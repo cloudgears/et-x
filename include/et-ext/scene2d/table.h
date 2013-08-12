@@ -7,13 +7,13 @@
 
 #pragma once
 
-#include <et/gui/scroll.h>
+#include <et-ext/scene2d/scroll.h>
 
 namespace et
 {
-	namespace gui
+	namespace s2d
 	{
-		class Table : public et::gui::Scroll
+		class Table : public et::s2d::Scroll
 		{
 		public:
 			ET_DECLARE_POINTER(Table)
@@ -41,7 +41,7 @@ namespace et
 			};
 			
 		public:
-			Table(et::gui::Element2d*, const std::string& name = std::string());
+			Table(et::s2d::Element2d*, const std::string& name = std::string());
 			~Table();
 			
 			Section* addSection(Element2d::Pointer header, const Element2d::List& items,

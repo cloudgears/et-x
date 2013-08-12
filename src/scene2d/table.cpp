@@ -5,18 +5,18 @@
  *
  */
 
-#include <et-ext/gui/table.h>
+#include <et-ext/scene2d/table.h>
 
 using namespace et;
-using namespace et::gui;
+using namespace et::s2d;
 
-ET_DECLARE_GUI_ELEMENT_CLASS(Table)
+ET_DECLARE_SCENE_ELEMENT_CLASS(Table)
 
 Table::Section::Section() :
 	headerOffset(0.0f), footerOffset(0.0f), headerSize(0.0f), itemsSize(0.0f),
 	footerSize(0.0f), sectionSize(0.0f) { }
 
-Table::Table(et::gui::Element2d* parent, const std::string& name) :
+Table::Table(et::s2d::Element2d* parent, const std::string& name) :
 	Scroll(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS)
 {
 	setBounce(Bounce_Horizontal);
