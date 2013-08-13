@@ -78,7 +78,7 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 	_defaultTransform[3][0] = -1.0f;
 	_defaultTransform[3][1] = 1.0f;
 	_defaultTransform[3][3] = 1.0f;
-
+	
 	_cameraFor3dElements.perspectiveProjection(DEG_30, contextSize.aspect(), 0.1f, 10.0f);
 	_cameraFor3dElements.lookAt(vec3(0.0f, 0.0f, std::cos(DEG_15) / std::sin(DEG_15)), vec3(0.0f), unitY);
 }
@@ -107,6 +107,8 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 	if (object && !object->hasFlag(Flag_DynamicRendering))
 		object = nullptr;
 
+	Texture actualTexture = inTexture.valid() ? inTexture : _defaultTexture;
+	
 	bool isDynamicObject = (object != nullptr) && (object->hasFlag(Flag_DynamicRendering));
 	bool shouldAdd = isDynamicObject || _renderingElement->chunks.empty();
 	if ((shouldAdd == false) && _renderingElement->chunks.size())
@@ -114,7 +116,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 		RenderChunk& lastChunk = _renderingElement->chunks.back();
 		
 		bool sameConfiguration = (lastChunk.representation == rep) && (lastChunk.clip == _clip.top()) &&
-			(lastChunk.texture == inTexture) && (lastChunk.program.program == inProgram.program);
+			(lastChunk.texture == actualTexture) && (lastChunk.program.program == inProgram.program);
 		
 		if (sameConfiguration)
 			lastChunk.count += count;
@@ -126,8 +128,8 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 	
 	if (shouldAdd)
 	{
-		_lastTexture = inTexture;
 		_lastProgram = inProgram;
+		_lastTexture = actualTexture;
 		_renderingElement->chunks.emplace_back(lastVertexIndex, count, _clip.top(),
 			_lastTexture, _lastProgram, object, rep);
 	}
@@ -167,12 +169,9 @@ void s2d::SceneRenderer::setRendernigElement(const RenderingElement::Pointer& r)
 
 void s2d::SceneRenderer::beginRender(RenderContext* rc)
 {
+	rc->renderState().setDepthMask(true);
 	rc->renderer()->clear(false, true);
 
-	_depthTestEnabled = rc->renderState().depthTestEnabled();
-	_blendEnabled = rc->renderState().blendEnabled();
-	_blendState = rc->renderState().blendState();
-	_depthMask = rc->renderState().depthMask();
 	_clipEnabled =  rc->renderState().clipEnabled();
 	_clipRect = rc->renderState().clipRect();
 	
@@ -216,9 +215,6 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 
 void SceneRenderer::endRender(RenderContext* rc)
 {
-	rc->renderState().setDepthTest(_depthTestEnabled);
-	rc->renderState().setBlend(_blendEnabled, static_cast<BlendState>(_blendState));
-	rc->renderState().setDepthMask(_depthMask);
 	rc->renderState().setClip(_clipEnabled, _clipRect);
 }
 

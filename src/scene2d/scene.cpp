@@ -95,7 +95,7 @@ bool Scene::characterEntered(size_t p)
 void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout)
 {
 	_renderer.setRendernigElement(element);
-
+	
 	if (!layout->valid())
 	{
 		element->clear();
@@ -105,11 +105,14 @@ void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer ele
 
 void Scene::buildBackgroundVertices(RenderContext* rc)
 {
+	_renderer.setRendernigElement(_renderingElementBackground);
+	
 	if (!_backgroundValid)
 	{
 		_renderingElementBackground->clear();
 		_background.addToRenderQueue(rc, _renderer);
 	}
+	
 	_backgroundValid = true;
 }
 
@@ -130,16 +133,15 @@ void Scene::render(RenderContext* rc)
 
 	if (_background.texture().valid())
 	{
-		_renderer.setRendernigElement(_renderingElementBackground);
-		buildBackgroundVertices(rc);
 		_renderer.setAdditionalOffsetAndAlpha(vec3(0.0f, 0.0f, 1.0f));
+		buildBackgroundVertices(rc);
 		_renderer.render(rc);
 	}
 
 	for (auto& obj : _layouts)
 	{
-		buildLayoutVertices(rc, obj->layout->renderingElement(), obj->layout);
 		_renderer.setAdditionalOffsetAndAlpha(obj->offsetAlpha);
+		buildLayoutVertices(rc, obj->layout->renderingElement(), obj->layout);
 		_renderer.render(rc);
 	}
 
