@@ -29,16 +29,16 @@ void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 		buildVertices(rc, gr);
 
 	if (_bgVertices.offset() > 0)
-		gr.addVertices(_bgVertices, _background[_state].texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		gr.addVertices(_bgVertices, _background[_state].texture);
 
 	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture());
 
 	if (_imageVertices.offset() > 0)
-		gr.addVertices(_imageVertices, _image.texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		gr.addVertices(_imageVertices, _image.texture);
 }
 
-void Button::buildVertices(RenderContext*, SceneRenderer& gr)
+void Button::buildVertices(RenderContext*, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	
@@ -86,22 +86,19 @@ void Button::buildVertices(RenderContext*, SceneRenderer& gr)
 		imageOrigin = 0.5f * (frameSize - vec2(contentWidth, imageSize.y));
 		textOrigin = vec2(imageOrigin.x + contentGap + imageSize.x, 0.5f * (frameSize.y - _textSize.y));
 	}
-	vec4 alphaScaleColor = vec4(1.0f, 1.0f, 1.0f, alpha());
+	vec4 alphaScale = vec4(1.0f, 1.0f, 1.0f, alpha());
 	
 	_bgVertices.setOffset(0);
 	_textVertices.setOffset(0);
 	_imageVertices.setOffset(0);
 	
 	if (_backgroundColor.w > 0.0f)
-	{
-		gr.createColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScaleColor,
-			transform, RenderLayer_Layer0);
-	}
+		buildColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
 
 	if (_background[_state].texture.valid())
 	{
-		gr.createImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
-			rect(vec2(0.0f), size()), color(), transform, RenderLayer_Layer0);
+		buildImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
+			rect(vec2(0.0f), size()), color(), transform);
 	}
 
 	if (_title.size() > 0)
@@ -109,20 +106,18 @@ void Button::buildVertices(RenderContext*, SceneRenderer& gr)
 		vec4 aColor = _state == State_Pressed ? _textPressedColor : _textColor;
 		if (aColor.w > 0.0f)
 		{
-			gr.createStringVertices(_textVertices, _font->buildString(_title, true), Alignment_Near,
-				Alignment_Near, textOrigin, aColor * alphaScaleColor, transform, RenderLayer_Layer1);
+			buildStringVertices(_textVertices, _font->buildString(_title, true), Alignment_Near,
+				Alignment_Near, textOrigin, aColor * alphaScale, transform);
 		}
 	}
 
 	if (_image.texture.valid())
 	{
-		vec4 aColor = _state == State_Pressed ?
-			color() * vec4(0.5f, 0.5f, 0.5f, 1.0f) : color();
-		
+		vec4 aColor = (_state == State_Pressed) ? color() * vec4(0.5f, 0.5f, 0.5f, 1.0f) : color();
 		if (aColor.w > 0.0f)
 		{
-			gr.createImageVertices(_imageVertices, _image.texture, _image.descriptor, 
-				rect(imageOrigin, imageSize), aColor * alphaScaleColor, transform, RenderLayer_Layer0);
+			buildImageVertices(_imageVertices, _image.texture, _image.descriptor, rect(imageOrigin, imageSize),
+				aColor * alphaScale, transform);
 		}
 	}
 }

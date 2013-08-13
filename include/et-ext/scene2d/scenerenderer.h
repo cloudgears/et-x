@@ -8,11 +8,11 @@
 #pragma once
 
 #include <stack>
+#include <et/core/objectscache.h>
 #include <et/core/containers.h>
 #include <et/camera/camera.h>
-#include <et-ext/scene2d/font.h>
 #include <et-ext/scene2d/renderingelement.h>
-#include <et/apiobjects/program.h>
+#include <et-ext/scene2d/vertexbuilder.h>
 
 namespace et
 {
@@ -21,7 +21,10 @@ namespace et
 		class SceneRenderer
 		{
 		public:
-			SceneRenderer(RenderContext* rc, bool saveFillRate);
+			static const std::string defaultProgramName;
+			
+		public:
+			SceneRenderer(RenderContext* rc);
 
 			void beginRender(RenderContext* rc);
 			void render(RenderContext* rc);
@@ -34,62 +37,50 @@ namespace et
 			void setProjectionMatrices(const vec2& contextSize);
 			void setRendernigElement(const RenderingElement::Pointer& r);
 
+			size_t addVertices(const GuiVertexList& vertices, const Texture& texture);
 			size_t addVertices(const GuiVertexList& vertices, const Texture& texture,
-				ElementRepresentation cls, RenderLayer layer);
-
-			int measusevertexCountForImageDescriptor(const ImageDescriptor& desc);
+				ElementRepresentation cls);
 			
-			void createStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars, 
-				Alignment hAlign, Alignment vAlign, const vec2& pos,
-				const vec4& color, const mat4& transform, RenderLayer layer);
-
-			void createImageVertices(GuiVertexList& vertices, const Texture& tex, const ImageDescriptor& desc, 
-				const rect& p, const vec4& color, const mat4& transform, RenderLayer layer);
-
-			void createColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color,
-				const mat4& transform, RenderLayer layer);
-			
-			void buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight,
-				const GuiVertex& bottomLeft, const GuiVertex& bottomRight);
-			
-			void setCustomOffset(const vec2& offset);
-			
-			void setCustomAlpha(float alpha)
-				{ _customAlpha = alpha; }
+			void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 			
 			const Camera& camera3d() const 
-				{ return _guiCamera; }
+				{ return _cameraFor3dElements; }
+			
+			SceneProgram defaultProgram() const
+				{ return _defaultProgram; }
+			
+			SceneProgram createProgramWithFragmentshader(const std::string& name, const std::string& fs);
 
 		private:
 			void init(RenderContext* rc);
 			void alloc(size_t count);
 			
-			GuiVertexPointer allocateVertices(size_t count, const Texture& texture,
-				ElementRepresentation cls, RenderLayer layer);
+			GuiVertexPointer allocateVertices(size_t, const Texture&, const SceneProgram&, ElementRepresentation);
 
 			ET_DENY_COPY(SceneRenderer)
 			
 		private:
 			RenderContext* _rc;
 			RenderingElement::Pointer _renderingElement;
-			Texture _lastTextures[RenderLayer_max];
+			
+			Texture _lastTexture;
 			Texture _defaultTexture;
 			
-			Program::Pointer _guiProgram;
-			mat4 _defaultTransform;
-			int _guiCustomOffsetUniform;
-			int _guiCustomAlphaUniform;
+			SceneProgram _defaultProgram;
+			SceneProgram _lastProgram;
 			
-			Camera _guiCamera;
-
+			ObjectsCache _sharedCache;
+			
+			Camera _cameraFor3dElements;
+			mat4 _defaultTransform;
+			
 			std::stack<recti> _clip;
 			recti _clipRect;
-			vec2 _customOffset;
-			recti _customWindowOffset;
-			float _customAlpha;
-	
+			
+			vec3 _additionalOffsetAndAlpha;
+			recti _additionalWindowOffset;
+			
 			size_t _blendState;
-			bool _saveFillRate;
 			bool _depthTestEnabled;
 			bool _depthMask;
 			bool _blendEnabled;

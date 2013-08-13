@@ -11,13 +11,7 @@
 using namespace et;
 using namespace et::s2d;
 
-#if (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
-static const bool shouldSaveFillRate = true;
-#else
-static const bool shouldSaveFillRate = false;
-#endif
-
-Scene::Scene(RenderContext* rc) : _rc(rc),  _renderer(rc, shouldSaveFillRate),
+Scene::Scene(RenderContext* rc) : _rc(rc), _renderer(rc),
 	_renderingElementBackground(new RenderingElement(rc)),
 	_background(Texture(), 0), _backgroundValid(true)
 {
@@ -138,16 +132,14 @@ void Scene::render(RenderContext* rc)
 	{
 		_renderer.setRendernigElement(_renderingElementBackground);
 		buildBackgroundVertices(rc);
-		_renderer.setCustomAlpha(1.0f);
-		_renderer.setCustomOffset(vec2(0.0f));
+		_renderer.setAdditionalOffsetAndAlpha(vec3(0.0f, 0.0f, 1.0f));
 		_renderer.render(rc);
 	}
 
 	for (auto& obj : _layouts)
 	{
 		buildLayoutVertices(rc, obj->layout->renderingElement(), obj->layout);
-		_renderer.setCustomAlpha(obj->offsetAlpha.z);
-		_renderer.setCustomOffset(obj->offsetAlpha.xy());
+		_renderer.setAdditionalOffsetAndAlpha(obj->offsetAlpha);
 		_renderer.render(rc);
 	}
 
@@ -176,11 +168,11 @@ void Scene::onKeyboardResigned(Layout*)
 
 void Scene::getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst)
 {
-	float fromLeft = static_cast<float>((flags & AnimationFlag_FromLeft) == AnimationFlag_FromLeft);
-	float fromRight = static_cast<float>((flags & AnimationFlag_FromRight) == AnimationFlag_FromRight);
-	float fromTop = static_cast<float>((flags & AnimationFlag_FromTop) == AnimationFlag_FromTop);
-	float fromBottom = static_cast<float>((flags & AnimationFlag_FromBottom) == AnimationFlag_FromBottom);
-	float fade = static_cast<float>((flags & AnimationFlag_Fade) == AnimationFlag_Fade);
+	float fromLeft = (flags & AnimationFlag_FromLeft) ? 1.0f : 0.0f;
+	float fromRight = (flags & AnimationFlag_FromRight) ? 1.0f : 0.0f;
+	float fromTop = (flags & AnimationFlag_FromTop) ? 1.0f : 0.0f;
+	float fromBottom = (flags & AnimationFlag_FromBottom) ? 1.0f : 0.0f;
+	float fade = (flags & AnimationFlag_Fade) ? 1.0f : 0.0f;
 
 	if (nextSrc)
 		*nextSrc = vec3(-1.0f * fromLeft + 1.0f * fromRight, 1.0f * fromTop - 1.0f * fromBottom, 1.0f - fade);

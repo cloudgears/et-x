@@ -14,7 +14,7 @@ namespace et
 {
 	namespace s2d
 	{
-		class Font : public Shared
+		class Font : public Object
 		{
 		public:
 			ET_DECLARE_POINTER(Font)

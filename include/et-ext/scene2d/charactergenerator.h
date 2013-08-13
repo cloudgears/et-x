@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <et/core/intrusiveptr.h>
 #include <et-ext/scene2d/fontbase.h>
 #include <et/apiobjects/texture.h>
 
@@ -18,7 +17,7 @@ namespace et
 	namespace s2d
 	{
 		class CharacterGeneratorPrivate;
-		class CharacterGenerator : public Shared
+		class CharacterGenerator : public Object
 		{
 		public:
 			ET_DECLARE_POINTER(CharacterGenerator)

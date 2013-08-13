@@ -245,7 +245,8 @@ Element* Layout::activeElement(const PointerInputInfo& p)
 	if (!_valid)
 	{
 		_topmostElements.clear();
-		ET_ITERATE(children(), auto&, i, collectTopmostElements(i.ptr()))
+		for (auto& i : children())
+			collectTopmostElements(i.ptr());
 	}
 
 	Element* active = 0;
@@ -372,7 +373,8 @@ void Layout::collectTopmostElements(Element* element)
 	if (element->hasFlag(Flag_RenderTopmost))
 		_topmostElements.push_back(Element::Pointer(element));
 
-	ET_ITERATE(element->children(), auto&, i, collectTopmostElements(i.ptr()))
+	for (auto& i : element->children())
+		collectTopmostElements(i.ptr());
 }
 
 void Layout::initRenderingElement(et::RenderContext* rc)

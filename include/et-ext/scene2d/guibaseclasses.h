@@ -1,6 +1,7 @@
 #pragma once
 
 #include <et/apiobjects/texture.h>
+#include <et-ext/scene2d/guibaseconst.h>
 
 namespace et
 {
@@ -134,23 +135,6 @@ namespace et
 			vec4 color; 
 		};
 
-		struct RenderChunk
-		{
-			size_t first;
-			size_t count;
-			recti clip;
-			Texture layers[RenderLayer_max];
-			ElementRepresentation representation;
-
-			RenderChunk(size_t f, size_t cnt, const Texture& l0, const Texture& l1,
-				const recti& aClip, ElementRepresentation c) : first(f), count(cnt), clip(aClip),
-				representation(c)
-			{ 
-				layers[RenderLayer_Layer0] = l0;
-				layers[RenderLayer_Layer1] = l1;
-			}
-		};
-
 		struct ElementDragInfo
 		{
 			vec2 currentPosition;
@@ -220,11 +204,5 @@ namespace et
 		typedef DataStorage<GuiVertex> GuiVertexList;
 		typedef std::vector<Image> ImageList;
 		typedef std::map<std::string, Image> ImageMap;
-		typedef std::list<RenderChunk> RenderChunkList;
-		typedef Animator<vec2> Vector2Animator;
-		typedef Animator<vec3> Vector3Animator;
-		typedef Animator<vec4> Vector4Animator;
-		typedef Animator<mat4> MatrixAnimator;
-		typedef Animator<rect> RectAnimator;
 	}
 }

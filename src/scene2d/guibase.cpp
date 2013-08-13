@@ -161,13 +161,13 @@ void Element::setAutolayoutMask(size_t m)
 
 void Element::autoLayout(const vec2& contextSize, float duration)
 {
-	if ((_autoLayout.mask & LayoutMask_Pivot) == LayoutMask_Pivot)
+	if (_autoLayout.mask & LayoutMask_Pivot)
 		setPivotPoint(_autoLayout.pivotPoint);
 
 	vec2 aSize = size();
 	vec2 aPos = position();
 
-	if ((_autoLayout.mask & LayoutMask_Size) == LayoutMask_Size)
+	if (_autoLayout.mask & LayoutMask_Size)
 	{
 		if (_autoLayout.sizeMode == LayoutMode_RelativeToContext)
 			aSize = contextSize * _autoLayout.size;
@@ -179,7 +179,7 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 			aSize = _autoLayout.size;
 	}
 
-	if ((_autoLayout.mask & LayoutMask_Position) == LayoutMask_Position)
+	if (_autoLayout.mask & LayoutMask_Position)
 	{
 		if (_autoLayout.positionMode == LayoutMode_RelativeToContext)
 			aPos = contextSize * _autoLayout.position;
@@ -191,7 +191,7 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 			aPos = _autoLayout.position;
 	}
 
-	if ((_autoLayout.mask & LayoutMask_Frame) != 0)
+	if (_autoLayout.mask & LayoutMask_Frame)
 		setFrame(aPos, aSize, duration);
 
 	if (!hasFlag(Flag_HandlesChildLayout))

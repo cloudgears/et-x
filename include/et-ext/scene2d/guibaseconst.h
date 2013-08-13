@@ -46,13 +46,6 @@ namespace et
 			AnimatedProperty_max
 		};
 
-		enum RenderLayer 
-		{
-			RenderLayer_Layer0,
-			RenderLayer_Layer1,
-			RenderLayer_max
-		};
-
 		enum Alignment
 		{
 			Alignment_Near,

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <et/apiobjects/program.h>
 #include <et/apiobjects/vertexarrayobject.h>
 #include <et-ext/scene2d/guibase.h>
 
@@ -14,6 +15,30 @@ namespace et
 {
 	namespace s2d
 	{
+		struct SceneProgram
+		{
+			Program::Pointer program;
+			ProgramUniform additionalOffsetAndAlpha;
+			
+			bool operator == (const SceneProgram& r) const
+				{ return r.program == program; }
+		};
+		
+		struct RenderChunk
+		{
+			size_t first;
+			size_t count;
+			recti clip;
+			
+			Texture texture;
+			SceneProgram program;
+			
+			ElementRepresentation representation;
+			
+			RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
+				const SceneProgram& aProgram, ElementRepresentation aRepresentation);
+		};
+		
 		class RenderingElement : public Shared
 		{
 		public:
@@ -27,16 +52,15 @@ namespace et
 
 		private:
 			friend class SceneRenderer;
-
-		private:
-			RenderState& _rs;
-			RenderChunkList _chunks;
-			IndexArray::Pointer _indexArray;
-			GuiVertexList _vertexList;
-
-			VertexArrayObject _vao;
-
-			bool _changed;
+			
+			RenderState& renderState;
+			std::vector<RenderChunk> chunks;
+			
+			IndexArray::Pointer indexArray;
+			GuiVertexList vertexList;
+			
+			VertexArrayObject vao;
+			bool changed;
 		};
 	}
 }

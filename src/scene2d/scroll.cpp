@@ -38,7 +38,7 @@ void Scroll::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 	
-	r.addVertices(_backgroundVertices, Texture(), ElementRepresentation_2d, RenderLayer_Layer0);
+	r.addVertices(_backgroundVertices, Texture());
 }
 
 void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
@@ -46,18 +46,18 @@ void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 
-	r.addVertices(_scrollbarsVertices, Texture(), ElementRepresentation_2d, RenderLayer_Layer0);
+	r.addVertices(_scrollbarsVertices, Texture());
 }
 
-void Scroll::buildVertices(RenderContext* rc, SceneRenderer& r)
+void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 {
 	_backgroundVertices.setOffset(0);
 	_scrollbarsVertices.setOffset(0);
 
 	if (_backgroundColor.w > 0.0f)
 	{
-		r.createColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor,
-			Element2d::finalTransform(), RenderLayer_Layer0);
+		buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor,
+			Element2d::finalTransform());
 	}
 	
 	if (_scrollbarsColor.w > 0.0f)
@@ -70,8 +70,8 @@ void Scroll::buildVertices(RenderContext* rc, SceneRenderer& r)
 		vec4 adjutsedColor = _scrollbarsColor;
 		adjutsedColor.w *= _scrollbarsAlpha;
 		
-		r.createColorVertices(_scrollbarsVertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
-		  Element2d::finalTransform(), RenderLayer_Layer0);
+		buildColorVertices(_scrollbarsVertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
+		  Element2d::finalTransform());
 	}
 	
 	setContentValid();
@@ -390,7 +390,11 @@ void Scroll::adjustContentSize()
 {
 	vec2 size;
 	
-	ET_ITERATE(children(), auto&, ptr, if (ptr->visible()) size = maxv(size, ptr->origin() + ptr->size()))
+	for (auto& ptr : children())
+	{
+		if (ptr->visible())
+			size = maxv(size, ptr->origin() + ptr->size());
+	}
 
 	setContentSize(size);
 }

@@ -51,19 +51,19 @@ void Slider::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		buildVertices(rc, r);
 
 	if (_backgroundVertices.offset() > 0)
-		r.addVertices(_backgroundVertices, _background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		r.addVertices(_backgroundVertices, _background.texture);
 
 	if (_sliderLeftVertices.offset() > 0)
-		r.addVertices(_sliderLeftVertices, _sliderLeft.texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		r.addVertices(_sliderLeftVertices, _sliderLeft.texture);
 
 	if (_sliderRightVertices.offset() > 0)
-		r.addVertices(_sliderRightVertices, _sliderRight.texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		r.addVertices(_sliderRightVertices, _sliderRight.texture);
 	
 	if (_handleVertices.offset() > 0)
-		r.addVertices(_handleVertices, _handle.texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		r.addVertices(_handleVertices, _handle.texture);
 }
 
-void Slider::buildVertices(RenderContext*, SceneRenderer& renderer)
+void Slider::buildVertices(RenderContext*, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	rect mainRect(vec2(0.0f), size());
@@ -79,14 +79,14 @@ void Slider::buildVertices(RenderContext*, SceneRenderer& renderer)
 	
 	if (_backgroundColor.w > 0.0f)
 	{
-		renderer.createColorVertices(_backgroundVertices, mainRect, _backgroundColor,
-			transform, RenderLayer_Layer0);
+		buildColorVertices(_backgroundVertices, mainRect, _backgroundColor,
+			transform);
 	}
 
 	if (_background.texture.valid())
 	{
-		renderer.createImageVertices(_backgroundVertices, _background.texture,
-			_background.descriptor, mainRect, vec4(1.0f), transform, RenderLayer_Layer0);
+		buildImageVertices(_backgroundVertices, _background.texture,
+			_background.descriptor, mainRect, vec4(1.0f), transform);
 	}
 	
 	if (_sliderLeft.texture.valid() && (_value > 0.0f))
@@ -95,8 +95,8 @@ void Slider::buildVertices(RenderContext*, SceneRenderer& renderer)
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.width = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
 		
-		renderer.createImageVertices(_sliderLeftVertices, _sliderLeft.texture,
-			_sliderLeft.descriptor, r, vec4(1.0f), transform, RenderLayer_Layer0);
+		buildImageVertices(_sliderLeftVertices, _sliderLeft.texture,
+			_sliderLeft.descriptor, r, vec4(1.0f), transform);
 	}
 
 	if (_sliderRight.texture.valid() && (_value < 1.0f))
@@ -105,8 +105,8 @@ void Slider::buildVertices(RenderContext*, SceneRenderer& renderer)
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.left = clamp(valuePoint, halfHandleWidth, mainRect.width - halfHandleWidth);
 		r.width = etMax(0.0f, mainRect.width - halfHandleWidth - r.left);
-		renderer.createImageVertices(_sliderRightVertices, _sliderRight.texture,
-			_sliderRight.descriptor, r, vec4(1.0f), transform, RenderLayer_Layer0);
+		buildImageVertices(_sliderRightVertices, _sliderRight.texture,
+			_sliderRight.descriptor, r, vec4(1.0f), transform);
 	}
 
 	if (_handle.texture.valid())
@@ -114,8 +114,8 @@ void Slider::buildVertices(RenderContext*, SceneRenderer& renderer)
 		rect r(vec2(0.0f), _handleScale * _handle.descriptor.size);
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
-		renderer.createImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r,
-			vec4(1.0f), transform, RenderLayer_Layer0);
+		buildImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r,
+			vec4(1.0f), transform);
 	}
 
 	setContentValid();

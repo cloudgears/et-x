@@ -32,16 +32,16 @@ void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 		buildVertices(rc, gr);
 	
 	if (_backgroundVertices.offset() > 0)
-		gr.addVertices(_backgroundVertices, _background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		gr.addVertices(_backgroundVertices, _background.texture);
 
 	if (_imageVertices.offset() > 0)
-		gr.addVertices(_imageVertices, _background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		gr.addVertices(_imageVertices, _background.texture);
 	
 	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture());
 }
 
-void TextField::buildVertices(RenderContext*, SceneRenderer& gr)
+void TextField::buildVertices(RenderContext*, SceneRenderer&)
 {
 	vec4 alphaVector = vec4(1.0f, 1.0f, 1.0f, alpha());
 	mat4 transform = finalTransform();
@@ -53,14 +53,14 @@ void TextField::buildVertices(RenderContext*, SceneRenderer& gr)
 	
 	if (_backgroundColor.w > 0.0f)
 	{
-		gr.createColorVertices(_backgroundVertices, wholeRect, _backgroundColor,
-			transform, RenderLayer_Layer0);
+		buildColorVertices(_backgroundVertices, wholeRect, _backgroundColor,
+			transform);
 	}
 	
 	if (_background.texture.valid())
 	{
-		gr.createImageVertices(_imageVertices, _background.texture, _background.descriptor,
-			wholeRect, alphaVector, transform, RenderLayer_Layer0);
+		buildImageVertices(_imageVertices, _background.texture, _background.descriptor,
+			wholeRect, alphaVector, transform);
 	}
 
 	_charList = _secured ?
@@ -71,14 +71,12 @@ void TextField::buildVertices(RenderContext*, SceneRenderer& gr)
 		_font->measureStringSize(_charList) : vec2(0.0f, _font->lineHeight());
 
 	if (_caretVisible)
-	{
 		_charList.push_back(_font->charDescription(caretChar));
-	}
 	
 	if (_charList.size())
 	{
-		gr.createStringVertices(_textVertices, _charList, Alignment_Near, Alignment_Near,
-			0.5f * (size() - textSize), color() * alphaVector, transform, RenderLayer_Layer1);
+		buildStringVertices(_textVertices, _charList, Alignment_Near, Alignment_Near,
+			0.5f * (size() - textSize), color() * alphaVector, transform);
 	}
 	
 	setContentValid();

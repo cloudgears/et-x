@@ -128,7 +128,7 @@ bool TextureAtlasWriter::placeImage(TextureDescription::Pointer image, TextureAt
 }
 
 inline bool textureNameSort(const TextureAtlasWriter::ImageItem& i1, const TextureAtlasWriter::ImageItem& i2)
-	{ return i1.image->source < i2.image->source; }
+	{ return i1.image->origin() < i2.image->origin(); }
 
 void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* textureNamePattern)
 {
@@ -150,7 +150,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 		for (ImageItemList::iterator ii = i->images.begin(), ie = i->images.end(); ii != ie; ++ii, ++index)
 		{
 			TextureDescription image;
-			PNGLoader::loadFromFile(ii->image->source, image, true);
+			PNGLoader::loadFromFile(ii->image->origin(), image, true);
 
 			vec2i iOrigin(static_cast<int>(ii->place.origin.x), static_cast<int>(ii->place.origin.y));
 
@@ -160,7 +160,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 				sIndex = "0" + sIndex;
 			
 			std::string newFile = replaceFileExt(texName, ".layout" + sIndex + ".png");
-			std::string name = removeFileExt(getFileName(ii->image->source));
+			std::string name = removeFileExt(getFileName(ii->image->origin()));
 
 			vec4 offset;
 			size_t delimPos = name.find_first_of("~");

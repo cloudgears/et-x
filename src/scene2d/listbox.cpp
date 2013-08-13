@@ -24,7 +24,7 @@ ListboxPopup::ListboxPopup(Listbox* owner, const std::string& name) :
 	setFlag(Flag_RenderTopmost);
 }
 
-void ListboxPopup::buildVertices(SceneRenderer& gr)
+void ListboxPopup::buildVertices(SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	_backgroundVertices.setOffset(0);
@@ -36,8 +36,8 @@ void ListboxPopup::buildVertices(SceneRenderer& gr)
 
 	if (background.texture.valid())
 	{
-		gr.createImageVertices(_backgroundVertices, background.texture, background.descriptor, 
-			rect(vec2(0.0), size()), color(), transform, RenderLayer_Layer0);
+		buildImageVertices(_backgroundVertices, background.texture, background.descriptor, 
+			rect(vec2(0.0), size()), color(), transform);
 	}
 
 	const StringList& values = _owner->_values;
@@ -60,13 +60,12 @@ void ListboxPopup::buildVertices(SceneRenderer& gr)
 		{
 			if (selectionValid && (_selectedIndex == index))
 			{
-				gr.createImageVertices(_selectionVertices, selection.texture, selection.descriptor, 
-					rect(vec2(0.0f, row * rowSize), vec2(size().x, rowSize)), drawColor, transform,
-					RenderLayer_Layer0);
+				buildImageVertices(_selectionVertices, selection.texture, selection.descriptor, 
+					rect(vec2(0.0f, row * rowSize), vec2(size().x, rowSize)), drawColor, transform);
 			}
 
-			gr.createStringVertices(_textVertices, _owner->_font->buildString(*i), Alignment_Near,
-				Alignment_Near, textPos, drawColor, transform, RenderLayer_Layer1);
+			buildStringVertices(_textVertices, _owner->_font->buildString(*i), Alignment_Near,
+				Alignment_Near, textPos, drawColor, transform);
 			textPos.y += dy;
 		}
 	}
@@ -117,13 +116,13 @@ void ListboxPopup::addToRenderQueue(RenderContext*, SceneRenderer& gr)
 		buildVertices(gr);
 
 	if (_backgroundVertices.offset() > 0)
-		gr.addVertices(_backgroundVertices, _owner->_background.texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		gr.addVertices(_backgroundVertices, _owner->_background.texture);
 
 	if (_selectionVertices.offset() > 0)
-		gr.addVertices(_selectionVertices, _owner->_selection.texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		gr.addVertices(_selectionVertices, _owner->_selection.texture);
 
 	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _owner->_font->texture(), ElementRepresentation_2d, RenderLayer_Layer1);
+		gr.addVertices(_textVertices, _owner->_font->texture());
 }
 
 bool ListboxPopup::pointerPressed(const PointerInputInfo&)
@@ -204,7 +203,7 @@ void Listbox::setSelectionImage(const Image& img)
 	invalidateContent();
 }
 
-void Listbox::buildVertices(SceneRenderer& gr)
+void Listbox::buildVertices(SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	_backgroundVertices.setOffset(0);
@@ -212,16 +211,16 @@ void Listbox::buildVertices(SceneRenderer& gr)
 
 	if (_images[_state].texture.valid())
 	{
-		gr.createImageVertices(_backgroundVertices, _images[_state].texture, _images[_state].descriptor, 
-			rect(vec2(0.0), size()), color(), transform, RenderLayer_Layer0);
+		buildImageVertices(_backgroundVertices, _images[_state].texture, _images[_state].descriptor, 
+			rect(vec2(0.0), size()), color(), transform);
 	}
 
 	if (shouldDrawText())
 	{
 		std::string textToDraw = _prefix + _values[_selectedIndex];
 		vec2 textPos = _contentOffset + vec2(0.0f, 0.5f * (size().y - _font->lineHeight()));
-		gr.createStringVertices(_textVertices, _font->buildString(textToDraw), Alignment_Near, Alignment_Near,
-								textPos, color(), transform, RenderLayer_Layer1);
+		buildStringVertices(_textVertices, _font->buildString(textToDraw), Alignment_Near, Alignment_Near,
+								textPos, color(), transform);
 	}
 
 	setContentValid();
@@ -233,10 +232,10 @@ void Listbox::addToRenderQueue(RenderContext*, SceneRenderer& gr)
 		buildVertices(gr);
 
 	if (_images[_state].texture.valid())
-		gr.addVertices(_backgroundVertices, _images[_state].texture, ElementRepresentation_2d, RenderLayer_Layer0);
+		gr.addVertices(_backgroundVertices, _images[_state].texture);
 
 	if (shouldDrawText())
-		gr.addVertices(_textVertices, _font->texture(),  ElementRepresentation_2d, RenderLayer_Layer1);
+		gr.addVertices(_textVertices, _font->texture(),  ElementRepresentation_2d);
 }
 
 bool Listbox::shouldDrawText()

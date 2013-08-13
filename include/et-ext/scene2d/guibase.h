@@ -14,7 +14,6 @@
 #include <et/core/hierarchy.h>
 #include <et/input/input.h>
 #include <et/timers/animator.h>
-#include <et-ext/scene2d/guibaseconst.h>
 #include <et-ext/scene2d/guibaseclasses.h>
 
 namespace et
@@ -234,4 +233,10 @@ namespace et
 		State adjustState(State s);
 		float alignmentFactor(Alignment a);
 	}
+	
+	typedef Animator<vec2> Vector2Animator;
+	typedef Animator<vec3> Vector3Animator;
+	typedef Animator<vec4> Vector4Animator;
+	typedef Animator<mat4> MatrixAnimator;
+	typedef Animator<rect> RectAnimator;
 }

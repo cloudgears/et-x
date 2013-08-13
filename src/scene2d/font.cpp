@@ -80,7 +80,7 @@ void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 			desc.value = sValue;
 			desc.params = sParams;
 			
-			if ((desc.params & CharParameter_Bold) == CharParameter_Bold)
+			if (desc.params & CharParameter_Bold)
 			{
 				_biggestBoldChar = maxv(_biggestBoldChar, desc.size);
 				_boldChars[desc.value] = desc;
@@ -99,7 +99,7 @@ void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 			CharDescriptor desc;
 			fontFile.stream().read(reinterpret_cast<char*>(&desc), sizeof(desc));
 			
-			if ((desc.params & CharParameter_Bold) == CharParameter_Bold)
+			if (desc.params & CharParameter_Bold)
 			{
 				_biggestBoldChar = maxv(_biggestBoldChar, desc.size);
 				_boldChars[desc.value] = desc;

@@ -11,8 +11,20 @@
 using namespace et;
 using namespace et::s2d;
 
-RenderingElement::RenderingElement(RenderContext* rc) : _rs(rc->renderState()),
-	_indexArray(new IndexArray(IndexArrayFormat_16bit, 0, PrimitiveType_Triangles)), _changed(false)
+/*
+ * Render chunk
+ */
+RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
+	const SceneProgram& aProgram, ElementRepresentation aRepresentation) : first(aFirst),
+	count(aCount), clip(aClip), texture(aTexture), program(aProgram), representation(aRepresentation)
+{
+}
+
+/*
+ * Rendering element
+ */
+RenderingElement::RenderingElement(RenderContext* rc) : renderState(rc->renderState()),
+	indexArray(new IndexArray(IndexArrayFormat_16bit, 0, PrimitiveType_Triangles)), changed(false)
 {
 	VertexDeclaration decl(true, Usage_Position, Type_Vec3);
 	decl.push_back(Usage_TexCoord0, Type_Vec4);
@@ -20,30 +32,30 @@ RenderingElement::RenderingElement(RenderContext* rc) : _rs(rc->renderState()),
 	
 	std::string nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao";
 
-	_vao = rc->vertexBufferFactory().createVertexArrayObject(nameId, VertexArray::Pointer::create(decl, true),
-		BufferDrawType_Stream, _indexArray, BufferDrawType_Static);
+	vao = rc->vertexBufferFactory().createVertexArrayObject(nameId, VertexArray::Pointer::create(decl, true),
+		BufferDrawType_Stream, indexArray, BufferDrawType_Static);
 }
 
 void RenderingElement::clear()
 {
-	_vertexList.setOffset(0);
-	_indexArray->setActualSize(0);
-	_chunks.clear();
-	_changed = true;
+	vertexList.setOffset(0);
+	indexArray->setActualSize(0);
+	chunks.clear();
+	changed = true;
 }
 
 const VertexArrayObject& RenderingElement::vertexArrayObject()
 {
-	_rs.bindVertexArray(_vao);
+	renderState.bindVertexArray(vao);
 
-	if (_changed)
+	if (changed)
 	{
-		size_t count = _vertexList.offset();
-		_indexArray->setActualSize(count);
-		_vao->vertexBuffer()->setData(_vertexList.data(), count * _vertexList.typeSize());
-		_vao->indexBuffer()->setData(_indexArray);
-		_changed = false;
+		size_t count = vertexList.offset();
+		indexArray->setActualSize(count);
+		vao->vertexBuffer()->setData(vertexList.data(), count * vertexList.typeSize());
+		vao->indexBuffer()->setData(indexArray);
+		changed = false;
 	}
 
-	return _vao;
+	return vao;
 }

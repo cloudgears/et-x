@@ -53,10 +53,10 @@ void CarouselItem::addToRenderQueue(RenderContext*, SceneRenderer& gr)
 	if (!contentValid())
 		buildVertexList(gr);
 
-	gr.addVertices(_vertices, _texture, ElementRepresentation_3d, RenderLayer_Layer0);
+	gr.addVertices(_vertices, _texture, ElementRepresentation_3d);
 }
 
-void CarouselItem::buildVertexList(SceneRenderer& gr)
+void CarouselItem::buildVertexList(SceneRenderer&)
 {
 	_vertices.setOffset(0);
 	if (!_texture.valid()) return;
@@ -88,13 +88,13 @@ void CarouselItem::buildVertexList(SceneRenderer& gr)
 
 	vec2 mask(0.0f);
 
-	gr.buildQuad(_vertices,
+	buildQuad(_vertices,
 		GuiVertex(topLeft, vec4(_texture->getTexCoord(topLeftUV), mask), leftColor),
 		GuiVertex(topMiddle, vec4(_texture->getTexCoord(topMiddleUV), mask), middleColor), 
 		GuiVertex(bottomLeft, vec4(_texture->getTexCoord(bottomLeftUV), mask), leftColor),
 		GuiVertex(bottomMiddle,	vec4(_texture->getTexCoord(bottomMiddleUV), mask), middleColor));
 
-	gr.buildQuad(_vertices,
+	buildQuad(_vertices,
 		GuiVertex(topMiddle, vec4(_texture->getTexCoord(topMiddleUV), mask), middleColor),
 		GuiVertex(topRight, vec4(_texture->getTexCoord(topRightUV), mask), rightColor), 
 		GuiVertex(bottomMiddle,	vec4(_texture->getTexCoord(bottomMiddleUV), mask), middleColor),
