@@ -23,19 +23,19 @@ Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, 
 	setSize(sizeForText(title));
 }
 
-void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
+void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
 	if (!contentValid() || !transformValid())
-		buildVertices(rc, gr);
+		buildVertices(rc, r);
 
-	if (_bgVertices.offset() > 0)
-		gr.addVertices(_bgVertices, _background[_state].texture);
+	if (_bgVertices.lastElementIndex() > 0)
+		r.addVertices(_bgVertices, _background[_state].texture, r.defaultProgram(), this);
 
-	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _font->texture());
+	if (_textVertices.lastElementIndex() > 0)
+		r.addVertices(_textVertices, _font->texture(), r.defaultProgram(), this);
 
-	if (_imageVertices.offset() > 0)
-		gr.addVertices(_imageVertices, _image.texture);
+	if (_imageVertices.lastElementIndex() > 0)
+		r.addVertices(_imageVertices, _image.texture, r.defaultProgram(), this);
 }
 
 void Button::buildVertices(RenderContext*, SceneRenderer&)

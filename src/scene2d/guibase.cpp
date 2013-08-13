@@ -7,6 +7,7 @@
 
 #include <et/app/application.h>
 #include <et-ext/scene2d/guibase.h>
+#include <et-ext/scene2d/scenerenderer.h>
 
 using namespace et;
 using namespace et::s2d;
@@ -74,6 +75,15 @@ void Element::addToRenderQueue(RenderContext*, SceneRenderer&)
 }
 
 void Element::addToOverlayRenderQueue(RenderContext*, SceneRenderer&)
+{
+}
+
+SceneProgram Element::initProgram(SceneRenderer& r)
+{
+	return r.defaultProgram();
+}
+
+void Element::setProgramParameters(et::Program::Pointer&)
 {
 }
 

@@ -68,7 +68,7 @@ namespace et
 				{ return vec2(0.0f); }
 
 		private:
-			GuiVertexList _vertices;
+			SceneVertexList _vertices;
 			Texture _texture;
 			ImageDescriptor _desc;
 			vec2 _scale;

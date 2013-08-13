@@ -50,9 +50,9 @@ namespace et
 			Image _background;
 			std::string _text;
 			CharDescriptorList _charList;
-			GuiVertexList _imageVertices;
-			GuiVertexList _textVertices;
-			GuiVertexList _backgroundVertices;
+			SceneVertexList _imageVertices;
+			SceneVertexList _textVertices;
+			SceneVertexList _backgroundVertices;
 			NotifyTimer _caretBlinkTimer;
 			vec4 _backgroundColor;
 			bool _secured;

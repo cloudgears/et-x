@@ -57,9 +57,15 @@ namespace et
 
 			const Camera& camera() const 
 				{ return _camera; }
+			
+			SceneProgram program()
+				{ return _defaultProgram; }
+			
+			SceneProgram initProgram(SceneRenderer&);
 
 		private:
 			const Camera& _camera;
+			SceneProgram _defaultProgram;
 
 			vec2 _null;
 			

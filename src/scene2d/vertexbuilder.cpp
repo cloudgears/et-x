@@ -11,8 +11,8 @@
 using namespace et;
 using namespace et::s2d;
 
-void et::s2d::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight,
-	const GuiVertex& bottomLeft, const GuiVertex& bottomRight)
+void et::s2d::buildQuad(SceneVertexList& vertices, const SceneVertex& topLeft, const SceneVertex& topRight,
+	const SceneVertex& bottomLeft, const SceneVertex& bottomRight)
 {
 	vertices.fitToSize(6);
 	vertices.push_back(bottomLeft);
@@ -23,7 +23,7 @@ void et::s2d::buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const
 	vertices.push_back(topLeft);
 }
 
-void et::s2d::buildStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars,
+void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescriptorList& chars,
 	Alignment hAlign, Alignment vAlign, const vec2& pos, const vec4& color,
 	const mat4& transform)
 {
@@ -79,10 +79,10 @@ void et::s2d::buildStringVertices(GuiVertexList& vertices, const CharDescriptorL
 			vec4 charColor = desc.color * color;
 			
 			buildQuad(vertices,
-				GuiVertex(floorv(transform * topLeft), vec4(topLeftUV, mask), charColor),
-				GuiVertex(floorv(transform * topRight), vec4(topRightUV, mask), charColor),
-				GuiVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, mask), charColor),
-				GuiVertex(floorv(transform * bottomRight), vec4(bottomRightUV, mask), charColor));
+				SceneVertex(floorv(transform * topLeft), vec4(topLeftUV, mask), charColor),
+				SceneVertex(floorv(transform * topRight), vec4(topRightUV, mask), charColor),
+				SceneVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, mask), charColor),
+				SceneVertex(floorv(transform * bottomRight), vec4(bottomRightUV, mask), charColor));
 			
 			line.x += desc.size.x;
 		}
@@ -107,7 +107,7 @@ size_t et::s2d::measuseVertexCountForImageDescriptor(const ImageDescriptor& desc
 	return 6 * (1 + numCorners + numBorders);
 }
 
-void et::s2d::buildImageVertices(GuiVertexList& vertices, const Texture& tex, const ImageDescriptor& desc,
+void et::s2d::buildImageVertices(SceneVertexList& vertices, const Texture& tex, const ImageDescriptor& desc,
 	const rect& p, const vec4& color, const mat4& transform)
 {
 	if (!tex.valid()) return;
@@ -166,45 +166,45 @@ void et::s2d::buildImageVertices(GuiVertexList& vertices, const Texture& tex, co
 	vec2 rightCenterBottomRigthUV = tex->getTexCoord( desc.origin + vec2( desc.size.x, desc.size.y - desc.contentOffset.bottom));
 
 	buildQuad(vertices, 
-		GuiVertex(transform * centerTopLeft, vec4(centerTopLeftUV, mask), color ), 
-		GuiVertex(transform * centerTopRight, vec4(centerTopRightUV, mask), color ),
-		GuiVertex(transform * centerBottomLeft, vec4(centerBottomLeftUV, mask), color ),
-		GuiVertex(transform * centerBottomRight, vec4(centerBottomRightUV, mask), color ) );
+		SceneVertex(transform * centerTopLeft, vec4(centerTopLeftUV, mask), color ), 
+		SceneVertex(transform * centerTopRight, vec4(centerTopRightUV, mask), color ),
+		SceneVertex(transform * centerBottomLeft, vec4(centerBottomLeftUV, mask), color ),
+		SceneVertex(transform * centerBottomRight, vec4(centerBottomRightUV, mask), color ) );
 
 	if (hasLeftTopCorner)
 	{
 		buildQuad(vertices, 
-			GuiVertex(transform * topLeft, vec4(topLeftUV, mask), color), 
-			GuiVertex(transform * topCenterTopLeft, vec4(topCenterTopLeftUV, mask), color), 
-			GuiVertex(transform * leftCenterTopLeft, vec4(leftCenterTopLeftUV, mask), color), 
-			GuiVertex(transform * centerTopLeft, vec4(centerTopLeftUV, mask), color) );
+			SceneVertex(transform * topLeft, vec4(topLeftUV, mask), color), 
+			SceneVertex(transform * topCenterTopLeft, vec4(topCenterTopLeftUV, mask), color), 
+			SceneVertex(transform * leftCenterTopLeft, vec4(leftCenterTopLeftUV, mask), color), 
+			SceneVertex(transform * centerTopLeft, vec4(centerTopLeftUV, mask), color) );
 	}
 
 	if (hasRightTopCorner)
 	{
 		buildQuad(vertices,
-			GuiVertex(transform * topCenterTopRight, vec4(topCenterTopRightUV, mask), color),
-			GuiVertex(transform * topRight, vec4(topRightUV, mask), color), 
-			GuiVertex(transform * centerTopRight, vec4(centerTopRightUV, mask), color), 
-			GuiVertex(transform * rightCenterTopRight, vec4(rightCenterTopRightUV, mask), color) );
+			SceneVertex(transform * topCenterTopRight, vec4(topCenterTopRightUV, mask), color),
+			SceneVertex(transform * topRight, vec4(topRightUV, mask), color), 
+			SceneVertex(transform * centerTopRight, vec4(centerTopRightUV, mask), color), 
+			SceneVertex(transform * rightCenterTopRight, vec4(rightCenterTopRightUV, mask), color) );
 	}
 
 	if (hasLeftBottomCorner)
 	{
 		buildQuad(vertices, 
-			GuiVertex(transform * leftCenterBottomLeft, vec4(leftCenterBottomLeftUV, mask), color), 
-			GuiVertex(transform * centerBottomLeft, vec4(centerBottomLeftUV, mask), color), 
-			GuiVertex(transform * bottomLeft, vec4(bottomLeftUV, mask), color), 
-			GuiVertex(transform * bottomCenterBottomLeft, vec4(bottomCenterBottomLeftUV, mask), color) );
+			SceneVertex(transform * leftCenterBottomLeft, vec4(leftCenterBottomLeftUV, mask), color), 
+			SceneVertex(transform * centerBottomLeft, vec4(centerBottomLeftUV, mask), color), 
+			SceneVertex(transform * bottomLeft, vec4(bottomLeftUV, mask), color), 
+			SceneVertex(transform * bottomCenterBottomLeft, vec4(bottomCenterBottomLeftUV, mask), color) );
 	}
 
 	if (hasRightBottomCorner)
 	{
 		buildQuad(vertices, 
-			GuiVertex(transform * centerBottomRight, vec4(centerBottomRightUV, mask), color), 
-			GuiVertex(transform * rightCenterBottomRigth, vec4(rightCenterBottomRigthUV, mask), color), 
-			GuiVertex(transform * bottomCenterBottomRigth, vec4(bottomCenterBottomRigthUV, mask), color), 
-			GuiVertex(transform * bottomRight, vec4(bottomRightUV, mask), color) );
+			SceneVertex(transform * centerBottomRight, vec4(centerBottomRightUV, mask), color), 
+			SceneVertex(transform * rightCenterBottomRigth, vec4(rightCenterBottomRigthUV, mask), color), 
+			SceneVertex(transform * bottomCenterBottomRigth, vec4(bottomCenterBottomRigthUV, mask), color), 
+			SceneVertex(transform * bottomRight, vec4(bottomRightUV, mask), color) );
 	}
 
 	if (hasTopSafe)
@@ -219,10 +219,10 @@ void et::s2d::buildImageVertices(GuiVertexList& vertices, const Texture& tex, co
 		vec2 brUV = hasRightTopCorner ? centerTopRightUV : rightCenterTopRightUV;
 
 		buildQuad(vertices, 
-			GuiVertex(transform * tl, vec4(tlUV, mask), color),
-			GuiVertex(transform * tr, vec4(trUV, mask), color),
-			GuiVertex(transform * bl, vec4(blUV, mask), color), 
-			GuiVertex(transform * br, vec4(brUV, mask), color) );
+			SceneVertex(transform * tl, vec4(tlUV, mask), color),
+			SceneVertex(transform * tr, vec4(trUV, mask), color),
+			SceneVertex(transform * bl, vec4(blUV, mask), color), 
+			SceneVertex(transform * br, vec4(brUV, mask), color) );
 	}
 
 	if (hasLeftSafe)
@@ -237,10 +237,10 @@ void et::s2d::buildImageVertices(GuiVertexList& vertices, const Texture& tex, co
 		vec2 brUV = hasLeftBottomCorner ? centerBottomLeftUV : bottomCenterBottomLeftUV;
 
 		buildQuad(vertices,
-			GuiVertex(transform * tl, vec4(tlUV, mask), color), 
-			GuiVertex(transform * tr, vec4(trUV, mask), color),
-			GuiVertex(transform * bl, vec4(blUV, mask), color),
-			GuiVertex(transform * br, vec4(brUV, mask), color) );
+			SceneVertex(transform * tl, vec4(tlUV, mask), color), 
+			SceneVertex(transform * tr, vec4(trUV, mask), color),
+			SceneVertex(transform * bl, vec4(blUV, mask), color),
+			SceneVertex(transform * br, vec4(brUV, mask), color) );
 	}
 
 	if (hasBottomSafe)
@@ -255,10 +255,10 @@ void et::s2d::buildImageVertices(GuiVertexList& vertices, const Texture& tex, co
 		vec2 brUV = hasRightBottomCorner ? bottomCenterBottomRigthUV : bottomRightUV;
 
 		buildQuad(vertices,
-			GuiVertex(transform * tl, vec4(tlUV, mask), color), 
-			GuiVertex(transform * tr, vec4(trUV, mask), color), 
-			GuiVertex(transform * bl, vec4(blUV, mask), color), 
-			GuiVertex(transform * br, vec4(brUV, mask), color) );
+			SceneVertex(transform * tl, vec4(tlUV, mask), color), 
+			SceneVertex(transform * tr, vec4(trUV, mask), color), 
+			SceneVertex(transform * bl, vec4(blUV, mask), color), 
+			SceneVertex(transform * br, vec4(brUV, mask), color) );
 	}
 
 	if (hasRightSafe)
@@ -273,14 +273,14 @@ void et::s2d::buildImageVertices(GuiVertexList& vertices, const Texture& tex, co
 		vec2 brUV = hasRightBottomCorner ? rightCenterBottomRigthUV : bottomRightUV;
 
 		buildQuad(vertices, 
-			GuiVertex(transform * tl, vec4(tlUV, mask), color),
-			GuiVertex(transform * tr, vec4(trUV, mask), color),
-			GuiVertex(transform * bl, vec4(blUV, mask), color), 
-			GuiVertex(transform * br, vec4(brUV, mask), color) );
+			SceneVertex(transform * tl, vec4(tlUV, mask), color),
+			SceneVertex(transform * tr, vec4(trUV, mask), color),
+			SceneVertex(transform * bl, vec4(blUV, mask), color), 
+			SceneVertex(transform * br, vec4(brUV, mask), color) );
 	}
 }
 
-void et::s2d::buildColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color,
+void et::s2d::buildColorVertices(SceneVertexList& vertices, const rect& p, const vec4& color,
 	const mat4& transform)
 {
 	vec2 topLeft = p.origin();
@@ -290,7 +290,7 @@ void et::s2d::buildColorVertices(GuiVertexList& vertices, const rect& p, const v
 	
 	vec4 texCoord(0.0f, 0.0f, 0.0f, 1.0f);
 	
-	buildQuad(vertices, GuiVertex(transform * topLeft, texCoord, color),
-		GuiVertex(transform * topRight, texCoord, color), GuiVertex(transform * bottomLeft, texCoord, color),
-		GuiVertex(transform * bottomRight, texCoord, color));
+	buildQuad(vertices, SceneVertex(transform * topLeft, texCoord, color),
+		SceneVertex(transform * topRight, texCoord, color), SceneVertex(transform * bottomLeft, texCoord, color),
+		SceneVertex(transform * bottomRight, texCoord, color));
 }

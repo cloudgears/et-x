@@ -38,7 +38,8 @@ void Scroll::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 	
-	r.addVertices(_backgroundVertices, Texture());
+	if (_backgroundVertices.lastElementIndex() > 0)
+		r.addVertices(_backgroundVertices, r.lastUsedTexture(), r.defaultProgram(), this);
 }
 
 void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
@@ -46,7 +47,8 @@ void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 
-	r.addVertices(_scrollbarsVertices, Texture());
+	if (_scrollbarsVertices.lastElementIndex() > 0)
+		r.addVertices(_scrollbarsVertices, r.lastUsedTexture(), r.defaultProgram(), this);
 }
 
 void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)

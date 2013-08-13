@@ -26,19 +26,19 @@ TextField::TextField(const Image& background, const std::string& text, Font::Poi
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
-void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
+void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
 	if (!contentValid() || !transformValid())
-		buildVertices(rc, gr);
+		buildVertices(rc, r);
 	
-	if (_backgroundVertices.offset() > 0)
-		gr.addVertices(_backgroundVertices, _background.texture);
+	if (_backgroundVertices.lastElementIndex() > 0)
+		r.addVertices(_backgroundVertices, _background.texture, r.defaultProgram(), this);
 
-	if (_imageVertices.offset() > 0)
-		gr.addVertices(_imageVertices, _background.texture);
+	if (_imageVertices.lastElementIndex() > 0)
+		r.addVertices(_imageVertices, _background.texture, r.defaultProgram(), this);
 	
-	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _font->texture());
+	if (_textVertices.lastElementIndex() > 0)
+		r.addVertices(_textVertices, _font->texture(), r.defaultProgram(), this);
 }
 
 void TextField::buildVertices(RenderContext*, SceneRenderer&)

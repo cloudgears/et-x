@@ -110,19 +110,19 @@ void ListboxPopup::animatorFinished(BaseAnimator* a)
 		Element2d::animatorFinished(a);
 }
 
-void ListboxPopup::addToRenderQueue(RenderContext*, SceneRenderer& gr)
+void ListboxPopup::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
 	if (!contentValid() || !transformValid())
-		buildVertices(gr);
+		buildVertices(r);
 
-	if (_backgroundVertices.offset() > 0)
-		gr.addVertices(_backgroundVertices, _owner->_background.texture);
+	if (_backgroundVertices.lastElementIndex() > 0)
+		r.addVertices(_backgroundVertices, _owner->_background.texture, r.defaultProgram(), this);
 
-	if (_selectionVertices.offset() > 0)
-		gr.addVertices(_selectionVertices, _owner->_selection.texture);
+	if (_selectionVertices.lastElementIndex() > 0)
+		r.addVertices(_selectionVertices, _owner->_selection.texture, r.defaultProgram(), this);
 
-	if (_textVertices.offset() > 0)
-		gr.addVertices(_textVertices, _owner->_font->texture());
+	if (_textVertices.lastElementIndex() > 0)
+		r.addVertices(_textVertices, _owner->_font->texture(), r.defaultProgram(), this);
 }
 
 bool ListboxPopup::pointerPressed(const PointerInputInfo&)
@@ -226,21 +226,21 @@ void Listbox::buildVertices(SceneRenderer&)
 	setContentValid();
 }
 
-void Listbox::addToRenderQueue(RenderContext*, SceneRenderer& gr)
+void Listbox::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
 	if (!contentValid())
-		buildVertices(gr);
+		buildVertices(r);
 
 	if (_images[_state].texture.valid())
-		gr.addVertices(_backgroundVertices, _images[_state].texture);
+		r.addVertices(_backgroundVertices, _images[_state].texture, r.defaultProgram(), this);
 
 	if (shouldDrawText())
-		gr.addVertices(_textVertices, _font->texture(),  ElementRepresentation_2d);
+		r.addVertices(_textVertices, _font->texture(), r.defaultProgram(), this);
 }
 
 bool Listbox::shouldDrawText()
 {
-	return !(_popupOpened || (_selectedIndex == -1));
+	return !(_popupOpened || (_selectedIndex == -1)) && (_textVertices.lastElementIndex() > 0);
 }
 
 bool Listbox::containsPoint(const vec2& p, const vec2& np)

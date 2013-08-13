@@ -15,8 +15,8 @@ using namespace et::s2d;
  * Render chunk
  */
 RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
-	const SceneProgram& aProgram, ElementRepresentation aRepresentation) : first(aFirst),
-	count(aCount), clip(aClip), texture(aTexture), program(aProgram), representation(aRepresentation)
+	const SceneProgram& aProgram, Element* aObject, ElementRepresentation aRepresentation) : first(aFirst),
+	count(aCount), clip(aClip), texture(aTexture), program(aProgram), object(aObject), representation(aRepresentation)
 {
 }
 
@@ -50,7 +50,7 @@ const VertexArrayObject& RenderingElement::vertexArrayObject()
 
 	if (changed)
 	{
-		size_t count = vertexList.offset();
+		size_t count = vertexList.lastElementIndex();
 		indexArray->setActualSize(count);
 		vao->vertexBuffer()->setData(vertexList.data(), count * vertexList.typeSize());
 		vao->indexBuffer()->setData(indexArray);

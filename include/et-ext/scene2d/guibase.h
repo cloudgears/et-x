@@ -14,6 +14,7 @@
 #include <et/core/hierarchy.h>
 #include <et/input/input.h>
 #include <et/timers/animator.h>
+#include <et/apiobjects/program.h>
 #include <et-ext/scene2d/guibaseclasses.h>
 
 namespace et
@@ -55,6 +56,9 @@ namespace et
 
 			virtual void addToRenderQueue(RenderContext*, SceneRenderer&);
 			virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&);
+			
+			virtual SceneProgram initProgram(SceneRenderer&);
+			virtual void setProgramParameters(et::Program::Pointer&);
 
 			virtual bool pointerPressed(const PointerInputInfo&)
 				{ return !hasFlag(Flag_TransparentForPointer); }
@@ -138,7 +142,9 @@ namespace et
 			/*
 			 * Required Methods
 			 */
+			virtual SceneProgram program() = 0;
 			virtual ElementRepresentation representation() const = 0;
+			
 			virtual vec2 origin() const = 0;
 			
 			virtual const vec2& position() const = 0;

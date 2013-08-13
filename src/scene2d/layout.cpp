@@ -28,7 +28,7 @@ void Layout::layout(const vec2& sz)
 }
 
 void Layout::adjustVerticalOffset(float) { }
-void Layout::resetVerticalOffset() { }
+void Layout::resetVerticallastElementIndex() { }
 
 void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, SceneRenderer& gr)
 {

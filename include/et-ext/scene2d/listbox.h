@@ -59,9 +59,9 @@ namespace et
 
 		private:
 			Listbox* _owner;
-			GuiVertexList _backgroundVertices;
-			GuiVertexList _selectionVertices;
-			GuiVertexList _textVertices;
+			SceneVertexList _backgroundVertices;
+			SceneVertexList _selectionVertices;
+			SceneVertexList _textVertices;
 			FloatAnimator* _textAlphaAnimator;
 			int _selectedIndex;
 			float _textAlpha;
@@ -135,8 +135,8 @@ namespace et
 			Image _images[ListboxState_max];
 			Image _background;
 			Image _selection;
-			GuiVertexList _backgroundVertices;
-			GuiVertexList _textVertices;
+			SceneVertexList _backgroundVertices;
+			SceneVertexList _textVertices;
 			std::string _prefix;
 			StringList _values;
 			ListboxState _state;

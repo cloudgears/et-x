@@ -18,6 +18,8 @@ extern std::string et_scene2d_default_shader_vs;
 extern std::string et_scene2d_default_shader_fs;
 
 const std::string SceneRenderer::defaultProgramName = "et-scene2d-default-shader";
+const std::string textureSamplerName = "inputTexture";
+const std::string additionalOffsetAndAlphaUniform = "additionalOffsetAndAlpha";
 
 SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_rc(rc), _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f)
@@ -25,6 +27,7 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	pushClipRect(recti(vec2i(0), rc->sizei()));
 	
 	_defaultProgram = createProgramWithFragmentshader(defaultProgramName, et_scene2d_default_shader_fs);
+	_defaultProgram.program->setUniform(textureSamplerName, 0);
 	
 	_defaultTexture = rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(1), GL_RGBA,
 		GL_UNSIGNED_BYTE, BinaryDataStorage(4, 0), "gui-default-texture");
@@ -84,7 +87,7 @@ void s2d::SceneRenderer::alloc(size_t count)
 {
 	if (_renderingElement.invalid()) return;
 
-	size_t currentOffset = _renderingElement->vertexList.offset();
+	size_t currentOffset = _renderingElement->vertexList.lastElementIndex();
 	size_t currentSize = _renderingElement->vertexList.size();
 
 	if (currentOffset + count >= currentSize)
@@ -96,67 +99,64 @@ void s2d::SceneRenderer::alloc(size_t count)
 	}
 }
 
-GuiVertexPointer s2d::SceneRenderer::allocateVertices(size_t count, const Texture& inTexture,
-	const SceneProgram& inProgram, ElementRepresentation rep)
+SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& inTexture,
+	const SceneProgram& inProgram, Element* object, ElementRepresentation rep)
 {
-	if (!_renderingElement.valid()) return 0;
+	assert(_renderingElement.valid());
 	
-	Texture texture = inTexture.invalid() ? _defaultTexture : inTexture;
+	if (object && !object->hasFlag(Flag_DynamicRendering))
+		object = nullptr;
 
-	bool shouldAdd = _renderingElement->chunks.empty();
-	
-	_renderingElement->changed = true;
-	size_t i0 = _renderingElement->vertexList.offset();
-
-	if (_renderingElement->chunks.size())
+	bool isDynamicObject = (object != nullptr) && (object->hasFlag(Flag_DynamicRendering));
+	bool shouldAdd = isDynamicObject || _renderingElement->chunks.empty();
+	if ((shouldAdd == false) && _renderingElement->chunks.size())
 	{
 		RenderChunk& lastChunk = _renderingElement->chunks.back();
 		
 		bool sameConfiguration = (lastChunk.representation == rep) && (lastChunk.clip == _clip.top()) &&
-			(lastChunk.texture == texture) && (lastChunk.program == inProgram);
+			(lastChunk.texture == inTexture) && (lastChunk.program.program == inProgram.program);
 		
 		if (sameConfiguration)
 			lastChunk.count += count;
-		
-		shouldAdd = !sameConfiguration;
+		else
+			shouldAdd = true;
 	}
 
+	size_t lastVertexIndex = _renderingElement->vertexList.lastElementIndex();
+	
 	if (shouldAdd)
 	{
-		_lastTexture = texture;
+		_lastTexture = inTexture;
 		_lastProgram = inProgram;
-		_renderingElement->chunks.emplace_back(i0, count, _clip.top(), _lastTexture, _lastProgram, rep);
+		_renderingElement->chunks.emplace_back(lastVertexIndex, count, _clip.top(),
+			_lastTexture, _lastProgram, object, rep);
 	}
 	
 	alloc(count);
 	
+	_renderingElement->changed = true;
 	_renderingElement->vertexList.applyOffset(count);
 
-	assert(i0 < _renderingElement->vertexList.size());
-	assert(i0 * _renderingElement->vertexList.typeSize() < _renderingElement->vertexList.dataSize());
+	assert(lastVertexIndex < _renderingElement->vertexList.size());
+	assert(lastVertexIndex * _renderingElement->vertexList.typeSize() < _renderingElement->vertexList.dataSize());
 
-	return _renderingElement->vertexList.element_ptr(i0);
+	return _renderingElement->vertexList.element_ptr(lastVertexIndex);
 }
 
-size_t SceneRenderer::addVertices(const GuiVertexList& vertices, const Texture& texture,
-	ElementRepresentation cls)
+void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture& texture,
+	const SceneProgram& program, Element* owner, ElementRepresentation cls)
 {
-	size_t current = 0;
-	size_t count = vertices.offset();
+	size_t count = vertices.lastElementIndex();
+	assert((count > 0) && _renderingElement.valid() && program.valid());
 	
-	if (_renderingElement.valid() && (count > 0))
-	{
-		current = _renderingElement->vertexList.offset();
-		GuiVertex* v0 = allocateVertices(count, texture, _defaultProgram, cls);
-		etCopyMemory(v0, vertices.data(), count * vertices.typeSize());
-	}
-
-	return current;
+	etCopyMemory(allocateVertices(count, texture, program, owner, cls),
+		vertices.data(), count * vertices.typeSize());
 }
 
-size_t SceneRenderer::addVertices(const GuiVertexList& vertices, const Texture& texture)
+void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture& texture,
+	const SceneProgram& program, Element* owner)
 {
-	return addVertices(vertices, texture, ElementRepresentation_2d);
+	addVertices(vertices, texture, program, owner, owner->representation());
 }
 
 void s2d::SceneRenderer::setRendernigElement(const RenderingElement::Pointer& r)
@@ -177,14 +177,8 @@ void s2d::SceneRenderer::beginRender(RenderContext* rc)
 	_clipRect = rc->renderState().clipRect();
 	
 	rc->renderState().setBlend(true, Blend_Default);
-}
-
-void SceneRenderer::endRender(RenderContext* rc)
-{
-	rc->renderState().setDepthTest(_depthTestEnabled);
-	rc->renderState().setBlend(_blendEnabled, static_cast<BlendState>(_blendState));
-	rc->renderState().setDepthMask(_depthMask);
-	rc->renderState().setClip(_clipEnabled, _clipRect);
+	rc->renderState().setDepthTest(false);
+	rc->renderState().setDepthMask(false);
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)
@@ -194,35 +188,38 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 	RenderState& rs = rc->renderState();
 	Renderer* renderer = rc->renderer();
 
-	ElementRepresentation representation = ElementRepresentation_max;
-	
 	const IndexBuffer& indexBuffer =
 		_renderingElement->vertexArrayObject()->indexBuffer();
+	
+	size_t switches = 0;
 	
 	Program::Pointer lastBoundProgram;
 	for (auto& i : _renderingElement->chunks)
 	{
 		if (lastBoundProgram != i.program.program)
 		{
+			++switches;
 			lastBoundProgram = i.program.program;
 			rs.bindProgram(lastBoundProgram);
 			lastBoundProgram->setUniform(i.program.additionalOffsetAndAlpha, _additionalOffsetAndAlpha);
+			lastBoundProgram->setTransformMatrix(_defaultTransform);
 		}
+		
+		if (i.object != nullptr)
+			i.object->setProgramParameters(lastBoundProgram);
 		
 		rs.bindTexture(0, i.texture);
 		rs.setClip(true, i.clip + _additionalWindowOffset);
-		
-		if (i.representation != representation)
-		{
-			representation = i.representation;
-			bool is3D = (i.representation == ElementRepresentation_3d);
-			rs.setDepthTest(is3D);
-			rs.setDepthMask(is3D);
-			lastBoundProgram->setTransformMatrix(is3D ? _cameraFor3dElements.modelViewProjectionMatrix() : _defaultTransform);
-		}
-
 		renderer->drawElements(indexBuffer, i.first, i.count);
 	}
+}
+
+void SceneRenderer::endRender(RenderContext* rc)
+{
+	rc->renderState().setDepthTest(_depthTestEnabled);
+	rc->renderState().setBlend(_blendEnabled, static_cast<BlendState>(_blendState));
+	rc->renderState().setDepthMask(_depthMask);
+	rc->renderState().setClip(_clipEnabled, _clipRect);
 }
 
 void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)
@@ -234,29 +231,42 @@ void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)
 
 SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& name, const std::string& fs)
 {
+	Program::Pointer existingProgram = _programsCache.find(name);
+	
 	SceneProgram program;
-	program.program = _rc->programFactory().genProgram(name, et_scene2d_default_shader_vs, std::string(),
-		fs, _sharedCache, StringList());
-	program.program->setUniform("layer0_texture", 0);
-	program.additionalOffsetAndAlpha = program.program->getUniform("additionalOffsetAndAlpha");
+	if (existingProgram.invalid())
+	{
+		program.program = _rc->programFactory().genProgram(name, et_scene2d_default_shader_vs, fs);
+		_programsCache.manage(program.program, ObjectLoader::Pointer());
+	}
+	else
+	{
+		program.program = existingProgram;
+	}
+	
+	program.additionalOffsetAndAlpha = program.program->getUniform(additionalOffsetAndAlphaUniform);
+	
+	assert((program.additionalOffsetAndAlpha.location != -1) &&
+		"Program should contain uniform for additional offset and alpha, of type vec3 and named additionalOffsetAndAlpha");
+	
 	return program;
 }
 
 std::string et_scene2d_default_shader_vs =
 	"uniform mat4 mTransform;"
-	"uniform vec3 additionalOffsetAndAlpha;"
+	"uniform vec3 " + additionalOffsetAndAlphaUniform+ ";"
 
 	"etVertexIn vec3 Vertex;"
 	"etVertexIn vec4 TexCoord0;"
 	"etVertexIn vec4 Color;"
 
-	"etVertexOut vec2 vTexCoord;"
+	"etVertexOut vec2 texCoord;"
 	"etVertexOut etLowp vec4 tintColor;"
 	"etVertexOut etLowp vec4 additiveColor;"
 
 	"void main()"
 	"{"
-		"vTexCoord = TexCoord0.xy;"
+		"texCoord = TexCoord0.xy;"
 		"vec4 alphaScaledColor = Color * vec4(1.0, 1.0, 1.0, additionalOffsetAndAlpha.z);"
 		"additiveColor = alphaScaledColor * TexCoord0.w;"
 		"tintColor = alphaScaledColor * (1.0 - TexCoord0.w);"
@@ -265,11 +275,11 @@ std::string et_scene2d_default_shader_vs =
 	"}";
 
 std::string et_scene2d_default_shader_fs =
-	"uniform etLowp sampler2D layer0_texture;"
-	"etFragmentIn etHighp vec2 vTexCoord;"
+	"uniform etLowp sampler2D " + textureSamplerName + ";"
+	"etFragmentIn etHighp vec2 texCoord;"
 	"etFragmentIn etLowp vec4 tintColor;"
 	"etFragmentIn etLowp vec4 additiveColor;"
 	"void main()"
 	"{"
-	"	etFragmentOut = etTexture2D(layer0_texture, vTexCoord) * tintColor + additiveColor;"
+	"	etFragmentOut = etTexture2D(inputTexture, texCoord) * tintColor + additiveColor;"
 	"}";

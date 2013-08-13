@@ -58,10 +58,10 @@ namespace et
 			Image _sliderRight;
 			Image _handle;
 			
-			GuiVertexList _backgroundVertices;
-			GuiVertexList _sliderLeftVertices;
-			GuiVertexList _sliderRightVertices;
-			GuiVertexList _handleVertices;
+			SceneVertexList _backgroundVertices;
+			SceneVertexList _sliderLeftVertices;
+			SceneVertexList _sliderRightVertices;
+			SceneVertexList _handleVertices;
 			
 			vec4 _backgroundColor;
 			

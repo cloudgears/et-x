@@ -53,7 +53,7 @@ namespace et
 		private:
 			void buildVertices(RenderContext* rc, SceneRenderer& renderer);
 			void update(float t);
-
+			
 		private:
 			std::string _text;
 			std::string _nextText;
@@ -62,7 +62,7 @@ namespace et
 			CharDescriptorList _charListNextText;
 			
 			Font::Pointer _font;
-			GuiVertexList _vertices;
+			SceneVertexList _vertices;
 			vec4 _backgroundColor;
 			vec4 _shadowColor;
 			vec2 _textSize;

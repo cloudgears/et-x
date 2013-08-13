@@ -48,12 +48,12 @@ void CarouselItem::setColor(const vec4& color)
 	invalidateContent();
 }
 
-void CarouselItem::addToRenderQueue(RenderContext*, SceneRenderer& gr)
+void CarouselItem::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
 	if (!contentValid())
-		buildVertexList(gr);
+		buildVertexList(r);
 
-	gr.addVertices(_vertices, _texture, ElementRepresentation_3d);
+	r.addVertices(_vertices, _texture, r.defaultProgram(), this);
 }
 
 void CarouselItem::buildVertexList(SceneRenderer&)
@@ -89,16 +89,16 @@ void CarouselItem::buildVertexList(SceneRenderer&)
 	vec2 mask(0.0f);
 
 	buildQuad(_vertices,
-		GuiVertex(topLeft, vec4(_texture->getTexCoord(topLeftUV), mask), leftColor),
-		GuiVertex(topMiddle, vec4(_texture->getTexCoord(topMiddleUV), mask), middleColor), 
-		GuiVertex(bottomLeft, vec4(_texture->getTexCoord(bottomLeftUV), mask), leftColor),
-		GuiVertex(bottomMiddle,	vec4(_texture->getTexCoord(bottomMiddleUV), mask), middleColor));
+		SceneVertex(topLeft, vec4(_texture->getTexCoord(topLeftUV), mask), leftColor),
+		SceneVertex(topMiddle, vec4(_texture->getTexCoord(topMiddleUV), mask), middleColor), 
+		SceneVertex(bottomLeft, vec4(_texture->getTexCoord(bottomLeftUV), mask), leftColor),
+		SceneVertex(bottomMiddle,	vec4(_texture->getTexCoord(bottomMiddleUV), mask), middleColor));
 
 	buildQuad(_vertices,
-		GuiVertex(topMiddle, vec4(_texture->getTexCoord(topMiddleUV), mask), middleColor),
-		GuiVertex(topRight, vec4(_texture->getTexCoord(topRightUV), mask), rightColor), 
-		GuiVertex(bottomMiddle,	vec4(_texture->getTexCoord(bottomMiddleUV), mask), middleColor),
-		GuiVertex(bottomRight, 	vec4(_texture->getTexCoord(bottomRightUV), mask), rightColor));
+		SceneVertex(topMiddle, vec4(_texture->getTexCoord(topMiddleUV), mask), middleColor),
+		SceneVertex(topRight, vec4(_texture->getTexCoord(topRightUV), mask), rightColor), 
+		SceneVertex(bottomMiddle,	vec4(_texture->getTexCoord(bottomMiddleUV), mask), middleColor),
+		SceneVertex(bottomRight, 	vec4(_texture->getTexCoord(bottomRightUV), mask), rightColor));
 
 	setContentValid();
 }

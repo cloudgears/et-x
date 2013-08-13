@@ -36,7 +36,7 @@ namespace et
 			const vec2& pivotPoint() const;
 			
 			vec2 origin() const;
-			vec2 offset() const;
+			vec2 lastElementIndex() const;
 			vec2 contentSize();
 
 			float angle() const;
@@ -82,8 +82,15 @@ namespace et
 
 			void animatorUpdated(BaseAnimator*);
 			void animatorFinished(BaseAnimator*);
+			
+			SceneProgram program()
+				{ return _defaultProgram; }
+			
+			SceneProgram initProgram(SceneRenderer&);
 
 		private:
+			SceneProgram _defaultProgram;
+			
 			RectAnimator _frameAnimator;
 			Vector4Animator _colorAnimator;
 			Vector2Animator _scaleAnimator;

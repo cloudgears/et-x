@@ -40,7 +40,7 @@ namespace et
 			void setBackgroundColor(const vec4& color);
 			void setScrollbarsColor(const vec4&);
 						
-			const vec2& offset() const
+			const vec2& lastElementIndex() const
 				{ return _offset; }
 			
 			void scrollToBottom(float duration = 0.0f);
@@ -106,8 +106,8 @@ namespace et
 		private:
 			Element::Pointer _selectedElement;
 			
-			GuiVertexList _backgroundVertices;
-			GuiVertexList _scrollbarsVertices;
+			SceneVertexList _backgroundVertices;
+			SceneVertexList _scrollbarsVertices;
 
 			Vector2Animator _offsetAnimator;
 			PointerInputInfo _currentPointer;

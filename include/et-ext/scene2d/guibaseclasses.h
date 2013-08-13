@@ -83,7 +83,7 @@ namespace et
 			ImageDescriptor(const Texture& tex, const ContentOffset& offset) : 
 				origin(0.0f), size(tex.valid() ? tex->sizeFloat() : vec2(0.0f)), contentOffset(offset) { }
 
-			ImageDescriptor(const vec2& aOrigin, const vec2& aSize, const ContentOffset& offset = ContentOffset()) : 
+			ImageDescriptor(const vec2& aOrigin, const vec2& aSize, const ContentOffset& offset = ContentOffset()) :
 				origin(aOrigin), size(aSize), contentOffset(offset) { }
 
 			vec2 centerPartTopLeft() const 
@@ -117,16 +117,16 @@ namespace et
 				texture(t), descriptor(d) { }
 		};
 
-		struct GuiVertex
+		struct SceneVertex
 		{
 		public:
-			GuiVertex() 
+			SceneVertex() 
 				{ }
 
-			GuiVertex(const vec2& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
+			SceneVertex(const vec2& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
 				position(pos, 0.0f), texCoord(tc), color(c) { }
 
-			GuiVertex(const vec3& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
+			SceneVertex(const vec3& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
 				position(pos), texCoord(tc), color(c) { }
 
 		public:
@@ -197,11 +197,19 @@ namespace et
 				mask(LayoutMask_All), positionMode(pMode), sizeMode(sMode) { }
 		};
 
+		struct SceneProgram
+		{
+			Program::Pointer program;
+			ProgramUniform additionalOffsetAndAlpha;
+			
+			bool valid() const
+			{ return program.valid(); }
+			
+			bool invalid() const
+			{ return program.invalid(); }
+		};
 
-		extern const recti Clip_None;
-
-		typedef GuiVertex* GuiVertexPointer;
-		typedef DataStorage<GuiVertex> GuiVertexList;
+		typedef DataStorage<SceneVertex> SceneVertexList;
 		typedef std::vector<Image> ImageList;
 		typedef std::map<std::string, Image> ImageMap;
 	}

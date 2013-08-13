@@ -114,9 +114,9 @@ namespace et
 		private:
 			Font::Pointer _font;
 			std::string _title;
-			GuiVertexList _bgVertices;
-			GuiVertexList _textVertices;
-			GuiVertexList _imageVertices;
+			SceneVertexList _bgVertices;
+			SceneVertexList _textVertices;
+			SceneVertexList _imageVertices;
 			StaticDataStorage<Image, State_max> _background;
 			Image _image;
 			vec4 _textColor;

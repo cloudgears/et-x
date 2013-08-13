@@ -37,17 +37,22 @@ namespace et
 			void setProjectionMatrices(const vec2& contextSize);
 			void setRendernigElement(const RenderingElement::Pointer& r);
 
-			size_t addVertices(const GuiVertexList& vertices, const Texture& texture);
-			size_t addVertices(const GuiVertexList& vertices, const Texture& texture,
-				ElementRepresentation cls);
+			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element*);
+			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element*, ElementRepresentation);
 			
 			void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 			
 			const Camera& camera3d() const 
 				{ return _cameraFor3dElements; }
 			
-			SceneProgram defaultProgram() const
+			const SceneProgram& defaultProgram() const
 				{ return _defaultProgram; }
+			
+			const Texture& lastUsedTexture() const
+				{ return _lastTexture; }
+
+			const Texture& defaultTexture() const
+				{ return _defaultTexture; }
 			
 			SceneProgram createProgramWithFragmentshader(const std::string& name, const std::string& fs);
 
@@ -55,7 +60,7 @@ namespace et
 			void init(RenderContext* rc);
 			void alloc(size_t count);
 			
-			GuiVertexPointer allocateVertices(size_t, const Texture&, const SceneProgram&, ElementRepresentation);
+			SceneVertex* allocateVertices(size_t, const Texture&, const SceneProgram&, Element*, ElementRepresentation);
 
 			ET_DENY_COPY(SceneRenderer)
 			
@@ -66,10 +71,9 @@ namespace et
 			Texture _lastTexture;
 			Texture _defaultTexture;
 			
+			ObjectsCache _programsCache;
 			SceneProgram _defaultProgram;
 			SceneProgram _lastProgram;
-			
-			ObjectsCache _sharedCache;
 			
 			Camera _cameraFor3dElements;
 			mat4 _defaultTransform;

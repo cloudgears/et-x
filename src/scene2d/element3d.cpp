@@ -57,3 +57,8 @@ void Element3D::applyTransform(const mat4& t)
 	_finalTransformValid = false;
 	_inverseFinalTransformValid = false;
 }
+
+SceneProgram Element3D::initProgram(SceneRenderer& r)
+{
+	return r.defaultProgram();
+}

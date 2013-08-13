@@ -76,7 +76,7 @@ namespace et
 
 		private:
 			Texture _texture;
-			GuiVertexList _vertices;
+			SceneVertexList _vertices;
 			ImageDescriptor _descriptor;
 			ImageView::ContentMode _contentMode;
 			vec4 _backgroundColor;

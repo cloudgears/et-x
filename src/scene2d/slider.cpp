@@ -47,20 +47,22 @@ float Slider::value() const
 
 void Slider::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
+	initProgram(r);
+	
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 
-	if (_backgroundVertices.offset() > 0)
-		r.addVertices(_backgroundVertices, _background.texture);
+	if (_backgroundVertices.lastElementIndex() > 0)
+		r.addVertices(_backgroundVertices, _background.texture, program(), this);
 
-	if (_sliderLeftVertices.offset() > 0)
-		r.addVertices(_sliderLeftVertices, _sliderLeft.texture);
+	if (_sliderLeftVertices.lastElementIndex() > 0)
+		r.addVertices(_sliderLeftVertices, _sliderLeft.texture, program(), this);
 
-	if (_sliderRightVertices.offset() > 0)
-		r.addVertices(_sliderRightVertices, _sliderRight.texture);
+	if (_sliderRightVertices.lastElementIndex() > 0)
+		r.addVertices(_sliderRightVertices, _sliderRight.texture, program(), this);
 	
-	if (_handleVertices.offset() > 0)
-		r.addVertices(_handleVertices, _handle.texture);
+	if (_handleVertices.lastElementIndex() > 0)
+		r.addVertices(_handleVertices, _handle.texture, program(), this);
 }
 
 void Slider::buildVertices(RenderContext*, SceneRenderer&)

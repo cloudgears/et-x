@@ -5,6 +5,7 @@
  *
  */
 
+#include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/element2d.h>
 
 using namespace et;
@@ -215,7 +216,7 @@ const mat4& Element2d::finalTransform()
 
 void Element2d::buildFinalTransform()
 { 
-	_finalTransform = translationMatrix(vec3(offset(), 0.0f)) * 
+	_finalTransform = translationMatrix(vec3(lastElementIndex(), 0.0f)) * 
 		transform2DMatrix(_angle, _scale, _frame.origin()) * parentFinalTransform(); 
 
 	setTransformValid(true);
@@ -264,17 +265,17 @@ void Element2d::setPivotPoint(const vec2& p, bool preservePosition)
 	_pivotPoint = p;
 
 	if (preservePosition)
-		setPosition(_frame.origin() - offset());
+		setPosition(_frame.origin() - lastElementIndex());
 }
 
-vec2 Element2d::offset() const
+vec2 Element2d::lastElementIndex() const
 {
 	return -_frame.size() * _pivotPoint;
 }
 
 vec2 Element2d::origin() const
 {
-	return _frame.origin() + offset();
+	return _frame.origin() + lastElementIndex();
 }
 
 const mat4& Element2d::finalInverseTransform()
@@ -296,4 +297,12 @@ vec2 Element2d::positionInElement(const vec2& p)
 vec2 Element2d::contentSize()
 {
 	return _frame.size();
+}
+
+SceneProgram Element2d::initProgram(SceneRenderer& r)
+{
+	if (_defaultProgram.invalid())
+		_defaultProgram = r.defaultProgram();
+	
+	return _defaultProgram;
 }

@@ -16,16 +16,16 @@ namespace et
 	{
 		size_t measuseVertexCountForImageDescriptor(const ImageDescriptor& desc);
 		
-		void buildQuad(GuiVertexList& vertices, const GuiVertex& topLeft, const GuiVertex& topRight,
-			const GuiVertex& bottomLeft, const GuiVertex& bottomRight);
+		void buildQuad(SceneVertexList& vertices, const SceneVertex& topLeft, const SceneVertex& topRight,
+			const SceneVertex& bottomLeft, const SceneVertex& bottomRight);
 		
-		void buildStringVertices(GuiVertexList& vertices, const CharDescriptorList& chars,  Alignment hAlign,
+		void buildStringVertices(SceneVertexList& vertices, const CharDescriptorList& chars,  Alignment hAlign,
 			Alignment vAlign, const vec2& pos, const vec4& color, const mat4& transform);
 
-		void buildImageVertices(GuiVertexList& vertices, const Texture& tex, const ImageDescriptor& desc,
+		void buildImageVertices(SceneVertexList& vertices, const Texture& tex, const ImageDescriptor& desc,
 			const rect& p, const vec4& color, const mat4& transform);
 
-		void buildColorVertices(GuiVertexList& vertices, const rect& p, const vec4& color,
+		void buildColorVertices(SceneVertexList& vertices, const rect& p, const vec4& color,
 			const mat4& transform);
 	}
 }

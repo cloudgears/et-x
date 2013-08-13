@@ -33,7 +33,7 @@ namespace et
 			void cancelDragging(float returnDuration = 0.0f);
 
 			virtual void adjustVerticalOffset(float dy);
-			virtual void resetVerticalOffset();
+			virtual void resetVerticallastElementIndex();
 			
 			void setActiveElement(Element* e);
 			

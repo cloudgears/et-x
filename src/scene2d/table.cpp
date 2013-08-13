@@ -31,14 +31,14 @@ Table::~Table()
 void Table::layout(const vec2& sz)
 {
 	Scroll::layout(sz);
-	setOffsetDirectly(offset());
+	setOffsetDirectly(lastElementIndex());
 	layoutChildren(size());
 }
 
 void Table::autoLayout(const vec2& contextSize, float duration)
 {
 	Scroll::autoLayout(contextSize, duration);
-	setOffsetDirectly(offset());
+	setOffsetDirectly(lastElementIndex());
 	layoutChildren(size());
 }
 
@@ -108,7 +108,7 @@ Table::Section* Table::addSection(Element2d::Pointer header, const Element2d::Li
 	_sections.push_back(section);
 	
 	adjustContentSize();
-	setOffsetDirectly(offset());
+	setOffsetDirectly(lastElementIndex());
 	
 	return section;
 }
@@ -119,7 +119,7 @@ void Table::setOffsetDirectly(const vec2& o)
 	
 	float width = size().x;
 	float sectionStart = 0.0f;
-	float off = -offset().x;
+	float off = -lastElementIndex().x;
 	for (auto s : _sections)
 	{
 		s->headerOffset = clamp(off - sectionStart, 0.0f, s->itemsSize);
