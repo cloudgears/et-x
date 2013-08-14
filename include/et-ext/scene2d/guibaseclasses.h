@@ -21,13 +21,14 @@ namespace et
 		{
 			static const std::string className;
 			static AtomicCounter instanceConter;
+			
 			static std::string uniqueName(const std::string&);
 		};
 
 #		define ET_DECLARE_SCENE_ELEMENT_CLASS(CLASS) template <> \
 			const std::string et::s2d::ElementClass<et::s2d::CLASS*>::className = std::string(#CLASS);\
-			template<>AtomicCounter et::s2d::ElementClass<et::s2d::CLASS*>::instanceConter = AtomicCounter();\
-			template<>std::string et::s2d::ElementClass<et::s2d::CLASS*>::uniqueName(const std::string& inputName)\
+			template <> et::AtomicCounter et::s2d::ElementClass<et::s2d::CLASS*>::instanceConter = { };\
+			template <> std::string et::s2d::ElementClass<et::s2d::CLASS*>::uniqueName(const std::string& inputName)\
 			{ return (inputName.empty()) ? className + intToStr(instanceConter.retain()) : inputName; }
 
 #		define ET_GUI_PASS_NAME_TO_BASE_CLASS ElementClass<decltype(this)>::uniqueName(name)

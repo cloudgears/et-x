@@ -80,7 +80,7 @@ namespace et
 			ET_DECLARE_EVENT1(layoutWillDisappear, Layout::Pointer)
 
 		private:
-			class LayoutEntryObject;
+			class LayoutEntry;
 			
 			struct LayoutPair
 			{
@@ -102,13 +102,13 @@ namespace et
 			void getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst);
 
 			void removeLayoutFromList(Layout::Pointer);
-			void removeLayoutEntryFromList(LayoutEntryObject*);
-			void layoutEntryTransitionFinished(LayoutEntryObject*);
+			void removeLayoutEntryFromList(LayoutEntry*);
+			void layoutEntryTransitionFinished(LayoutEntry*);
 			
-			LayoutEntryObject* entryForLayout(Layout::Pointer);
+			LayoutEntry* entryForLayout(Layout::Pointer);
 			bool animatingTransition();
 			
-			void animateLayoutAppearing(Layout::Pointer, LayoutEntryObject* newEntry,
+			void animateLayoutAppearing(Layout::Pointer, LayoutEntry* newEntry,
 				size_t animationFlags, float duration);
 			
 			void onMessageViewButtonClicked(MessageView* view, MessageViewButton);
@@ -120,8 +120,11 @@ namespace et
 			void internal_pushLayout(Layout::Pointer, AnimationDescriptor);
 			
 		private:
-			class LayoutEntryObject : public Shared, public AnimatorDelegate
+			class LayoutEntry : public Shared, public AnimatorDelegate
 			{
+			public:
+				ET_DECLARE_POINTER(LayoutEntry)
+				
 			public:
 				enum State
 				{
@@ -131,30 +134,24 @@ namespace et
 				};
 
 			public:
-				LayoutEntryObject(Scene* own, RenderContext* rc, Layout::Pointer l);
+				LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l);
 				void animateTo(const vec3& oa, float duration, State s);
 				
 			private:
-				LayoutEntryObject(LayoutEntryObject&& l);
-				LayoutEntryObject(LayoutEntryObject& l);
-				LayoutEntryObject& operator = (LayoutEntryObject& l);
+				ET_DENY_COPY(LayoutEntry)
 				
 			private:
-				void animatorUpdated(BaseAnimator*);
 				void animatorFinished(BaseAnimator*);
-				void moveDelegate();
 
 			public:
 				Scene* owner;
 				Layout::Pointer layout;
-				AutoPtr<Vector3Animator> animator;
+				Vector3Animator animator;
 				vec3 offsetAlpha;
 				State state;
 			};
 			
-			typedef IntrusivePtr<LayoutEntryObject> LayoutEntry;
-			typedef std::deque<LayoutEntry> LayoutEntryStack;
-			friend class LayoutEntryObject;
+			typedef std::deque<LayoutEntry::Pointer> LayoutEntryStack;
 
 		private:
 			RenderContext* _rc;

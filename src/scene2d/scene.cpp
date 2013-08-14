@@ -211,7 +211,7 @@ void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 	}
 	else 
 	{
-		LayoutEntry newEntry(new LayoutEntryObject(this, _rc, l.newLayout));
+		LayoutEntry::Pointer newEntry(new LayoutEntry(this, _rc, l.newLayout));
 		_layouts.insert(i, newEntry);
 
 		animateLayoutAppearing(l.newLayout, newEntry.ptr(), desc.flags, desc.duration);
@@ -220,7 +220,7 @@ void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 
 void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor desc)
 {
-	LayoutEntryObject* entry = entryForLayout(oldLayout);
+	LayoutEntry* entry = entryForLayout(oldLayout);
 	if (entry == 0) return;
 
 	layoutWillDisappear.invoke(oldLayout);
@@ -237,7 +237,7 @@ void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor
 	{
 		vec3 destOffsetAlpha;
 		getAnimationParams(desc.flags, 0, 0, &destOffsetAlpha);
-		entry->animateTo(destOffsetAlpha, std::abs(desc.duration), Scene::LayoutEntryObject::State_Disappear);
+		entry->animateTo(destOffsetAlpha, std::abs(desc.duration), Scene::LayoutEntry::State_Disappear);
 	}
 }
 
@@ -248,11 +248,11 @@ void Scene::internal_pushLayout(Layout::Pointer newLayout, AnimationDescriptor d
 	if (hasLayout(newLayout))
 		internal_removeLayout(newLayout, AnimationDescriptor());
 
-	_layouts.push_back(LayoutEntry(new LayoutEntryObject(this, _rc, newLayout)));
+	_layouts.push_back(LayoutEntry::Pointer::create(this, _rc, newLayout));
 	animateLayoutAppearing(newLayout, _layouts.back().ptr(), desc.flags, desc.duration);
 }
 
-void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject* newEntry,
+void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntry* newEntry,
 	size_t animationFlags, float duration)
 {
 	newLayout->layout(_screenSize);
@@ -273,7 +273,7 @@ void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntryObject*
 	{
 		vec3 destOffsetAlpha;
 		getAnimationParams(animationFlags, &newEntry->offsetAlpha, &destOffsetAlpha, 0);
-		newEntry->animateTo(destOffsetAlpha, std::abs(duration), Scene::LayoutEntryObject::State_Appear);
+		newEntry->animateTo(destOffsetAlpha, std::abs(duration), Scene::LayoutEntry::State_Appear);
 	}
 }
 
@@ -289,7 +289,7 @@ void Scene::removeLayoutFromList(Layout::Pointer ptr)
 	}
 }
 
-void Scene::removeLayoutEntryFromList(LayoutEntryObject* ptr)
+void Scene::removeLayoutEntryFromList(LayoutEntry* ptr)
 {
 	for (auto i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
 	{
@@ -301,9 +301,9 @@ void Scene::removeLayoutEntryFromList(LayoutEntryObject* ptr)
 	}
 }
 
-void Scene::layoutEntryTransitionFinished(LayoutEntryObject* l)
+void Scene::layoutEntryTransitionFinished(LayoutEntry* l)
 {
-	if (l->state == LayoutEntryObject::State_Disappear)
+	if (l->state == LayoutEntry::State_Disappear)
 	{
 		layoutDidDisappear.invoke(l->layout);
 		l->layout->didDisappear();
@@ -315,7 +315,7 @@ void Scene::layoutEntryTransitionFinished(LayoutEntryObject* l)
 		layoutDidAppear.invoke(l->layout);
 		l->layout->didAppear();
 
-		l->state = Scene::LayoutEntryObject::State_Still;
+		l->state = Scene::LayoutEntry::State_Still;
 	}
 }
 
@@ -332,7 +332,7 @@ bool Scene::hasLayout(Layout::Pointer aLayout)
 	return false;
 }
 
-Scene::LayoutEntryObject* Scene::entryForLayout(Layout::Pointer ptr)
+Scene::LayoutEntry* Scene::entryForLayout(Layout::Pointer ptr)
 {
 	if (ptr.invalid()) return nullptr;
 
@@ -349,72 +349,11 @@ bool Scene::animatingTransition()
 {
 	for (auto& i : _layouts)
 	{
-		if (i.ptr()->state != Scene::LayoutEntryObject::State_Still)
+		if (i.ptr()->state != Scene::LayoutEntry::State_Still)
 			return true;
 	}
 	
 	return false;
-}
-
-/*
- * Layout Entry
- */
-
-Scene::LayoutEntryObject::LayoutEntryObject(Scene* own, RenderContext* rc, Layout::Pointer l) :  owner(own),
-	layout(l), animator(0),  offsetAlpha(0.0f, 0.0f, 1.0f), state(Scene::LayoutEntryObject::State_Still)
-{
-	l->initRenderingElement(rc);
-}
-
-Scene::LayoutEntryObject::LayoutEntryObject(Scene::LayoutEntryObject&& l) : 
-	owner(l.owner), layout(l.layout), animator(l.animator.extract()), 
-	offsetAlpha(l.offsetAlpha), state(Scene::LayoutEntryObject::State_Still)
-{
-	moveDelegate();
-}
-
-Scene::LayoutEntryObject::LayoutEntryObject(Scene::LayoutEntryObject& l) : 
-	owner(l.owner), layout(l.layout), animator(l.animator.extract()), 
-	offsetAlpha(l.offsetAlpha), state(Scene::LayoutEntryObject::State_Still)
-{
-	moveDelegate();
-}
-
-Scene::LayoutEntryObject& Scene::LayoutEntryObject::operator = (Scene::LayoutEntryObject& l)
-{
-	owner = l.owner;
-	layout = l.layout;
-	animator = l.animator.extract();
-	offsetAlpha = l.offsetAlpha;
-	state = l.state;
-	moveDelegate();
-	return *this; 
-}
-
-void Scene::LayoutEntryObject::moveDelegate()
-{
-	if (animator.valid())
-		animator->setDelegate(0);
-}
-
-void Scene::LayoutEntryObject::animateTo(const vec3& oa, float duration, State s)
-{
-	state = s;
-
-	if (animator.valid())
-		animator.extract()->destroy();
-
-	animator = new Vector3Animator(this, &offsetAlpha, offsetAlpha, oa, duration, 0, mainTimerPool());
-}
-
-void Scene::LayoutEntryObject::animatorUpdated(BaseAnimator*)
-{
-}
-
-void Scene::LayoutEntryObject::animatorFinished(BaseAnimator*)
-{
-	animator.extract()->destroy();
-	owner->layoutEntryTransitionFinished(this);
 }
 
 void Scene::showMessageView(MessageView::Pointer mv, size_t animationFlags, float duration)
@@ -441,7 +380,7 @@ void Scene::popTopmostLayout(size_t animationFlags, float duration)
 }
 
 void Scene::replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout,
-	size_t animationFlags, float duration)
+						  size_t animationFlags, float duration)
 {
 	ET_INVOKE_THIS_CLASS_METHOD2(Scene, internal_replaceLayout, LayoutPair(oldLayout, newLayout),
 		AnimationDescriptor(animationFlags, duration))
@@ -459,3 +398,26 @@ void Scene::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float d
 		AnimationDescriptor(animationFlags, duration))
 }
 
+
+/*
+ * Layout Entry
+ */
+
+Scene::LayoutEntry::LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l) :  owner(own),
+	layout(l), animator(l->timerPool()),  offsetAlpha(0.0f, 0.0f, 1.0f),
+	state(Scene::LayoutEntry::State_Still)
+{
+	animator.setDelegate(this);
+	l->initRenderingElement(rc);
+}
+
+void Scene::LayoutEntry::animateTo(const vec3& oa, float duration, State s)
+{
+	state = s;
+	animator.animate(&offsetAlpha, offsetAlpha, oa, duration);
+}
+
+void Scene::LayoutEntry::animatorFinished(BaseAnimator*)
+{
+	owner->layoutEntryTransitionFinished(this);
+}
