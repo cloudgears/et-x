@@ -49,19 +49,29 @@ Element2d::~Element2d()
 {
 }
 
-const vec2& Element2d::size() const
-{ 
-	return _frame.size(); 
-}
-
 const vec4 Element2d::color() const
 {
 	return vec4(_color.xyz(), finalAlpha());
 }
 
+const vec2& Element2d::size() const
+{ 
+	return _frame.size(); 
+}
+
 const vec2& Element2d::position() const
 {
 	return _frame.origin(); 
+}
+
+const vec2& Element2d::desiredSize() const
+{
+	return _desiredFrame.size();
+}
+
+const vec2& Element2d::desiredPosition() const
+{
+	return _desiredFrame.origin();
 }
 
 const rect& Element2d::frame() const
@@ -157,6 +167,8 @@ void Element2d::setAlpha(const float alpha, float duration)
 
 void Element2d::setFrame(const rect& r, float duration)
 {
+	_desiredFrame = r;
+	
 	if (duration <= std::numeric_limits<float>::epsilon())
 	{
 		_frame = r;

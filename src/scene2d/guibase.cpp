@@ -182,7 +182,7 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 		if (_autoLayout.sizeMode == LayoutMode_RelativeToContext)
 			aSize = contextSize * _autoLayout.size;
 		else if ((_autoLayout.sizeMode == LayoutMode_RelativeToParent) && (parent() != nullptr))
-			aSize = parent()->size() * _autoLayout.size;
+			aSize = parent()->desiredSize() * _autoLayout.size;
 		else if (_autoLayout.sizeMode == LayoutMode_WrapContent)
 			aSize = contentSize();
 		else
@@ -194,7 +194,7 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 		if (_autoLayout.positionMode == LayoutMode_RelativeToContext)
 			aPos = contextSize * _autoLayout.position;
 		else if ((_autoLayout.positionMode == LayoutMode_RelativeToParent) && (parent() != nullptr))
-			aPos = parent()->size() * _autoLayout.position;
+			aPos = parent()->desiredSize() * _autoLayout.position;
 		else if (_autoLayout.positionMode == LayoutMode_WrapContent)
 			abort();
 		else

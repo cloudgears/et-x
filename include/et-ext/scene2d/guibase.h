@@ -102,6 +102,9 @@ namespace et
 
 			virtual void layout(const vec2&) 
 				{ layoutChildren(); }
+			
+			const ElementLayout& autoLayout() const
+				{ return _autoLayout; }
 
 			void setAutolayot(const ElementLayout&);
 			
@@ -148,7 +151,11 @@ namespace et
 			virtual vec2 origin() const = 0;
 			
 			virtual const vec2& position() const = 0;
+			virtual const vec2& desiredPosition() const = 0;
+			
 			virtual const vec2& size() const = 0;
+			virtual const vec2& desiredSize() const = 0;
+			
 			virtual const vec2& pivotPoint() const = 0;
 
 			virtual void setPosition(const vec2&, float duration = 0.0f) = 0;

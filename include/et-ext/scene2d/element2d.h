@@ -29,11 +29,16 @@ namespace et
 				{ return ElementRepresentation_2d; };
 
 			const vec2& size() const;
-			const vec4 color() const;
 			const vec2& position() const;
+			
+			const vec2& desiredSize() const;
+			const vec2& desiredPosition() const;
+			
 			const vec2& scale() const;
 			const rect& frame() const;
 			const vec2& pivotPoint() const;
+
+			const vec4 color() const;
 			
 			vec2 origin() const;
 			vec2 lastElementIndex() const;
@@ -98,7 +103,10 @@ namespace et
 
 			mat4 _finalTransform;
 			mat4 _finalInverseTransform;
+			
 			rect _frame;
+			rect _desiredFrame;
+			
 			vec2 _scale;
 			vec4 _color;
 			vec2 _pivotPoint;

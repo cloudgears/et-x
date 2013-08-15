@@ -190,14 +190,11 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 	const IndexBuffer& indexBuffer =
 		_renderingElement->vertexArrayObject()->indexBuffer();
 	
-	size_t switches = 0;
-	
 	Program::Pointer lastBoundProgram;
 	for (auto& i : _renderingElement->chunks)
 	{
 		if (lastBoundProgram != i.program.program)
 		{
-			++switches;
 			lastBoundProgram = i.program.program;
 			rs.bindProgram(lastBoundProgram);
 			lastBoundProgram->setUniform(i.program.additionalOffsetAndAlpha, _additionalOffsetAndAlpha);
@@ -209,6 +206,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 		
 		rs.bindTexture(0, i.texture);
 		rs.setClip(true, i.clip + _additionalWindowOffset);
+		
 		renderer->drawElements(indexBuffer, i.first, i.count);
 	}
 }
