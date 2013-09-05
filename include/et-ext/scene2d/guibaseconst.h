@@ -74,5 +74,20 @@ namespace et
 			LayoutMask_Frame = LayoutMask_Position | LayoutMask_Size,
 			LayoutMask_All = LayoutMask_Frame | LayoutMask_Pivot
 		};
+		
+		enum Location
+		{
+			Location_TopLeft,
+			Location_TopCenter,
+			Location_TopRight,
+			
+			Location_CenterLeft,
+			Location_Center,
+			Location_CenterRight,
+			
+			Location_BottomLeft,
+			Location_BottomCenter,
+			Location_BottomRight,
+		};
 	}
 }

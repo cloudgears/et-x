@@ -217,10 +217,10 @@ void Element::fillParent()
 		LayoutMode_RelativeToParent, vec2(0.0f));
 }
 
-void Element::centerInParent()
+void Element::setLocationInParent(Location l, const vec2& offset)
 {
-	setAutolayot(vec2(0.5f), LayoutMode_RelativeToParent, vec2(1.0f),
-		LayoutMode_RelativeToParent, vec2(0.5f));
+	vec2 actualOffset(0.5f * static_cast<float>(l % 3), 0.5f * static_cast<float>(l / 3));
+	setAutolayotRelativeToParent(actualOffset + offset, vec2(0.0f), actualOffset);
 	setAutolayoutMask(LayoutMask_PositionPivot);
 }
 

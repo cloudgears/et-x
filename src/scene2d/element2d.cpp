@@ -228,7 +228,7 @@ const mat4& Element2d::finalTransform()
 
 void Element2d::buildFinalTransform()
 { 
-	_finalTransform = translationMatrix(vec3(lastElementIndex(), 0.0f)) * 
+	_finalTransform = translationMatrix(vec3(offset(), 0.0f)) *
 		transform2DMatrix(_angle, _scale, _frame.origin()) * parentFinalTransform(); 
 
 	setTransformValid(true);
@@ -277,17 +277,17 @@ void Element2d::setPivotPoint(const vec2& p, bool preservePosition)
 	_pivotPoint = p;
 
 	if (preservePosition)
-		setPosition(_frame.origin() - lastElementIndex());
+		setPosition(_frame.origin() - offset());
 }
 
-vec2 Element2d::lastElementIndex() const
+vec2 Element2d::offset() const
 {
 	return -_frame.size() * _pivotPoint;
 }
 
 vec2 Element2d::origin() const
 {
-	return _frame.origin() + lastElementIndex();
+	return _frame.origin() + offset();
 }
 
 const mat4& Element2d::finalInverseTransform()

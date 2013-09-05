@@ -51,7 +51,7 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 	if (_backgroundColor.w > 0.0f)
 		buildColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform);
 
-	if (_charListText.empty())
+	if (_charListText.empty() && _charListNextText.empty())
 	{
 		setContentValid();
 		return;
@@ -82,8 +82,6 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 	}
 	else 
 	{
-		_nextTextSize = _textSize;
-
 		if (hasShadow)
 		{
 			shadowColor.w = _shadowColor.w * color().w;
@@ -104,8 +102,13 @@ void Label::setText(const std::string& text, float duration)
 
 	if (duration == 0.0f)
 	{
+		_animatingText = false;
+		cancelUpdates();
+		
 		_text = text;
+		_nextText = text;
 		_charListText = _font->buildString(_text, _allowFormatting);
+		
 		adjustSize();
 	}
 	else 
@@ -113,7 +116,10 @@ void Label::setText(const std::string& text, float duration)
 		startUpdates();
 
 		if (_animatingText)
-			setText(_nextText, 0.0f);
+		{
+			_text = _nextText;
+			_charListText = _font->buildString(_text, _allowFormatting);
+		}
 		
 		_nextText = text;
 		_charListNextText = _font->buildString(_nextText, _allowFormatting);
@@ -123,6 +129,8 @@ void Label::setText(const std::string& text, float duration)
 		_animatingText = true;
 		_textFadeStartTime = actualTime();
 		_textFadeDuration = duration;
+		
+		adjustSize();
 	}
 
 	invalidateContent();
@@ -144,6 +152,7 @@ vec2 Label::textSize()
 void Label::update(float t)
 {
 	_textFade = (t - _textFadeStartTime) / _textFadeDuration;
+	
 	if (_textFade >= 1.0f)
 	{
 		_textFade = 0.0f;
@@ -167,6 +176,10 @@ void Label::update(float t)
 void Label::adjustSize()
 {
 	_textSize = _font->measureStringSize(_text, _allowFormatting);
+	
+	if (_animatingText)
+		_textSize = maxv(_textSize, _font->measureStringSize(_nextText, _allowFormatting));
+	
 	setSize(_textSize);
 }
 

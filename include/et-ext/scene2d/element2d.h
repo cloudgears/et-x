@@ -41,7 +41,7 @@ namespace et
 			const vec4 color() const;
 			
 			vec2 origin() const;
-			vec2 lastElementIndex() const;
+			vec2 offset() const;
 			vec2 contentSize();
 
 			float angle() const;
