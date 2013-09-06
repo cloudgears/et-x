@@ -121,6 +121,7 @@ namespace et
 			void setLocationInParent(Location, const vec2& offset = vec2(0.0f));
 
 			virtual void autoLayout(const vec2& contextSize, float duration = 0.0f);
+			virtual void autoLayouted(float) { }
 
 			virtual bool focused() const
 				{ return false; }

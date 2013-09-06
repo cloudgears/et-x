@@ -51,7 +51,7 @@ namespace et
 
 		private:
 			void layout(const vec2&);
-			void autoLayout(const vec2& contextSize, float duration);
+			void autoLayouted(float);
 			
 			void layoutChildren(const vec2&);
 			

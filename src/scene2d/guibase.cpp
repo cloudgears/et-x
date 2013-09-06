@@ -203,6 +203,8 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 
 	if (_autoLayout.mask & LayoutMask_Frame)
 		setFrame(aPos, aSize, duration);
+	
+	autoLayouted(duration);
 
 	if (!hasFlag(Flag_HandlesChildLayout))
 	{

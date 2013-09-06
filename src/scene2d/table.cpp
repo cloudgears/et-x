@@ -35,9 +35,8 @@ void Table::layout(const vec2& sz)
 	layoutChildren(size());
 }
 
-void Table::autoLayout(const vec2& contextSize, float duration)
+void Table::autoLayouted(float)
 {
-	Scroll::autoLayout(contextSize, duration);
 	setOffsetDirectly(lastElementIndex());
 	layoutChildren(size());
 }
