@@ -84,12 +84,16 @@ bool Scene::pointerScrolled(const et::PointerInputInfo& p)
 	return false;
 }
 
-bool Scene::characterEntered(size_t p)
+void Scene::keyPressed(size_t key)
 {
-	if (_keyboardFocusedLayout.invalid() && _keyboardFocusedElement.invalid()) return false;
-	
-	_keyboardFocusedElement->processMessage(GuiMessage(GuiMessage::Type_TextInput, p));
-	return true;
+	if (_keyboardFocusedLayout.valid() && _keyboardFocusedElement.valid())
+		_keyboardFocusedElement->processMessage(GuiMessage(GuiMessage::Type_TextFieldControl, key));
+}
+
+void Scene::charactersEntered(std::string p)
+{
+	if (_keyboardFocusedLayout.valid() && _keyboardFocusedElement.valid())
+		_keyboardFocusedElement->processMessage(GuiMessage(GuiMessage::Type_TextInput, p));
 }
 
 void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout)
@@ -224,6 +228,7 @@ void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor
 	if (entry == 0) return;
 
 	layoutWillDisappear.invoke(oldLayout);
+	
 	oldLayout->willDisappear();
 	oldLayout->layoutDoesntNeedKeyboard.disconnect(this);
 	oldLayout->layoutRequiresKeyboard.disconnect(this);

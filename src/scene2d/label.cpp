@@ -98,8 +98,6 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 
 void Label::setText(const std::string& text, float duration)
 {
-	if (text == _text) return;
-
 	if (duration == 0.0f)
 	{
 		_animatingText = false;

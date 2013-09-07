@@ -69,7 +69,8 @@ namespace et
 			bool pointerCancelled(const et::PointerInputInfo&);
 			bool pointerScrolled(const et::PointerInputInfo&);
 			
-			bool characterEntered(size_t);
+			void keyPressed(size_t);
+			void charactersEntered(std::string);
 			
 			void showMessageView(MessageView::Pointer mv,
 				size_t animationFlags = AnimationFlag_None, float duration = 0.3f);

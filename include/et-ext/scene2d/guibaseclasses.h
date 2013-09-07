@@ -150,32 +150,20 @@ namespace et
 		{
 			enum Type
 			{
-				Type_None = 0x0000,
-				Type_TextInput = 0x0001,
-
-				Type_User = 0xFFFF
-			};
-
-			union Parameter
-			{
-				size_t szValue;
-				unsigned int uintValue;
-				int intValue;
-				unsigned short ushortValues[2];
-				short shortValues[2];
-				unsigned char ucharValues[4];
-				char charValues[4];
+				Type_None,
+				Type_TextInput,
+				Type_TextFieldControl,
 			};
 
 			size_t type;
-			Parameter param;
-			Parameter data;
+			size_t param;
+			std::string text;
 
-			GuiMessage(size_t t, size_t p1, size_t p2 = 0) : type(t)
-			{ 
-				param.szValue = p1;
-				data.szValue = p2;
-			}
+			GuiMessage(size_t aType, size_t aParam) :
+				type(aType), param(aParam) { }
+			
+			GuiMessage(size_t aType, const std::string& aText) :
+				type(aType), param(0), text(aText) { }
 		};
 
 		struct ElementLayout

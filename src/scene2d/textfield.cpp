@@ -16,10 +16,31 @@ const short securedChar = '*';
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(TextField)
 
+TextField::TextField(Font::Pointer font, Element* parent, const std::string& name) :
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _font(font), _alignment(Alignment_Near),
+	_secured(false), _caretVisible(false)
+{
+	setEditingFlags(EditingFlag_ResignFocusOnReturn);
+	setFlag(Flag_RequiresKeyboard);
+	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
+}
+
+TextField::TextField(const std::string& text, Font::Pointer font, Element* parent, const std::string& name) :
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _font(font), _alignment(Alignment_Near),
+	_secured(false), _caretVisible(false)
+{
+	setText(text);
+	setFlag(Flag_RequiresKeyboard);
+	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
+}
+
 TextField::TextField(const Image& background, const std::string& text, Font::Pointer font,
 	Element* parent, const std::string& name) : Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS),
-	_font(font), _background(background), _text(text), _secured(false), _caretVisible(false)
+	_font(font), _background(background), _alignment(Alignment_Near), _secured(false),
+	_caretVisible(false)
 {
+	setText(text);
+	
 	setFlag(Flag_RequiresKeyboard);
 	setSize(font->measureStringSize(text));
 	
@@ -52,10 +73,7 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	_textVertices.setOffset(0);
 	
 	if (_backgroundColor.w > 0.0f)
-	{
-		buildColorVertices(_backgroundVertices, wholeRect, _backgroundColor,
-			transform);
-	}
+		buildColorVertices(_backgroundVertices, wholeRect, _backgroundColor, transform);
 	
 	if (_background.texture.valid())
 	{
@@ -64,19 +82,17 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	}
 
 	_charList = _secured ?
-		CharDescriptorList(_text.length(), _font->charDescription(securedChar)) :
-		_font->buildString(_text);
+		CharDescriptorList(_actualText.length(), _font->charDescription(securedChar)) :
+		_font->buildString(_actualText);
 	
-	vec2 textSize = _charList.size() ?
-		_font->measureStringSize(_charList) : vec2(0.0f, _font->lineHeight());
-
 	if (_caretVisible)
 		_charList.push_back(_font->charDescription(caretChar));
 	
 	if (_charList.size())
 	{
-		buildStringVertices(_textVertices, _charList, Alignment_Near, Alignment_Near,
-			0.5f * (size() - textSize), color() * alphaVector, transform);
+		float ax = alignmentFactor(_alignment);
+		buildStringVertices(_textVertices, _charList, _alignment, Alignment_Center,
+			size() * vec2(ax, 0.5f), color() * alphaVector, transform);
 	}
 	
 	setContentValid();
@@ -85,38 +101,51 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 void TextField::setText(const std::string& s)
 {
 	_text = s;
+	_actualText = _prefix + _text;
 	invalidateContent();
 }
 
 void TextField::processMessage(const GuiMessage& msg)
 {
-	if (msg.type == GuiMessage::Type_TextInput)
+	if (msg.type == GuiMessage::Type_TextFieldControl)
 	{
-		switch (msg.param.szValue)
+		switch (msg.param)
 		{
-		case ET_RETURN:
-		case ET_NEWLINE:
+			case ET_KEY_RETURN:
 			{
-				owner()->setActiveElement(nullptr);
+				returnReceived.invoke(this);
+				if (_editingFlags.hasFlag(EditingFlag_ResignFocusOnReturn))
+					owner()->setActiveElement(nullptr);
 				break;
 			}
 				
-		case ET_BACKSPACE:
+			case ET_KEY_BACKSPACE:
 			{
 				if (_text.length())
-					_text = _text.substr(0, _text.length() - 1);
+					setText(_text.substr(0, _text.length() - 1));
+				
 				textChanged.invoke(this);
 				break;
 			}
-
-		default:
+				
+			case ET_KEY_ESCAPE:
 			{
-				char text[2] = { static_cast<char>(msg.param.szValue & 0xff), 0 };
-				_text += text;
-				textChanged.invoke(this);
+				if (_editingFlags.hasFlag(EditingFlag_ClearOnEscape))
+				{
+					setText(std::string());
+					textChanged.invoke(this);
+				}
+				break;
 			}
+				
+			default:
+				break;
 		}
-
+	}
+	else if (msg.type == GuiMessage::Type_TextInput)
+	{
+		setText(_text + msg.text);
+		textChanged.invoke(this);
 		invalidateContent();
 	}
 }
@@ -161,3 +190,22 @@ void TextField::setBackgroundColor(const vec4& color)
 	_backgroundColor = color;
 	invalidateContent();
 }
+
+void TextField::setAlignment(s2d::Alignment a)
+{
+	_alignment = a;
+	invalidateContent();
+}
+
+void TextField::setPrefix(const std::string& s)
+{
+	_prefix = s;
+	setText(_text);
+	invalidateContent();
+}
+
+void TextField::setEditingFlags(size_t f)
+{
+	_editingFlags.setFlags(f);
+}
+
