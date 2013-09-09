@@ -46,7 +46,8 @@ namespace et
 
 			void setSecured(bool);
 			void setBackgroundColor(const vec4& color);
-			void setAlignment(Alignment);
+			void setVerticalAlignment(Alignment);
+			void setHorizontalAlignment(Alignment);
 
 			void setFocus();
 			void resignFocus(Element*);
@@ -74,7 +75,8 @@ namespace et
 			NotifyTimer _caretBlinkTimer;
 			vec4 _backgroundColor;
 			FlagsHolder _editingFlags;
-			Alignment _alignment;
+			Alignment _alignmentV;
+			Alignment _alignmentH;
 			bool _secured;
 			bool _caretVisible;
 		};

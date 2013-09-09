@@ -17,8 +17,8 @@ const short securedChar = '*';
 ET_DECLARE_SCENE_ELEMENT_CLASS(TextField)
 
 TextField::TextField(Font::Pointer font, Element* parent, const std::string& name) :
-	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _font(font), _alignment(Alignment_Near),
-	_secured(false), _caretVisible(false)
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
+	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard);
@@ -26,8 +26,8 @@ TextField::TextField(Font::Pointer font, Element* parent, const std::string& nam
 }
 
 TextField::TextField(const std::string& text, Font::Pointer font, Element* parent, const std::string& name) :
-	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _font(font), _alignment(Alignment_Near),
-	_secured(false), _caretVisible(false)
+	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
+	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
 	setText(text);
 	setFlag(Flag_RequiresKeyboard);
@@ -36,8 +36,8 @@ TextField::TextField(const std::string& text, Font::Pointer font, Element* paren
 
 TextField::TextField(const Image& background, const std::string& text, Font::Pointer font,
 	Element* parent, const std::string& name) : Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS),
-	_font(font), _background(background), _alignment(Alignment_Near), _secured(false),
-	_caretVisible(false)
+	_font(font), _background(background), _alignmentH(Alignment_Near), _alignmentV(Alignment_Center),
+	_secured(false), _caretVisible(false)
 {
 	setText(text);
 	
@@ -90,9 +90,9 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	
 	if (_charList.size())
 	{
-		float ax = alignmentFactor(_alignment);
-		buildStringVertices(_textVertices, _charList, _alignment, Alignment_Center,
-			size() * vec2(ax, 0.5f), color() * alphaVector, transform);
+		buildStringVertices(_textVertices, _charList, _alignmentH, _alignmentV,
+			size() * vec2(alignmentFactor(_alignmentH), alignmentFactor(_alignmentV)),
+			color() * alphaVector, transform);
 	}
 	
 	setContentValid();
@@ -191,9 +191,15 @@ void TextField::setBackgroundColor(const vec4& color)
 	invalidateContent();
 }
 
-void TextField::setAlignment(s2d::Alignment a)
+void TextField::setVerticalAlignment(s2d::Alignment a)
 {
-	_alignment = a;
+	_alignmentV = a;
+	invalidateContent();
+}
+
+void TextField::setHorizontalAlignment(s2d::Alignment a)
+{
+	_alignmentH = a;
 	invalidateContent();
 }
 
@@ -208,4 +214,3 @@ void TextField::setEditingFlags(size_t f)
 {
 	_editingFlags.setFlags(f);
 }
-

@@ -71,8 +71,11 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 		desc.uvOrigin = _texture->getTexCoord(desc.origin);
 		desc.uvSize = desc.size / _texture->sizeFloat();
 	}
+	
+#if (!ET_OBJC_ARC_ENABLED)
 	[wString release];
-		
+#endif
+	
 	return (_chars[value] = desc);
 }
 
@@ -80,7 +83,7 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 {
 	wchar_t string[2] = { value, 0 };
     NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string)
-											   encoding:NSUTF32LittleEndianStringEncoding];
+		encoding:NSUTF32LittleEndianStringEncoding];
 	
     CGSize characterSize = [wString sizeWithFont:_private->_boldFont];
 	vec2i charSize = vec2i(static_cast<int>(characterSize.width), static_cast<int>(characterSize.height));
@@ -102,7 +105,9 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 		desc.uvSize = desc.size / _texture->sizeFloat();
 	}
 	
+#if (!ET_OBJC_ARC_ENABLED)
 	[wString release];
+#endif
 	
 	return (_boldChars[value] = desc);
 }
@@ -118,27 +123,34 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
     NSString* cFace = [NSString stringWithCString:face.c_str() encoding:NSASCIIStringEncoding];
     NSString* cBoldFace = [NSString stringWithCString:boldFace.c_str() encoding:NSASCIIStringEncoding];
 	
-    _font = [[UIFont fontWithName:cFace size:static_cast<float>(size)] retain];
+    _font = [UIFont fontWithName:cFace size:static_cast<float>(size)];
 	if (_font == nil)
 	{
 		log::warning("Font %s not found, using system font.", face.c_str());
-		_font = [[UIFont systemFontOfSize:static_cast<float>(size)] retain];
+		_font = [UIFont systemFontOfSize:static_cast<float>(size)];
 	}
 	assert(_font);
 	
-    _boldFont = [[UIFont fontWithName:cBoldFace size:static_cast<float>(size)] retain];
+    _boldFont = [UIFont fontWithName:cBoldFace size:static_cast<float>(size)];
 	if (_boldFont == nil)
 	{
 		log::warning("Font %s not found, using system bold font.", boldFace.c_str());
-		_boldFont = [[UIFont boldSystemFontOfSize:static_cast<float>(size)] retain];
+		_boldFont = [UIFont boldSystemFontOfSize:static_cast<float>(size)];
 	}
 	assert(_boldFont);
+	
+#if (!ET_OBJC_ARC_ENABLED)
+	[_font retain];
+	[_boldFont retain];
+#endif
 }
 
 CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 {
+#if (!ET_OBJC_ARC_ENABLED)
     [_font release];
 	[_boldFont release];
+#endif
 }
 
 void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position,
