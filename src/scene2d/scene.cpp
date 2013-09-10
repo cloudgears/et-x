@@ -409,7 +409,7 @@ void Scene::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float d
  */
 
 Scene::LayoutEntry::LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l) :  owner(own),
-	layout(l), animator(l->timerPool()),  offsetAlpha(0.0f, 0.0f, 1.0f),
+	layout(l), animator(own->timerPoolForLayout(l)), offsetAlpha(0.0f, 0.0f, 1.0f),
 	state(Scene::LayoutEntry::State_Still)
 {
 	animator.setDelegate(this);

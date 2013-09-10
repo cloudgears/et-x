@@ -90,10 +90,10 @@ namespace et
 			void updateBouncing(float deltaTime);
 			
 			bool horizontalBounce() const
-				{ return (_bounce & Bounce_Horizontal); }
+				{ return (_bounce & Bounce_Horizontal) != 0; }
 			
 			bool verticalBounce() const
-				{ return (_bounce & Bounce_Vertical); }
+				{ return (_bounce & Bounce_Vertical) != 0; }
 
 		private:
 			enum BounceDirection

@@ -119,6 +119,9 @@ namespace et
 			void internal_replaceLayout(LayoutPair, AnimationDescriptor);
 			void internal_removeLayout(Layout::Pointer, AnimationDescriptor);
 			void internal_pushLayout(Layout::Pointer, AnimationDescriptor);
+
+			TimerPool::Pointer timerPoolForLayout(Layout::Pointer layout)
+				{ return layout->timerPool(); }
 			
 		private:
 			class LayoutEntry : public Shared, public AnimatorDelegate

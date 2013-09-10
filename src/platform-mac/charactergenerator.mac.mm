@@ -147,7 +147,7 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 	const std::string&, size_t size) : fontFace(face), fontSize(size),
 	_placer(vec2i(defaultTextureSize), true)
 {
-    NSString* cFace = [NSString stringWithCString:face.c_str() encoding:NSUTF8StringEncoding];
+    NSString* cFace = [NSString stringWithUTF8String:face.c_str()];
 	
 	font = [[NSFontManager sharedFontManager] fontWithFamily:cFace
 		traits:0 weight:0 size:size];

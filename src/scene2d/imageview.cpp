@@ -144,50 +144,24 @@ ImageDescriptor ImageView::calculateImageFrame()
 		{
 			vec2 frameSize = size();
 			vec2 descSize = absv(_descriptor.size);
-
-			if ((_contentMode == ContentMode_FitAnyway) || (descSize.x > frameSize.x) ||
-				(descSize.y > frameSize.y))
-			{
-				float imageAspect = descSize.aspect();
-				float frameAspect = frameSize.aspect();
-				if (frameAspect > 1.0f)
-				{
-					if (imageAspect > 1.0f)
-					{
-						float resultHeight = frameSize.x / imageAspect;
-						if (resultHeight > frameSize.y)
-						{
-							float scale = frameSize.y / resultHeight;
-							frameSize.x *= scale;
-							frameSize.y = resultHeight * scale;
-						}
-						else
-						{
-							frameSize.y = resultHeight;
-						}
-					}
-					else
-					{
-						frameSize.x = frameSize.x * imageAspect / frameAspect;
-					}
-				}
-				else
-				{
-					frameSize.y = frameSize.y / imageAspect * frameAspect;
-				}
-			}
-			else
-			{
-				frameSize = descSize;
-			}
-
+				
 			if (_contentMode == ContentMode_Fill)
 			{
 				vec2 sizeAspect = frameSize / size();
 				float minScale = etMin(sizeAspect.x, sizeAspect.y);
 				frameSize /= minScale;
 			}
-
+			else
+			{
+				vec2 sizeAspect = frameSize / descSize;
+				float minScale = etMin(sizeAspect.x, sizeAspect.y);
+				
+				if (_contentMode == ContentMode_Fit)
+					minScale = etMin(minScale, 1.0f);
+				
+				frameSize = descSize * minScale;
+			}
+				
 			_actualImageSize = frameSize;
 			_actualImageOrigin = 0.5f * (size() - _actualImageSize);
 			break;
