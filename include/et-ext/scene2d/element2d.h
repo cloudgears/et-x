@@ -33,6 +33,7 @@ namespace et
 			
 			const vec2& desiredSize() const;
 			const vec2& desiredPosition() const;
+			const vec2& desiredScale() const;
 			
 			const vec2& scale() const;
 			const rect& frame() const;
@@ -108,6 +109,8 @@ namespace et
 			rect _desiredFrame;
 			
 			vec2 _scale;
+			vec2 _desiredScale;
+			
 			vec4 _color;
 			vec2 _pivotPoint;
 			float _angle;

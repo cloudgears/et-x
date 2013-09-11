@@ -103,6 +103,8 @@ namespace et
 			void setContentOffset(const vec2& o);
 			
 			vec2 contentSize();
+			
+			void adjustsPressedBackground(bool);
 
 		protected:
 			void performClick();
@@ -132,6 +134,7 @@ namespace et
 			bool _pressed;
 			bool _hovered;
 			bool _selected;
+			bool _adjustPressedBackground;
 		};
 	}
 }

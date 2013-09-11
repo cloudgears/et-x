@@ -97,8 +97,11 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_background[_state].texture.valid())
 	{
+		vec4 backgroundScale = ((_state == State_Pressed) && _adjustPressedBackground) ?
+			vec4(0.5f, 0.5f, 0.5f, alpha()) : alphaScale;
+		
 		buildImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
-			rect(vec2(0.0f), size()), color(), transform);
+			rect(vec2(0.0f), size()), backgroundScale * color(), transform);
 	}
 
 	if (_title.size() > 0)
@@ -328,4 +331,10 @@ void Button::setContentMode(ContentMode m)
 vec2 Button::contentSize()
 {
 	return sizeForText(_title);
+}
+
+void Button::adjustsPressedBackground(bool b)
+{
+	_adjustPressedBackground = b;
+	invalidateContent();
 }

@@ -155,7 +155,7 @@ void Element::setAutolayot(const et::s2d::ElementLayout& al)
 }
 
 void Element::setAutolayot(const vec2& pos, LayoutMode pMode, const vec2& sz,
-							 LayoutMode sMode, const vec2& pivot)
+	LayoutMode sMode, const vec2& pivot)
 {
 	_autoLayout.position = pos;
 	_autoLayout.size = sz;

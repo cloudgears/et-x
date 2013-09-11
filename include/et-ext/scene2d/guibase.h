@@ -153,6 +153,7 @@ namespace et
 			
 			virtual const vec2& position() const = 0;
 			virtual const vec2& desiredPosition() const = 0;
+			virtual const vec2& desiredScale() const = 0;
 			
 			virtual const vec2& size() const = 0;
 			virtual const vec2& desiredSize() const = 0;

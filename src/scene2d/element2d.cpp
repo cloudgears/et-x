@@ -18,7 +18,8 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(Element2d)
 Element2d::Element2d(Element* parent, const std::string& name) :
 	Element(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _frameAnimator(timerPool()),
 	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
-	_frame(0.0f, 0.0f, 0.0f, 0.0f), _scale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
+	_frame(0.0f, 0.0f, 0.0f, 0.0f), _scale(1.0f), _desiredScale(1.0f), _color(1.0f), _angle(0.0f),
+	_pivotPoint(0.0f)
 {
 	_frameAnimator.setTag(AnimatedProperty_Frame);
 	_frameAnimator.setDelegate(this);
@@ -33,7 +34,7 @@ Element2d::Element2d(Element* parent, const std::string& name) :
 Element2d::Element2d(const rect& frame, Element* parent, const std::string& name) :
 	Element(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _frameAnimator(timerPool()),
 	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
-	_frame(frame), _scale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
+	_frame(frame), _scale(1.0f), _desiredScale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
 {
 	_frameAnimator.setTag(AnimatedProperty_Frame);
 	_frameAnimator.setDelegate(this);
@@ -72,6 +73,11 @@ const vec2& Element2d::desiredSize() const
 const vec2& Element2d::desiredPosition() const
 {
 	return _desiredFrame.origin();
+}
+
+const vec2& Element2d::desiredScale() const
+{
+	return _desiredScale;
 }
 
 const rect& Element2d::frame() const
@@ -124,6 +130,8 @@ void Element2d::rotate(float angle, float duration)
 
 void Element2d::setScale(const vec2& scale, float duration)
 {
+	_desiredScale = scale;
+	
 	if (duration == 0.0f)
 	{
 		_scale = scale;
@@ -134,7 +142,6 @@ void Element2d::setScale(const vec2& scale, float duration)
 		_scaleAnimator.animate( &_scale, _scale, scale, duration);
 	}
 }
-
 
 void Element2d::setColor(const vec4& color, float duration) 
 { 
