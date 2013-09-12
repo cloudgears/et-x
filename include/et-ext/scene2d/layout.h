@@ -20,11 +20,13 @@ namespace et
 			ET_DECLARE_POINTER(Layout)
 			
 		public:
-			Layout();
+			Layout(const std::string& name = std::string());
+			
+			void autolayoutFromFile(const std::string&);
 
 			bool valid() const
 				{ return _valid; }
-
+			
 			void layout(const vec2& sz);
 
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& gr);
@@ -87,7 +89,7 @@ namespace et
 		class ModalLayout : public Layout
 		{
 		public:
-			ModalLayout();
+			ModalLayout(const std::string& name = std::string());
 						
 		protected:
 			ImageView::Pointer backgroundFade()

@@ -13,7 +13,7 @@ using namespace et::s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(FullscreenElement)
 
 FullscreenElement::FullscreenElement(Element* parent, const std::string& name) :
-	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS)
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
 	setFlag(Flag_TransparentForPointer);
 }

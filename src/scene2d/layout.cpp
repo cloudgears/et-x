@@ -6,18 +6,20 @@
  */
 
 #include <et/app/applicationnotifier.h>
+#include <et-ext/json/json.h>
 #include <et-ext/scene2d/layout.h>
 
 using namespace et;
 using namespace et::s2d;
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(Layout)
+ET_DECLARE_SCENE_ELEMENT_CLASS(ModalLayout)
 
-Layout::Layout() : Element2d(nullptr, ElementClass<decltype(this)>::uniqueName(std::string())),
-	_currentElement(nullptr), _focusedElement(nullptr), _capturedElement(nullptr), _valid(false),
-	_dragging(false)
+Layout::Layout(const std::string& name) :
+	Element2d(nullptr, ET_S2D_PASS_NAME_TO_BASE_CLASS), _currentElement(nullptr), _focusedElement(nullptr),
+	_capturedElement(nullptr), _valid(false), _dragging(false)
 {
-	setAutolayot(vec2(0.0f), LayoutMode_Absolute, vec2(1.0f),
+	setAutolayout(vec2(0.0f), LayoutMode_Absolute, vec2(1.0f),
 		LayoutMode_RelativeToContext, vec2(0.0f));
 }
 
@@ -388,13 +390,28 @@ vec2 Layout::contentSize()
 	return ApplicationNotifier().accessRenderContext()->size();
 }
 
+void Layout::autolayoutFromFile(const std::string& fileName)
+{
+	setOrigin(fileName);
+	
+	std::string data = loadTextFile(fileName);
+	ValueClass c = ValueClass_Invalid;
+	ValueBase::Pointer base = json::deserialize(data, c);
+	
+	if (base.valid() && (c == ValueClass_Dictionary))
+		setAutolayout(base);
+	else
+		log::error("Unable to load layout from file %s", fileName.c_str());
+}
+
 /*
  *
  * Modal Layout
  *
  */
 
-ModalLayout::ModalLayout()
+ModalLayout::ModalLayout(const std::string& name) :
+	Layout(ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
 	_backgroundFade = ImageView::Pointer::create(Texture(), this);
 	_backgroundFade->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.25f));

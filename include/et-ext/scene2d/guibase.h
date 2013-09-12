@@ -26,7 +26,7 @@ namespace et
 		class Element;
 		class Layout;
 		
-		typedef Hierarchy<Element> ElementHierarchy;
+		typedef Hierarchy<Element, LoadableObject> ElementHierarchy;
 		class Element : public ElementHierarchy, public FlagsHolder, public EventReceiver,
 			public TimedObject, public AnimatorDelegate
 		{
@@ -105,13 +105,16 @@ namespace et
 			
 			const ElementLayout& autoLayout() const
 				{ return _autoLayout; }
-
-			void setAutolayot(const ElementLayout&);
 			
-			void setAutolayot(const vec2& pos, LayoutMode pMode, const vec2& sz,
+			Dictionary autoLayoutDictionary() const;
+
+			void setAutolayout(Dictionary);
+			void setAutolayout(const ElementLayout&);
+			
+			void setAutolayout(const vec2& pos, LayoutMode pMode, const vec2& sz,
 				LayoutMode sMode, const vec2& pivot);
 			
-			void setAutolayotRelativeToParent(const vec2& pos, const vec2& sz, const vec2& pivot);
+			void setAutolayoutRelativeToParent(const vec2& pos, const vec2& sz, const vec2& pivot);
 			
 			void setAutolayoutSizeMode(LayoutMode);
 			
@@ -120,28 +123,31 @@ namespace et
 			void fillParent();
 			void setLocationInParent(Location, const vec2& offset = vec2(0.0f));
 
-			virtual void autoLayout(const vec2& contextSize, float duration = 0.0f);
-			virtual void autoLayouted(float) { }
-
+			void autoLayout(const vec2& contextSize, float duration = 0.0f);
+			
+			virtual void storeProperties(Dictionary) const { }
+			virtual void loadProperties(Dictionary) { }
+			
 			virtual bool focused() const
 				{ return false; }
 			
 			virtual void setFocus() { };
 			virtual void resignFocus(Element*) { };
-
 			virtual void didAppear() { }
-			virtual void didDisappear() { }
 			virtual void willAppear() { }
+			virtual void didDisappear() { }
 			virtual void willDisappear() { }
-
+			virtual void willAutoLayout(float) { }
+			virtual void didAutoLayout(float) { }
+			
 			void bringToFront(Element* c);
 			void sendToBack(Element* c);
 
-			Element* baseChildWithName(const std::string&);
+			Element* baseChildWithName(const std::string&, bool recursive);
 
 			template <typename T>
-			T* childWithName(const std::string& name)
-				{ return static_cast<T*>(baseChildWithName(name)); }
+			T* childWithName(const std::string& name, bool recursive)
+				{ return static_cast<T*>(baseChildWithName(name, recursive)); }
 
 			/*
 			 * Required Methods
@@ -218,12 +224,12 @@ namespace et
 
 			void layoutChildren();
 
-			Element* childWithNameCallback(const std::string&, Element*);
+			Element* childWithNameCallback(const std::string&, Element*, bool recursive);
 
 			ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, name, setName)
 
 		private:
-			friend class Hierarchy<Element>;
+			friend class Hierarchy<Element, LoadableObject>;
 
 			Element(const Element&) : 
 				ElementHierarchy(0) { }
@@ -247,6 +253,8 @@ namespace et
 
 		State adjustState(State s);
 		float alignmentFactor(Alignment a);
+		std::string layoutModeToString(LayoutMode);
+		LayoutMode layoutModeFromString(const std::string&);
 	}
 	
 	typedef Animator<vec2> Vector2Animator;

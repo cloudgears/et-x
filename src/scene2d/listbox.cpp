@@ -18,7 +18,7 @@ const float textRevealDuration = 0.1f;
 ET_DECLARE_SCENE_ELEMENT_CLASS(ListboxPopup)
 
 ListboxPopup::ListboxPopup(Listbox* owner, const std::string& name) :
-	Element2d(owner, ET_GUI_PASS_NAME_TO_BASE_CLASS), _owner(owner), _textAlphaAnimator(0),
+	Element2d(owner, ET_S2D_PASS_NAME_TO_BASE_CLASS), _owner(owner), _textAlphaAnimator(0),
 	_selectedIndex(-1), _textAlpha(0.0f), _pressed(false)
 {
 	setFlag(Flag_RenderTopmost);
@@ -169,7 +169,7 @@ void ListboxPopup::pointerLeaved(const PointerInputInfo&)
 ET_DECLARE_SCENE_ELEMENT_CLASS(Listbox)
 
 Listbox::Listbox(Font::Pointer font, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _font(font), _state(ListboxState_Default),
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _state(ListboxState_Default),
 	_contentOffset(0.0f), _selectedIndex(-1), _direction(ListboxPopupDirection_Bottom),
 	_popupOpened(false), _popupOpening(false), _popupValid(false)
 {

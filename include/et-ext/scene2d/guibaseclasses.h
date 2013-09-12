@@ -31,7 +31,7 @@ namespace et
 			template <> std::string et::s2d::ElementClass<et::s2d::CLASS*>::uniqueName(const std::string& inputName)\
 			{ return (inputName.empty()) ? className + intToStr(instanceConter.retain()) : inputName; }
 
-#		define ET_GUI_PASS_NAME_TO_BASE_CLASS ElementClass<decltype(this)>::uniqueName(name)
+#		define ET_S2D_PASS_NAME_TO_BASE_CLASS ElementClass<decltype(this)>::uniqueName(name)
 
 		struct AnimationDescriptor
 		{

@@ -14,7 +14,7 @@ using namespace et::s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Button)
 
 Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _title(title), _font(font),
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _title(title), _font(font),
 	_textSize(font->measureStringSize(title, true)), _textColor(vec3(0.0f), 1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(State_Default),
 	_imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit), _pressed(false),

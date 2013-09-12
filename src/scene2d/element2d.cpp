@@ -16,7 +16,7 @@ const float minimalVisibleAlpha = 1.0f / 1000.0f;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Element2d)
 
 Element2d::Element2d(Element* parent, const std::string& name) :
-	Element(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _frameAnimator(timerPool()),
+	Element(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _frameAnimator(timerPool()),
 	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
 	_frame(0.0f, 0.0f, 0.0f, 0.0f), _scale(1.0f), _desiredScale(1.0f), _color(1.0f), _angle(0.0f),
 	_pivotPoint(0.0f)
@@ -32,7 +32,7 @@ Element2d::Element2d(Element* parent, const std::string& name) :
 }
 
 Element2d::Element2d(const rect& frame, Element* parent, const std::string& name) :
-	Element(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _frameAnimator(timerPool()),
+	Element(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _frameAnimator(timerPool()),
 	_colorAnimator(timerPool()), _scaleAnimator(timerPool()), _angleAnimator(timerPool()),
 	_frame(frame), _scale(1.0f), _desiredScale(1.0f), _color(1.0f), _angle(0.0f), _pivotPoint(0.0f)
 {

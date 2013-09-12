@@ -13,26 +13,26 @@ using namespace s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(ImageView)
 
 ImageView::ImageView(Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _contentMode(ImageView::ContentMode_Stretch)
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _contentMode(ImageView::ContentMode_Stretch)
 {
 }
 
 ImageView::ImageView(const Texture& texture, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _texture(texture),
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(texture),
 	_descriptor(ImageDescriptor(texture)), _contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size);
 }
 
 ImageView::ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent,
-	const std::string& name) : Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _texture(texture),
+	const std::string& name) : Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(texture),
 	_descriptor(i), _contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size, 0.0f);
 }
 
 ImageView::ImageView(const Image& img, Element2d* parent, const std::string& name) : 
-	Element2d(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS), _texture(img.texture), _descriptor(img.descriptor),
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(img.texture), _descriptor(img.descriptor),
 	_contentMode(ImageView::ContentMode_Stretch)
 {
 	setSize(_descriptor.size, 0.0f);

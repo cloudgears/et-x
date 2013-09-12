@@ -17,7 +17,7 @@ Table::Section::Section() :
 	footerSize(0.0f), sectionSize(0.0f) { }
 
 Table::Table(et::s2d::Element2d* parent, const std::string& name) :
-	Scroll(parent, ET_GUI_PASS_NAME_TO_BASE_CLASS)
+	Scroll(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
 	setBounce(Bounce_Horizontal);
 	setFlag(Flag_HandlesChildLayout);
@@ -35,7 +35,7 @@ void Table::layout(const vec2& sz)
 	layoutChildren(size());
 }
 
-void Table::autoLayouted(float)
+void Table::didAutoLayout(float)
 {
 	setOffsetDirectly(lastElementIndex());
 	layoutChildren(size());

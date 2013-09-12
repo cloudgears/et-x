@@ -403,6 +403,12 @@ void Scene::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float d
 		AnimationDescriptor(animationFlags, duration))
 }
 
+void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
+{
+	Layout::Pointer l = obj;
+	l->autolayoutFromFile(obj->origin());
+	l->layout(_rc->size());
+}
 
 /*
  * Layout Entry

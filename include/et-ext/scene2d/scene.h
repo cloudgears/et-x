@@ -27,7 +27,7 @@ namespace et
 {
 	namespace s2d
 	{
-		class Scene : public Shared, public EventReceiver
+		class Scene : public ObjectLoader, public EventReceiver
 		{
 		public:
 			ET_DECLARE_POINTER(Scene)
@@ -40,6 +40,9 @@ namespace et
 
 			SceneRenderer& renderer() 
 				{ return _renderer; }
+			
+			ObjectsCache& sharedCache()
+				{ return _sharedCache; }
 
 			Layout::Pointer topmostLayout() const
 				{ return _layouts.size() ? _layouts.back()->layout : Layout::Pointer(); }
@@ -123,6 +126,8 @@ namespace et
 			TimerPool::Pointer timerPoolForLayout(Layout::Pointer layout)
 				{ return layout->timerPool(); }
 			
+			void reloadObject(LoadableObject::Pointer, ObjectsCache&);
+			
 		private:
 			class LayoutEntry : public Shared, public AnimatorDelegate
 			{
@@ -160,6 +165,7 @@ namespace et
 		private:
 			RenderContext* _rc;
 			SceneRenderer _renderer;
+			ObjectsCache _sharedCache;
 
 			RenderingElement::Pointer _renderingElementBackground;
 			ImageView _background;
