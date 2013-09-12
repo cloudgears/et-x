@@ -228,12 +228,7 @@ void Label::fitToWidth(float w)
 	if (_text.empty()) return;
 	
 	float minimalWidthToFit = _font->measureStringSize("W").x;
-	if (std::abs(w) < minimalWidthToFit)
-	{
-		log::error("Trying to fit text %s into %f width, minimal width to fit is %f",
-			_text.c_str(), w, minimalWidthToFit);
-		return;
-	}
+	if (std::abs(w) < minimalWidthToFit) return;
 	
 	std::string newText;
 	std::string oldText = _text;
