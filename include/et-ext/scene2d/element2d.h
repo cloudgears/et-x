@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et-ext/scene2d/guibase.h>
+#include <et-ext/scene2d/element.h>
 
 namespace et
 {
@@ -23,8 +23,6 @@ namespace et
 			Element2d(Element* parent, const std::string& name = std::string());
 			Element2d(const rect& frame, Element* parent, const std::string& name = std::string());
 
-			virtual ~Element2d();
-
 			virtual ElementRepresentation representation() const
 				{ return ElementRepresentation_2d; };
 
@@ -36,10 +34,11 @@ namespace et
 			const vec2& desiredScale() const;
 			
 			const vec2& scale() const;
-			const rect& frame() const;
 			const vec2& pivotPoint() const;
 
 			const vec4 color() const;
+
+			rect frame() const;
 			
 			vec2 origin() const;
 			vec2 offset() const;
@@ -55,16 +54,13 @@ namespace et
 			virtual void setAngle(float angle, float duration = 0.0f);
 			virtual void setScale(const vec2& scale, float duration = 0.0f);
 			virtual void setColor(const vec4& color, float duration = 0.0f);
-			virtual void setFrame(const rect& r, float duration = 0.0f);
-			virtual void setFrame(const vec2& origin, const vec2& size, float duration = 0.0f);
 			virtual void setPivotPoint(const vec2& p, bool preservePosition = true);
 
 			/*
 			 * Convenience
 			 */
 			void setPosition(const vec2& p, float duration = 0.0f);
-			void setAlpha(const float alpha, float duration = 0.0f);
-			void setFrame(float x, float y, float width, float height, float duration = 0.0f);
+			void setAlpha(float alpha, float duration = 0.0f);
 			void setPosition(float x, float y, float duration = 0.0f);
 			void setSize(const vec2& s, float duration = 0.0f);
 			void setSize(float w, float h, float duration = 0.0f);
@@ -95,25 +91,29 @@ namespace et
 			SceneProgram initProgram(SceneRenderer&);
 
 		private:
-			SceneProgram _defaultProgram;
-			
-			RectAnimator _frameAnimator;
+			Vector2Animator _positionAnimator;
+			Vector2Animator _sizeAnimator;
 			Vector4Animator _colorAnimator;
 			Vector2Animator _scaleAnimator;
 			FloatAnimator _angleAnimator;
-
+			
+			SceneProgram _defaultProgram;
+			
 			mat4 _finalTransform;
 			mat4 _finalInverseTransform;
 			
-			rect _frame;
-			rect _desiredFrame;
-			
-			vec2 _scale;
-			vec2 _desiredScale;
+			ElementLayout _layout;
+			ElementLayout _desiredLayout;
 			
 			vec4 _color;
+/*
+			rect _frame;
+			vec2 _scale;
 			vec2 _pivotPoint;
 			float _angle;
+			rect _desiredFrame;
+			vec2 _desiredScale;
+*/
 		};
 	}
 }

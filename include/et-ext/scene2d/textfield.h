@@ -58,7 +58,7 @@ namespace et
 			ET_DECLARE_EVENT1(editingFinished, TextField*)
 			
 		private:
-			void processMessage(const GuiMessage& msg);
+			void processMessage(const Message& msg);
 			void buildVertices(RenderContext*, SceneRenderer&);
 			void onCreateBlinkTimerExpired(NotifyTimer* t);
 

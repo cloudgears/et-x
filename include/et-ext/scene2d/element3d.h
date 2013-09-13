@@ -8,7 +8,7 @@
 #pragma once
 
 #include <et/camera/camera.h>
-#include <et-ext/scene2d/guibase.h>
+#include <et-ext/scene2d/element.h>
 
 namespace et
 {
@@ -43,9 +43,6 @@ namespace et
 				{ }
 
 			void setSize(const vec2&, float)
-				{ }
-
-			void setFrame(const vec2&, const vec2&, float)
 				{ }
 
 			void setPivotPoint(const vec2&, bool)

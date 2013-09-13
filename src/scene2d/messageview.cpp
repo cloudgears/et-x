@@ -11,8 +11,8 @@
 using namespace et;
 using namespace et::s2d;
 
-MessageView::MessageView(const std::string& title, const std::string& text, Font::Pointer font, const Image& bgImage,
-						 const std::string& button1title, const std::string& button2title)
+MessageView::MessageView(const std::string& title, const std::string& text, Font::Pointer font,
+	const Image& bgImage, const std::string& button1title, const std::string& button2title)
 {
 	_imgBackground = ImageView::Pointer::create(bgImage, backgroundFade().ptr());
 	
@@ -41,7 +41,7 @@ MessageView::MessageView(const std::string& title, const std::string& text, Font
 	ET_CONNECT_EVENT(_button1->clicked, MessageView::buttonClicked)
 	ET_CONNECT_EVENT(_buttonCommon->clicked, MessageView::buttonClicked)
 }
-
+/*
 void MessageView::layout(const vec2& sz)
 {
 	_button1->setPivotPoint(hasSecondButton() ? vec2(0.0f, 1.0f) : vec2(0.5f, 1.0f));
@@ -51,8 +51,11 @@ void MessageView::layout(const vec2& sz)
 	_button1->setVisible(hasFirstButton());
 	_button2->setVisible(hasSecondButton());
 	
-	backgroundFade()->setFrame(vec2(0.0f), sz);
-	_buttonCommon->setFrame(vec2(0.0f), sz);
+	backgroundFade()->setPosition(vec2(0.0f));
+	backgroundFade()->setSize(sz);
+	
+	_buttonCommon->setPosition(vec2(0.0f));
+	_buttonCommon->setSize(sz);
 	
 	float maxMessageViewSize = 0.9f * sz.x;
 	float maxTextWidth = 0.9f * maxMessageViewSize;
@@ -129,8 +132,10 @@ void MessageView::layout(const vec2& sz)
 		buttonsSize.x = etMax(_button2->sizeForText(_button2->title()).x, 0.5f * (contentSize.x - 2.0f * edgeOffset.x));
 	}
 	
-	_button1->setFrame(button1Pos - _contentOffset, buttonsSize);
-	_button2->setFrame(button2Pos - _contentOffset, buttonsSize);
+	_button1->setSize(buttonsSize);
+	_button2->setSize(buttonsSize);
+	_button1->setPosition(button1Pos - _contentOffset);
+	_button2->setPosition(button2Pos - _contentOffset);
 	
 	float yPosition = gap;
 	_title->setPosition(vec2(0.5f * contentSize.x, yPosition) - _contentOffset);
@@ -151,7 +156,7 @@ void MessageView::layout(const vec2& sz)
 		_imgImage->setSize(imageSize);
 	}
 }
-
+*/
 void MessageView::setText(const std::string& aText)
 {
     _text->setText(aText);

@@ -22,13 +22,9 @@ namespace et
 		public:
 			Layout(const std::string& name = std::string());
 			
-			void autolayoutFromFile(const std::string&);
-
 			bool valid() const
 				{ return _valid; }
 			
-			void layout(const vec2& sz);
-
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& gr);
 
 			void update(float);

@@ -87,13 +87,13 @@ bool Scene::pointerScrolled(const et::PointerInputInfo& p)
 void Scene::keyPressed(size_t key)
 {
 	if (_keyboardFocusedLayout.valid() && _keyboardFocusedElement.valid())
-		_keyboardFocusedElement->processMessage(GuiMessage(GuiMessage::Type_TextFieldControl, key));
+		_keyboardFocusedElement->processMessage(Message(Message::Type_TextFieldControl, key));
 }
 
 void Scene::charactersEntered(std::string p)
 {
 	if (_keyboardFocusedLayout.valid() && _keyboardFocusedElement.valid())
-		_keyboardFocusedElement->processMessage(GuiMessage(GuiMessage::Type_TextInput, p));
+		_keyboardFocusedElement->processMessage(Message(Message::Type_TextInput, p));
 }
 
 void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout)
@@ -124,11 +124,12 @@ void Scene::layout(const vec2& size)
 {
 	_screenSize = size;
 	_renderer.setProjectionMatrices(size);
-	_background.setFrame(0.5f * size, size);
+	_background.setPosition(0.5f * size);
+	_background.setSize(size);
 	_backgroundValid = false;
 
 	for (auto& i : _layouts)
-		i->layout->layout(size);
+		i->layout->autoLayout(size, 0.0f);
 }
 
 void Scene::render(RenderContext* rc)
@@ -260,7 +261,7 @@ void Scene::internal_pushLayout(Layout::Pointer newLayout, AnimationDescriptor d
 void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntry* newEntry,
 	size_t animationFlags, float duration)
 {
-	newLayout->layout(_screenSize);
+	newLayout->autoLayout(_screenSize, 0.0f);
 
 	layoutWillAppear.invoke(newLayout);
 	newLayout->willAppear();
@@ -405,9 +406,9 @@ void Scene::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float d
 
 void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
 {
-	Layout::Pointer l = obj;
+	Element::Pointer l = obj;
 	l->autolayoutFromFile(obj->origin());
-	l->layout(_rc->size());
+	l->autoLayout(_rc->size(), 0.0f);
 }
 
 /*

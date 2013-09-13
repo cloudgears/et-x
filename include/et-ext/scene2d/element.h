@@ -7,15 +7,13 @@
 
 #pragma once
 
-#include <map>
-
 #include <et/core/et.h>
 #include <et/core/flags.h>
 #include <et/core/hierarchy.h>
 #include <et/input/input.h>
 #include <et/timers/animator.h>
 #include <et/apiobjects/program.h>
-#include <et-ext/scene2d/guibaseclasses.h>
+#include <et-ext/scene2d/baseclasses.h>
 
 namespace et
 {
@@ -51,14 +49,14 @@ namespace et
 			virtual bool enabled() const;
 			virtual void setEnabled(bool enabled);
 
-			virtual void broardcastMessage(const GuiMessage&);
-			virtual void processMessage(const GuiMessage&) { }
+			virtual void broardcastMessage(const Message&);
+			virtual void processMessage(const Message&) { }
 
-			virtual void addToRenderQueue(RenderContext*, SceneRenderer&);
-			virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&);
+			virtual void addToRenderQueue(RenderContext*, SceneRenderer&) { }
+			virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) { }
 			
 			virtual SceneProgram initProgram(SceneRenderer&);
-			virtual void setProgramParameters(et::Program::Pointer&);
+			virtual void setProgramParameters(et::Program::Pointer&) { }
 
 			virtual bool pointerPressed(const PointerInputInfo&)
 				{ return !hasFlag(Flag_TransparentForPointer); }
@@ -99,9 +97,6 @@ namespace et
 
 			virtual const mat4& finalInverseTransform() 
 				{ return identityMatrix; }
-
-			virtual void layout(const vec2&) 
-				{ layoutChildren(); }
 			
 			const ElementLayout& autoLayout() const
 				{ return _autoLayout; }
@@ -110,6 +105,7 @@ namespace et
 
 			void setAutolayout(Dictionary);
 			void setAutolayout(const ElementLayout&);
+			void autolayoutFromFile(const std::string&);
 			
 			void setAutolayout(const vec2& pos, LayoutMode pMode, const vec2& sz,
 				LayoutMode sMode, const vec2& pivot);
@@ -139,6 +135,8 @@ namespace et
 			virtual void willDisappear() { }
 			virtual void willAutoLayout(float) { }
 			virtual void didAutoLayout(float) { }
+			virtual void willChangeFrame() { }
+			virtual void didChangeFrame() { }
 			
 			void bringToFront(Element* c);
 			void sendToBack(Element* c);
@@ -166,10 +164,11 @@ namespace et
 			
 			virtual const vec2& pivotPoint() const = 0;
 
-			virtual void setPosition(const vec2&, float duration = 0.0f) = 0;
-			virtual void setSize(const vec2&, float duration = 0.0f) = 0;
-			virtual void setFrame(const vec2&, const vec2&, float duration = 0.0f) = 0;
-			virtual void setPivotPoint(const vec2& p, bool preservePosition = true) = 0;
+			virtual void setPosition(const vec2&, float duration) = 0;
+			virtual void setSize(const vec2&, float duration) = 0;
+			virtual void setScale(const vec2&, float duration) = 0;
+			virtual void setPivotPoint(const vec2&, bool preservePosition) = 0;
+			virtual void setAngle(float, float duration) = 0;
 
 			virtual bool containsPoint(const vec2&, const vec2&) = 0;
 			
@@ -221,8 +220,6 @@ namespace et
 
 			void startUpdates();
 			TimerPool::Pointer timerPool();
-
-			void layoutChildren();
 
 			Element* childWithNameCallback(const std::string&, Element*, bool recursive);
 

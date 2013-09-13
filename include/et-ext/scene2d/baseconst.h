@@ -43,7 +43,8 @@ namespace et
 			AnimatedProperty_Angle,
 			AnimatedProperty_Scale,
 			AnimatedProperty_Color,
-			AnimatedProperty_Frame,
+			AnimatedProperty_Position,
+			AnimatedProperty_Size,
 			AnimatedProperty_max
 		};
 
@@ -69,10 +70,16 @@ namespace et
 			LayoutMask_Position = 0x01,
 			LayoutMask_Size = 0x02,
 			LayoutMask_Pivot = 0x04,
+			LayoutMask_Angle = 0x08,
+			LayoutMask_Scale = 0x10,
+			LayoutMask_Children = 0x20,
 
-			LayoutMask_PositionPivot = LayoutMask_Position | LayoutMask_Pivot,
-			LayoutMask_Frame = LayoutMask_Position | LayoutMask_Size,
-			LayoutMask_All = LayoutMask_Frame | LayoutMask_Pivot
+			LayoutMask_PositionPivot = LayoutMask_Position | LayoutMask_Pivot | LayoutMask_Children,
+			
+			LayoutMask_Frame = LayoutMask_Position | LayoutMask_Size | LayoutMask_Children,
+			
+			LayoutMask_All = LayoutMask_Frame | LayoutMask_Pivot | LayoutMask_Angle | LayoutMask_Scale |
+				LayoutMask_Children
 		};
 		
 		enum Location

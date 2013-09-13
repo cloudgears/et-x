@@ -20,7 +20,6 @@ namespace et
 
 		public:
 			FullscreenElement(Element* parent, const std::string& name = std::string());
-			void layout(const vec2& sz);
 		};
 	}
 }

@@ -8,7 +8,7 @@
 #pragma once
 
 #include <et-ext/scene2d/fontbase.h>
-#include <et-ext/scene2d/guibaseclasses.h>
+#include <et-ext/scene2d/baseclasses.h>
 
 namespace et
 {

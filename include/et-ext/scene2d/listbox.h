@@ -83,7 +83,6 @@ namespace et
 
 			void addToRenderQueue(RenderContext*, SceneRenderer&);
 
-			void setFrame(const rect& r, float duration = 0.0f);
 			bool containsPoint(const vec2& p, const vec2&);
 
 			bool pointerPressed(const PointerInputInfo&);
@@ -117,6 +116,8 @@ namespace et
 			ET_DECLARE_EVENT1(popupClosed, Listbox*)
 
 		private:
+			void didChangeFrame();
+			
 			void buildVertices(SceneRenderer& gr);
 			void configurePopup();
 

@@ -15,12 +15,5 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(FullscreenElement)
 FullscreenElement::FullscreenElement(Element* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
-	setFlag(Flag_TransparentForPointer);
-}
-
-void FullscreenElement::layout(const vec2& sz)
-{
-	setFrame(vec2(0.0f), sz);
-	autoLayout(sz);
-	layoutChildren();
+	setAutolayout(vec2(0.0f), LayoutMode_Absolute, vec2(1.0f), LayoutMode_RelativeToContext, vec2(0.0f));
 }

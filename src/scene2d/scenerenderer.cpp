@@ -30,7 +30,7 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_defaultProgram.program->setUniform(textureSamplerName, 0);
 	
 	_defaultTexture = rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(1), GL_RGBA,
-		GL_UNSIGNED_BYTE, BinaryDataStorage(4, 0), "gui-default-texture");
+		GL_UNSIGNED_BYTE, BinaryDataStorage(4, 0), "scene-default-texture");
 	_defaultTexture->setFiltration(rc, TextureFiltration_Nearest, TextureFiltration_Nearest);
 	
 	setProjectionMatrices(rc->size());
@@ -225,7 +225,7 @@ void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)
 
 SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& name, const std::string& fs)
 {
-	Program::Pointer existingProgram = _programsCache.find(name);
+	Program::Pointer existingProgram = _programsCache.findAnyObject(name);
 	
 	SceneProgram program;
 	if (existingProgram.invalid())

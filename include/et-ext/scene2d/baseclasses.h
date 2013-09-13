@@ -1,7 +1,7 @@
 #pragma once
 
 #include <et/apiobjects/texture.h>
-#include <et-ext/scene2d/guibaseconst.h>
+#include <et-ext/scene2d/baseconst.h>
 
 namespace et
 {
@@ -146,7 +146,7 @@ namespace et
 				currentPosition(c), initialPosition(i), normalizedPointerPosition(npp) { }
 		};
 
-		struct GuiMessage
+		struct Message
 		{
 			enum Type
 			{
@@ -159,10 +159,10 @@ namespace et
 			size_t param;
 			std::string text;
 
-			GuiMessage(size_t aType, size_t aParam) :
+			Message(size_t aType, size_t aParam) :
 				type(aType), param(aParam) { }
 			
-			GuiMessage(size_t aType, const std::string& aText) :
+			Message(size_t aType, const std::string& aText) :
 				type(aType), param(0), text(aText) { }
 		};
 
@@ -173,17 +173,22 @@ namespace et
 			vec2 scale;
 			vec2 pivotPoint;
 			float angle;
-			size_t mask;
+			
+			size_t layoutMask;
+			LayoutMode layoutPositionMode;
+			LayoutMode layoutSizeMode;
 
-			LayoutMode positionMode;
-			LayoutMode sizeMode;
+			ElementLayout() : scale(1.0f), angle(0.0f), layoutMask(LayoutMask_All),
+				layoutPositionMode(LayoutMode_Absolute), layoutSizeMode(LayoutMode_Absolute) { }
 
-			ElementLayout() : scale(1.0f), angle(0.0f), mask(LayoutMask_All),
-				positionMode(LayoutMode_Absolute), sizeMode(LayoutMode_Absolute) { }
-
+			ElementLayout(const rect& frame) :
+				position(frame.origin()), size(frame.size()), scale(1.0f), angle(0.0f),
+				layoutMask(LayoutMask_All), layoutPositionMode(LayoutMode_Absolute),
+				layoutSizeMode(LayoutMode_Absolute) { }
+			
 			ElementLayout(const vec2& pos, const vec2& sz, LayoutMode pMode,
 				LayoutMode sMode) : position(pos), size(sz), scale(1.0f), angle(0.0f),
-				mask(LayoutMask_All), positionMode(pMode), sizeMode(sMode) { }
+				layoutMask(LayoutMask_All), layoutPositionMode(pMode), layoutSizeMode(sMode) { }
 		};
 
 		struct SceneProgram

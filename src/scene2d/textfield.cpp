@@ -105,9 +105,9 @@ void TextField::setText(const std::string& s)
 	invalidateContent();
 }
 
-void TextField::processMessage(const GuiMessage& msg)
+void TextField::processMessage(const Message& msg)
 {
-	if (msg.type == GuiMessage::Type_TextFieldControl)
+	if (msg.type == Message::Type_TextFieldControl)
 	{
 		switch (msg.param)
 		{
@@ -142,7 +142,7 @@ void TextField::processMessage(const GuiMessage& msg)
 				break;
 		}
 	}
-	else if (msg.type == GuiMessage::Type_TextInput)
+	else if (msg.type == Message::Type_TextInput)
 	{
 		setText(_text + msg.text);
 		textChanged.invoke(this);

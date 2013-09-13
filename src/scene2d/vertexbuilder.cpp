@@ -5,7 +5,7 @@
  *
  */
 
-#include <et-ext/scene2d/guibase.h>
+#include <et-ext/scene2d/element.h>
 #include <et-ext/scene2d/vertexbuilder.h>
 
 using namespace et;

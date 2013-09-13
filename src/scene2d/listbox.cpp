@@ -249,9 +249,8 @@ bool Listbox::containsPoint(const vec2& p, const vec2& np)
 	return Element2d::containsPoint(p, np) || inPopup;
 }
 
-void Listbox::setFrame(const rect& r, float duration)
+void Listbox::didChangeFrame()
 {
-	Element2d::setFrame(r, duration);
 	configurePopup();
 }
 
@@ -301,13 +300,15 @@ void Listbox::pointerLeaved(const PointerInputInfo& p)
 
 void Listbox::showPopup()
 {
+	assert(false && "Need to move from frame to position+size");
+/*
 	setState(ListboxState_Opened);
 	if (_popupOpening) return;
 
 	if (!_popupValid)
 		configurePopup();
 
-	rect destSize = _popup->frame();
+	rect destSize = _popup->position + size instead of frame();
 	rect currentSize = destSize;
 
 	destSize.top = 0.0f;
@@ -324,12 +325,13 @@ void Listbox::showPopup()
 
 	_popup->hideText();
 	_popup->setAlpha(0.0f);
-	_popup->setFrame(currentSize);
-	_popup->setFrame(destSize, popupAppearTime);
+	_popup->setPosition + Size instead of Frame(currentSize);
+	_popup->setPosition + Size instead of Frame(destSize, popupAppearTime);
 	_popup->setAlpha(1.0f, popupAppearTime);
 	_popup->setVisible(true);
 
 	owner()->setActiveElement(this);
+*/ 
 }
 
 void Listbox::hidePopup()
@@ -366,7 +368,8 @@ void Listbox::configurePopup()
 	size_t numElements = _values.size();
 	float scale = (numElements < 1) ? 1.0f : static_cast<float>(numElements);
 
-	_popup->setFrame(0.0f, 0.0f, ownSize.x, ownSize.y * scale);
+	_popup->setPosition(0.0f, 0.0f);
+	_popup->setSize(ownSize.x, ownSize.y * scale);
 	_popupValid = true;
 }
 

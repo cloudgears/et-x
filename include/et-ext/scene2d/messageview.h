@@ -37,7 +37,8 @@ namespace et
 			
 			void setImage(const Image& img);
 			void setBackgroundImage(const Image& img);
-			void layout(const vec2&);
+			
+			// void layout(const vec2&); - to be replaced
 			
 			void setText(const std::string& text);
 			void setTitle(const std::string& text);

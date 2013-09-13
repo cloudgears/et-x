@@ -28,13 +28,6 @@ Table::~Table()
 	clean();
 }
 
-void Table::layout(const vec2& sz)
-{
-	Scroll::layout(sz);
-	setOffsetDirectly(lastElementIndex());
-	layoutChildren(size());
-}
-
 void Table::didAutoLayout(float)
 {
 	setOffsetDirectly(lastElementIndex());
@@ -49,20 +42,23 @@ void Table::layoutChildren(const vec2& ownSize)
 	{
 		if (s->header.valid())
 		{
-			s->header->setFrame(rect(x + s->headerOffset, 0.0f, s->header->size().x, ownSize.y));
-			x += s->header->frame().width;
+			s->header->setPosition(x + s->headerOffset, 0.0f);
+			s->header->setSize(s->header->size().x, ownSize.y);
+			x += s->header->size().x;
 		}
 		
 		for (auto i : s->items)
 		{
-			i->setFrame(rect(x, 0.0f, i->size().x, ownSize.y));
-			x += i->frame().width;
+			i->setPosition(x, 0.0f);
+			i->setSize(i->size().x, ownSize.y);
+			x += i->size().x;
 		}
 		
 		if (s->footer.valid())
 		{
-			s->footer->setFrame(rect(x + s->footerOffset, 0.0f, s->footer->size().x, ownSize.y));
-			x += s->footer->frame().width;
+			s->footer->setPosition(x + s->footerOffset, 0.0f);
+			s->footer->setSize(s->footer->size().x, ownSize.y);
+			x += s->footer->size().x;
 		}
 	}
 

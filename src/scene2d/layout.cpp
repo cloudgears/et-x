@@ -5,7 +5,7 @@
  *
  */
 
-#include <et/app/applicationnotifier.h>
+#include <et/core/filesystem.h>
 #include <et-ext/json/json.h>
 #include <et-ext/scene2d/layout.h>
 
@@ -21,12 +21,6 @@ Layout::Layout(const std::string& name) :
 {
 	setAutolayout(vec2(0.0f), LayoutMode_Absolute, vec2(1.0f),
 		LayoutMode_RelativeToContext, vec2(0.0f));
-}
-
-void Layout::layout(const vec2& sz)
-{
-	autoLayout(sz);
-	layoutChildren();
 }
 
 void Layout::adjustVerticalOffset(float) { }
@@ -314,7 +308,7 @@ void Layout::performDragging(const PointerInputInfo& p)
 	vec2 currentPos = _capturedElement->positionInElement(p.pos);
 	vec2 delta = currentPos - _dragInitialOffset;
 	
-	_capturedElement->setPosition(_capturedElement->position() + delta);
+	_capturedElement->setPosition(_capturedElement->position() + delta, 0.0f);
 	
 	_capturedElement->dragged.invoke(_capturedElement,
 		ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
@@ -387,21 +381,7 @@ void Layout::initRenderingElement(et::RenderContext* rc)
 
 vec2 Layout::contentSize()
 {
-	return ApplicationNotifier().accessRenderContext()->size();
-}
-
-void Layout::autolayoutFromFile(const std::string& fileName)
-{
-	setOrigin(fileName);
-	
-	std::string data = loadTextFile(fileName);
-	ValueClass c = ValueClass_Invalid;
-	ValueBase::Pointer base = json::deserialize(data, c);
-	
-	if (base.valid() && (c == ValueClass_Dictionary))
-		setAutolayout(base);
-	else
-		log::error("Unable to load layout from file %s", fileName.c_str());
+	return vec2(0.0f);
 }
 
 /*
@@ -413,7 +393,7 @@ void Layout::autolayoutFromFile(const std::string& fileName)
 ModalLayout::ModalLayout(const std::string& name) :
 	Layout(ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
-	_backgroundFade = ImageView::Pointer::create(Texture(), this);
+	_backgroundFade = ImageView::Pointer::create(Texture(), this, "img_background_fade");
 	_backgroundFade->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.25f));
 	_backgroundFade->fillParent();
 }
