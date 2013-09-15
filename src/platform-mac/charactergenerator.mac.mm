@@ -5,8 +5,11 @@
  *
  */
 
-#include <Foundation/Foundation.h>
-#include <AppKit/AppKit.h>
+#include <AppKit/NSFont.h>
+#include <AppKit/NSColor.h>
+#include <AppKit/NSAttributedString.h>
+#include <AppKit/NSStringDrawing.h>
+#include <AppKit/NSGraphicsContext.h>
 
 #include <et/rendering/rendercontext.h>
 #include <et/geometry/rectplacer.h>

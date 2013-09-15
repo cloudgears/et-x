@@ -1,3 +1,7 @@
+#include <UIKit/UIFont.h>
+#include <UIKit/UIColor.h>
+#include <UIKit/UIStringDrawing.h>
+#include <UIKit/UIGraphics.h>
 #include <et/rendering/rendercontext.h>
 #include <et/geometry/rectplacer.h>
 #include <et/imaging/imagewriter.h>

@@ -8,6 +8,7 @@
 #include <et/core/conversion.h>
 #include <et/core/filesystem.h>
 #include <et/app/application.h>
+#include <et-ext/json/json.h>
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/element.h>
 
