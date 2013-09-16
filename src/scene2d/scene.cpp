@@ -169,8 +169,8 @@ void Scene::onKeyboardNeeded(Layout* l, Element* element)
 void Scene::onKeyboardResigned(Layout*)
 {
 	input().deactivateSoftwareKeyboard();
-	_keyboardFocusedElement.reset(0);
-	_keyboardFocusedLayout.reset(0);
+	_keyboardFocusedElement.reset(nullptr);
+	_keyboardFocusedLayout.reset(nullptr);
 }
 
 void Scene::getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst)

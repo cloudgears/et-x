@@ -248,7 +248,7 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 		}
 	}
 	
-	_selectedElement.reset(0);
+	_selectedElement.reset(nullptr);
 }
 
 void Scroll::broadcastCancelled(const PointerInputInfo& p)
@@ -266,7 +266,7 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p)
 		}
 	}
 	
-	_selectedElement.reset(0);
+	_selectedElement.reset(nullptr);
 }
 
 bool Scroll::containsPoint(const vec2& p, const vec2& np)
