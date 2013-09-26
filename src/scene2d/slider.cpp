@@ -12,6 +12,8 @@
 using namespace et;
 using namespace et::s2d;
 
+const float colorPlaceholdersSize = 0.5f;
+
 Slider::Slider(Element2d* parent) :
 	Element2d(parent), _handleScale(1.0f), _min(0.0f), _max(1.0f), _value(0.5f), _drag(false)
 {
@@ -80,10 +82,7 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 	float valuePoint = _value * mainRect.width;
 	
 	if (_backgroundColor.w > 0.0f)
-	{
-		buildColorVertices(_backgroundVertices, mainRect, _backgroundColor,
-			transform);
-	}
+		buildColorVertices(_backgroundVertices, mainRect, _backgroundColor, transform);
 
 	if (_background.texture.valid())
 	{
@@ -100,6 +99,13 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 		buildImageVertices(_sliderLeftVertices, _sliderLeft.texture,
 			_sliderLeft.descriptor, r, vec4(1.0f), transform);
 	}
+	else
+	{
+		rect r(halfHandleWidth, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
+		r.top = 0.5f * (mainRect.height - r.height);
+		r.width = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
+		buildColorVertices(_sliderLeftVertices, r, vec4(0.25f, 0.5f, 1.0f, 1.0f), transform);
+	}
 
 	if (_sliderRight.texture.valid() && (_value < 1.0f))
 	{
@@ -110,6 +116,14 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 		buildImageVertices(_sliderRightVertices, _sliderRight.texture,
 			_sliderRight.descriptor, r, vec4(1.0f), transform);
 	}
+	else
+	{
+		rect r(0.0f, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
+		r.top = 0.5f * (mainRect.height - r.height);
+		r.left = clamp(valuePoint, halfHandleWidth, mainRect.width - halfHandleWidth);
+		r.width = etMax(0.0f, mainRect.width - halfHandleWidth - r.left);
+		buildColorVertices(_sliderLeftVertices, r, vec4(0.5f, 0.5f, 0.5f, 1.0f), transform);
+	}
 
 	if (_handle.texture.valid())
 	{
@@ -118,6 +132,13 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
 		buildImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r,
 			vec4(1.0f), transform);
+	}
+	else
+	{
+		rect r(vec2(0.0f), vec2(1.5f * colorPlaceholdersSize * mainRect.height));
+		r.top = 0.5f * (mainRect.height - r.height);
+		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
+		buildColorVertices(_sliderLeftVertices, r, vec4(1.0f, 0.5f, 0.25f, 1.0f), transform);
 	}
 
 	setContentValid();

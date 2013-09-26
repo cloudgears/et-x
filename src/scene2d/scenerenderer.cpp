@@ -95,7 +95,7 @@ void s2d::SceneRenderer::alloc(size_t count)
 		size_t newSize = currentSize + BlockSize * (1 + count / BlockSize);
 		_renderingElement->vertexList.resize(newSize);
 		_renderingElement->indexArray->resize(newSize);
-		_renderingElement->indexArray->linearize();
+		_renderingElement->indexArray->linearize(newSize);
 	}
 }
 
