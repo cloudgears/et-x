@@ -79,12 +79,9 @@ namespace et
 			mat4 _defaultTransform;
 			
 			std::stack<recti> _clip;
-			recti _clipRect;
 			
 			vec3 _additionalOffsetAndAlpha;
 			recti _additionalWindowOffset;
-			
-			bool _clipEnabled;
 		};
 	}
 }

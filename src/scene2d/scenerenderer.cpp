@@ -172,9 +172,6 @@ void s2d::SceneRenderer::beginRender(RenderContext* rc)
 	rc->renderState().setDepthMask(true);
 	rc->renderer()->clear(false, true);
 
-	_clipEnabled =  rc->renderState().clipEnabled();
-	_clipRect = rc->renderState().clipRect();
-	
 	rc->renderState().setBlend(true, Blend_Default);
 	rc->renderState().setDepthTest(false);
 	rc->renderState().setDepthMask(false);
@@ -213,7 +210,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 
 void SceneRenderer::endRender(RenderContext* rc)
 {
-	rc->renderState().setClip(_clipEnabled, _clipRect);
+	rc->renderState().setClip(false, rc->renderState().clipRect());
 }
 
 void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)

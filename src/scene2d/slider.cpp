@@ -137,7 +137,7 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 	{
 		rect r(vec2(0.0f), vec2(1.5f * colorPlaceholdersSize * mainRect.height));
 		r.top = 0.5f * (mainRect.height - r.height);
-		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
+		r.left = clamp(valuePoint - 0.5f * r.width, 0.0f, mainRect.width - r.width);
 		buildColorVertices(_sliderLeftVertices, r, vec4(1.0f, 0.5f, 0.25f, 1.0f), transform);
 	}
 
