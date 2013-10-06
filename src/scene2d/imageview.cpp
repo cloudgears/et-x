@@ -55,7 +55,7 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 	_vertices.setOffset(0);
 	
 	if (_backgroundColor.w > 0.0f)
-		buildColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform);
+		buildColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor * vec4(1.0f, 1.0, 1.0f, alpha()), transform);
 	
 	if (_texture.valid())
 	{
