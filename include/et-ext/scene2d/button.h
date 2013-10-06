@@ -41,7 +41,7 @@ namespace et
 		public:
 			Button(const std::string& title, Font::Pointer font, Element2d* parent,
 				const std::string& name = std::string());
-
+			
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);
 			
 			void setImage(const Image& img);

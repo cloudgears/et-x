@@ -130,6 +130,13 @@ void Table::clean()
 	for (auto s : _sections)
 	{
 		s->header.reset(nullptr);
+		
+		for (auto& item : s->items)
+		{
+			item->setParent(nullptr);
+			item.reset(nullptr);
+		}
+		
 		s->items.clear();
 		s->footer.reset(nullptr);
 		delete s;
