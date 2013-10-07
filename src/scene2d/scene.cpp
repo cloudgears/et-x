@@ -431,5 +431,7 @@ void Scene::LayoutEntry::animateTo(const vec3& oa, float duration, State s)
 
 void Scene::LayoutEntry::animatorFinished(BaseAnimator*)
 {
-	owner->layoutEntryTransitionFinished(this);
+	Invocation1 i;
+	i.setTarget(owner, &Scene::layoutEntryTransitionFinished, this);
+	i.invokeInMainRunLoop();
 }
