@@ -111,6 +111,11 @@ void Element::setAutolayoutPosition(const vec2& pos)
 	_autoLayout.position = pos;
 }
 
+void Element::setAutolayoutSize(const vec2& sz)
+{
+	_autoLayout.size = sz;
+}
+
 void Element::autoLayout(const vec2& contextSize, float duration)
 {
 	willAutoLayout(duration);

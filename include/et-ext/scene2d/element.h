@@ -111,6 +111,7 @@ namespace et
 				LayoutMode sMode, const vec2& pivot);
 
 			void setAutolayoutPosition(const vec2& pos);
+			void setAutolayoutSize(const vec2& pos);
 
 			void setAutolayoutRelativeToParent(const vec2& pos, const vec2& sz, const vec2& pivot);
 			
