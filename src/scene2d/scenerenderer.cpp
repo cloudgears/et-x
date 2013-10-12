@@ -172,7 +172,7 @@ void s2d::SceneRenderer::beginRender(RenderContext* rc)
 	rc->renderState().setDepthMask(true);
 	rc->renderer()->clear(false, true);
 
-	rc->renderState().setBlend(true, Blend_Default);
+	rc->renderState().setBlend(true, BlendState_Default);
 	rc->renderState().setDepthTest(false);
 	rc->renderState().setDepthMask(false);
 }
