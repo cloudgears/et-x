@@ -29,13 +29,13 @@ namespace et
 			enum ImageLayout
 			{
 				ImageLayout_Left,
-				ImageLayout_Right
+				ImageLayout_Right,
 			};
 			
 			enum ContentMode
 			{
 				ContentMode_Fit,
-				ContentMode_ScaleMaxToMin
+				ContentMode_ScaleMaxToMin,
 			};
 
 		public:
@@ -45,6 +45,8 @@ namespace et
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);
 			
 			void setImage(const Image& img);
+			void setImageForState(const Image& img, State s);
+			
 			void setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, State s);
 			void setBackgroundForState(const Image& img, State s);
 
@@ -68,8 +70,8 @@ namespace et
 
 			void setTitle(const std::string& t);
 
-			const Image& image() const
-				{ return _image; }
+			const Image& imageForState(State s) const
+				{ return _image[s]; }
 			
 			void setImageLayout(ImageLayout l);
 
@@ -105,6 +107,9 @@ namespace et
 			vec2 contentSize();
 			
 			void adjustsPressedBackground(bool);
+			
+			void setHorizontalAlignment(Alignment);
+			void setVerticalAlignment(Alignment);
 
 		protected:
 			void performClick();
@@ -119,8 +124,10 @@ namespace et
 			SceneVertexList _bgVertices;
 			SceneVertexList _textVertices;
 			SceneVertexList _imageVertices;
+			
 			StaticDataStorage<Image, State_max> _background;
-			Image _image;
+			StaticDataStorage<Image, State_max> _image;
+			
 			vec4 _textColor;
 			vec4 _textPressedColor;
 			vec4 _backgroundColor;
@@ -131,6 +138,8 @@ namespace et
 			State _state;
 			ImageLayout _imageLayout;
 			ContentMode _contentMode;
+			Alignment _horizontalAlignment;
+			Alignment _verticalAlignment;
 			bool _pressed;
 			bool _hovered;
 			bool _selected;

@@ -17,8 +17,8 @@ Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, 
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _title(title), _font(font),
 	_textSize(font->measureStringSize(title, true)), _textColor(vec3(0.0f), 1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(State_Default),
-	_imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit), _pressed(false),
-	_hovered(false), _selected(false)
+	_imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit), _horizontalAlignment(Alignment_Center),
+	_verticalAlignment(Alignment_Center), _pressed(false), _hovered(false), _selected(false)
 {
 	setSize(sizeForText(title));
 }
@@ -35,7 +35,7 @@ void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_textVertices, _font->texture(), r.defaultProgram(), this);
 
 	if (_imageVertices.lastElementIndex() > 0)
-		r.addVertices(_imageVertices, _image.texture, r.defaultProgram(), this);
+		r.addVertices(_imageVertices, _image[_state].texture, r.defaultProgram(), this);
 }
 
 void Button::buildVertices(RenderContext*, SceneRenderer&)
@@ -43,9 +43,10 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	mat4 transform = finalTransform();
 	
 	vec2 frameSize = size() + _contentOffset;
-	vec2 imageSize = absv(_image.descriptor.size);
+	vec2 imageSize = absv(_image[_state].descriptor.size);
 	
-	if (_contentMode == ContentMode_Fit)
+	size_t sizeMode = _contentMode & 0x0000ffff;
+	if (sizeMode == ContentMode_Fit)
 	{
 		float imageAspect = imageSize.aspect();
 		if (imageSize.x > frameSize.x)
@@ -59,7 +60,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 			imageSize.y = frameSize.y;
 		}
 	}
-	else if (_contentMode == ContentMode_ScaleMaxToMin)
+	else if (sizeMode == ContentMode_ScaleMaxToMin)
 	{
 		float maxImageDim = etMax(imageSize.x, imageSize.y);
 		float minFrameDim = etMin(frameSize.x, frameSize.y);
@@ -78,14 +79,21 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	
 	if (_imageLayout == ImageLayout_Right)
 	{
-		textOrigin = 0.5f * (frameSize - vec2(contentWidth, _textSize.y));
-		imageOrigin = vec2(textOrigin.x + contentGap + _textSize.x, 0.5f * (frameSize.y - imageSize.y));
+		textOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
+			(frameSize - vec2(contentWidth, _textSize.y));
+		
+		imageOrigin.x = textOrigin.x + contentGap + _textSize.x;
+		imageOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - imageSize.y);
 	}
 	else
 	{
-		imageOrigin = 0.5f * (frameSize - vec2(contentWidth, imageSize.y));
-		textOrigin = vec2(imageOrigin.x + contentGap + imageSize.x, 0.5f * (frameSize.y - _textSize.y));
+		imageOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
+			(frameSize - vec2(contentWidth, imageSize.y));
+		
+		textOrigin.x = imageOrigin.x + contentGap + imageSize.x;
+		textOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - _textSize.y);
 	}
+	
 	vec4 alphaScale = vec4(1.0f, 1.0f, 1.0f, alpha());
 	
 	_bgVertices.setOffset(0);
@@ -114,13 +122,13 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 		}
 	}
 
-	if (_image.texture.valid())
+	if (_image[_state].texture.valid())
 	{
 		vec4 aColor = (_state == State_Pressed) ? color() * vec4(0.5f, 0.5f, 0.5f, 1.0f) : color();
 		if (aColor.w > 0.0f)
 		{
-			buildImageVertices(_imageVertices, _image.texture, _image.descriptor, rect(imageOrigin, imageSize),
-				aColor * alphaScale, transform);
+			buildImageVertices(_imageVertices, _image[_state].texture, _image[_state].descriptor,
+				rect(imageOrigin, imageSize), aColor * alphaScale, transform);
 		}
 	}
 }
@@ -275,7 +283,15 @@ vec2 Button::sizeForText(const std::string& text)
 
 void Button::setImage(const Image& img)
 {
-	_image = img;
+	for (size_t i = 0; i < State_max; ++i)
+		_image[i] = img;
+	
+	invalidateContent();
+}
+
+void Button::setImageForState(const Image& img, State s)
+{
+	_image[s] = img;
 	invalidateContent();
 }
 
@@ -336,5 +352,17 @@ vec2 Button::contentSize()
 void Button::adjustsPressedBackground(bool b)
 {
 	_adjustPressedBackground = b;
+	invalidateContent();
+}
+
+void Button::setHorizontalAlignment(Alignment a)
+{
+	_horizontalAlignment = a;
+	invalidateContent();
+}
+
+void Button::setVerticalAlignment(Alignment a)
+{
+	_verticalAlignment = a;
 	invalidateContent();
 }
