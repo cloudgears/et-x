@@ -85,14 +85,19 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 		CharDescriptorList(_actualText.length(), _font->charDescription(securedChar)) :
 		_font->buildString(_actualText);
 	
-	if (_caretVisible)
-		_charList.push_back(_font->charDescription(caretChar));
-	
 	if (_charList.size())
 	{
 		buildStringVertices(_textVertices, _charList, _alignmentH, _alignmentV,
 			size() * vec2(alignmentFactor(_alignmentH), alignmentFactor(_alignmentV)),
 			color() * alphaVector, transform);
+	}
+
+	if (_caretVisible)
+	{
+		vec2 textSize = _font->measureStringSize(_charList);
+		vec2 textOrigin = vec2(alignmentFactor(_alignmentH), alignmentFactor(_alignmentV)) * (size() - textSize);
+		buildStringVertices(_textVertices, { _font->charDescription(caretChar) }, Alignment_Near,
+			Alignment_Near, textOrigin + vec2(textSize.x, 0.0f), color() * alphaVector, transform);
 	}
 	
 	setContentValid();
@@ -121,8 +126,14 @@ void TextField::processMessage(const Message& msg)
 				
 			case ET_KEY_BACKSPACE:
 			{
-				if (_text.length())
-					setText(_text.substr(0, _text.length() - 1));
+				if (_text.length() > 0)
+				{
+					size_t charToDelete = 1;
+					while ((_text.size() > charToDelete) && ((_text[_text.length() - charToDelete - 1] & 0x80) != 0))
+						   ++charToDelete;
+						   
+					setText(_text.substr(0, _text.length() - charToDelete));
+				}
 				
 				textChanged.invoke(this);
 				break;
