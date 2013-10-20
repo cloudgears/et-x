@@ -49,13 +49,13 @@ namespace et
 			
 			void clean();
 
+			void layoutChildren();
+
 		protected:
 			void layoutChildren(const vec2&);
 			
 		private:
 			void didAutoLayout(float);
-			
-			
 			void setOffsetDirectly(const vec2&);
 			
 		private:

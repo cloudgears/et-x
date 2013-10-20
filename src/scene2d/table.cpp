@@ -34,6 +34,11 @@ void Table::didAutoLayout(float)
 	layoutChildren(size());
 }
 
+void Table::layoutChildren()
+{
+	layoutChildren(size());
+}
+
 void Table::layoutChildren(const vec2& ownSize)
 {
 	float x = 0.0f;
