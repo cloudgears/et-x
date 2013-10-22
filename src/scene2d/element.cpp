@@ -27,6 +27,11 @@ void Element::setParent(Element* element)
 	invalidateTransform();
 }
 
+void Element::removeAllChildren()
+{
+	removeChildren();
+}
+
 void Element::invalidateContent()
 { 
 	_contentValid = false; 

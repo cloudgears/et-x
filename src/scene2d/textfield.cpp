@@ -94,7 +94,7 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_caretVisible)
 	{
-		vec2 textSize = _font->measureStringSize(_charList);
+		vec2 textSize = _charList.empty() ? _font->measureStringSize(" ") * vec2(0.0f, 1.0f) : _font->measureStringSize(_charList);
 		vec2 textOrigin = vec2(alignmentFactor(_alignmentH), alignmentFactor(_alignmentV)) * (size() - textSize);
 		buildStringVertices(_textVertices, { _font->charDescription(caretChar) }, Alignment_Near,
 			Alignment_Near, textOrigin + vec2(textSize.x, 0.0f), color() * alphaVector, transform);

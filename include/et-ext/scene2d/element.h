@@ -146,6 +146,8 @@ namespace et
 			template <typename T>
 			T* childWithName(const std::string& name, bool recursive)
 				{ return static_cast<T*>(baseChildWithName(name, recursive)); }
+			
+			void removeAllChildren();
 
 			/*
 			 * Required Methods
