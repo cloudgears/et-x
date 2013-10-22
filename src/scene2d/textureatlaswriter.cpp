@@ -6,7 +6,6 @@
  */
 
 #include <fstream>
-#include <et/core/filesystem.h>
 #include <et/core/conversion.h>
 #include <et/core/cout.h>
 #include <et/opengl/opengl.h>

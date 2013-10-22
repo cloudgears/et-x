@@ -1,5 +1,9 @@
 #pragma once
 
+#include <et/core/et.h>
+#include <et/core/flags.h>
+#include <et/core/hierarchy.h>
+
 namespace et
 {
 	namespace s2d

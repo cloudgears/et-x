@@ -5,7 +5,6 @@
  *
  */
 
-#include <et/geometry/geometry.h>
 #include <et-ext/scene2d/messageview.h>
 
 using namespace et;

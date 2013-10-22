@@ -6,7 +6,6 @@
  */
 
 #include <et/rendering/rendercontext.h>
-#include <et/core/filesystem.h>
 #include <et-ext/json/json.h>
 #include <et-ext/scene2d/layout.h>
 

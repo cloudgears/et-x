@@ -8,7 +8,6 @@
 #pragma once
 
 #include <et/core/containers.h>
-#include <et/geometry/geometry.h>
 
 #define FONT_VERSION_1			0x0001
 #define FONT_VERSION_2			0x0002

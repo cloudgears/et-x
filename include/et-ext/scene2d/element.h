@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include <et/core/et.h>
-#include <et/core/flags.h>
-#include <et/core/hierarchy.h>
 #include <et/input/input.h>
 #include <et/timers/animator.h>
 #include <et/apiobjects/program.h>
