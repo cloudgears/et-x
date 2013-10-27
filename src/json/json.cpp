@@ -40,6 +40,20 @@ std::string et::json::serialize(const Dictionary& msg, bool readableFormat)
 	return serialized;
 }
 
+std::string et::json::serialize(const et::ArrayValue& arr, bool readableFormat)
+{
+	json_t* dictionary = serializeArray(arr);
+	size_t flags = readableFormat ? JSON_INDENT(2) : JSON_COMPACT;
+	char* dump = json_dumps(dictionary, flags | JSON_PRESERVE_ORDER | JSON_ENSURE_ASCII);
+	
+	std::string serialized(dump);
+	
+	free(dump);
+	json_decref(dictionary);
+	
+	return serialized;
+}
+
 et::ValueBase::Pointer et::json::deserialize(const char* input, ValueClass& c)
 	{ return deserializeJson(input, strlen(input), c); }
 

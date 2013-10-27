@@ -14,6 +14,7 @@ namespace et
 	namespace json
 	{
 		std::string serialize(const et::Dictionary&, bool readableFormat = false);
+		std::string serialize(const et::ArrayValue&, bool readableFormat = false);
 		
 		et::ValueBase::Pointer deserialize(const char*, et::ValueClass&);
 		et::ValueBase::Pointer deserialize(const std::string&, et::ValueClass&);
