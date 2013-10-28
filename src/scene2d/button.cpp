@@ -160,16 +160,19 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 	if ((p.type != PointerType_General) || !_pressed) return false;
 	
 	_pressed = false;
-	State newState = _selected ? State_Selected : State_Default;
 
 	if (containLocalPoint(p.pos))
 	{
 		performClick();
-		newState = adjustState(_selected ? State_SelectedHovered : State_Hovered);
+		setCurrentState(adjustState(_selected ? State_SelectedHovered : State_Hovered));
+		releasedInside.invoke(this);
+	}
+	else
+	{
+		setCurrentState(adjustState(_selected ? State_Selected : State_Default));
+		releasedOutside.invoke(this);
 	}
 
-	setCurrentState(newState);
-	released.invoke(this);
 	return true;
 }
 
@@ -184,7 +187,7 @@ bool Button::pointerCancelled(const PointerInputInfo& p)
 		newState = adjustState(_selected ? State_SelectedHovered : State_Hovered);
 	
 	setCurrentState(newState);
-	released.invoke(this);
+	cancelled.invoke(this);
 	return true;
 }
 
