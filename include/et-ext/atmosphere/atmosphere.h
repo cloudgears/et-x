@@ -10,21 +10,32 @@ namespace et
 		ET_DECLARE_POINTER(Atmosphere)
 		
 	public:
-		Atmosphere(RenderContext*);
+		Atmosphere(RenderContext*, size_t textureSize);
 		
-		void testRender(RenderContext*, const Camera&, const vec3& lightPosition);
+		void setLightDirection(const vec3&);
+		
+		void updateTexture();
+		et::Texture environmentTexture();
 		
 	private:
 		void generateGeometry(RenderContext*);
 		void setProgramParameters(Program::Pointer p);
+		void performRendering();
 		
 	private:
-		Program::Pointer _atmosphereProgram;
-		Program::Pointer _groundProgram;
-		
-		Program::Pointer _testProgram;
+		RenderContext* _rc;
 		
 		VertexArrayObject _atmosphereVAO;
-		VertexArrayObject _groundVAO;
+		
+		Program::Pointer _atmospherePerVertexProgram;
+		Program::Pointer _atmospherePerPixelProgram;
+		
+		Framebuffer::Pointer _framebuffer;
+
+		Camera _cubemapCamera;
+		CubemapProjectionMatrixArray _cubemapMatrices;
+		
+		vec3 _lightDirection = unitY;
+		bool _textureValid = false;
 	};
 }
