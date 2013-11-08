@@ -119,6 +119,8 @@ void Atmosphere::performRendering()
 	for (uint32_t i = 0; i < 6; ++i)
 	{
 		_framebuffer->setCurrentCubemapFace(i);
+		_rc->renderer()->clear(true, false);
+		
 		_atmospherePerPixelProgram->setMVPMatrix(_cubemapMatrices[i]);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
 	}
@@ -279,6 +281,7 @@ const std::string atmospherePerPixelVS = ET_TO_CONST_CHAR
 
 const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
    (
+	precision highp float;
 	uniform vec3 vCamera;
 	uniform vec3 vPrimaryLight;
 	uniform vec3 v3InvWavelength;
@@ -313,6 +316,10 @@ const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
 		float fFar = length(v3Ray);
 		v3Ray /= fFar;
 		
+/*
+ *		uncomment to enable atmosphere from space
+ *
+ *
 		vec3 v3Start = vCamera;
 		float fStartAngle = 0.0;
 		float fStartOffset = 0.0;
@@ -333,6 +340,11 @@ const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
 			fStartAngle = dot(v3Ray, v3Start) / fOuterRadius;
 			fStartOffset = exp(-1.0 / fScaleDepth) * scale(fStartAngle);
 		}
+ *
+ */
+		vec3 v3Start = vCamera;
+		float fStartAngle = dot(v3Ray, v3Start) / length(v3Start);
+		float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
 		
 		float fSampleLength = fFar / fSamples;
 		float fScaledLength = fSampleLength * fScale;
@@ -360,69 +372,5 @@ const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
 		float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * (1.0 + fCos*fCos) / pow(1.0 + g2 - 2.0*g*fCos, 1.5);
 		vec4 aColor = vec4(fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor, 1.0);
 		etFragmentOut = 1.0 - exp(-aColor);
-	}
-);
-
-////////////////////////////////////////////////////////////////
-//
-// Ground shader
-//
-////////////////////////////////////////////////////////////////
-const std::string groundVS = ET_TO_CONST_CHAR
-   (
-	uniform mat4 mModelViewProjection;
-	uniform mat4 mTransform;
-	uniform vec3 vCamera;
-	etVertexIn vec4 Vertex;
-	etVertexOut vec4 vTransformedVertex;
-	etVertexOut vec3 vNormalWS;
-	etVertexOut vec3 vViewWS;
-	void main(void)
-	{
-		vTransformedVertex = mTransform * Vertex;
-		vNormalWS = normalize(vTransformedVertex.xyz);
-		vViewWS = normalize(vTransformedVertex.xyz - vCamera);
-		gl_Position = mModelViewProjection * vTransformedVertex;
-	}
-);
-
-const std::string groundFS = ET_TO_CONST_CHAR
-   (
-	uniform etHighp samplerCube environmentMap;
-	etFragmentIn etHighp vec3 vNormalWS;
-	etFragmentIn etHighp vec3 vViewWS;
-	void main (void)
-	{
-		etFragmentOut = etTextureCube(environmentMap, vNormalWS);
-	}
-);
-
-////////////////////////////////////////////////////////////////
-//
-// Environment shader
-//
-////////////////////////////////////////////////////////////////
-const std::string environmentVS = ET_TO_CONST_CHAR
-   (
-	uniform etHighp mat4 mModelViewProjectionInverse;
-	
-	etVertexIn etHighp vec2 Vertex;
-	etVertexOut etHighp vec3 vProjected;
-	
-	void main()
-	{
-		vec4 vVertex = vec4(Vertex.x, Vertex.y, 1.0, 1.0);
-		vProjected = (mModelViewProjectionInverse * vVertex).xyz;
-		gl_Position = vVertex;
-	}
-);
-
-const std::string environmentFS = ET_TO_CONST_CHAR
-   (
-	uniform etHighp samplerCube environmentMap;
-	etFragmentIn etHighp vec3 vProjected;
-	void main()
-	{
-		etFragmentOut = etTextureCube(environmentMap, vProjected);
 	}
 );
