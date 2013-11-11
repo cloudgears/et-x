@@ -7,30 +7,17 @@ using namespace et;
 
 extern const std::string atmospherePerVertexVS;
 extern const std::string atmospherePerVertexFS;
-
 extern const std::string atmospherePerPixelVS;
 extern const std::string atmospherePerPixelFS;
-
 extern const std::string groundVS;
 extern const std::string groundFS;
-
 extern const std::string environmentVS;
 extern const std::string environmentFS;
-
-float innerRadius = 100.0f;
-float outerRadius = 1.05f * innerRadius;
-
-vec3 positionOnSphere = vec3(0.0f, innerRadius, 0.0f);
-
-int numSamples = 10;
 
 Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
 	_rc(rc)
 {
 	ObjectsCache localCache;
-	
-	_cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 0.25f * (outerRadius - innerRadius), 2.0f * outerRadius);
-	_cubemapMatrices = cubemapMatrixProjectionArray(_cubemapCamera.modelViewProjectionMatrix(), positionOnSphere);
 	
 	_atmospherePerVertexProgram = rc->programFactory().genProgram("et~atmosphere~per-vertex~program",
 		atmospherePerVertexVS, atmospherePerVertexFS);
@@ -44,26 +31,77 @@ Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
 		GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0, 0);
 	
 	generateGeometry(rc);
+	
+	setParameters(defaultParameters());
+}
+
+Dictionary Atmosphere::defaultParameters()
+{
+	Dictionary result;
+	
+	ArrayValue waveLength;
+	waveLength->content.push_back(FloatValue(0.720f));
+	waveLength->content.push_back(FloatValue(0.550f));
+	waveLength->content.push_back(FloatValue(0.480f));
+
+	ArrayValue ambientColor;
+	ambientColor->content.push_back(FloatValue(0.0f));
+	ambientColor->content.push_back(FloatValue(0.0f));
+	ambientColor->content.push_back(FloatValue(0.0f));
+	
+	result.setArrayForKey(kAmbientColor, ambientColor);
+	result.setArrayForKey(kWaveLength, waveLength);
+	
+	result.setFloatForKey(kKr, 0.0025f);
+	result.setFloatForKey(kKm, 0.0015f);
+	result.setFloatForKey(kG, -0.999f);
+	result.setFloatForKey(kSunExponent, 25.0f);
+	result.setFloatForKey(kRayleighScaleDepth, 1.0f / 3.0f);
+	result.setFloatForKey(kPlanetRadius, 100.0f);
+	result.setFloatForKey(kAtmosphereHeight, 5.0f);
+	result.setFloatForKey(kLatitude, HALF_PI);
+	result.setFloatForKey(kLongitude, 0.0f);
+	result.setFloatForKey(kHeightAboveSurface, 0.0f);
+	result.setIntegerForKey(kIterationCount, 10);
+	
+	return result;
 }
 
 void Atmosphere::setProgramParameters(Program::Pointer prog)
 {
-	vec3 waveLength(0.720f, 0.550f, 0.480f);
+	vec3 waveLength;
+	waveLength.x = _parameters.floatForKeyPath({kWaveLength, "0"})->content;
+	waveLength.y = _parameters.floatForKeyPath({kWaveLength, "1"})->content;
+	waveLength.z = _parameters.floatForKeyPath({kWaveLength, "2"})->content;
 	
-	vec3 invWaveLenth(1.0f / std::pow(waveLength.x, 4.0f),
-		1.0f / std::pow(waveLength.y, 4.0f),
-		1.0f / std::pow(waveLength.z, 4.0f));
+	float fRayleighScaleDepth = _parameters.floatForKey(kRayleighScaleDepth)->content;
+	float fESun = _parameters.floatForKey(kSunExponent)->content;
+	float fKr = _parameters.floatForKey(kKr)->content;
+	float fKm = _parameters.floatForKey(kKm)->content;
+	float fG = _parameters.floatForKey(kG)->content;
+	float innerRadius = _parameters.floatForKey(kPlanetRadius)->content;
+	float atmosphereHeight = _parameters.floatForKey(kAtmosphereHeight)->content;
+	float outerRadius = innerRadius + atmosphereHeight;
+	float lat = _parameters.floatForKey(kLatitude)->content;
+	float lon = _parameters.floatForKey(kLongitude)->content;
+	float h = innerRadius + atmosphereHeight * _parameters.floatForKey(kHeightAboveSurface)->content;
 	
-	float fG = -0.999f;
-	float fKr = 0.0025f;			// Rayleigh scattering constant
-	float fKm = 0.0015f;			// Mie scattering constant
+	_ambientColor.x =  _parameters.floatForKeyPath({kAmbientColor, "0"})->content;
+	_ambientColor.y =  _parameters.floatForKeyPath({kAmbientColor, "1"})->content;
+	_ambientColor.z =  _parameters.floatForKeyPath({kAmbientColor, "2"})->content;
 	
-	float fESun = 25.0f;			// Sun brightness constant
+	int numSamples = _parameters.integerForKey(kIterationCount)->content;
 	
 	float fKr4PI = fKr * 4.0f * PI;
 	float fKm4PI = fKm * 4.0f * PI;
+
+	_cameraPosition = h * fromSpherical(lat, lon);
 	
-	float fRayleighScaleDepth = 1.0f / 3.0f;
+	vec3 invWaveLenth(1.0f / std::pow(waveLength.x, 4.0f), 1.0f / std::pow(waveLength.y, 4.0f),
+		1.0f / std::pow(waveLength.z, 4.0f));
+	
+	_cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 0.25f * (outerRadius - innerRadius), 2.0f * outerRadius);
+	_cubemapMatrices = cubemapMatrixProjectionArray(_cubemapCamera.modelViewProjectionMatrix(), _cameraPosition);
 	
 	prog->setUniform("nSamples", numSamples);
 	prog->setUniform("fSamples", static_cast<float>(numSamples));
@@ -95,58 +133,80 @@ void Atmosphere::generateGeometry(RenderContext* rc)
 	
 	RawDataAcessor<vec3> pos = va->chunk(Usage_Position).accessData<vec3>(0);
 	for (size_t i = 0, e = va->size(); i < e; ++i)
-		pos[i] = outerRadius * normalize(pos[i]);
+		pos[i] = normalize(pos[i]);
 	
 	_atmosphereVAO = rc->vertexBufferFactory().createVertexArrayObject("et~sky-sphere", va,
 		BufferDrawType_Static, ia, BufferDrawType_Static);
 }
 
-void Atmosphere::performRendering()
+void Atmosphere::performRendering(bool shouldClear)
 {
 	auto& rs = _rc->renderState();
 
-	rs.setBlend(false);
-	rs.setCulling(false);
+	auto boundFramebuffer = rs.boundFramebuffer();
+	CullState cullState = rs.cullState();
+	BlendState blendState = rs.blendState();
+	bool blendEnabled = rs.blendEnabled();
+	bool cullEnabled = rs.cullEnabled();
+	bool depthTest = rs.depthTestEnabled();
+	bool depthMask = rs.depthMask();
+	vec4 clearColor = rs.clearColor();
+	
+	rs.setBlend(true, BlendState_Additive);
+	rs.setCulling(true, CullState_Front);
 	rs.setDepthTest(false);
 	rs.setDepthMask(false);
 	
 	rs.bindVertexArray(_atmosphereVAO);
 	rs.bindProgram(_atmospherePerPixelProgram);
+	
+	if (!_parametersValid)
+		setProgramParameters(_atmospherePerPixelProgram);
+	
 	_atmospherePerPixelProgram->setPrimaryLightPosition(_lightDirection);
-	_atmospherePerPixelProgram->setCameraPosition(positionOnSphere);
+	_atmospherePerPixelProgram->setCameraPosition(_cameraPosition);
+	
+	if (shouldClear)
+		rs.setClearColor(_ambientColor);
 	
 	rs.bindFramebuffer(_framebuffer);
 	for (uint32_t i = 0; i < 6; ++i)
 	{
 		_framebuffer->setCurrentCubemapFace(i);
-		_rc->renderer()->clear(true, false);
+		
+		if (shouldClear)
+			_rc->renderer()->clear(true, false);
 		
 		_atmospherePerPixelProgram->setMVPMatrix(_cubemapMatrices[i]);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
 	}
 	
-	rs.setDepthTest(true);
-	rs.setDepthMask(true);
-	rs.bindDefaultFramebuffer();
-	_textureValid = true;
-}
-
-void Atmosphere::updateTexture()
-{
-	if (!_textureValid)
-		performRendering();
+	rs.bindFramebuffer(boundFramebuffer);
+	rs.setBlend(blendEnabled, blendState);
+	rs.setCulling(cullEnabled, cullState);
+	rs.setDepthMask(depthMask);
+	rs.setDepthTest(depthTest);
+	
+	if (shouldClear)
+		rs.setClearColor(clearColor);
+	
+	_parametersValid = true;
 }
 
 et::Texture Atmosphere::environmentTexture()
 {
-	assert(_textureValid);
 	return _framebuffer->renderTarget();
 }
 
 void Atmosphere::setLightDirection(const vec3& l)
 {
 	_lightDirection = l;
-	_textureValid = false;
+}
+
+void Atmosphere::setParameters(Dictionary d)
+{
+	_parameters->content = d->content;
+	_parametersValid = false;
 }
 
 ////////////////////////////////////////////////////////////////
@@ -188,7 +248,7 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	void main(void)
 	{
 		float fCameraHeight = length(vCamera);
-		vec3 v3Ray = Vertex - vCamera;
+		vec3 v3Ray = fOuterRadius * Vertex - vCamera;
 		float fFar = length(v3Ray);
 		v3Ray /= fFar;
 	
@@ -231,7 +291,7 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 			v3SamplePoint += v3SampleRay;
 		}
 		
-		v3Direction = vCamera - Vertex;
+		v3Direction = vCamera - fOuterRadius * Vertex;
 		aFrontColor = fKrESun * (v3FrontColor * v3InvWavelength);
 		aSecondaryColor = fKmESun * v3FrontColor;
 		
@@ -270,11 +330,12 @@ const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
 const std::string atmospherePerPixelVS = ET_TO_CONST_CHAR
    (
 	uniform mat4 mModelViewProjection;
+	uniform float fOuterRadius;
 	etVertexIn vec3 Vertex;
 	etVertexOut vec3 vVertex;
 	void main(void)
 	{
-		vVertex = Vertex;
+		vVertex = fOuterRadius * Vertex;
 		gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
 	}
 );
@@ -374,3 +435,24 @@ const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
 		etFragmentOut = 1.0 - exp(-aColor);
 	}
 );
+
+/*
+ * Constants
+ */
+const std::string Atmosphere::kAmbientColor = "ambient-color";
+
+const std::string Atmosphere::kWaveLength = "wave-length";
+const std::string Atmosphere::kKr = "kr";
+const std::string Atmosphere::kKm = "km";
+const std::string Atmosphere::kG = "g";
+const std::string Atmosphere::kSunExponent = "sun-exponent";
+const std::string Atmosphere::kRayleighScaleDepth = "rayleigh-scale-depth";
+
+const std::string Atmosphere::kPlanetRadius = "planet-radius";
+const std::string Atmosphere::kAtmosphereHeight = "atmosphere-height";
+
+const std::string Atmosphere::kIterationCount = "iterations-count";
+
+const std::string Atmosphere::kLatitude = "latitude";
+const std::string Atmosphere::kLongitude = "longitude";
+const std::string Atmosphere::kHeightAboveSurface = "height";

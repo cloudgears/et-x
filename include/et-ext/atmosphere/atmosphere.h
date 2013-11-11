@@ -13,14 +13,39 @@ namespace et
 		Atmosphere(RenderContext*, size_t textureSize);
 		
 		void setLightDirection(const vec3&);
+		void setParameters(Dictionary);
 		
-		void updateTexture();
-		et::Texture environmentTexture();
+		void performRendering(bool shouldClear);
+		
+		Texture environmentTexture();
+		
+		Dictionary parameters()
+			{ return _parameters; }
+		
+	public:
+		static Dictionary defaultParameters();
+		
+		static const std::string kAmbientColor;
+		
+		static const std::string kWaveLength;
+		static const std::string kKr;
+		static const std::string kKm;
+		static const std::string kG;
+		static const std::string kSunExponent;
+		static const std::string kRayleighScaleDepth;
+		
+		static const std::string kPlanetRadius;
+		static const std::string kAtmosphereHeight;
+		
+		static const std::string kIterationCount;
+		
+		static const std::string kLatitude;
+		static const std::string kLongitude;
+		static const std::string kHeightAboveSurface;
 		
 	private:
 		void generateGeometry(RenderContext*);
 		void setProgramParameters(Program::Pointer p);
-		void performRendering();
 		
 	private:
 		RenderContext* _rc;
@@ -35,7 +60,10 @@ namespace et
 		Camera _cubemapCamera;
 		CubemapProjectionMatrixArray _cubemapMatrices;
 		
+		Dictionary _parameters;
 		vec3 _lightDirection = unitY;
-		bool _textureValid = false;
+		vec3 _cameraPosition;
+		vec4 _ambientColor;
+		bool _parametersValid = false;
 	};
 }
