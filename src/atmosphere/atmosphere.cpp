@@ -6,17 +6,19 @@
 using namespace et;
 
 extern const std::string atmospherePerVertexVS;
-extern const std::string atmospherePerVertexFS;
 extern const std::string atmospherePerPixelVS;
+extern const std::string planetPerPixelVS;
+extern const std::string atmospherePerVertexFS;
 extern const std::string atmospherePerPixelFS;
-extern const std::string groundVS;
-extern const std::string groundFS;
-extern const std::string environmentVS;
-extern const std::string environmentFS;
+extern const std::string planetPerPixelFS;
+
+#define DRAW_WIREFRAME	0
 
 Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
 	_rc(rc)
 {
+	setParameters(defaultParameters());
+	
 	ObjectsCache localCache;
 	
 	_atmospherePerVertexProgram = rc->programFactory().genProgram("et~atmosphere~per-vertex~program",
@@ -26,13 +28,15 @@ Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
 	_atmospherePerPixelProgram = rc->programFactory().genProgram("et~atmosphere~per-pixel~program",
 		atmospherePerPixelVS, atmospherePerPixelFS);
 	setProgramParameters(_atmospherePerPixelProgram);
+	
+	_planetPerPixelProgram = rc->programFactory().genProgram("et~planet~per-pixel~program",
+		planetPerPixelVS, planetPerPixelFS);
+	setProgramParameters(_planetPerPixelProgram);
 		
 	_framebuffer = rc->framebufferFactory().createCubemapFramebuffer(textureSize, "et~atmosphere~cubemap",
-		GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0, 0);
+		GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT);
 	
 	generateGeometry(rc);
-	
-	setParameters(defaultParameters());
 }
 
 Dictionary Atmosphere::defaultParameters()
@@ -69,10 +73,7 @@ Dictionary Atmosphere::defaultParameters()
 
 void Atmosphere::setProgramParameters(Program::Pointer prog)
 {
-	vec3 waveLength;
-	waveLength.x = _parameters.floatForKeyPath({kWaveLength, "0"})->content;
-	waveLength.y = _parameters.floatForKeyPath({kWaveLength, "1"})->content;
-	waveLength.z = _parameters.floatForKeyPath({kWaveLength, "2"})->content;
+	if (_parametersValid) return;
 	
 	float fRayleighScaleDepth = _parameters.floatForKey(kRayleighScaleDepth)->content;
 	float fESun = _parameters.floatForKey(kSunExponent)->content;
@@ -82,30 +83,19 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 	float innerRadius = _parameters.floatForKey(kPlanetRadius)->content;
 	float atmosphereHeight = _parameters.floatForKey(kAtmosphereHeight)->content;
 	float outerRadius = innerRadius + atmosphereHeight;
-	float lat = _parameters.floatForKey(kLatitude)->content;
-	float lon = _parameters.floatForKey(kLongitude)->content;
-	float h = innerRadius + atmosphereHeight * _parameters.floatForKey(kHeightAboveSurface)->content;
 	
-	_ambientColor.x =  _parameters.floatForKeyPath({kAmbientColor, "0"})->content;
-	_ambientColor.y =  _parameters.floatForKeyPath({kAmbientColor, "1"})->content;
-	_ambientColor.z =  _parameters.floatForKeyPath({kAmbientColor, "2"})->content;
+	vec3 waveLength(1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "0"})->content, 4.0f),
+		1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "1"})->content, 4.0f),
+		1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "2"})->content, 4.0f));
 	
 	int numSamples = _parameters.integerForKey(kIterationCount)->content;
 	
 	float fKr4PI = fKr * 4.0f * PI;
 	float fKm4PI = fKm * 4.0f * PI;
-
-	_cameraPosition = h * fromSpherical(lat, lon);
-	
-	vec3 invWaveLenth(1.0f / std::pow(waveLength.x, 4.0f), 1.0f / std::pow(waveLength.y, 4.0f),
-		1.0f / std::pow(waveLength.z, 4.0f));
-	
-	_cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 0.25f * (outerRadius - innerRadius), 2.0f * outerRadius);
-	_cubemapMatrices = cubemapMatrixProjectionArray(_cubemapCamera.modelViewProjectionMatrix(), _cameraPosition);
 	
 	prog->setUniform("nSamples", numSamples);
 	prog->setUniform("fSamples", static_cast<float>(numSamples));
-	prog->setUniform("v3InvWavelength", invWaveLenth);
+	prog->setUniform("vInvWavelength", waveLength);
 	prog->setUniform("fOuterRadius", outerRadius);
 	prog->setUniform("fOuterRadius2", sqr(outerRadius));
 	prog->setUniform("fInnerRadius", innerRadius);
@@ -119,17 +109,22 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 	prog->setUniform("fKmESun", fKm * fESun);
 	prog->setUniform("fKr4PI", fKr4PI);
 	prog->setUniform("fKm4PI", fKm4PI);
+	prog->setPrimaryLightPosition(_lightDirection);
+	prog->setCameraPosition(_cameraPosition);
 }
 
 void Atmosphere::generateGeometry(RenderContext* rc)
 {
 	auto va = VertexArray::Pointer::create(VertexDeclaration(true, Usage_Position, Type_Vec3), 0);
-	primitives::createIcosahedron(va, 1.0f, true, true, false);
-	primitives::tesselateTriangles(va);
-	primitives::tesselateTriangles(va);
-	auto ia = IndexArray::Pointer::create(IndexArrayFormat_16bit, va->size(), PrimitiveType_Triangles);
-	ia->linearize(va->size());
-	va = primitives::buildIndexArray(va, ia);
+	auto ia = IndexArray::Pointer::create(IndexArrayFormat_32bit, 0, PrimitiveType_Triangles);
+	primitives::createIcosahedron(va, 1.0f, true, false, false);
+	for (size_t i = 0; i < 7; ++i)
+	{
+		primitives::tesselateTriangles(va, ia);
+		ia->resize(va->size());
+		ia->linearize(va->size());
+		va = primitives::buildIndexArray(va, ia);
+	}
 	
 	RawDataAcessor<vec3> pos = va->chunk(Usage_Position).accessData<vec3>(0);
 	for (size_t i = 0, e = va->size(); i < e; ++i)
@@ -139,7 +134,7 @@ void Atmosphere::generateGeometry(RenderContext* rc)
 		BufferDrawType_Static, ia, BufferDrawType_Static);
 }
 
-void Atmosphere::performRendering(bool shouldClear)
+void Atmosphere::performRendering(bool shouldClear, bool renderPlanet)
 {
 	auto& rs = _rc->renderState();
 
@@ -152,33 +147,49 @@ void Atmosphere::performRendering(bool shouldClear)
 	bool depthMask = rs.depthMask();
 	vec4 clearColor = rs.clearColor();
 	
-	rs.setBlend(true, BlendState_Additive);
-	rs.setCulling(true, CullState_Front);
-	rs.setDepthTest(false);
-	rs.setDepthMask(false);
+	if (renderPlanet)
+	{
+		rs.bindProgram(_planetPerPixelProgram);
+		setProgramParameters(_planetPerPixelProgram);
+	}
 	
-	rs.bindVertexArray(_atmosphereVAO);
 	rs.bindProgram(_atmospherePerPixelProgram);
-	
-	if (!_parametersValid)
-		setProgramParameters(_atmospherePerPixelProgram);
-	
-	_atmospherePerPixelProgram->setPrimaryLightPosition(_lightDirection);
-	_atmospherePerPixelProgram->setCameraPosition(_cameraPosition);
+	setProgramParameters(_atmospherePerPixelProgram);
 	
 	if (shouldClear)
 		rs.setClearColor(_ambientColor);
 	
+	rs.setDepthTest(true);
+	rs.setBlend(true, BlendState_Additive);
+	rs.setCulling(true, CullState_Front);
+	rs.bindVertexArray(_atmosphereVAO);
 	rs.bindFramebuffer(_framebuffer);
 	for (uint32_t i = 0; i < 6; ++i)
 	{
 		_framebuffer->setCurrentCubemapFace(i);
 		
 		if (shouldClear)
-			_rc->renderer()->clear(true, false);
+		{
+			rs.setDepthMask(true);
+			_rc->renderer()->clear(true, true);
+		}
 		
+		rs.setDepthMask(false);
 		_atmospherePerPixelProgram->setMVPMatrix(_cubemapMatrices[i]);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		
+		if (renderPlanet)
+		{
+			rs.setDepthMask(true);
+			rs.setBlend(false);
+			rs.setCulling(true, CullState_Back);
+			rs.bindProgram(_planetPerPixelProgram);
+			_planetPerPixelProgram->setMVPMatrix(_cubemapMatrices[i]);
+			_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+			rs.setBlend(true, BlendState_Additive);
+			rs.bindProgram(_atmospherePerPixelProgram);
+			rs.setCulling(true, CullState_Front);
+		}
 	}
 	
 	rs.bindFramebuffer(boundFramebuffer);
@@ -201,11 +212,27 @@ et::Texture Atmosphere::environmentTexture()
 void Atmosphere::setLightDirection(const vec3& l)
 {
 	_lightDirection = l;
-}
+} 
 
 void Atmosphere::setParameters(Dictionary d)
 {
 	_parameters->content = d->content;
+	
+	float innerRadius = _parameters.floatForKey(kPlanetRadius)->content;
+	float atmosphereHeight = _parameters.floatForKey(kAtmosphereHeight)->content;
+	float outerRadius = innerRadius + atmosphereHeight;
+	float lat = _parameters.floatForKey(kLatitude)->content;
+	float lon = _parameters.floatForKey(kLongitude)->content;
+	float h = innerRadius + atmosphereHeight * _parameters.floatForKey(kHeightAboveSurface)->content;
+
+	_ambientColor.x = _parameters.floatForKeyPath({kAmbientColor, "0"})->content;
+	_ambientColor.y = _parameters.floatForKeyPath({kAmbientColor, "1"})->content;
+	_ambientColor.z = _parameters.floatForKeyPath({kAmbientColor, "2"})->content;
+	
+	_cameraPosition = h * fromSpherical(lat, lon);
+	_cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 0.1f, 2.0f * outerRadius);
+	_cubemapMatrices = cubemapMatrixProjectionArray(_cubemapCamera.modelViewProjectionMatrix(), _cameraPosition);
+	
 	_parametersValid = false;
 }
 
@@ -219,7 +246,7 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	uniform mat4 mModelViewProjection;
 	uniform vec3 vCamera;
 	uniform vec3 vPrimaryLight;
-	uniform vec3 v3InvWavelength;
+	uniform vec3 vInvWavelength;
 	uniform float fOuterRadius;
 	uniform float fOuterRadius2;
 	uniform float fInnerRadius;
@@ -235,7 +262,7 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	uniform int nSamples;
 	
 	etVertexIn vec3 Vertex;
-	etVertexOut vec3 v3Direction;
+	etVertexOut vec3 vDirection;
 	etVertexOut vec3 aFrontColor;
 	etVertexOut vec3 aSecondaryColor;
 
@@ -248,52 +275,52 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	void main(void)
 	{
 		float fCameraHeight = length(vCamera);
-		vec3 v3Ray = fOuterRadius * Vertex - vCamera;
-		float fFar = length(v3Ray);
-		v3Ray /= fFar;
+		vec3 vRay = fOuterRadius * Vertex - vCamera;
+		float fFar = length(vRay);
+		vRay /= fFar;
 	
-		vec3 v3Start = vCamera;
+		vec3 vStart = vCamera;
 		float fStartAngle = 0.0;
 		float fStartOffset = 0.0;
 		if (fCameraHeight < fOuterRadius)
 		{
-			fStartAngle = dot(v3Ray, v3Start) / length(v3Start);
+			fStartAngle = dot(vRay, vStart) / length(vStart);
 			fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
 		}
 		else
 		{
-			float B = 2.0 * dot(vCamera, v3Ray);
+			float B = 2.0 * dot(vCamera, vRay);
 			float C = fCameraHeight * fCameraHeight - fOuterRadius2;
 			float fDet = max(0.0, B * B - 4.0 * C);
 			float fNear = -0.5 * (B + sqrt(fDet));
 			fFar -= fNear;
 			
-			v3Start += v3Ray * fNear;
-			fStartAngle = dot(v3Ray, v3Start) / fOuterRadius;
+			vStart += vRay * fNear;
+			fStartAngle = dot(vRay, vStart) / fOuterRadius;
 			fStartOffset = exp(-1.0 / fScaleDepth) * scale(fStartAngle);
 		}
 		
 		float fSampleLength = fFar / fSamples;
 		float fScaledLength = fSampleLength * fScale;
-		vec3 v3SampleRay = v3Ray * fSampleLength;
-		vec3 v3SamplePoint = v3Start;
+		vec3 vSampleRay = vRay * fSampleLength;
+		vec3 vSamplePoint = vStart;
 		
-		vec3 v3FrontColor = vec3(0.0);
+		vec3 vFrontColor = vec3(0.0);
 		for(int i = 0; i < nSamples; i++)
 		{
-			float fHeight = length(v3SamplePoint);
+			float fHeight = length(vSamplePoint);
 			float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight));
-			float fLightAngle = dot(vPrimaryLight, v3SamplePoint) / fHeight;
-			float fCameraAngle = dot(v3Ray, v3SamplePoint) / fHeight;
+			float fLightAngle = dot(vPrimaryLight, vSamplePoint) / fHeight;
+			float fCameraAngle = dot(vRay, vSamplePoint) / fHeight;
 			float fScatter = fStartOffset + fDepth * (scale(fLightAngle) - scale(fCameraAngle));
-			vec3 v3Attenuate = exp(-fScatter * (v3InvWavelength * fKr4PI + fKm4PI));
-			v3FrontColor += v3Attenuate * (fDepth * fScaledLength);
-			v3SamplePoint += v3SampleRay;
+			vec3 vAttenuate = exp(-fScatter * (vInvWavelength * fKr4PI + fKm4PI));
+			vFrontColor += vAttenuate * (fDepth * fScaledLength);
+			vSamplePoint += vSampleRay;
 		}
 		
-		v3Direction = vCamera - fOuterRadius * Vertex;
-		aFrontColor = fKrESun * (v3FrontColor * v3InvWavelength);
-		aSecondaryColor = fKmESun * v3FrontColor;
+		vDirection = vCamera - fOuterRadius * Vertex;
+		aFrontColor = fKrESun * (vFrontColor * vInvWavelength);
+		aSecondaryColor = fKmESun * vFrontColor;
 		
 		gl_Position = mModelViewProjection * vec4(Vertex, 1.0);
 	}
@@ -308,13 +335,13 @@ const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
 	uniform float g;
 	uniform float g2;
 	
-	etFragmentIn vec3 v3Direction;
+	etFragmentIn vec3 vDirection;
 	etFragmentIn vec3 aFrontColor;
 	etFragmentIn vec3 aSecondaryColor;
 	
 	void main (void)
 	{
-		float fCos = dot(vPrimaryLight, v3Direction) / length(v3Direction);
+		float fCos = dot(vPrimaryLight, vDirection) / length(vDirection);
 		float fRayleighPhase = 0.75 * (1.0 + fCos*fCos);
 		float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * (1.0 + fCos*fCos) / pow(1.0 + g2 - 2.0*g*fCos, 1.5);
 		vec4 aColor = vec4(fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor, 1.0);
@@ -340,12 +367,25 @@ const std::string atmospherePerPixelVS = ET_TO_CONST_CHAR
 	}
 );
 
+const std::string planetPerPixelVS = ET_TO_CONST_CHAR
+   (
+	uniform mat4 mModelViewProjection;
+	uniform float fInnerRadius;
+	etVertexIn vec3 Vertex;
+	etVertexOut vec3 vVertex;
+	void main(void)
+	{
+		vVertex = fInnerRadius * Vertex;
+		gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
+	}
+);
+
 const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
    (
 	precision highp float;
 	uniform vec3 vCamera;
 	uniform vec3 vPrimaryLight;
-	uniform vec3 v3InvWavelength;
+	uniform vec3 vInvWavelength;
 	uniform float fOuterRadius;
 	uniform float fOuterRadius2;
 	uniform float fInnerRadius;
@@ -373,67 +413,123 @@ const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
 	void main(void)
 	{
 		float fCameraHeight = length(vCamera);
-		vec3 v3Ray = vVertex - vCamera;
-		float fFar = length(v3Ray);
-		v3Ray /= fFar;
+		vec3 vRay = vVertex - vCamera;
+		float fFar = length(vRay);
+		vRay /= fFar;
 		
 /*
- *		uncomment to enable atmosphere from space
+ * from space
  *
- *
-		vec3 v3Start = vCamera;
-		float fStartAngle = 0.0;
-		float fStartOffset = 0.0;
-		if (fCameraHeight < fOuterRadius)
 		{
-			fStartAngle = dot(v3Ray, v3Start) / length(v3Start);
-			fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
-		}
-		else
-		{
-			float B = 2.0 * dot(vCamera, v3Ray);
+			float B = 2.0 * dot(vCamera, vRay);
 			float C = fCameraHeight * fCameraHeight - fOuterRadius2;
 			float fDet = max(0.0, B * B - 4.0 * C);
 			float fNear = -0.5 * (B + sqrt(fDet));
 			fFar -= fNear;
 			
-			v3Start += v3Ray * fNear;
-			fStartAngle = dot(v3Ray, v3Start) / fOuterRadius;
-			fStartOffset = exp(-1.0 / fScaleDepth) * scale(fStartAngle);
+			vec3 vStart = vCamera + vRay * fNear;
+			float fStartAngle = dot(vRay, vStart) / fOuterRadius;
+			float fStartOffset = exp(-1.0 / fScaleDepth) * scale(fStartAngle);
 		}
- *
  */
-		vec3 v3Start = vCamera;
-		float fStartAngle = dot(v3Ray, v3Start) / length(v3Start);
-		float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
 		
+		float fStartAngle = dot(vRay, vCamera) / fCameraHeight;
+		float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
 		float fSampleLength = fFar / fSamples;
 		float fScaledLength = fSampleLength * fScale;
-		vec3 v3SampleRay = v3Ray * fSampleLength;
-		vec3 v3SamplePoint = v3Start;
+		vec3 vSampleRay = vRay * fSampleLength;
+		vec3 vSamplePoint = vCamera;
 		
-		vec3 v3FrontColor = vec3(0.0);
+		vec3 vFrontColor = vec3(0.0);
 		for(int i = 0; i < nSamples; i++)
 		{
-			float fHeight = length(v3SamplePoint);
+			float fHeight = length(vSamplePoint);
 			float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight));
-			float fLightAngle = dot(vPrimaryLight, v3SamplePoint) / fHeight;
-			float fCameraAngle = dot(v3Ray, v3SamplePoint) / fHeight;
+			float fLightAngle = dot(vPrimaryLight, vSamplePoint) / fHeight;
+			float fCameraAngle = dot(vRay, vSamplePoint) / fHeight;
 			float fScatter = fStartOffset + fDepth * (scale(fLightAngle) - scale(fCameraAngle));
-			vec3 v3Attenuate = exp(-fScatter * (v3InvWavelength * fKr4PI + fKm4PI));
-			v3FrontColor += v3Attenuate * (fDepth * fScaledLength);
-			v3SamplePoint += v3SampleRay;
+			vec3 vAttenuate = exp(-fScatter * (vInvWavelength * fKr4PI + fKm4PI));
+			vFrontColor += vAttenuate * (fDepth * fScaledLength);
+			vSamplePoint += vSampleRay;
 		}
 		
-		vec3 aFrontColor = fKrESun * (v3FrontColor * v3InvWavelength);
-		vec3 aSecondaryColor = fKmESun * v3FrontColor;
+		float fCos = dot(vPrimaryLight, vRay);
+		float fOnePlusCos2 = 1.0 + fCos * fCos;
 		
-		float fCos = -dot(vPrimaryLight, v3Ray);
-		float fRayleighPhase = 0.75 * (1.0 + fCos*fCos);
-		float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * (1.0 + fCos*fCos) / pow(1.0 + g2 - 2.0*g*fCos, 1.5);
-		vec4 aColor = vec4(fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor, 1.0);
-		etFragmentOut = 1.0 - exp(-aColor);
+		float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * fOnePlusCos2 / pow(1.0 + g2 + 2.0 * g * fCos, 1.5);
+		float fRayleighPhase = 0.75 * fOnePlusCos2;
+		
+		vec3 aColor = (fRayleighPhase * fKrESun) * (vFrontColor * vInvWavelength) +
+			(fMiePhase * fKmESun) * vFrontColor;
+		
+		etFragmentOut = vec4(1.0 - exp(-aColor), 1.0);
 	}
+);
+
+const std::string planetPerPixelFS = ET_TO_CONST_CHAR
+(
+ precision highp float;
+ uniform vec3 vCamera;
+ uniform vec3 vPrimaryLight;
+ uniform vec3 vInvWavelength;
+ uniform float fOuterRadius;
+ uniform float fOuterRadius2;
+ uniform float fInnerRadius;
+ uniform float fInnerRadius2;
+ uniform float fKrESun;
+ uniform float fKmESun;
+ uniform float fKr4PI;
+ uniform float fKm4PI;
+ uniform float fScale;
+ uniform float fScaleDepth;
+ uniform float fScaleOverScaleDepth;
+ uniform float fSamples;
+ uniform int nSamples;
+ 
+ etFragmentIn vec3 vVertex;
+ 
+ float scale(float fCos)
+ {
+	 float x = 1.0 - fCos;
+	 return fScaleDepth * exp(x * (0.459 + x * (3.83 + x * (x * 5.25 - 6.80))) - 0.00287);
+ }
+ 
+ void main(void)
+ {
+	 vec3 vPos = vVertex;
+	 vec3 vRay = vPos - vCamera;
+	 float fFar = length(vRay);
+	 vRay /= fFar;
+	 
+	 vec3 vStart = vCamera;
+	 float fCameraHeight = length(vCamera);
+	 float fDepth = exp((fInnerRadius - fCameraHeight) / fScaleDepth);
+	 float fCameraAngle = -dot(vRay, vPos) / length(vPos);
+	 float fLightAngle = dot(vPrimaryLight, vPos) / length(vPos);
+	 float fCameraScale = scale(fCameraAngle);
+	 float fLightScale = scale(fLightAngle);
+	 float fCameraOffset = fDepth * fCameraScale;
+	 float fTemp = (fLightScale + fCameraScale);
+	 float fSampleLength = fFar / fSamples;
+	 float fScaledLength = fSampleLength * fScale;
+	 vec3 vSampleRay = vRay * fSampleLength;
+	 vec3 vSamplePoint = vStart;
+	 vec3 vAttenuate = vec3(0.0);
+	 vec3 vFrontColor = vec3(0.0);
+	 
+	 for (int i = 0; i < nSamples; ++i)
+	 {
+		 float fHeight = length(vSamplePoint);
+		 float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight));
+		 float fScatter = fDepth * fTemp - fCameraOffset;
+		 vAttenuate = exp(-fScatter * (vInvWavelength * fKr4PI + fKm4PI));
+		 vFrontColor += vAttenuate * (fDepth * fScaledLength);
+		 vSamplePoint += vSampleRay;
+	 }
+	 
+	 vec3 aColor = (vFrontColor + 0.25 * vAttenuate) * (vInvWavelength * fKrESun + fKmESun);
+	 etFragmentOut = vec4(1.0 - exp(-aColor), 1.0);
+ }
 );
 
 /*

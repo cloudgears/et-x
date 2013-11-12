@@ -15,7 +15,7 @@ namespace et
 		void setLightDirection(const vec3&);
 		void setParameters(Dictionary);
 		
-		void performRendering(bool shouldClear);
+		void performRendering(bool shouldClear, bool renderPlanet);
 		
 		Texture environmentTexture();
 		
@@ -54,6 +54,8 @@ namespace et
 		
 		Program::Pointer _atmospherePerVertexProgram;
 		Program::Pointer _atmospherePerPixelProgram;
+		
+		Program::Pointer _planetPerPixelProgram;
 		
 		Framebuffer::Pointer _framebuffer;
 
