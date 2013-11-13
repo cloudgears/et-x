@@ -241,6 +241,12 @@ void Atmosphere::setParameters(Dictionary d)
 // Atmosphere per vertex
 //
 ////////////////////////////////////////////////////////////////
+#if (ET_PLATFORM_WIN)
+#	define PRECISION_STRING
+#else
+#	define PRECISION_STRING precision highp float;
+#endif
+
 const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
    (
 	uniform mat4 mModelViewProjection;
@@ -328,7 +334,8 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 
 const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
    (
-	precision highp float;
+	PRECISION_STRING
+
 	uniform vec3 vPrimaryLight;
 	uniform vec3 vCamera;
 	
@@ -382,7 +389,8 @@ const std::string planetPerPixelVS = ET_TO_CONST_CHAR
 
 const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
    (
-	precision highp float;
+	PRECISION_STRING
+
 	uniform vec3 vCamera;
 	uniform vec3 vPrimaryLight;
 	uniform vec3 vInvWavelength;
@@ -468,7 +476,6 @@ const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
 
 const std::string planetPerPixelFS = ET_TO_CONST_CHAR
 (
- precision highp float;
  uniform vec3 vCamera;
  uniform vec3 vPrimaryLight;
  uniform vec3 vInvWavelength;
