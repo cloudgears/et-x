@@ -94,6 +94,8 @@ namespace et
 			
 			bool verticalBounce() const
 				{ return (_bounce & Bounce_Vertical) != 0; }
+			
+			Element* getActiveElement(const PointerInputInfo&, Element* root);
 
 		private:
 			enum BounceDirection

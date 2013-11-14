@@ -196,24 +196,42 @@ void Scroll::invalidateChildren()
 	}
 }
 
+Element* Scroll::getActiveElement(const PointerInputInfo& p, Element* root)
+{
+	if (root == this)
+	{
+		for (auto cI = root->children().rbegin(), cE = root->children().rend(); cI != cE; ++cI)
+		{
+			auto el = getActiveElement(p, cI->ptr());
+			if (el != nullptr)
+				return el;
+		}
+	}
+	else if (root->enabled() && root->visible() && root->containsPoint(p.pos, p.normalizedPos))
+	{
+		for (auto cI = root->children().rbegin(), cE = root->children().rend(); cI != cE; ++cI)
+		{
+			auto el = getActiveElement(p, cI->ptr());
+			if (el != nullptr)
+				return el;
+		}
+		return root;
+	}
+	
+	return nullptr;
+}
+
 void Scroll::broadcastPressed(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos,
 		p.scroll, p.id, p.timestamp, p.origin);
-
-	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
+	
+	_selectedElement = Element::Pointer(getActiveElement(globalPos, this));
+	if (_selectedElement.valid())
 	{
-		Element* el = i->ptr();
-		if (el->enabled() && el->visible() && el->containsPoint(globalPos.pos, globalPos.normalizedPos))
-		{
-			vec2 posInElement = el->positionInElement(globalPos.pos);
-			if (el->pointerPressed(PointerInputInfo(p.type, posInElement, globalPos.normalizedPos,
-				p.scroll, p.id, p.timestamp, p.origin)))
-			{
-				_selectedElement = Element::Pointer(el);
-				break;
-			}
-		}
+		PointerInputInfo localPos(p.type, _selectedElement->positionInElement(globalPos.pos),
+			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
+		_selectedElement->pointerPressed(localPos);
 	}
 }
 
@@ -221,15 +239,13 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
-
-	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
+	
+	Element* el = _selectedElement.valid() ? _selectedElement.ptr() : getActiveElement(globalPos, this);
+	if (el != nullptr)
 	{
-		Element* el = i->ptr();
-		if (el-visible() && el->enabled())
-		{
-			el->pointerMoved(PointerInputInfo(p.type, el->positionInElement(globalPos.pos),
-				globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
-		}
+		PointerInputInfo localPos(p.type, el->positionInElement(globalPos.pos),
+			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
+		el->pointerMoved(localPos);
 	}
 }
 
@@ -238,16 +254,13 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 
-	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
+	Element* el = _selectedElement.valid() ? _selectedElement.ptr() : getActiveElement(globalPos, this);
+	if (el != nullptr)
 	{
-		Element* el = i->ptr();
-		if (el-visible() && el->enabled())
-		{
-			el->pointerReleased(PointerInputInfo(p.type, el->positionInElement(globalPos.pos),
-				globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
-		}
+		PointerInputInfo localPos(p.type, el->positionInElement(globalPos.pos),
+			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
+		el->pointerReleased(localPos);
 	}
-	
 	_selectedElement.reset(nullptr);
 }
 
@@ -255,17 +268,14 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p)
 {
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
-
-	for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
-	{
-		Element* el = i->ptr();
-		if (el-visible() && el->enabled())
-		{
-			el->pointerCancelled(PointerInputInfo(p.type, el->positionInElement(globalPos.pos),
-				globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
-		}
-	}
 	
+	Element* el = _selectedElement.valid() ? _selectedElement.ptr() : getActiveElement(globalPos, this);
+	if (el != nullptr)
+	{
+		PointerInputInfo localPos(p.type, el->positionInElement(globalPos.pos),
+			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
+		el->pointerCancelled(localPos);
+	}
 	_selectedElement.reset(nullptr);
 }
 
