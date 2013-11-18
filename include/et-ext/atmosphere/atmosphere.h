@@ -15,6 +15,8 @@ namespace et
 		void setLightDirection(const vec3&);
 		void setParameters(Dictionary);
 		
+		void renderAtmosphereWithGeometry(const Camera&);
+		
 		void performRendering(bool shouldClear, bool renderPlanet);
 		
 		Texture environmentTexture();
@@ -22,8 +24,11 @@ namespace et
 		Dictionary parameters()
 			{ return _parameters; }
 		
+		void setPlanetFragmentShader(const std::string&);
+		
 	public:
 		static Dictionary defaultParameters();
+		static const std::string& defaultPlanetFragmentShader();
 		
 		static const std::string kAmbientColor;
 		
@@ -55,6 +60,7 @@ namespace et
 		Program::Pointer _atmospherePerVertexProgram;
 		Program::Pointer _atmospherePerPixelProgram;
 		
+		Program::Pointer _planetPerVertexProgram;
 		Program::Pointer _planetPerPixelProgram;
 		
 		Framebuffer::Pointer _framebuffer;
