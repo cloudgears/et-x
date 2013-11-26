@@ -25,16 +25,21 @@ namespace et
 			void loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache);
 			void unload();
 			
+			bool hasImage(const std::string& key) const;
+			
 			const s2d::Image& image(const std::string& key) const;
-			s2d::ImageList imagesForTexture(Texture t) const;
+			
+			std::vector<Image> imagesForTexture(Texture t) const;
 			
 			Texture firstTexture() const;
 			
 		private:
 			typedef std::map<std::string, Texture> TextureMap;
+			typedef std::map<std::string, Image> ImageMap;
 
 			TextureMap _textures;
-			s2d::ImageMap _images;
+			ImageMap _images;
+			
 			bool _loaded;
 		};
 	}

@@ -204,7 +204,5 @@ namespace et
 		};
 
 		typedef DataStorage<SceneVertex> SceneVertexList;
-		typedef std::vector<Image> ImageList;
-		typedef std::map<std::string, Image> ImageMap;
 	}
 }

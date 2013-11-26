@@ -55,7 +55,9 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 				textureName = application().environment().resolveScalableFileName(filePath + textureId, 1);
 			
 			_textures[textureId] = rc->textureFactory().loadTexture(textureName, cache);
-			_textures[textureId]->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
+			
+			if (_textures[textureId].valid())
+				_textures[textureId]->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
 		}
 		else if (token == "image:")
 		{
@@ -133,21 +135,30 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 	_loaded = true;
 }
 
-const s2d::Image& TextureAtlas::image(const std::string& key) const
+bool TextureAtlas::hasImage(const std::string& key) const
 {
-	if (key.length() == 0) return _emptyImage;
-	
-	auto i = _images.find(key);
-	
-	if (i == _images.end())
-		return _emptyImage;
-	
-	return i->second;
+	return _images.count(key) > 0;
 }
 
-ImageList TextureAtlas::imagesForTexture(Texture t) const
+const s2d::Image& TextureAtlas::image(const std::string& key) const
 {
-	ImageList result;
+	assert(key.length() > 0);
+	
+	if (_images.count(key) == 0)
+		return _emptyImage;
+	
+	return _images.at(key);
+/*
+	auto i = _images.find(key);
+	if (i == _images.end())
+		return _emptyImage;
+	return i->second;
+*/
+}
+
+std::vector<Image> TextureAtlas::imagesForTexture(Texture t) const
+{
+	std::vector<Image> result;
 	
 	for (auto& i : _images)
 	{
