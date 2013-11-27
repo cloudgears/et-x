@@ -130,7 +130,7 @@ void Atmosphere::generateGeometry(RenderContext* rc)
 		primitives::tesselateTriangles(va, ia);
 		ia->resize(va->size());
 		ia->linearize(va->size());
-		va = primitives::buildIndexArray(va, ia);
+		va = primitives::buildLinearIndexArray(va, ia);
 	}
 	
 	RawDataAcessor<vec3> pos = va->chunk(Usage_Position).accessData<vec3>(0);
