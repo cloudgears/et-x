@@ -8,6 +8,7 @@
 #pragma once
 
 #include <et/core/singleton.h>
+#include <et/app/events.h>
 
 namespace et
 {
