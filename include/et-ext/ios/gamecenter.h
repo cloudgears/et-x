@@ -23,10 +23,16 @@ namespace et
 		void showAchievements();
 		void unlockAchievement(const std::string&);
 		
+		ET_DECLARE_EVENT0(unavailable)
+		ET_DECLARE_EVENT1(reportingFailed, std::string)
+		ET_DECLARE_EVENT1(achievementFailedToUnlock, std::string)
+				
 	private:
 		GameCenter();
 		
 		ET_SINGLETON_COPY_DENY(GameCenter)
+		
+		void authenticationCompleted();
 				
 	private:
 		GameCenterPrivate* _private;
