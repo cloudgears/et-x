@@ -15,7 +15,7 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(Button)
 
 Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _title(title), _font(font),
-	_textSize(font->measureStringSize(title, true)), _textColor(vec3(0.0f), 1.0f),
+	_textSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(State_Default),
 	_imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit), _horizontalAlignment(Alignment_Center),
 	_verticalAlignment(Alignment_Center), _pressed(false), _hovered(false), _selected(false)
@@ -117,7 +117,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 		vec4 aColor = _state == State_Pressed ? _textPressedColor : _textColor;
 		if (aColor.w > 0.0f)
 		{
-			buildStringVertices(_textVertices, _font->buildString(_title, true), Alignment_Near,
+			buildStringVertices(_textVertices, _font->buildString(_title), Alignment_Near,
 				Alignment_Near, textOrigin, aColor * alphaScale, transform);
 		}
 	}
@@ -238,7 +238,7 @@ void Button::setTitle(const std::string& t)
 	if (_title == t) return;
 
 	_title = t;
-	_textSize = _font->measureStringSize(_title, true);
+	_textSize = _font->measureStringSize(_title);
 	invalidateContent();
 }
 
@@ -276,7 +276,7 @@ void Button::adjustSizeForText(const std::string& text, float duration)
 
 vec2 Button::sizeForText(const std::string& text)
 {
-	vec2 textSize = _font.valid() ? _font->measureStringSize("AA" + text + "AA", true) : vec2(0.0f);
+	vec2 textSize = _font.valid() ? _font->measureStringSize("AA" + text + "AA") : vec2(0.0f);
 	
 	for (size_t i = 0; i < State_max; ++i)
 		textSize = maxv(textSize, _background[i].descriptor.size);
