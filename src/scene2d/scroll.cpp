@@ -47,14 +47,14 @@ void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
 	if (!contentValid())
 		buildVertices(rc, r);
 
-	if (_scrollbarsVertices.lastElementIndex() > 0)
-		r.addVertices(_scrollbarsVertices, r.lastUsedTexture(), r.defaultProgram(), this);
+	if (_overlayVertices.lastElementIndex() > 0)
+		r.addVertices(_overlayVertices, r.lastUsedTexture(), r.defaultProgram(), this);
 }
 
 void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 {
 	_backgroundVertices.setOffset(0);
-	_scrollbarsVertices.setOffset(0);
+	_overlayVertices.setOffset(0);
 
 	if (_backgroundColor.w > 0.0f)
 	{
@@ -72,9 +72,12 @@ void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 		vec4 adjutsedColor = _scrollbarsColor;
 		adjutsedColor.w *= _scrollbarsAlpha;
 		
-		buildColorVertices(_scrollbarsVertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
+		buildColorVertices(_overlayVertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
 		  Element2d::finalTransform());
 	}
+	
+	if (_overlayColor.w > 0.0f)
+		buildColorVertices(_overlayVertices, rect(vec2(0.0f), size()), _overlayColor, Element2d::finalTransform());
 	
 	setContentValid();
 }
@@ -538,4 +541,10 @@ vec2 Scroll::contentSize()
 {
 	adjustContentSize();
 	return _contentSize;
+}
+
+void Scroll::setOverlayColor(const vec4& color)
+{
+	_overlayColor = color;
+	invalidateContent();
 }
