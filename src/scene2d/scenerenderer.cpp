@@ -251,7 +251,8 @@ std::string et_scene2d_default_shader_vs =
 	"etVertexIn vec4 TexCoord0;"
 	"etVertexIn vec4 Color;"
 
-	"etVertexOut vec2 texCoord;"
+	"etVertexOut etHighp vec2 texCoord;"
+	"etVertexOut etHighp vec2 screenSpaceTexCoord;"
 	"etVertexOut etLowp vec4 tintColor;"
 	"etVertexOut etLowp vec4 additiveColor;"
 
@@ -263,6 +264,7 @@ std::string et_scene2d_default_shader_vs =
 		"tintColor = alphaScaledColor * (1.0 - TexCoord0.w);"
 		"vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
 		"gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
+		"screenSpaceTexCoord = 0.5 + 0.5 * gl_Position.xy / gl_Position.w;"
 	"}";
 
 std::string et_scene2d_default_shader_fs =

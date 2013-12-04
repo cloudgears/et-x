@@ -106,14 +106,6 @@ namespace et
 			ElementLayout _desiredLayout;
 			
 			vec4 _color;
-/*
-			rect _frame;
-			vec2 _scale;
-			vec2 _pivotPoint;
-			float _angle;
-			rect _desiredFrame;
-			vec2 _desiredScale;
-*/
 		};
 	}
 }

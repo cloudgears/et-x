@@ -197,10 +197,10 @@ namespace et
 			ProgramUniform additionalOffsetAndAlpha;
 			
 			bool valid() const
-			{ return program.valid(); }
+				{ return program.valid(); }
 			
 			bool invalid() const
-			{ return program.invalid(); }
+				{ return program.invalid(); }
 		};
 
 		typedef DataStorage<SceneVertex> SceneVertexList;
