@@ -38,6 +38,7 @@ namespace et
 			void adjustContentSize();
 			
 			void setBackgroundColor(const vec4& color);
+			void setOverlayColor(const vec4& color);
 			void setScrollbarsColor(const vec4&);
 						
 			const vec2& lastElementIndex() const
@@ -109,15 +110,18 @@ namespace et
 			Element::Pointer _selectedElement;
 			
 			SceneVertexList _backgroundVertices;
-			SceneVertexList _scrollbarsVertices;
+			SceneVertexList _overlayVertices;
 
 			Vector2Animator _offsetAnimator;
+			
 			PointerInputInfo _currentPointer;
 			PointerInputInfo _previousPointer;
+			
 			mat4 _localFinalTransform;
 			mat4 _localInverseTransform;
 			vec4 _backgroundColor;
 			vec4 _scrollbarsColor;
+			vec4 _overlayColor;
 			vec2 _contentSize;
 			vec2 _offset;
 			vec2 _velocity;
