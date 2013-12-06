@@ -100,6 +100,7 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 	float fKr4PI = fKr * 4.0f * PI;
 	float fKm4PI = fKm * 4.0f * PI;
 	
+	prog->setUniform("ambientColor", _ambientColor);
 	prog->setUniform("nSamples", numSamples);
 	prog->setUniform("fSamples", static_cast<float>(numSamples));
 	prog->setUniform("vInvWavelength", waveLength);
@@ -148,23 +149,25 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam)
 	Camera adjustedCamera(cam);
 	adjustedCamera.lookAt(_cameraPosition, _cameraPosition - cam.direction());
 
-	bool shouldDrawPlanet =
-		adjustedCamera.frustum().containSphere(Sphere(vec3(0.0f), _parameters.floatForKey(kPlanetRadius)->content));
-	
 	rs.bindVertexArray(_atmosphereVAO);
-	rs.setBlend(false);
 	rs.setDepthMask(true);
 	rs.setDepthTest(true);
+	
+	bool shouldDrawPlanet =
+		adjustedCamera.frustum().containSphere(Sphere(vec3(0.0f), _parameters.floatForKey(kPlanetRadius)->content));
 
 	if (shouldDrawPlanet)
 	{
+		rs.setBlend(false);
 		rs.setCulling(true, CullState_Back);
 		rs.bindProgram(_planetPerVertexProgram);
+		setProgramParameters(_planetPerVertexProgram);
 		_planetPerVertexProgram->setPrimaryLightPosition(_lightDirection);
 		_planetPerVertexProgram->setCameraProperties(adjustedCamera);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
 	}
 	
+	rs.setBlend(true, BlendState_Additive);
 	rs.setCulling(true, CullState_Front);
 	rs.bindProgram(_atmospherePerVertexProgram);
 	setProgramParameters(_atmospherePerVertexProgram);
@@ -326,9 +329,11 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	uniform int nSamples;
 	
 	etVertexIn vec3 Vertex;
+	etVertexOut vec3 vVertex;
 	etVertexOut vec3 vDirection;
 	etVertexOut vec3 aFrontColor;
 	etVertexOut vec3 aSecondaryColor;
+	etVertexOut vec3 aSourceColor;
 
 	float scale(float fCos)
 	{
@@ -338,10 +343,10 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	
 	void main(void)
 	{
-		vec3 scaledVertex = fOuterRadius * Vertex;
+		vVertex = fOuterRadius * Vertex;
 		
 		float fCameraHeight = length(vCamera);
-		vec3 vRay = scaledVertex - vCamera;
+		vec3 vRay = vVertex - vCamera;
 		float fFar = length(vRay);
 		vRay /= fFar;
 /*
@@ -381,11 +386,11 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 			vSamplePoint += vSampleRay;
 		}
 		
-		vDirection = vCamera - scaledVertex;
+		vDirection = vCamera - vVertex;
 		aFrontColor = fKrESun * (vFrontColor * vInvWavelength);
 		aSecondaryColor = fKmESun * vFrontColor;
 		
-		gl_Position = mModelViewProjection * vec4(scaledVertex, 1.0);
+		gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
 	}
 );
 
@@ -393,12 +398,16 @@ const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
 (
  PRECISION_STRING
  
+ uniform vec4 ambientColor;
  uniform vec3 vPrimaryLight;
  uniform vec3 vCamera;
  
  uniform float g;
  uniform float g2;
- 
+ uniform float fOuterRadius;
+ uniform float fInnerRadius;
+
+ etFragmentIn vec3 vVertex;
  etFragmentIn vec3 vDirection;
  etFragmentIn vec3 aFrontColor;
  etFragmentIn vec3 aSecondaryColor;
@@ -406,9 +415,14 @@ const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
  void main (void)
  {
 	 float fCos = dot(vPrimaryLight, vDirection) / length(vDirection);
-	 float fRayleighPhase = 0.75 * (1.0 + fCos*fCos);
-	 float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * (1.0 + fCos*fCos) / pow(1.0 + g2 - 2.0*g*fCos, 1.5);
-	 vec4 aColor = vec4(fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor, 1.0);
+	 float onePlusfCos2 = 1.0 + fCos * fCos;
+	 float fRayleighPhase = 0.75 * onePlusfCos2;
+	 float fMiePhase = max(0.0, 1.5 * ((1.0 - g2) / (2.0 + g2)) * onePlusfCos2 / pow(1.0 + g2 - 2.0 * g * fCos, 1.5));
+	 
+	 float shadow = 1.0 - exp(-9.21 * clamp(dot(vVertex, vPrimaryLight) / length(vVertex) +
+		sqrt(1.0 - fInnerRadius / fOuterRadius), 0.0, 1.0));
+	 
+	 vec4 aColor = mix(ambientColor, vec4(fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor, 1.0), shadow);
 	 etFragmentOut = 1.0 - exp(-aColor);
  }
  );
