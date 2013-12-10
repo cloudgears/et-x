@@ -24,7 +24,8 @@ const std::string kCompleted = "completed";
 
 using namespace et;
 
-@interface SharedGameCenterDelegate : NSObject <GKGameCenterControllerDelegate>
+@interface SharedGameCenterDelegate : NSObject <GKGameCenterControllerDelegate,
+	GKLeaderboardViewControllerDelegate, GKAchievementViewControllerDelegate>
 
 + (instancetype)instance;
 
@@ -312,6 +313,16 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 	[mainViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)leaderboardViewControllerDidFinish:(GKLeaderboardViewController*)viewController
+{
+	[self gameCenterViewControllerDidFinish:viewController];
+}
+
+- (void)achievementViewControllerDidFinish:(GKAchievementViewController*)viewController
+{
+	[self gameCenterViewControllerDidFinish:viewController];
+}
+
 - (void)showAchievements
 {
 	UIViewController* mainViewController =
@@ -321,7 +332,7 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 	if (gcController != nil)
 	{
 		gcController.gameCenterDelegate = [SharedGameCenterDelegate instance];
-		
+		gcController.achievementDelegate = [SharedGameCenterDelegate instance];
 		[mainViewController presentViewController:gcController animated:YES completion:^
 		 {
 			 ApplicationNotifier notifier;
@@ -353,16 +364,24 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 			{
 				for (GKLeaderboard* leaderboard in leaderboards)
 				{
-					if ([leaderboard.identifier isEqualToString:leaderboardId])
+					NSString* lbId = [leaderboard respondsToSelector:@selector(identifier)] ?
+						leaderboard.identifier : leaderboard.category;
+										
+					if ([lbId isEqualToString:leaderboardId])
 					{
 						gcController.leaderboardCategory = leaderboard.category;
+						
 						gcController.leaderboardTimeScope = leaderboard.timeScope;
-						gcController.leaderboardIdentifier = leaderboardId;
+						
+						if ([gcController respondsToSelector:@selector(setLeaderboardIdentifier:)])
+							gcController.leaderboardIdentifier = leaderboardId;
+						
 						break;
 					}
 				}
 				
 				gcController.gameCenterDelegate = [SharedGameCenterDelegate instance];
+				gcController.leaderboardDelegate = [SharedGameCenterDelegate instance];
 				[mainViewController presentViewController:gcController animated:YES completion:^
 				 {
 					 ApplicationNotifier notifier;
