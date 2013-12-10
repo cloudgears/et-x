@@ -80,6 +80,8 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 	[wString release];
 #endif
 	
+	characterGenerated.invoke(value);
+	
 	return (_chars[value] = desc);
 }
 
@@ -113,7 +115,28 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 	[wString release];
 #endif
 	
+	characterGenerated.invoke(value);
+	
 	return (_boldChars[value] = desc);
+}
+
+void CharacterGenerator::setTexture(Texture tex)
+{
+	_texture = tex;
+}
+
+void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
+{
+	if (desc.params & CharParameter_Bold)
+		_boldChars[desc.value] = desc;
+	else
+		_chars[desc.value] = desc;
+	
+	rect r;
+	r.setOrigin(desc.origin - vec2(1.0f));
+	r.setSize(desc.size + vec2(2.0f));
+	
+	_private->_placer.addPlacedRect(r);
 }
 
 /*

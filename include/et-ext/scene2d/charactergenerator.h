@@ -27,7 +27,7 @@ namespace et
 				const std::string& boldFace, size_t size);
 			
 			~CharacterGenerator();
-
+			
 			const Texture& texture() const 
 				{ return _texture; }
 
@@ -36,6 +36,9 @@ namespace et
 
 			const std::string& face() const
 				{ return _face; }
+			
+			size_t charactersCount() const
+				{ return _chars.size() + _boldChars.size(); }
 
 			CharDescriptor charDescription(int c)
 			{
@@ -48,9 +51,20 @@ namespace et
 				auto i = _boldChars.find(c);
 				return (i != _boldChars.end()) ? i->second : generateBoldCharacter(c, true);
 			}
+			
+			const CharDescriptorMap& characters() const
+				{ return _chars; }
 
+			const CharDescriptorMap& boldCharacters() const
+				{ return _boldChars; }
+			
 			float lineHeight() const
 				{ return _chars.size() ? _chars.begin()->second.size.y : static_cast<float>(_size); }
+			
+			void setTexture(Texture);
+			void pushCharacter(const CharDescriptor&);
+			
+			ET_DECLARE_EVENT1(characterGenerated, int)
 
 		private:
 			CharDescriptor generateCharacter(int value, bool updateTexture);

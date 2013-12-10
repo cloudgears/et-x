@@ -53,7 +53,7 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	BinaryDataStorage emptyData(defaultTextureSize * defaultTextureSize * 4, 0);
 	
 	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize),
-												GL_RGBA, GL_UNSIGNED_BYTE, emptyData, face + "font");
+		GL_RGBA, GL_UNSIGNED_BYTE, emptyData, face + "font");
 }
 
 CharacterGenerator::~CharacterGenerator()
@@ -101,6 +101,8 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 	[wString release];
 #endif
 	
+	characterGenerated.invoke(value);
+	
 	_chars[value] = desc;
 	return desc;
 }
@@ -145,8 +147,29 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 	[wString release];
 #endif
 	
+	characterGenerated.invoke(value);
+
 	_boldChars[value] = desc;
 	return desc;
+}
+
+void CharacterGenerator::setTexture(Texture tex)
+{
+	_texture = tex;
+}
+
+void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
+{
+	if (desc.params & CharParameter_Bold)
+		_boldChars[desc.value] = desc;
+	else
+		_chars[desc.value] = desc;
+	
+	rect r;
+	r.setOrigin(desc.origin - vec2(1.0f));
+	r.setSize(desc.size + vec2(2.0f));
+	
+	_private->_placer.addPlacedRect(r);
 }
 
 /*

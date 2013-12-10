@@ -20,32 +20,36 @@ namespace et
 			ET_DECLARE_POINTER(Font)
 			
 		public:
-			Font();
-			Font(RenderContext* rc, const std::string& fileName, ObjectsCache& cache);
 			Font(const CharacterGenerator::Pointer& generator);
-			~Font();
+			
+			const Texture& texture() const
+				{ ET_ASSERT(_generator.valid()); return _generator->texture(); }
+			
+			const std::string& face() const
+				{ ET_ASSERT(_generator.valid()); return _generator->face(); }
+			
+			size_t size() const
+				{ ET_ASSERT(_generator.valid()); return _generator->size(); }
+			
+			CharDescriptor charDescription(int c)
+				{ ET_ASSERT(_generator.valid()); return _generator->charDescription(c); }
+			
+			CharDescriptor boldCharDescription(int c)
+				{ ET_ASSERT(_generator.valid()); return _generator->boldCharDescription(c); }
+
+			float lineHeight() const
+				{ ET_ASSERT(_generator.valid()); return _generator->lineHeight(); }
 
 			void loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache);
-
-			const Texture& texture() const 
-				{ return _generator.valid() ? _generator->texture() : _texture; }
-			const std::string& face() const
-				{ return _generator.valid() ? _generator->face() : _face; }
-			size_t size() const
-				{ return _generator.valid() ? _generator->size() : _size; }
-
-			CharDescriptor charDescription(int c);
-			CharDescriptor boldCharDescription(int c);
-
-			float lineHeight() const;
-
+			void saveToFile(RenderContext* rc, const std::string& fileName);
+			
 			CharDescriptorList buildString(const std::string& s, bool formatted = false);
 			CharDescriptorList buildString(const std::wstring& s, bool formatted = false);
 
 			vec2 measureStringSize(const std::string& s, bool formatted = false);
 			vec2 measureStringSize(const std::wstring& s, bool formatted = false);
 			vec2 measureStringSize(const CharDescriptorList& s);
-
+			
 		private:
 			bool isUtf8String(const std::string& s) const;
 
@@ -54,14 +58,6 @@ namespace et
 
 		private:
 			CharacterGenerator::Pointer _generator;
-
-			Texture _texture;
-			CharDescriptorMap _chars;
-			CharDescriptorMap _boldChars;
-			std::string _face;
-			et::vec2 _biggestChar;
-			et::vec2 _biggestBoldChar;
-			size_t _size;
 		};
 	}
 }
