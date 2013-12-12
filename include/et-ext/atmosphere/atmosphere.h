@@ -26,6 +26,9 @@ namespace et
 		
 		void setPlanetFragmentShader(const std::string&);
 		
+		const vec3& cameraPosition() const
+			{ return _cameraPosition; }
+		
 	public:
 		static Dictionary defaultParameters();
 		static const std::string& defaultPlanetFragmentShader();
