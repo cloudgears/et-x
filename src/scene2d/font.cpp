@@ -5,41 +5,93 @@
  *
  */
 
+#include <fstream>
 #include <et/core/conversion.h>
 #include <et/core/serialization.h>
 #include <et/app/application.h>
+#include <et/imaging/imagewriter.h>
 #include <et-ext/scene2d/font.h>
 
 using namespace et;
 using namespace et::s2d;
 
-Font::Font() :
-	_size(0)
-{
-}
-
-Font::Font(RenderContext* rc, const std::string& fileName, ObjectsCache& cache) :
-	_size(0)
-{
-	loadFromFile(rc, fileName, cache);
-}
-
 Font::Font(const CharacterGenerator::Pointer& generator) :
-	_generator(generator), _size(0)
+	_generator(generator)
 {
+	
 }
 
-Font::~Font()
+void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 {
+	std::ofstream fOut(fileName, std::ios::out | std::ios::binary);
+	if (fOut.fail())
+	{
+		log::error("Unable save font to file %s", fileName.c_str());
+		return;
+	}
+	
+	serializeInt(fOut, FONT_VERSION_CURRENT);
+	serializeString(fOut, _generator->face());
+	serializeInt(fOut, _generator->size());
+	
+	std::string textureFile = removeFileExt(getFileName(fileName)) + ".cache.png";
+	std::string layoutFile = removeFileExt(getFileName(fileName)) + ".layout.png";
+	
+	serializeString(fOut, textureFile);
+	serializeString(fOut, layoutFile);
+	
+	int charCount = static_cast<int>(_generator->charactersCount());
+	serializeInt(fOut, charCount);
+	
+	const auto& chars = _generator->characters();
+	const auto& boldChars = _generator->boldCharacters();
+	
+	for (const auto& c : chars)
+		fOut.write(reinterpret_cast<const char*>(&c.second), sizeof(c.second));
 
+	for (const auto& c : boldChars)
+		fOut.write(reinterpret_cast<const char*>(&c.second), sizeof(c.second));
+	
+	fOut.flush();
+	fOut.close();
+	
+	BinaryDataStorage imageData(4 * texture()->size().square());
+	
+#if (ET_PLATFORM_MAC || ET_PLATFORM_WIN)
+	
+	rc->renderState().bindTexture(0, texture());
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data());
+	checkOpenGLError("glGetTexImage");
+	
+#elif (ET_PLATFORM_IOS)
+	
+	auto fbo = rc->framebufferFactory().createFramebuffer(texture()->size(), "temp-buffer",
+		GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0, 0);
+	
+	bool blendEnabled = rc->renderState().blendEnabled();
+	auto currentBuffer = rc->renderState().boundFramebuffer();
+	
+	rc->renderState().bindFramebuffer(fbo);
+	rc->renderState().setBlend(false, BlendState_Current);
+	rc->renderer()->renderFullscreenTexture(texture());
+	
+	glReadPixels(0, 0, fbo->size().x, fbo->size().y, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data());
+	checkOpenGLError("glReadPixels");
+	
+	rc->renderState().bindFramebuffer(currentBuffer);
+	rc->renderState().setBlend(blendEnabled, BlendState_Current);
+	
+	fbo.reset(nullptr);
+	
+#endif
+	
+	ImageWriter::writeImageToFile(getFilePath(fileName) + textureFile, imageData,
+		texture()->size(), 4, 8, ImageFormat_PNG, true);
+	
 }
 
 void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
 {
-	_chars.clear();
-	_boldChars.clear();
-	_texture = Texture();
-
 	std::string resolvedFileName =
 		application().environment().resolveScalableFileName(fileName, rc->screenScaleFactor());
 
@@ -49,95 +101,29 @@ void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	std::string fontFileDir = getFilePath(resolvedFileName);
 
 	int version = deserializeInt(fontFile.stream());
-	_face = deserializeString(fontFile.stream());
-	_size = deserializeInt(fontFile.stream());
+	ET_ASSERT(version >= FONT_VERSION_2)
+	
+	std::string face = deserializeString(fontFile.stream());
+	deserializeInt(fontFile.stream()); // -> size
 	
 	std::string textureFile = deserializeString(fontFile.stream());
 	std::string layoutFile = deserializeString(fontFile.stream());
+	
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	_texture = rc->textureFactory().loadTexture(actualName, cache);
-	_biggestChar = vec2(0.0f);
-	_biggestBoldChar = vec2(0.0f);
+	_generator->setTexture(rc->textureFactory().loadTexture(actualName, cache));
+	
 	int charCount = deserializeInt(fontFile.stream());
-
-	if (version == FONT_VERSION_1)
-	{
-		for (int i = 0; i < charCount; ++i)
-		{
-			CharDescriptor desc;
-			char* ptr = reinterpret_cast<char*>(&desc);
-			ptr += 2 * sizeof(int);
-			
-			unsigned short sValue = 0;
-			unsigned short sParams = 0;
-			fontFile.stream().read(reinterpret_cast<char*>(&sValue), sizeof(sValue));
-			fontFile.stream().read(reinterpret_cast<char*>(&sParams), sizeof(sParams));
-			fontFile.stream().read(ptr, sizeof(desc) - 2 * sizeof(int));
-
-			desc.value = sValue;
-			desc.params = sParams;
-			
-			if (desc.params & CharParameter_Bold)
-			{
-				_biggestBoldChar = maxv(_biggestBoldChar, desc.size);
-				_boldChars[desc.value] = desc;
-			}
-			else
-			{
-				_biggestChar = maxv(_biggestChar, desc.size);
-				_chars[desc.value] = desc;
-			}
-		}
-	}
-	else if (version == FONT_VERSION_2)
+	if (version == FONT_VERSION_2)
 	{
 		for (int i = 0; i < charCount; ++i)
 		{
 			CharDescriptor desc;
 			fontFile.stream().read(reinterpret_cast<char*>(&desc), sizeof(desc));
-			
-			if (desc.params & CharParameter_Bold)
-			{
-				_biggestBoldChar = maxv(_biggestBoldChar, desc.size);
-				_boldChars[desc.value] = desc;
-			}
-			else
-			{
-				_biggestChar = maxv(_biggestChar, desc.size);
-				_chars[desc.value] = desc;
-			}
+			_generator->pushCharacter(desc);
 		}
 	}
-}
-
-CharDescriptor Font::charDescription(int c)
-{
-	if (_generator.valid())
-		return _generator->charDescription(c);
-
-	auto i = _chars.find(c);
-	return (i != _chars.end()) ? i->second : CharDescriptor(c, 0, _biggestChar * vec2(0.0f, 1.0f));
-}
-
-CharDescriptor Font::boldCharDescription(int c)
-{
-	if (_generator.valid())
-		return _generator->boldCharDescription(c);
-
-	auto i = _boldChars.find(c);
-
-	return (i != _boldChars.end()) ? i->second :
-		CharDescriptor(c, CharParameter_Bold, _biggestBoldChar * vec2(0.0f, 1.0f));
-}
-
-float Font::lineHeight() const
-{
-	if (_generator.valid())
-		return _generator->lineHeight();
-	else 
-		return _chars.size() ? _chars.begin()->second.size.y : static_cast<float>(_size);
 }
 
 vec2 Font::measureStringSize(const CharDescriptorList& s)
