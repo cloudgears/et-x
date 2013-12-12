@@ -40,6 +40,7 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	_private(new CharacterGeneratorPrivate(face, boldFace, size)), _face(face), _size(size)
 {
 	vec2i textureSize(defaultTextureSize);
+	
 	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, textureSize,
 		GL_RGBA, GL_UNSIGNED_BYTE, BinaryDataStorage(4 * textureSize.square(), 0), face + "font");
 }
@@ -65,8 +66,11 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 		rect textureRect;
 		
 		BinaryDataStorage data(charSize.square() * 4, 0);
+		
 		_private->_placer.place(charSize + vec2i(2), textureRect);
+		
 		_private->renderCharacter(wString, charSize, false, data);
+		
 		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
 			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
 		
@@ -145,7 +149,7 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 	const std::string& boldFace, size_t size) : _fontFace(face), _fontSize(size),
-	_placer(vec2i(defaultTextureSize), true)
+	_placer(vec2i(defaultTextureSize - 1), false)
 {
     NSString* cFace = [NSString stringWithCString:face.c_str() encoding:NSASCIIStringEncoding];
     NSString* cBoldFace = [NSString stringWithCString:boldFace.c_str() encoding:NSASCIIStringEncoding];
@@ -183,7 +187,7 @@ CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position,
 	const vec2i& size, Texture texture, BinaryDataStorage& data)
 {
-	vec2i dest(position.x, defaultTextureSize - position.y - size.y);
+	vec2i dest(position.x, _placer.contextSize().y - position.y - size.y);
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 

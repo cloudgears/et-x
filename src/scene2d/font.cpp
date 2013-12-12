@@ -108,11 +108,17 @@ void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	
 	std::string textureFile = deserializeString(fontFile.stream());
 	std::string layoutFile = deserializeString(fontFile.stream());
-	
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	_generator->setTexture(rc->textureFactory().loadTexture(actualName, cache));
+	Texture tex = rc->textureFactory().loadTexture(actualName, cache);
+	if (tex.invalid())
+	{
+		log::error("Unable to load texture for font %s. Missing file: %s", fileName.c_str(), textureFile.c_str());
+		return;
+	}
+	
+	_generator->setTexture(tex);
 	
 	int charCount = deserializeInt(fontFile.stream());
 	if (version == FONT_VERSION_2)

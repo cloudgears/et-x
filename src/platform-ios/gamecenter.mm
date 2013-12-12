@@ -42,7 +42,6 @@ public:
 	Dictionary options;
 	
 	bool authenticated = false;
-	bool authenticationViewControllerDisplayed = false;
 	
 public:
 	std::string hashForScore(Dictionary score);
@@ -77,23 +76,10 @@ void GameCenter::authenticate()
 		{
 			UIViewController* mainViewController =
 				reinterpret_cast<UIViewController*>(application().renderingContextHandle());
-			
-			[mainViewController presentViewController:viewController animated:YES completion:^
-			{
-				ApplicationNotifier notifier;
-				notifier.notifyDeactivated();
-				_private->authenticationViewControllerDisplayed = true;
-			}];
+			[mainViewController presentViewController:viewController animated:YES completion:nil];
 		}
 		else
 		{
-			if (_private->authenticationViewControllerDisplayed)
-			{
-				_private->authenticationViewControllerDisplayed = false;
-				ApplicationNotifier notifier;
-				notifier.notifyActivated();
-			}
-			
 			if (player.authenticated)
 			{
 				_private->authenticated = true;
@@ -304,12 +290,8 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 
 - (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController*)gameCenterViewController
 {
-	ApplicationNotifier notifier;
-	notifier.notifyActivated();
-	
 	UIViewController* mainViewController =
 		reinterpret_cast<UIViewController*>(application().renderingContextHandle());
-	
 	[mainViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -333,11 +315,7 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 	{
 		gcController.gameCenterDelegate = [SharedGameCenterDelegate instance];
 		gcController.achievementDelegate = [SharedGameCenterDelegate instance];
-		[mainViewController presentViewController:gcController animated:YES completion:^
-		 {
-			 ApplicationNotifier notifier;
-			 notifier.notifyDeactivated();
-		 }];
+		[mainViewController presentViewController:gcController animated:YES completion:nil];
 	}
 	[gcController release];
 }
@@ -382,11 +360,7 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 				
 				gcController.gameCenterDelegate = [SharedGameCenterDelegate instance];
 				gcController.leaderboardDelegate = [SharedGameCenterDelegate instance];
-				[mainViewController presentViewController:gcController animated:YES completion:^
-				 {
-					 ApplicationNotifier notifier;
-					 notifier.notifyDeactivated();
-				 }];
+				[mainViewController presentViewController:gcController animated:YES completion:nil];
 			}
 			[gcController release];
 		}

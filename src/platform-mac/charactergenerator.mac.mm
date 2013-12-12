@@ -178,33 +178,34 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 	const std::string&, size_t size) : fontFace(face), fontSize(size),
-	_placer(vec2i(defaultTextureSize), true)
+	_placer(vec2i(defaultTextureSize), false)
 {
     NSString* cFace = [NSString stringWithUTF8String:face.c_str()];
 	
 	font = [[NSFontManager sharedFontManager] fontWithFamily:cFace
-		traits:0 weight:0 size:size];
+		traits:0 weight:5 size:size];
 	
 	if (font == nil)
 	{
 		log::error("Font %s not found. Using default font (Arial)", face.c_str());
-		font = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial" traits:0 weight:0 size:size];
+		font = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial" traits:0 weight:5 size:size];
 	}
-	assert(font);
+	ET_ASSERT(font);
 	
 	boldFont = [[NSFontManager sharedFontManager] fontWithFamily:cFace
-		traits:NSBoldFontMask weight:0 size:size];
+		traits:NSBoldFontMask weight:5 size:size];
 	
 	if (boldFont == nil)
 	{
 		log::error("Font %s not found. Using default font (Arial)", face.c_str());
-		boldFont = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial" traits:0 weight:0 size:size];
+		boldFont = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial"
+			traits:NSBoldFontMask weight:5 size:size];
 	}
-	assert(boldFont);
+	ET_ASSERT(boldFont);
 	
 	whiteColor = [NSColor whiteColor];
 	colorSpace = CGColorSpaceCreateDeviceRGB();
-	assert(colorSpace);
+	ET_ASSERT(colorSpace);
 	
 #if (!ET_OBJC_ARC_ENABLED)
 	[font retain];
