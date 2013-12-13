@@ -12,7 +12,6 @@
 using namespace et;
 using namespace et::s2d;
 
-const float popupAppearTime = 0.1f;
 const float textRevealDuration = 0.1f;
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(ListboxPopup)

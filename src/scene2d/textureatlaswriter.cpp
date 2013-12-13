@@ -151,7 +151,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 		for (ImageItemList::iterator ii = i->images.begin(), ie = i->images.end(); ii != ie; ++ii, ++index)
 		{
 			TextureDescription image;
-			PNGLoader::loadFromFile(ii->image->origin(), image, true);
+			png::loadFromFile(ii->image->origin(), image, true);
 
 			vec2i iOrigin(static_cast<int>(ii->place.origin.x), static_cast<int>(ii->place.origin.y));
 

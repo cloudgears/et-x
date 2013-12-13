@@ -22,7 +22,7 @@ namespace et
 			bool loaded() const
 				{ return _loaded; }
 			
-			void loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache);
+			void loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache, bool async = false);
 			void unload();
 			
 			bool hasImage(const std::string& key) const;

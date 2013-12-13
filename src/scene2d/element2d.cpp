@@ -11,8 +11,6 @@
 using namespace et;
 using namespace et::s2d;
 
-const float minimalVisibleAlpha = 1.0f / 1000.0f;
-
 ET_DECLARE_SCENE_ELEMENT_CLASS(Element2d)
 
 Element2d::Element2d(Element* parent, const std::string& name) :

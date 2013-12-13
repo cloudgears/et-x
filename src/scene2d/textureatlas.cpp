@@ -27,7 +27,7 @@ TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, Objec
 	loadFromFile(rc, filename, cache);
 }
 
-void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache)
+void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache, bool async)
 {
 	std::string resolvedFileName =
 		application().environment().resolveScalableFileName(filename, rc->screenScaleFactor());
@@ -54,7 +54,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 			if (!fileExists(textureName))
 				textureName = application().environment().resolveScalableFileName(filePath + textureId, 1);
 			
-			_textures[textureId] = rc->textureFactory().loadTexture(textureName, cache);
+			_textures[textureId] = rc->textureFactory().loadTexture(textureName, cache, async);
 			
 			if (_textures[textureId].valid())
 				_textures[textureId]->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
