@@ -142,6 +142,9 @@ namespace et
 			vec2 initialPosition;
 			vec2 normalizedPointerPosition;
 			
+			ElementDragInfo()
+				{ }
+			
 			ElementDragInfo(const vec2& c, const vec2& i, const vec2& npp) : 
 				currentPosition(c), initialPosition(i), normalizedPointerPosition(npp) { }
 		};
