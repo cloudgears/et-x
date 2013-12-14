@@ -148,32 +148,33 @@ void GameCenter::showAchievements()
 	}
 }
 
-void GameCenter::unlockAchievement(const std::string& aId)
+void GameCenter::unlockAchievement(const std::string& achId)
 {
 	if ([[GKLocalPlayer localPlayer] isAuthenticated])
 	{
-		GKAchievement* ach = [[GKAchievement alloc] initWithIdentifier:[NSString stringWithUTF8String:aId.c_str()]];
+		std::string localId = achId;
+		GKAchievement* ach = [[GKAchievement alloc] initWithIdentifier:[NSString stringWithUTF8String:achId.c_str()]];
 		ach.percentComplete = 100.0;
 		ach.showsCompletionBanner = YES;
 		
 		[ach reportAchievementWithCompletionHandler:^(NSError *error)
 		{
-			if (error != nil)
+			if (error == nil)
 			{
-				_private->setAchievement(aId, true);
+				_private->setAchievement(localId, true);
 			}
 			else
 			{
-				_private->setAchievement(aId, false);
-				NSLog(@"Unable to report achievement %s\n%@", aId.c_str(), error);
-				achievementFailedToUnlock.invokeInMainRunLoop(aId);
+				_private->setAchievement(localId, false);
+				NSLog(@"Unable to report achievement %s\n%@", localId.c_str(), error);
+				achievementFailedToUnlock.invokeInMainRunLoop(localId);
 			}
 		}];
 	}
 	else
 	{
-		_private->setAchievement(aId, false);
-		achievementFailedToUnlock.invokeInMainRunLoop(aId);
+		_private->setAchievement(achId, false);
+		achievementFailedToUnlock.invokeInMainRunLoop(achId);
 	}
 }
 
@@ -192,6 +193,7 @@ void GameCenter::authenticationCompleted()
 			else
 				this->_private->setAchievement(achievementId, 1);
 		});
+		i.invokeInMainRunLoop();
 	}
 	
 	Dictionary scores = _private->options.dictionaryForKey(kReportedScores);
