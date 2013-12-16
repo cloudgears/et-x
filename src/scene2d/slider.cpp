@@ -15,7 +15,8 @@ using namespace et::s2d;
 const float colorPlaceholdersSize = 0.5f;
 
 Slider::Slider(Element2d* parent) :
-	Element2d(parent), _handleScale(1.0f), _min(0.0f), _max(1.0f), _value(0.5f), _drag(false)
+	Element2d(parent), _handleScale(1.0f), _min(0.0f), _max(1.0f), _value(0.5f), _drag(false),
+	_sliderImagesMode(SliderImagesMode_Crop)
 {
 	
 }
