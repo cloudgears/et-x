@@ -15,7 +15,7 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(Button)
 
 Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _title(title), _font(font),
-	_textSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f),
+	_textSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f), _pressedColor(0.5f, 0.5f, 0.5f, 1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(State_Default),
 	_imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit), _horizontalAlignment(Alignment_Center),
 	_verticalAlignment(Alignment_Center), _pressed(false), _hovered(false), _selected(false)
@@ -106,7 +106,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	if (_background[_state].texture.valid())
 	{
 		vec4 backgroundScale = ((_state == State_Pressed) && _adjustPressedBackground) ?
-			vec4(0.5f, 0.5f, 0.5f, alpha()) : alphaScale;
+			_pressedColor * alphaScale : alphaScale;
 		
 		buildImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
 			rect(vec2(0.0f), size()), backgroundScale * color(), transform);
@@ -124,11 +124,11 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_image[_state].texture.valid())
 	{
-		vec4 aColor = (_state == State_Pressed) ? color() * vec4(0.5f, 0.5f, 0.5f, 1.0f) : color();
+		vec4 aColor = ((_state == State_Pressed) ? pressedColor() : color()) * alphaScale;
 		if (aColor.w > 0.0f)
 		{
 			buildImageVertices(_imageVertices, _image[_state].texture, _image[_state].descriptor,
-				rect(imageOrigin, imageSize), aColor * alphaScale, transform);
+				rect(imageOrigin, imageSize), aColor, transform);
 		}
 	}
 }
@@ -181,10 +181,7 @@ bool Button::pointerCancelled(const PointerInputInfo& p)
 	if ((p.type != PointerType_General) || !_pressed) return false;
 	
 	_pressed = false;
-	State newState = newState = _selected ? State_Selected : State_Default;
-	
-	if (containLocalPoint(p.pos))
-		newState = adjustState(_selected ? State_SelectedHovered : State_Hovered);
+	State newState = _selected ? State_Selected : State_Default;
 	
 	setCurrentState(newState);
 	cancelled.invoke(this);
@@ -368,4 +365,15 @@ void Button::setVerticalAlignment(Alignment a)
 {
 	_verticalAlignment = a;
 	invalidateContent();
+}
+
+void Button::setPressedColor(const vec4& color)
+{
+	_pressedColor = color;
+	invalidateContent();
+}
+
+const vec4& Button::pressedColor() const
+{
+	return _pressedColor;
 }

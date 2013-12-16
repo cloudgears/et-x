@@ -81,6 +81,9 @@ namespace et
 
 			void setTextColor(const vec4& color);
 			const vec4& textColor() const;
+
+			void setPressedColor(const vec4& color);
+			const vec4& pressedColor() const;
 			
 			void setTextPressedColor(const vec4& color);
 			const vec4& textPressedColor() const;
@@ -132,6 +135,7 @@ namespace et
 			
 			vec4 _textColor;
 			vec4 _textPressedColor;
+			vec4 _pressedColor;
 			vec4 _backgroundColor;
 			vec2 _textSize;
 			vec2 _contentOffset;

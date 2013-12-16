@@ -112,8 +112,12 @@ bool Scroll::pointerPressed(const PointerInputInfo& p)
 
 bool Scroll::pointerMoved(const PointerInputInfo& p)
 {
-	if (p.id != _currentPointer.id) return true;
-
+	if (p.id != _currentPointer.id)
+	{
+		broadcastMoved(p);
+		return true;
+	}
+	
 	vec2 offset = p.pos - _currentPointer.pos;
 	if (offset.dotSelf() < SQRT_2) return true;
 
@@ -144,7 +148,7 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		
 		applyOffset(sqr(offsetScale) * offset);
 	}
-	else if (_selectedElement.valid() && _selectedElement->capturesPointer())
+	else if (_capturedElement.valid() && _capturedElement->capturesPointer())
 	{
 		broadcastMoved(p);
 	}
@@ -229,12 +233,20 @@ void Scroll::broadcastPressed(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos,
 		p.scroll, p.id, p.timestamp, p.origin);
 	
-	_selectedElement = Element::Pointer(getActiveElement(globalPos, this));
-	if (_selectedElement.valid())
+	auto active = getActiveElement(globalPos, this);
+	if (active)
 	{
-		PointerInputInfo localPos(p.type, _selectedElement->positionInElement(globalPos.pos),
+		_capturedElement.reset(active);
+		
+		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
-		_selectedElement->pointerPressed(localPos);
+		
+		setActiveElement(localPos, active);
+		active->pointerPressed(localPos);
+	}
+	else
+	{
+		setActiveElement(globalPos, nullptr);
 	}
 }
 
@@ -243,12 +255,24 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 	
-	Element* el = _selectedElement.valid() ? _selectedElement.ptr() : getActiveElement(globalPos, this);
-	if (el != nullptr)
+	if (_capturedElement.valid())
 	{
-		PointerInputInfo localPos(p.type, el->positionInElement(globalPos.pos),
+		PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
-		el->pointerMoved(localPos);
+		_capturedElement->pointerMoved(localPos);
+	}
+	
+	Element* active = getActiveElement(globalPos, this);
+	if (active != nullptr)
+	{
+		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),
+			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
+		setActiveElement(localPos, active);
+		active->pointerMoved(localPos);
+	}
+	else
+	{
+		setActiveElement(globalPos, nullptr);
 	}
 }
 
@@ -257,14 +281,26 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 
-	Element* el = _selectedElement.valid() ? _selectedElement.ptr() : getActiveElement(globalPos, this);
-	if (el != nullptr)
+	if (_capturedElement.valid())
 	{
-		PointerInputInfo localPos(p.type, el->positionInElement(globalPos.pos),
+		PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
-		el->pointerReleased(localPos);
+		_capturedElement->pointerReleased(localPos);
+		_capturedElement.reset(nullptr);
 	}
-	_selectedElement.reset(nullptr);
+	
+	Element* active = getActiveElement(globalPos, this);
+	if (active != nullptr)
+	{
+		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),
+			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
+		setActiveElement(localPos, active);
+		active->pointerReleased(localPos);
+	}
+	else
+	{
+		setActiveElement(globalPos, nullptr);
+	}
 }
 
 void Scroll::broadcastCancelled(const PointerInputInfo& p)
@@ -272,19 +308,45 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 	
-	Element* el = _selectedElement.valid() ? _selectedElement.ptr() : getActiveElement(globalPos, this);
-	if (el != nullptr)
+	if (_capturedElement.valid())
 	{
-		PointerInputInfo localPos(p.type, el->positionInElement(globalPos.pos),
+		PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
-		el->pointerCancelled(localPos);
+		_capturedElement->pointerCancelled(localPos);
+		_capturedElement.reset(nullptr);
 	}
-	_selectedElement.reset(nullptr);
+	
+	Element* active = getActiveElement(globalPos, this);
+	if (active != nullptr)
+	{
+		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),
+			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
+		active->pointerCancelled(localPos);
+	}
 }
 
 bool Scroll::containsPoint(const vec2& p, const vec2& np)
 {
 	return Element2d::containsPoint(p, np);
+}
+
+void Scroll::setActiveElement(const PointerInputInfo& p, Element* e)
+{
+	if (e == _activeElement.ptr()) return;
+	
+	if (_activeElement.valid())
+	{
+		_activeElement->pointerLeaved(p);
+		_activeElement->hoverEnded.invoke(_activeElement.ptr());
+	}
+	
+	_activeElement.reset(e);
+	
+	if (_activeElement.valid())
+	{
+		_activeElement->pointerEntered(p);
+		_activeElement->hoverStarted.invoke(_activeElement.ptr());
+	}
 }
 
 void Scroll::updateBouncing(float deltaTime)
