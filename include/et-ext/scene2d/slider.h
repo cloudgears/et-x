@@ -18,6 +18,12 @@ namespace et
         public:
 			ET_DECLARE_POINTER(Slider)
 			
+			enum SliderImagesMode
+			{
+				SliderImagesMode_Stretch,
+				SliderImagesMode_Crop
+			};
+			
 		public:
 			Slider(Element2d* parent);
 			
@@ -26,6 +32,8 @@ namespace et
 			
 			void setHandleImage(const Image&, float scale);
 			void setSliderImages(const Image& left, const Image& right);
+			
+			void setSliderImageMode(SliderImagesMode);
 			
 			float minValue() const
 				{ return _min; }
@@ -72,6 +80,7 @@ namespace et
 			float _value;
 			
 			bool _drag;
+			SliderImagesMode _sliderImagesMode;
         };
     }
 }

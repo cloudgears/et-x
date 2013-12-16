@@ -90,39 +90,56 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 			_background.descriptor, mainRect, vec4(1.0f), transform);
 	}
 	
-	if (_sliderLeft.texture.valid() && (_value > 0.0f))
+	if (_value > 0.0f)
 	{
-		rect r(vec2(halfHandleWidth, 0.0f), _sliderLeft.descriptor.size);
-		r.top = 0.5f * (mainRect.height - r.height);
-		r.width = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
-		
-		buildImageVertices(_sliderLeftVertices, _sliderLeft.texture,
-			_sliderLeft.descriptor, r, vec4(1.0f), transform);
+		if (_sliderLeft.texture.valid())
+		{
+			auto desc = _sliderLeft.descriptor;
+			rect r(vec2(0.0f, 0.0f), desc.size);
+			r.top = 0.5f * (mainRect.height - r.height);
+			r.width = clamp(valuePoint, 0.0f, mainRect.width);
+			
+			if (_sliderImagesMode == SliderImagesMode_Crop)
+				desc.size.x *= _value;
+			
+			buildImageVertices(_sliderLeftVertices, _sliderLeft.texture, desc, r, vec4(1.0f), transform);
+		}
+		else
+		{
+			rect r(halfHandleWidth, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
+			r.top = 0.5f * (mainRect.height - r.height);
+			r.width = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
+			buildColorVertices(_sliderLeftVertices, r, vec4(0.25f, 0.5f, 1.0f, 1.0f), transform);
+		}
 	}
-	else
+	
+	if (_value < 1.0f)
 	{
-		rect r(halfHandleWidth, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
-		r.top = 0.5f * (mainRect.height - r.height);
-		r.width = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
-		buildColorVertices(_sliderLeftVertices, r, vec4(0.25f, 0.5f, 1.0f, 1.0f), transform);
-	}
-
-	if (_sliderRight.texture.valid() && (_value < 1.0f))
-	{
-		rect r(vec2(0.0f), _sliderRight.descriptor.size);
-		r.top = 0.5f * (mainRect.height - r.height);
-		r.left = clamp(valuePoint, halfHandleWidth, mainRect.width - halfHandleWidth);
-		r.width = etMax(0.0f, mainRect.width - halfHandleWidth - r.left);
-		buildImageVertices(_sliderRightVertices, _sliderRight.texture,
-			_sliderRight.descriptor, r, vec4(1.0f), transform);
-	}
-	else
-	{
-		rect r(0.0f, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
-		r.top = 0.5f * (mainRect.height - r.height);
-		r.left = clamp(valuePoint, halfHandleWidth, mainRect.width - halfHandleWidth);
-		r.width = etMax(0.0f, mainRect.width - halfHandleWidth - r.left);
-		buildColorVertices(_sliderLeftVertices, r, vec4(0.5f, 0.5f, 0.5f, 1.0f), transform);
+		if (_sliderRight.texture.valid())
+		{
+			auto desc = _sliderRight.descriptor;
+			
+			rect r(vec2(0.0f), desc.size);
+			r.top = 0.5f * (mainRect.height - r.height);
+			r.left = clamp(valuePoint, 0.0f, mainRect.width);
+			r.width = etMax(0.0f, mainRect.width - r.left);
+			
+			if (_sliderImagesMode == SliderImagesMode_Crop)
+			{
+				desc.origin.x += _value * desc.size.x;
+				desc.size.x *= (1.0f - _value);
+			}
+			
+			buildImageVertices(_sliderRightVertices, _sliderRight.texture, desc, r, vec4(1.0f), transform);
+		}
+		else
+		{
+			rect r(0.0f, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
+			r.top = 0.5f * (mainRect.height - r.height);
+			r.left = clamp(valuePoint, halfHandleWidth, mainRect.width - halfHandleWidth);
+			r.width = etMax(0.0f, mainRect.width - halfHandleWidth - r.left);
+			buildColorVertices(_sliderLeftVertices, r, vec4(0.5f, 0.5f, 0.5f, 1.0f), transform);
+		}
 	}
 
 	if (_handle.texture.valid())
@@ -130,8 +147,8 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 		rect r(vec2(0.0f), _handleScale * _handle.descriptor.size);
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
-		buildImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r,
-			vec4(1.0f), transform);
+		
+		buildImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r, vec4(1.0f), transform);
 	}
 	else
 	{
@@ -205,5 +222,11 @@ void Slider::updateValue(float v)
 void Slider::setBackgroundColor(const vec4& c)
 {
 	_backgroundColor = c;
+	invalidateContent();
+}
+
+void Slider::setSliderImageMode(SliderImagesMode mode)
+{
+	_sliderImagesMode = mode;
 	invalidateContent();
 }
