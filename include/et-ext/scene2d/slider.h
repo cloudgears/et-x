@@ -48,6 +48,7 @@ namespace et
 			
 			ET_DECLARE_EVENT1(changed, Slider*)
 			ET_DECLARE_EVENT1(valueChanged, float)
+			ET_DECLARE_EVENT0(draggingFinished)
 			
         private:
 			void addToRenderQueue(RenderContext*, SceneRenderer&);

@@ -202,6 +202,8 @@ bool Slider::pointerMoved(const PointerInputInfo& p)
 bool Slider::pointerReleased(const PointerInputInfo&)
 {
 	_drag = false;
+	
+	draggingFinished.invokeInMainRunLoop();
 	return true;
 }
 
