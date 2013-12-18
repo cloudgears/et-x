@@ -5,17 +5,16 @@
 
 using namespace et;
 
-extern const std::string atmospherePerVertexVS;
+/*
 extern const std::string atmospherePerPixelVS;
-
-extern const std::string planetPerVertexVS;
-extern const std::string planetPerPixelVS;
-
-extern const std::string atmospherePerVertexFS;
 extern const std::string atmospherePerPixelFS;
-
-extern const std::string planetPerVertexFS;
+extern const std::string planetPerPixelVS;
 extern const std::string planetPerPixelFS;
+*/
+extern const std::string atmospherePerVertexVS;
+extern const std::string atmospherePerVertexFS;
+extern const std::string planetPerVertexVS;
+extern const std::string planetPerVertexFS;
 
 #define DRAW_WIREFRAME	0
 
@@ -32,6 +31,7 @@ Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
 
 	setPlanetFragmentShader(defaultPlanetFragmentShader());
 
+/*
 	_atmospherePerPixelProgram = rc->programFactory().genProgram("et~atmosphere~per-pixel~program",
 		atmospherePerPixelVS, atmospherePerPixelFS);
 	setProgramParameters(_atmospherePerPixelProgram);
@@ -42,6 +42,7 @@ Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
 		
 	_framebuffer = rc->framebufferFactory().createCubemapFramebuffer(textureSize, "et~atmosphere~cubemap",
 		GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT);
+*/
 	
 	generateGeometry(rc);
 }
@@ -165,15 +166,34 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam)
 		_planetPerVertexProgram->setPrimaryLightPosition(_lightDirection);
 		_planetPerVertexProgram->setCameraProperties(adjustedCamera);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		
+#if (DRAW_WIREFRAME)
+		rs.setDepthFunc(DepthFunc_LessOrEqual);
+		rs.setBlend(true, BlendState_Additive);
+		rs.setWireframeRendering(true);
+		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		rs.setWireframeRendering(false);
+#endif
 	}
 	
 	rs.setBlend(true, BlendState_Additive);
 	rs.setCulling(true, CullState_Front);
+//	rs.bindVertexArray(_gridVAO);
 	rs.bindProgram(_atmospherePerVertexProgram);
 	setProgramParameters(_atmospherePerVertexProgram);
+
+	_atmospherePerVertexProgram->setUniform("mInverseMVPMatrix", adjustedCamera.inverseModelViewProjectionMatrix());
 	_atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
 	_atmospherePerVertexProgram->setCameraProperties(adjustedCamera);
 	_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+	
+#if (DRAW_WIREFRAME)
+	rs.setWireframeRendering(true);
+	_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+	rs.setWireframeRendering(false);
+	rs.setDepthFunc(DepthFunc_Less);
+#endif
+	
 	rs.setCulling(true, CullState_Back);
 	
 	_parametersValid |= shouldDrawPlanet;
@@ -181,6 +201,7 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam)
 
 void Atmosphere::performRendering(bool shouldClear, bool renderPlanet)
 {
+/*
 	auto& rs = _rc->renderState();
 
 	auto boundFramebuffer = rs.boundFramebuffer();
@@ -247,11 +268,12 @@ void Atmosphere::performRendering(bool shouldClear, bool renderPlanet)
 		rs.setClearColor(clearColor);
 	
 	_parametersValid = true;
+*/
 }
 
-et::Texture Atmosphere::environmentTexture()
+Texture Atmosphere::environmentTexture()
 {
-	return _framebuffer->renderTarget();
+	return Texture(); // _framebuffer->renderTarget();
 }
 
 void Atmosphere::setLightDirection(const vec3& l)
@@ -265,7 +287,6 @@ void Atmosphere::setParameters(Dictionary d)
 	
 	float innerRadius = _parameters.floatForKey(kPlanetRadius)->content;
 	float atmosphereHeight = _parameters.floatForKey(kAtmosphereHeight)->content;
-	float outerRadius = innerRadius + atmosphereHeight;
 	float lat = _parameters.floatForKey(kLatitude)->content;
 	float lon = _parameters.floatForKey(kLongitude)->content;
 	float h = innerRadius + atmosphereHeight * _parameters.floatForKey(kHeightAboveSurface)->content;
@@ -276,9 +297,11 @@ void Atmosphere::setParameters(Dictionary d)
 	
 	_cameraPosition = h * fromSpherical(lat, lon);
 	
+/*
+	float outerRadius = innerRadius + atmosphereHeight;
 	_cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 0.1f, 2.0f * outerRadius);
 	_cubemapMatrices = cubemapMatrixProjectionArray(_cubemapCamera.modelViewProjectionMatrix(), _cameraPosition);
-	
+*/
 	_parametersValid = false;
 }
 
@@ -297,115 +320,127 @@ const std::string& Atmosphere::defaultPlanetFragmentShader()
 	return planetPerVertexFS;
 }
 
-////////////////////////////////////////////////////////////////
-//
-// Atmosphere per vertex
-//
-////////////////////////////////////////////////////////////////
+/*
+ *
+ * Shaders
+ *
+ */
 #if (ET_PLATFORM_WIN)
 #	define PRECISION_STRING
 #else
 #	define PRECISION_STRING precision highp float;
 #endif
 
+#define ATMOSPHERE_UNIFORMS \
+	uniform mat4 mModelViewProjection; \
+	uniform vec4 ambientColor; \
+	uniform vec3 vCamera; \
+	uniform vec3 vPrimaryLight; \
+	uniform vec3 vInvWavelength; \
+	uniform float fOuterRadius; \
+	uniform float fOuterRadius2; \
+	uniform float fInnerRadius; \
+	uniform float fInnerRadius2; \
+	uniform float fKrESun; \
+	uniform float fKmESun; \
+	uniform float fKr4PI; \
+	uniform float fKm4PI; \
+	uniform float g; \
+	uniform float g2; \
+	uniform float fScale; \
+	uniform float fScaleDepth; \
+	uniform float fScaleOverScaleDepth; \
+	uniform float fSamples; \
+	uniform int nSamples; \
+
+#define SCALE_FUNCTION \
+	float scale(float fCos) \
+	{ \
+		float x = 1.0 - fCos; \
+		return fScaleDepth * exp(x * (0.459 + x * (3.83 + x * (x * 5.25 - 6.80))) - 0.00287); \
+	}
+
+#define SCATTERING_INTEGRAL_FUNCTION  \
+	vec3 solveScatteringIntegral(in vec3 vSamplePoint, in vec3 vRay, in float fFar, in float fStartOffset) \
+	{ \
+		float sampleLength = fFar / fSamples; \
+		float scaledLength = fScale * sampleLength; \
+		vec3 vSampleRay = sampleLength * vRay; \
+		vec3 vScatterScale = vInvWavelength * fKr4PI + fKm4PI; \
+		vec3 color = vec3(0.0); \
+		for (int i = 0; i < nSamples; i++) \
+		{ \
+			float fHeight = length(vSamplePoint); \
+			float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight)); \
+			float fLightAngle = dot(vPrimaryLight, vSamplePoint) / fHeight; \
+			float fCameraAngle = dot(vRay, vSamplePoint) / fHeight; \
+			float fScatter = fStartOffset + fDepth * (scale(fLightAngle) - scale(fCameraAngle)); \
+			color += exp(-fScatter * vScatterScale) * (fDepth * scaledLength); \
+			vSamplePoint += vSampleRay; \
+		} \
+		return color; \
+	}
+
+/*
+ *
+ * Atmosphere vertex shader
+ *
+ */
+
 const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
    (
-	uniform mat4 mModelViewProjection;
-	uniform vec3 vCamera;
-	uniform vec3 vPrimaryLight;
-	uniform vec3 vInvWavelength;
-	uniform float fOuterRadius;
-	uniform float fOuterRadius2;
-	uniform float fInnerRadius;
-	uniform float fInnerRadius2;
-	uniform float fKrESun;
-	uniform float fKmESun;
-	uniform float fKr4PI;
-	uniform float fKm4PI;
-	uniform float fScale;
-	uniform float fScaleDepth;
-	uniform float fScaleOverScaleDepth;
-	uniform float fSamples;
-	uniform int nSamples;
+	ATMOSPHERE_UNIFORMS
+	SCALE_FUNCTION
+	SCATTERING_INTEGRAL_FUNCTION
+	
+	uniform mat4 mInverseMVPMatrix;
 	
 	etVertexIn vec3 Vertex;
+	
 	etVertexOut vec3 vVertex;
 	etVertexOut vec3 vDirection;
 	etVertexOut vec3 aFrontColor;
 	etVertexOut vec3 aSecondaryColor;
 	etVertexOut vec3 aSourceColor;
-
-	float scale(float fCos)
-	{
-		float x = 1.0 - fCos;
-		return fScaleDepth * exp(x * (0.459 + x * (3.83 + x * (x * 5.25 - 6.80))) - 0.00287);
-	}
 	
 	void main(void)
 	{
-		vVertex = fOuterRadius * Vertex;
+		/*
+		vec4 farFarAway = mInverseMVPMatrix * vec4(Vertex, 1.0, 1.0);
+		vec3 direction = normalize(farFarAway.xyz / farFarAway.w - vCamera);
+		float b = 2.0f * dot(direction, vCamera);
+		float c = dot(vCamera, vCamera) - fOuterRadius2;
+		float d = sqrt(max(0.0, b * b - 4.0f * c));
+		vVertex = vCamera + 0.5 * (-b + d) * direction;
+		*/
+		vVertex = normalize(Vertex) * fOuterRadius;
 		
 		float fCameraHeight = length(vCamera);
 		vec3 vRay = vVertex - vCamera;
 		float fFar = length(vRay);
 		vRay /= fFar;
-/*
- * from space
- *
-		{
-			float B = 2.0 * dot(vCamera, vRay);
-			float C = fCameraHeight * fCameraHeight - fOuterRadius2;
-			float fDet = max(0.0, B * B - 4.0 * C);
-			float fNear = -0.5 * (B + sqrt(fDet));
-			fFar -= fNear;
-			
-			vStart += vRay * fNear;
-			fStartAngle = dot(vRay, vStart) / fOuterRadius;
-			fStartOffset = exp(-1.0 / fScaleDepth) * scale(fStartAngle);
-		}
- */
-		vec3 vStart = vCamera;
-		float fStartAngle = dot(vRay, vStart) / length(vStart);
+
+		float fStartAngle = dot(vRay, vCamera) / fCameraHeight;
 		float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
 		
-		float fSampleLength = fFar / fSamples;
-		float fScaledLength = fSampleLength * fScale;
-		vec3 vSampleRay = vRay * fSampleLength;
-		vec3 vSamplePoint = vStart;
-		
-		vec3 vFrontColor = vec3(0.0);
-		for(int i = 0; i < nSamples; i++)
-		{
-			float fHeight = length(vSamplePoint);
-			float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight));
-			float fLightAngle = dot(vPrimaryLight, vSamplePoint) / fHeight;
-			float fCameraAngle = dot(vRay, vSamplePoint) / fHeight;
-			float fScatter = fStartOffset + fDepth * (scale(fLightAngle) - scale(fCameraAngle));
-			vec3 vAttenuate = exp(-fScatter * (vInvWavelength * fKr4PI + fKm4PI));
-			vFrontColor += vAttenuate * (fDepth * fScaledLength);
-			vSamplePoint += vSampleRay;
-		}
-		
+		vec3 vFrontColor = solveScatteringIntegral(vCamera, vRay, fFar, fStartOffset);
 		vDirection = vCamera - vVertex;
 		aFrontColor = fKrESun * (vFrontColor * vInvWavelength);
 		aSecondaryColor = fKmESun * vFrontColor;
-		
 		gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
 	}
 );
 
+/*
+ *
+ * Atmosphere fragment shader
+ *
+ */
+
 const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
 (
  PRECISION_STRING
- 
- uniform vec4 ambientColor;
- uniform vec3 vPrimaryLight;
- uniform vec3 vCamera;
- 
- uniform float g;
- uniform float g2;
- uniform float fOuterRadius;
- uniform float fInnerRadius;
+ ATMOSPHERE_UNIFORMS
 
  etFragmentIn vec3 vVertex;
  etFragmentIn vec3 vDirection;
@@ -418,86 +453,54 @@ const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
 	 float onePlusfCos2 = 1.0 + fCos * fCos;
 	 float fRayleighPhase = 0.75 * onePlusfCos2;
 	 float fMiePhase = max(0.0, 1.5 * ((1.0 - g2) / (2.0 + g2)) * onePlusfCos2 / pow(1.0 + g2 - 2.0 * g * fCos, 1.5));
-	 
-	 float shadow = 1.0 - exp(-9.21 * clamp(dot(vVertex, vPrimaryLight) / length(vVertex) +
-		sqrt(1.0 - fInnerRadius / fOuterRadius), 0.0, 1.0));
-	 
-	 vec4 aColor = mix(ambientColor, vec4(fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor, 1.0), shadow);
-	 etFragmentOut = 1.0 - exp(-aColor);
+	 vec3 aColor = fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor;
+	 etFragmentOut = vec4(1.0 - exp(-aColor), 1.0);
  }
  );
 
+/*
+ *
+ * Planet vertex shader
+ *
+ */
 const std::string planetPerVertexVS = ET_TO_CONST_CHAR
 (
- uniform mat4 mModelViewProjection;
- uniform vec3 vCamera;
- uniform vec3 vPrimaryLight;
- uniform vec3 vInvWavelength;
- uniform float fOuterRadius;
- uniform float fOuterRadius2;
- uniform float fInnerRadius;
- uniform float fInnerRadius2;
- uniform float fKrESun;
- uniform float fKmESun;
- uniform float fKr4PI;
- uniform float fKm4PI;
- uniform float fScale;
- uniform float fScaleDepth;
- uniform float fScaleOverScaleDepth;
- uniform float fSamples;
- uniform int nSamples;
+ ATMOSPHERE_UNIFORMS
+ SCALE_FUNCTION
+ SCATTERING_INTEGRAL_FUNCTION
  
  etVertexIn vec3 Vertex;
- 
  etVertexOut vec3 vVertexWS;
  etVertexOut vec3 aColor;
- 
- float scale(float fCos)
- {
-	 float x = 1.0 - fCos;
-	 return fScaleDepth * exp(x * (0.459 + x * (3.83 + x * (x * 5.25 - 6.80))) - 0.00287);
- }
  
  void main(void)
  {
 	 vVertexWS = fInnerRadius * Vertex;
-	 vec3 vRay = vVertexWS - vCamera;
-	 float fFar = length(vRay);
-	 vRay /= fFar;
 	 
-	 vec3 vStart = vCamera;
+	 float b = 2.0 * dot(vPrimaryLight, fOuterRadius * Vertex);
+	 float d = sqrt(max(0.0, b * b - 4.0 * (dot(vVertexWS, vVertexWS) - fOuterRadius2)));
+	 
+	 vec3 skyToGoundColor = solveScatteringIntegral(vVertexWS, vPrimaryLight, 0.5 * (d - b),
+		scale(dot(vPrimaryLight, Vertex)));
+	 
+	 vec3 vCameraWS = vCamera - vVertexWS;
+	 vec3 vRay = normalize(vCameraWS);
 	 float fCameraHeight = length(vCamera);
-	 float fDepth = exp((fInnerRadius - fCameraHeight) / fScaleDepth);
-	 float fCameraAngle = -dot(vRay, vVertexWS) / fInnerRadius;
-	 float fLightAngle = dot(vPrimaryLight, vVertexWS) / fInnerRadius;
-	 float fCameraScale = scale(fCameraAngle);
-	 float fLightScale = scale(fLightAngle);
-	 float fCameraOffset = fDepth * fCameraScale;
-	 float fTemp = (fLightScale + fCameraScale);
+	 float fStartAngle = dot(vRay, vCamera) / fCameraHeight;
+	 float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
+	 vec3 groundToCameraColor = solveScatteringIntegral(vVertexWS, vRay, length(vCameraWS), fStartOffset);
 	 
-	 float fSampleLength = fFar / fSamples;
-	 float fScaledLength = fSampleLength * fScale;
-	 
-	 vec3 vInvWavelengthScaled = vInvWavelength * fKr4PI + fKm4PI;
-	 vec3 vSampleRay = vRay * fSampleLength;
-	 vec3 vSamplePoint = vStart;
-	 
-	 vec3 vFrontColor = vec3(0.0);
-	 
-	 for (int i = 0; i < nSamples; ++i)
-	 {
-		 float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - length(vSamplePoint)));
-		 float fScatter = fDepth * fTemp - fCameraOffset;
-		 vec3 vAttenuate = exp(-fScatter * vInvWavelengthScaled);
-		 vFrontColor += vAttenuate * (fDepth * fScaledLength);
-		 vSamplePoint += vSampleRay;
-	 }
-	 
-	 aColor = fKrESun * vFrontColor * vInvWavelength + fKmESun * vFrontColor;
+	 aColor = (skyToGoundColor * groundToCameraColor) * (fKrESun * vInvWavelength + fKmESun);
 	 
 	 gl_Position = mModelViewProjection * vec4(vVertexWS, 1.0);
  }
  );
+
+/*
+ *
+ * Planet fragment shader
+ *
+ */
 
 const std::string planetPerVertexFS = ET_TO_CONST_CHAR
 (
@@ -511,191 +514,6 @@ const std::string planetPerVertexFS = ET_TO_CONST_CHAR
  }
  );
 
-
-////////////////////////////////////////////////////////////////
-//
-// Atmosphere per pixel
-//
-////////////////////////////////////////////////////////////////
-const std::string atmospherePerPixelVS = ET_TO_CONST_CHAR
-   (
-	uniform mat4 mModelViewProjection;
-	uniform float fOuterRadius;
-	etVertexIn vec3 Vertex;
-	etVertexOut vec3 vVertex;
-	void main(void)
-	{
-		vVertex = fOuterRadius * Vertex;
-		gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
-	}
-);
-
-const std::string planetPerPixelVS = ET_TO_CONST_CHAR
-   (
-	uniform mat4 mModelViewProjection;
-	uniform float fInnerRadius;
-	etVertexIn vec3 Vertex;
-	etVertexOut vec3 vVertex;
-	void main(void)
-	{
-		vVertex = fInnerRadius * Vertex;
-		gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
-	}
-);
-
-const std::string atmospherePerPixelFS = ET_TO_CONST_CHAR
-   (
-	PRECISION_STRING
-
-	uniform vec3 vCamera;
-	uniform vec3 vPrimaryLight;
-	uniform vec3 vInvWavelength;
-	uniform float fOuterRadius;
-	uniform float fOuterRadius2;
-	uniform float fInnerRadius;
-	uniform float fInnerRadius2;
-	uniform float fKrESun;
-	uniform float fKmESun;
-	uniform float fKr4PI;
-	uniform float fKm4PI;
-	uniform float fScale;
-	uniform float fScaleDepth;
-	uniform float fScaleOverScaleDepth;
-	uniform float fSamples;
-	uniform int nSamples;
-	uniform float g;
-	uniform float g2;
-	
-	etFragmentIn vec3 vVertex;
-	
-	float scale(float fCos)
-	{
-		float x = 1.0 - fCos;
-		return fScaleDepth * exp(x * (0.459 + x * (3.83 + x * (x * 5.25 - 6.80))) - 0.00287);
-	}
-	
-	void main(void)
-	{
-		float fCameraHeight = length(vCamera);
-		vec3 vRay = vVertex - vCamera;
-		float fFar = length(vRay);
-		vRay /= fFar;
-		
-/*
- * from space
- *
-		{
-			float B = 2.0 * dot(vCamera, vRay);
-			float C = fCameraHeight * fCameraHeight - fOuterRadius2;
-			float fDet = max(0.0, B * B - 4.0 * C);
-			float fNear = -0.5 * (B + sqrt(fDet));
-			fFar -= fNear;
-			
-			vec3 vStart = vCamera + vRay * fNear;
-			float fStartAngle = dot(vRay, vStart) / fOuterRadius;
-			float fStartOffset = exp(-1.0 / fScaleDepth) * scale(fStartAngle);
-		}
- */
-		
-		float fStartAngle = dot(vRay, vCamera) / fCameraHeight;
-		float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
-		float fSampleLength = fFar / fSamples;
-		float fScaledLength = fSampleLength * fScale;
-		vec3 vSampleRay = vRay * fSampleLength;
-		vec3 vSamplePoint = vCamera;
-		
-		vec3 vFrontColor = vec3(0.0);
-		for(int i = 0; i < nSamples; i++)
-		{
-			float fHeight = length(vSamplePoint);
-			float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight));
-			float fLightAngle = dot(vPrimaryLight, vSamplePoint) / fHeight;
-			float fCameraAngle = dot(vRay, vSamplePoint) / fHeight;
-			float fScatter = fStartOffset + fDepth * (scale(fLightAngle) - scale(fCameraAngle));
-			vec3 vAttenuate = exp(-fScatter * (vInvWavelength * fKr4PI + fKm4PI));
-			vFrontColor += vAttenuate * (fDepth * fScaledLength);
-			vSamplePoint += vSampleRay;
-		}
-		
-		float fCos = dot(vPrimaryLight, vRay);
-		float fOnePlusCos2 = 1.0 + fCos * fCos;
-		
-		float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * fOnePlusCos2 / pow(1.0 + g2 + 2.0 * g * fCos, 1.5);
-		float fRayleighPhase = 0.75 * fOnePlusCos2;
-		
-		vec3 aColor = (fRayleighPhase * fKrESun) * (vFrontColor * vInvWavelength) +
-			(fMiePhase * fKmESun) * vFrontColor;
-		
-		etFragmentOut = vec4(1.0 - exp(-aColor), 1.0);
-	}
-);
-
-const std::string planetPerPixelFS = ET_TO_CONST_CHAR
-(
- PRECISION_STRING
- 
- uniform vec3 vCamera;
- uniform vec3 vPrimaryLight;
- uniform vec3 vInvWavelength;
- uniform float fOuterRadius;
- uniform float fOuterRadius2;
- uniform float fInnerRadius;
- uniform float fInnerRadius2;
- uniform float fKrESun;
- uniform float fKmESun;
- uniform float fKr4PI;
- uniform float fKm4PI;
- uniform float fScale;
- uniform float fScaleDepth;
- uniform float fScaleOverScaleDepth;
- uniform float fSamples;
- uniform int nSamples;
- 
- etFragmentIn vec3 vVertex;
- 
- float scale(float fCos)
- {
-	 float x = 1.0 - fCos;
-	 return fScaleDepth * exp(x * (0.459 + x * (3.83 + x * (x * 5.25 - 6.80))) - 0.00287);
- }
- 
- void main(void)
- {
-	 vec3 vPos = vVertex;
-	 vec3 vRay = vPos - vCamera;
-	 float fFar = length(vRay);
-	 vRay /= fFar;
-	 
-	 vec3 vStart = vCamera;
-	 float fCameraHeight = length(vCamera);
-	 float fDepth = exp((fInnerRadius - fCameraHeight) / fScaleDepth);
-	 float fCameraAngle = -dot(vRay, vPos) / length(vPos);
-	 float fLightAngle = dot(vPrimaryLight, vPos) / length(vPos);
-	 float fCameraScale = scale(fCameraAngle);
-	 float fLightScale = scale(fLightAngle);
-	 float fCameraOffset = fDepth * fCameraScale;
-	 float fTemp = (fLightScale + fCameraScale);
-	 float fSampleLength = fFar / fSamples;
-	 float fScaledLength = fSampleLength * fScale;
-	 vec3 vSampleRay = vRay * fSampleLength;
-	 vec3 vSamplePoint = vStart;
-	 vec3 vAttenuate = vec3(0.0);
-	 vec3 vFrontColor = vec3(0.0);
-	 
-	 for (int i = 0; i < nSamples; ++i)
-	 {
-		 float fHeight = length(vSamplePoint);
-		 float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight));
-		 float fScatter = fDepth * fTemp - fCameraOffset;
-		 vAttenuate = exp(-fScatter * (vInvWavelength * fKr4PI + fKm4PI));
-		 vFrontColor += vAttenuate * (fDepth * fScaledLength);
-		 vSamplePoint += vSampleRay;
-	 }
-	 
-	 vec3 aColor = (vFrontColor + 0.25 * vAttenuate) * (vInvWavelength * fKrESun + fKmESun);
-	 etFragmentOut = vec4(1.0 - exp(-aColor), 1.0);
- }
-);
 
 /*
  * Constants

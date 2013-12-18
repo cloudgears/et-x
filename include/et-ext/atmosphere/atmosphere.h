@@ -59,17 +59,18 @@ namespace et
 		RenderContext* _rc;
 		
 		VertexArrayObject _atmosphereVAO;
+		VertexArrayObject _gridVAO;
 		
 		Program::Pointer _atmospherePerVertexProgram;
-		Program::Pointer _atmospherePerPixelProgram;
-		
 		Program::Pointer _planetPerVertexProgram;
+	
+		/*
+		Program::Pointer _atmospherePerPixelProgram;
 		Program::Pointer _planetPerPixelProgram;
-		
 		Framebuffer::Pointer _framebuffer;
-
 		Camera _cubemapCamera;
 		CubemapProjectionMatrixArray _cubemapMatrices;
+		*/
 		
 		Dictionary _parameters;
 		vec3 _lightDirection = unitY;
