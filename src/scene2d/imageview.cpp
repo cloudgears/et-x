@@ -81,7 +81,8 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 		}
 		else
 		{
-			buildImageVertices(_vertices, _texture, calculateImageFrame(),
+			auto frame = calculateImageFrame();
+			buildImageVertices(_vertices, _texture, frame,
 				rect(_actualImageOrigin, _actualImageSize), color(), transform);
 		}
 	}
@@ -133,8 +134,8 @@ ImageDescriptor ImageView::calculateImageFrame()
 	{
 		case ContentMode_Center:
 		{
-			_actualImageSize = _descriptor.size;
-			_actualImageOrigin = 0.5f * (size() - _descriptor.size);
+			_actualImageSize = desc.size;
+			_actualImageOrigin = 0.5f * (size() - desc.size);
 			break;
 		}
 
