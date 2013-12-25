@@ -214,7 +214,7 @@ Element* Scroll::getActiveElement(const PointerInputInfo& p, Element* root)
 				return el;
 		}
 	}
-	else if (root->enabled() && root->visible() && root->containsPoint(p.pos, p.normalizedPos))
+	else if (root->enabled() && root->visible() && root->containsPoint(p.pos, p.normalizedPos) && !root->hasFlag(Flag_TransparentForPointer))
 	{
 		for (auto cI = root->children().rbegin(), cE = root->children().rend(); cI != cE; ++cI)
 		{
