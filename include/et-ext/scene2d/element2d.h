@@ -70,17 +70,18 @@ namespace et
 			virtual bool containsPoint(const vec2& p, const vec2&);
 			virtual bool containLocalPoint(const vec2& p);
 
+			float finalAlpha() const;
+			
+			const mat4& transform();
 			const mat4& finalTransform();
 			const mat4& finalInverseTransform();
+			
 			vec2 positionInElement(const vec2& p);
 
 			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, AnimatedPropery)
 
 		protected:
 			void buildFinalTransform();
-
-			mat4 transform();
-			float finalAlpha() const;
 
 			void animatorUpdated(BaseAnimator*);
 			void animatorFinished(BaseAnimator*);
@@ -99,6 +100,7 @@ namespace et
 			
 			SceneProgram _defaultProgram;
 			
+			mat4 _transform;
 			mat4 _finalTransform;
 			mat4 _finalInverseTransform;
 			

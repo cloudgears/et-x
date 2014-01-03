@@ -28,6 +28,7 @@ namespace et
 			Scroll(Element2d* parent, const std::string& name = std::string());
 			
 			void setBounce(size_t);
+			void setBounceExtent(const vec2&);
 			
 			void setContentSize(const vec2& cs);
 			
@@ -127,6 +128,7 @@ namespace et
 			vec2 _contentSize;
 			vec2 _offset;
 			vec2 _velocity;
+			vec2 _bounceExtent;
 			vector2<BounceDirection> _bouncing;
 			size_t _bounce;
 			float _updateTime;

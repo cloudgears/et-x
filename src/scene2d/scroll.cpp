@@ -24,8 +24,8 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(Scroll)
 
 Scroll::Scroll(Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _offsetAnimator(0, 0, timerPool()),
-	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f), _bounce(0),
-	_pointerCaptured(false), _manualScrolling(false)
+	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f), _bounceExtent(0.5f),
+	_bounce(0), _pointerCaptured(false), _manualScrolling(false)
 {
 	_offsetAnimator.setDelegate(this);
 	setFlag(Flag_HandlesChildEvents);
@@ -353,10 +353,13 @@ void Scroll::updateBouncing(float deltaTime)
 {
 	if (-_offset.x < scrollLeftDefaultValue())
 		_bouncing.x = BounceDirection_ToNear;
+	
 	if (-_offset.x > scrollRightDefaultValue())
 		_bouncing.x = BounceDirection_ToFar;
+	
 	if (-_offset.y < scrollUpperDefaultValue())
 		_bouncing.y = BounceDirection_ToNear;
+	
 	if (-_offset.y > scrollLowerDefaultValue())
 		_bouncing.y = BounceDirection_ToFar;
 
@@ -422,7 +425,7 @@ void Scroll::update(float t)
 	if (_scrollbarsAlpha < minAlpha)
 		_scrollbarsAlpha = 0.0f;
 
-	if (_manualScrolling)
+	if (_manualScrolling || _offsetAnimator.running())
 	{
 		_scrollbarsAlphaTarget = 1.0f;
 		float dt = _currentPointer.timestamp - _previousPointer.timestamp;
@@ -497,10 +500,10 @@ void Scroll::setOffset(const vec2& aOffset, float duration)
 }
 
 float Scroll::scrollOutOfContentXSize() const
-	{ return horizontalBounce() ? 0.5f * size().x : 0.001f; }
+	{ return horizontalBounce() ? _bounceExtent.x * size().x : 0.001f; }
 
 float Scroll::scrollOutOfContentYSize() const
-	{ return verticalBounce() ? 0.5f * size().y : 0.001f; }
+	{ return verticalBounce() ? _bounceExtent.y * size().y : 0.001f; }
 
 float Scroll::scrollUpperDefaultValue() const
 	{ return 0.0f; }
@@ -594,6 +597,11 @@ void Scroll::setBounce(size_t b)
 	_bounce = b;
 }
 
+void Scroll::setBounceExtent(const vec2& e)
+{
+	_bounceExtent = e;
+}
+
 void Scroll::scrollToBottom(float delay)
 {
 	setOffset(vec2(_offset.x, etMin(0.0f, size().y - _contentSize.y)), delay);
@@ -601,7 +609,6 @@ void Scroll::scrollToBottom(float delay)
 
 vec2 Scroll::contentSize()
 {
-	adjustContentSize();
 	return _contentSize;
 }
 

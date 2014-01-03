@@ -15,7 +15,7 @@ namespace et
 		void setLightDirection(const vec3&);
 		void setParameters(Dictionary);
 		
-		void renderAtmosphereWithGeometry(const Camera&);
+		void renderAtmosphereWithGeometry(const Camera&, bool drawSky, bool drawPlanet);
 		
 		void performRendering(bool shouldClear, bool renderPlanet);
 		
@@ -28,6 +28,8 @@ namespace et
 		
 		const vec3& cameraPosition() const
 			{ return _cameraPosition; }
+		
+		Program::Pointer planetProgram();
 		
 	public:
 		static Dictionary defaultParameters();
@@ -76,6 +78,7 @@ namespace et
 		vec3 _lightDirection = unitY;
 		vec3 _cameraPosition;
 		vec4 _ambientColor;
-		bool _parametersValid = false;
+		bool _skyParametersValid = false;
+		bool _groundParametersValid = false;
 	};
 }

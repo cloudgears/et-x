@@ -81,8 +81,6 @@ Dictionary Atmosphere::defaultParameters()
 
 void Atmosphere::setProgramParameters(Program::Pointer prog)
 {
-	if (_parametersValid) return;
-	
 	float fRayleighScaleDepth = _parameters.floatForKey(kRayleighScaleDepth)->content;
 	float fESun = _parameters.floatForKey(kSunExponent)->content;
 	float fKr = _parameters.floatForKey(kKr)->content;
@@ -143,18 +141,26 @@ void Atmosphere::generateGeometry(RenderContext* rc)
 		BufferDrawType_Static, ia, BufferDrawType_Static);
 }
 
-void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam)
+void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam, bool drawSky, bool drawPlanet)
 {
+	ET_ASSERT(drawSky || drawPlanet);
+	
 	auto& rs = _rc->renderState();
 	
+	vec3 direction = -cam.direction();
+	
+	vec3 upVector = unitY;
+	if (std::abs( (std::abs(dot(upVector, direction)) - 1.0f)) <= std::numeric_limits<float>::epsilon())
+		upVector = unitX;
+	
 	Camera adjustedCamera(cam);
-	adjustedCamera.lookAt(_cameraPosition, _cameraPosition - cam.direction());
+	adjustedCamera.lookAt(_cameraPosition, _cameraPosition + direction, upVector);
 
 	rs.bindVertexArray(_atmosphereVAO);
 	rs.setDepthMask(true);
 	rs.setDepthTest(true);
 	
-	bool shouldDrawPlanet =
+	bool shouldDrawPlanet = drawPlanet &&
 		adjustedCamera.frustum().containSphere(Sphere(vec3(0.0f), _parameters.floatForKey(kPlanetRadius)->content));
 
 	if (shouldDrawPlanet)
@@ -162,7 +168,13 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam)
 		rs.setBlend(false);
 		rs.setCulling(true, CullState_Back);
 		rs.bindProgram(_planetPerVertexProgram);
-		setProgramParameters(_planetPerVertexProgram);
+		
+		if (!_groundParametersValid)
+		{
+			setProgramParameters(_planetPerVertexProgram);
+			_groundParametersValid = true;
+		}
+		
 		_planetPerVertexProgram->setPrimaryLightPosition(_lightDirection);
 		_planetPerVertexProgram->setCameraProperties(adjustedCamera);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
@@ -176,27 +188,31 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam)
 #endif
 	}
 	
-	rs.setBlend(true, BlendState_Additive);
-	rs.setCulling(true, CullState_Front);
-//	rs.bindVertexArray(_gridVAO);
-	rs.bindProgram(_atmospherePerVertexProgram);
-	setProgramParameters(_atmospherePerVertexProgram);
-
-	_atmospherePerVertexProgram->setUniform("mInverseMVPMatrix", adjustedCamera.inverseModelViewProjectionMatrix());
-	_atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
-	_atmospherePerVertexProgram->setCameraProperties(adjustedCamera);
-	_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
-	
+	if (drawSky)
+	{
+		rs.setBlend(true, BlendState_Additive);
+		rs.setCulling(true, CullState_Front);
+		rs.bindProgram(_atmospherePerVertexProgram);
+		
+		if (!_skyParametersValid)
+		{
+			setProgramParameters(_atmospherePerVertexProgram);
+			_skyParametersValid = true;
+		}
+		
+		_atmospherePerVertexProgram->setUniform("mInverseMVPMatrix", adjustedCamera.inverseModelViewProjectionMatrix());
+		_atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
+		_atmospherePerVertexProgram->setCameraProperties(adjustedCamera);
+		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		
 #if (DRAW_WIREFRAME)
-	rs.setWireframeRendering(true);
-	_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
-	rs.setWireframeRendering(false);
-	rs.setDepthFunc(DepthFunc_Less);
+		rs.setWireframeRendering(true);
+		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		rs.setWireframeRendering(false);
+		rs.setDepthFunc(DepthFunc_Less);
 #endif
-	
-	rs.setCulling(true, CullState_Back);
-	
-	_parametersValid |= shouldDrawPlanet;
+		rs.setCulling(true, CullState_Back);
+	}
 }
 
 void Atmosphere::performRendering(bool shouldClear, bool renderPlanet)
@@ -302,12 +318,14 @@ void Atmosphere::setParameters(Dictionary d)
 	_cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 0.1f, 2.0f * outerRadius);
 	_cubemapMatrices = cubemapMatrixProjectionArray(_cubemapCamera.modelViewProjectionMatrix(), _cameraPosition);
 */
-	_parametersValid = false;
+	_skyParametersValid = false;
+	_groundParametersValid = false;
 }
 
 void Atmosphere::setPlanetFragmentShader(const std::string& shader)
 {
-	_parametersValid = false;
+	_skyParametersValid = false;
+	_groundParametersValid = false;
 	
 	_planetPerVertexProgram = _rc->programFactory().genProgram("et~planet~per-vertex~program",
 		planetPerVertexVS, shader);
@@ -318,6 +336,11 @@ void Atmosphere::setPlanetFragmentShader(const std::string& shader)
 const std::string& Atmosphere::defaultPlanetFragmentShader()
 {
 	return planetPerVertexFS;
+}
+
+Program::Pointer Atmosphere::planetProgram()
+{
+	return _planetPerVertexProgram;
 }
 
 /*
