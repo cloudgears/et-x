@@ -106,7 +106,6 @@ namespace et
 
 			void getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst);
 
-			void removeLayoutFromList(Layout::Pointer);
 			void removeLayoutEntryFromList(LayoutEntry*);
 			void layoutEntryTransitionFinished(LayoutEntry*);
 			

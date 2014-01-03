@@ -29,6 +29,7 @@ bool Scene::pointerPressed(const et::PointerInputInfo& p)
 		if ((*i)->layout->pointerPressed(p))
 			return true;
 	}
+	
 	return false;
 }
 
@@ -193,8 +194,8 @@ void Scene::getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3*
 
 void Scene::internal_replaceTopmostLayout(Layout::Pointer newLayout, AnimationDescriptor desc)
 {
-	removeLayout(topmostLayout(), desc.flags, desc.duration);
-	pushLayout(newLayout, desc.flags, desc.duration);
+	internal_removeLayout(topmostLayout(), desc);
+	internal_pushLayout(newLayout, desc);
 }
 
 void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
@@ -208,25 +209,35 @@ void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 		++i;
 	}
 
-	removeLayout(l.oldLayout, desc.flags, desc.duration);
+	internal_removeLayout(l.oldLayout, desc);
 
 	if (i == _layouts.end())
 	{
-		pushLayout(l.newLayout, desc.flags, desc.duration);
+		internal_pushLayout(l.newLayout, desc);
 	}
 	else 
 	{
-		LayoutEntry::Pointer newEntry(new LayoutEntry(this, _rc, l.newLayout));
-		_layouts.insert(i, newEntry);
-
-		animateLayoutAppearing(l.newLayout, newEntry.ptr(), desc.flags, desc.duration);
+		LayoutEntry::Pointer layoutToShow(entryForLayout(l.newLayout));
+		
+		if (layoutToShow.invalid())
+		{
+			layoutToShow.reset(new LayoutEntry(this, _rc, l.newLayout));
+		}
+		else
+		{
+			_layouts.erase(std::find_if(_layouts.begin(), _layouts.end(),
+				[layoutToShow](const LayoutEntry::Pointer& lp) { return (lp.ptr() == layoutToShow.ptr()); }));
+		}
+		
+		_layouts.insert(i, layoutToShow);
+		animateLayoutAppearing(l.newLayout, layoutToShow.ptr(), desc.flags, desc.duration);
 	}
 }
 
 void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor desc)
 {
 	LayoutEntry* entry = entryForLayout(oldLayout);
-	if (entry == 0) return;
+	if (entry == nullptr) return;
 
 	layoutWillDisappear.invoke(oldLayout);
 	
@@ -237,7 +248,7 @@ void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor
 	if ((desc.flags == AnimationFlag_None) || (std::abs(desc.duration) < std::numeric_limits<float>::epsilon()))
 	{
 		oldLayout->didDisappear();
-		removeLayoutFromList(oldLayout);
+		removeLayoutEntryFromList(entry);
 	}
 	else 
 	{
@@ -283,18 +294,6 @@ void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntry* newEn
 	}
 }
 
-void Scene::removeLayoutFromList(Layout::Pointer ptr)
-{
-	for (auto i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
-	{
-		if ((*i)->layout == ptr)
-		{
-			_layouts.erase(i);
-			return;
-		}
-	}
-}
-
 void Scene::removeLayoutEntryFromList(LayoutEntry* ptr)
 {
 	for (auto i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
@@ -320,7 +319,6 @@ void Scene::layoutEntryTransitionFinished(LayoutEntry* l)
 	{
 		layoutDidAppear.invoke(l->layout);
 		l->layout->didAppear();
-
 		l->state = Scene::LayoutEntry::State_Still;
 	}
 }
@@ -340,7 +338,8 @@ bool Scene::hasLayout(Layout::Pointer aLayout)
 
 Scene::LayoutEntry* Scene::entryForLayout(Layout::Pointer ptr)
 {
-	if (ptr.invalid()) return nullptr;
+	if (ptr.invalid())
+		return nullptr;
 
 	for (auto& i : _layouts)
 	{
