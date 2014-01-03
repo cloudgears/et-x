@@ -157,8 +157,6 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam, bool drawSky, b
 	adjustedCamera.lookAt(_cameraPosition, _cameraPosition + direction, upVector);
 
 	rs.bindVertexArray(_atmosphereVAO);
-	rs.setDepthMask(true);
-	rs.setDepthTest(true);
 	
 	bool shouldDrawPlanet = drawPlanet &&
 		adjustedCamera.frustum().containSphere(Sphere(vec3(0.0f), _parameters.floatForKey(kPlanetRadius)->content));
@@ -185,6 +183,7 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam, bool drawSky, b
 		rs.setWireframeRendering(true);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
 		rs.setWireframeRendering(false);
+		rs.setDepthFunc(DepthFunc_Less);
 #endif
 	}
 	
