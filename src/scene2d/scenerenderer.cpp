@@ -149,7 +149,7 @@ void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture& 
 	const SceneProgram& program, Element* owner, ElementRepresentation cls)
 {
 	size_t count = vertices.lastElementIndex();
-	assert((count > 0) && _renderingElement.valid() && program.valid());
+	ET_ASSERT((count > 0) && _renderingElement.valid() && program.valid());
 	
 	etCopyMemory(allocateVertices(count, texture, program, owner, cls),
 		vertices.data(), count * vertices.typeSize());
@@ -237,7 +237,7 @@ SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& n
 	
 	program.additionalOffsetAndAlpha = program.program->getUniform(additionalOffsetAndAlphaUniform);
 	
-	assert((program.additionalOffsetAndAlpha.location != -1) &&
+	ET_ASSERT((program.additionalOffsetAndAlpha.location != -1) &&
 		"Program should contain uniform for additional offset and alpha, of type vec3 and named additionalOffsetAndAlpha");
 	
 	return program;
