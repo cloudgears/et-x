@@ -16,6 +16,16 @@ namespace et
 	class GameCenter : public Singleton<GameCenter>
 	{
 	public:
+		enum AuthorizationStatus
+		{
+			AuthorizationStatus_NotAuthorized,
+			AuthorizationStatus_Authorizing,
+			AuthorizationStatus_Authorized,
+		};
+		
+	public:
+		AuthorizationStatus status() const;
+		
 		void authenticate();
 		
 		void showLeaderboard(const std::string&);
@@ -24,7 +34,7 @@ namespace et
 		void showAchievements();
 		void unlockAchievement(const std::string&);
 		
-		ET_DECLARE_EVENT0(unavailable)
+		ET_DECLARE_EVENT1(authorizationStatusChanged, AuthorizationStatus)
 		ET_DECLARE_EVENT1(reportingFailed, std::string)
 		ET_DECLARE_EVENT1(achievementFailedToUnlock, std::string)
 				

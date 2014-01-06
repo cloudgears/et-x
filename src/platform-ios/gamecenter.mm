@@ -40,8 +40,7 @@ public:
 	std::string optionsFileName;
 	
 	Dictionary options;
-	
-	bool authenticated = false;
+	GameCenter::AuthorizationStatus status = GameCenter::AuthorizationStatus_NotAuthorized;
 	
 public:
 	std::string hashForScore(Dictionary score);
@@ -67,6 +66,11 @@ GameCenter::GameCenter() :
 	authenticate();
 }
 
+GameCenter::AuthorizationStatus GameCenter::status() const
+{
+	return _private->status;
+}
+
 void GameCenter::authenticate()
 {
 	GKLocalPlayer* player = [GKLocalPlayer localPlayer];
@@ -74,6 +78,8 @@ void GameCenter::authenticate()
 	{
 		if (viewController != nil)
 		{
+			_private->status = AuthorizationStatus_Authorizing;
+			
 			UIViewController* mainViewController =
 				reinterpret_cast<UIViewController*>(application().renderingContextHandle());
 			[mainViewController presentViewController:viewController animated:YES completion:nil];
@@ -82,15 +88,17 @@ void GameCenter::authenticate()
 		{
 			if (player.authenticated)
 			{
-				_private->authenticated = true;
+				_private->status = AuthorizationStatus_Authorized;
 				authenticationCompleted();
 			}
 			else
 			{
-				_private->authenticated = false;
+				_private->status = AuthorizationStatus_NotAuthorized;
 				NSLog(@"Unable to authenticate to Game Center\n%@", error);
 			}
 		}
+		
+		authorizationStatusChanged.invokeInMainRunLoop(_private->status);
 	};
 }
 
@@ -100,10 +108,6 @@ void GameCenter::showLeaderboard(const std::string& ldId)
 	{
 		[[SharedGameCenterDelegate instance] performSelectorOnMainThread:@selector(showLeaderboard:)
 			withObject:[NSString stringWithUTF8String:ldId.c_str()] waitUntilDone:NO];
-	}
-	else
-	{
-		unavailable.invokeInMainRunLoop();
 	}
 }
 
