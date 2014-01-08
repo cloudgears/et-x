@@ -26,6 +26,8 @@ namespace et
 		
 		void setPlanetFragmentShader(const std::string&);
 		
+		void setShouldComputeScatteringOnPlanet(bool);
+		
 		const vec3& cameraPosition() const
 			{ return _cameraPosition; }
 		
@@ -65,14 +67,6 @@ namespace et
 		
 		Program::Pointer _atmospherePerVertexProgram;
 		Program::Pointer _planetPerVertexProgram;
-	
-		/*
-		Program::Pointer _atmospherePerPixelProgram;
-		Program::Pointer _planetPerPixelProgram;
-		Framebuffer::Pointer _framebuffer;
-		Camera _cubemapCamera;
-		CubemapProjectionMatrixArray _cubemapMatrices;
-		*/
 		
 		Dictionary _parameters;
 		vec3 _lightDirection = unitY;
@@ -80,5 +74,6 @@ namespace et
 		vec4 _ambientColor;
 		bool _skyParametersValid = false;
 		bool _groundParametersValid = false;
+		bool _computeScatteringOnPlanet = true;
 	};
 }

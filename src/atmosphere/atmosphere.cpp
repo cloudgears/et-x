@@ -5,15 +5,11 @@
 
 using namespace et;
 
-/*
-extern const std::string atmospherePerPixelVS;
-extern const std::string atmospherePerPixelFS;
-extern const std::string planetPerPixelVS;
-extern const std::string planetPerPixelFS;
-*/
 extern const std::string atmospherePerVertexVS;
 extern const std::string atmospherePerVertexFS;
+
 extern const std::string planetPerVertexVS;
+extern const std::string planetPerVertexSimpleVS;
 extern const std::string planetPerVertexFS;
 
 #define DRAW_WIREFRAME	0
@@ -30,19 +26,6 @@ Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
 	setProgramParameters(_atmospherePerVertexProgram);
 
 	setPlanetFragmentShader(defaultPlanetFragmentShader());
-
-/*
-	_atmospherePerPixelProgram = rc->programFactory().genProgram("et~atmosphere~per-pixel~program",
-		atmospherePerPixelVS, atmospherePerPixelFS);
-	setProgramParameters(_atmospherePerPixelProgram);
-
-	_planetPerPixelProgram = rc->programFactory().genProgram("et~planet~per-pixel~program",
-		planetPerPixelVS, planetPerPixelFS);
-	setProgramParameters(_planetPerPixelProgram);
-		
-	_framebuffer = rc->framebufferFactory().createCubemapFramebuffer(textureSize, "et~atmosphere~cubemap",
-		GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT);
-*/
 	
 	generateGeometry(rc);
 }
@@ -312,11 +295,6 @@ void Atmosphere::setParameters(Dictionary d)
 	
 	_cameraPosition = h * fromSpherical(lat, lon);
 	
-/*
-	float outerRadius = innerRadius + atmosphereHeight;
-	_cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 0.1f, 2.0f * outerRadius);
-	_cubemapMatrices = cubemapMatrixProjectionArray(_cubemapCamera.modelViewProjectionMatrix(), _cameraPosition);
-*/
 	_skyParametersValid = false;
 	_groundParametersValid = false;
 }
@@ -327,7 +305,7 @@ void Atmosphere::setPlanetFragmentShader(const std::string& shader)
 	_groundParametersValid = false;
 	
 	_planetPerVertexProgram = _rc->programFactory().genProgram("et~planet~per-vertex~program",
-		planetPerVertexVS, shader);
+		_computeScatteringOnPlanet ? planetPerVertexVS : planetPerVertexSimpleVS, shader);
 	
 	setProgramParameters(_planetPerVertexProgram);
 }
@@ -340,6 +318,11 @@ const std::string& Atmosphere::defaultPlanetFragmentShader()
 Program::Pointer Atmosphere::planetProgram()
 {
 	return _planetPerVertexProgram;
+}
+
+void Atmosphere::setShouldComputeScatteringOnPlanet(bool c)
+{
+	_computeScatteringOnPlanet = c;
 }
 
 /*
@@ -514,6 +497,22 @@ const std::string planetPerVertexVS = ET_TO_CONST_CHAR
 	 
 	 aColor = (skyToGoundColor * groundToCameraColor) * (fKrESun * vInvWavelength + fKmESun);
 	 
+	 gl_Position = mModelViewProjection * vec4(vVertexWS, 1.0);
+ }
+ );
+
+const std::string planetPerVertexSimpleVS = ET_TO_CONST_CHAR
+(
+ ATMOSPHERE_UNIFORMS
+ 
+ etVertexIn vec3 Vertex;
+ etVertexOut vec3 vVertexWS;
+ etVertexOut vec3 aColor;
+ 
+ void main(void)
+ {
+	 vVertexWS = fInnerRadius * Vertex;
+	 aColor = vec3(1.0);
 	 gl_Position = mModelViewProjection * vec4(vVertexWS, 1.0);
  }
  );
