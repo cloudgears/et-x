@@ -32,6 +32,7 @@ namespace et
 			
 			void setHandleImage(const Image&, float scale);
 			void setSliderImages(const Image& left, const Image& right);
+			void setSliderFillColors(const vec4& l, const vec4& r);
 			
 			void setSliderImageMode(SliderImagesMode);
 			
@@ -66,6 +67,9 @@ namespace et
 			Image _sliderLeft;
 			Image _sliderRight;
 			Image _handle;
+
+			vec4 _sliderLeftColor;
+			vec4 _sliderRightColor;
 			
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _sliderLeftVertices;

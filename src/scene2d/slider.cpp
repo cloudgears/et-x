@@ -81,14 +81,14 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 	float handleWidth = _handle.descriptor.size.x;
 	float halfHandleWidth = 0.5f * handleWidth;
 	float valuePoint = _value * mainRect.width;
-	
+		
 	if (_backgroundColor.w > 0.0f)
 		buildColorVertices(_backgroundVertices, mainRect, _backgroundColor, transform);
 
 	if (_background.texture.valid())
 	{
 		buildImageVertices(_backgroundVertices, _background.texture,
-			_background.descriptor, mainRect, vec4(1.0f), transform);
+			_background.descriptor, mainRect, color(), transform);
 	}
 	
 	if (_value > 0.0f)
@@ -103,14 +103,14 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 			if (_sliderImagesMode == SliderImagesMode_Crop)
 				desc.size.x *= _value;
 			
-			buildImageVertices(_sliderLeftVertices, _sliderLeft.texture, desc, r, vec4(1.0f), transform);
+			buildImageVertices(_sliderLeftVertices, _sliderLeft.texture, desc, r, color(), transform);
 		}
 		else
 		{
 			rect r(halfHandleWidth, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
 			r.top = 0.5f * (mainRect.height - r.height);
 			r.width = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
-			buildColorVertices(_sliderLeftVertices, r, vec4(0.25f, 0.5f, 1.0f, 1.0f), transform);
+			buildColorVertices(_sliderLeftVertices, r, _sliderLeftColor, transform);
 		}
 	}
 	
@@ -131,7 +131,7 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 				desc.size.x *= (1.0f - _value);
 			}
 			
-			buildImageVertices(_sliderRightVertices, _sliderRight.texture, desc, r, vec4(1.0f), transform);
+			buildImageVertices(_sliderRightVertices, _sliderRight.texture, desc, r, color(), transform);
 		}
 		else
 		{
@@ -139,7 +139,7 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 			r.top = 0.5f * (mainRect.height - r.height);
 			r.left = clamp(valuePoint, halfHandleWidth, mainRect.width - halfHandleWidth);
 			r.width = etMax(0.0f, mainRect.width - halfHandleWidth - r.left);
-			buildColorVertices(_sliderLeftVertices, r, vec4(0.5f, 0.5f, 0.5f, 1.0f), transform);
+			buildColorVertices(_sliderLeftVertices, r, _sliderRightColor, transform);
 		}
 	}
 
@@ -149,7 +149,7 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
 		
-		buildImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r, vec4(1.0f), transform);
+		buildImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r, color(), transform);
 	}
 	else
 	{
@@ -179,6 +179,13 @@ void Slider::setSliderImages(const Image& left, const Image& right)
 {
 	_sliderLeft = left;
 	_sliderRight = right;
+	invalidateContent();
+}
+
+void Slider::setSliderFillColors(const vec4& l, const vec4& r)
+{
+	_sliderLeftColor = l;
+	_sliderRightColor = l;
 	invalidateContent();
 }
 
