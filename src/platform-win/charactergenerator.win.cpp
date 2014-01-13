@@ -9,12 +9,11 @@ using namespace et;
 using namespace et::s2d;
 
 const int defaultTextureBindUnit = 7;
-const int defaultTextureSize = 1024;
 
 class et::s2d::CharacterGeneratorPrivate
 {
 	public:
-		CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size);
+		CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size, size_t texSize);
 		~CharacterGeneratorPrivate();
 
 		void updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
@@ -24,6 +23,8 @@ class et::s2d::CharacterGeneratorPrivate
 
 	public:
 		size_t _size;		
+		size_t textureSize;
+
 		std::string _face;
 		std::string _boldFace;
 
@@ -35,11 +36,12 @@ class et::s2d::CharacterGeneratorPrivate
 		HFONT _boldFont;
 };
 
-CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace, size_t size) : _rc(rc),
-	_private(new CharacterGeneratorPrivate(face, boldFace, size)), _face(face), _boldFace(boldFace), _size(size)
+CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace, 
+	size_t size, size_t texSize) : _rc(rc),
+	_private(new CharacterGeneratorPrivate(face, boldFace, size, texSize)), _face(face), _boldFace(boldFace), _size(size)
 {
-	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize), GL_RGBA, 
-		GL_UNSIGNED_BYTE, BinaryDataStorage(4 * defaultTextureSize * defaultTextureSize, 0), face + "font");
+	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(texSize), GL_RGBA,
+		GL_UNSIGNED_BYTE, BinaryDataStorage(4 * sqr(texSize), 0), face + "font");
 }
 
 CharacterGenerator::~CharacterGenerator()
@@ -133,8 +135,9 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
  * Private
  */
 
-CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size) : 
-	_size(size), _face(face), _boldFace(boldFace), placer(vec2i(defaultTextureSize), true), _textureData(sqr(defaultTextureSize) * 4)
+CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, 
+	size_t size, size_t texSize) : _size(size), _face(face), _boldFace(boldFace), placer(vec2i(texSize), true),
+	_textureData(sqr(texSize) * 4), textureSize(texSize)
 {
 	commonDC = CreateCompatibleDC(nullptr);
 
@@ -157,7 +160,7 @@ CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
 	Texture texture, BinaryDataStorage& data)
 {
-	vec2i dest(position.x, defaultTextureSize - position.y - size.y);
+	vec2i dest(position.x, textureSize - position.y - size.y);
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 
