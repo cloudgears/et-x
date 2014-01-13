@@ -10,8 +10,6 @@
 using namespace et;
 using namespace et::s2d;
 
-const size_t defaultTextureSize = 1024;
-
 class et::s2d::CharacterGeneratorPrivate
 {
 	public:
@@ -36,11 +34,10 @@ class et::s2d::CharacterGeneratorPrivate
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face,
-	const std::string& boldFace, size_t size) : _rc(rc),
-	_private(new CharacterGeneratorPrivate(face, boldFace, size)), _face(face), _size(size)
+	const std::string& boldFace, size_t size, size_t texSize) : _rc(rc),
+	_private(new CharacterGeneratorPrivate(face, boldFace, size)), _face(face), _size(size),
 {
-	vec2i textureSize(defaultTextureSize);
-	
+	vec2i textureSize(texSize);
 	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, textureSize,
 		GL_RGBA, GL_UNSIGNED_BYTE, BinaryDataStorage(4 * textureSize.square(), 0), face + "font");
 }

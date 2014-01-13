@@ -72,7 +72,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	}
 	
 	float contentGap = (imageSize.x > 0.0f) && (_textSize.x > 0.0f) ? 5.0f : 0.0f;
-	float contentWidth = imageSize.x + _textSize.x + contentGap;
+	vec2 contentSize = imageSize + _textSize + vec2(contentGap);
 
 	vec2 imageOrigin;
 	vec2 textOrigin;
@@ -80,15 +80,29 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	if (_imageLayout == ImageLayout_Right)
 	{
 		textOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
-			(frameSize - vec2(contentWidth, _textSize.y));
+			(frameSize - vec2(contentSize.x, _textSize.y));
 		
 		imageOrigin.x = textOrigin.x + contentGap + _textSize.x;
 		imageOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - imageSize.y);
 	}
+	else if (_imageLayout == ImageLayout_Top)
+	{
+		imageOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
+		(frameSize - vec2(imageSize.x, contentSize.y));
+		textOrigin.x = alignmentFactor(_horizontalAlignment) * (frameSize.x - _textSize.x);
+		textOrigin.y = imageOrigin.y + contentGap + imageSize.y;
+	}
+	else if (_imageLayout == ImageLayout_Bottom)
+	{
+		textOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
+			(frameSize - vec2(_textSize.x, contentSize.y));
+		imageOrigin.x = alignmentFactor(_horizontalAlignment) * (frameSize.x - imageSize.x);
+		imageOrigin.y = textOrigin.y + contentGap + _textSize.y;
+	}
 	else
 	{
 		imageOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
-			(frameSize - vec2(contentWidth, imageSize.y));
+			(frameSize - vec2(contentSize.x, imageSize.y));
 		
 		textOrigin.x = imageOrigin.x + contentGap + imageSize.x;
 		textOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - _textSize.y);

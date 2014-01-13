@@ -19,12 +19,10 @@
 using namespace et;
 using namespace et::s2d;
 
-const size_t defaultTextureSize = 1024;
-
 class et::s2d::CharacterGeneratorPrivate
 {
 public:
-	CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size);
+	CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size, size_t texSize);
 	~CharacterGeneratorPrivate();
 	
 	void updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
@@ -36,6 +34,7 @@ public:
 public:
 	std::string fontFace;
 	size_t fontSize;
+	size_t textureSize;
 	
 	RectPlacer _placer;
 	
@@ -47,12 +46,12 @@ public:
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face,
-	const std::string& boldFace, size_t size) : _rc(rc),
-	_private(new CharacterGeneratorPrivate(face, boldFace, size)), _face(face), _size(size)
+	const std::string& boldFace, size_t size, size_t texSize) : _rc(rc),
+	_private(new CharacterGeneratorPrivate(face, boldFace, size, texSize)), _face(face), _size(size)
 {
-	BinaryDataStorage emptyData(defaultTextureSize * defaultTextureSize * 4, 0);
+	BinaryDataStorage emptyData(sqr(texSize) * 4, 0);
 	
-	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(defaultTextureSize),
+	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(static_cast<int>(texSize)),
 		GL_RGBA, GL_UNSIGNED_BYTE, emptyData, face + "font");
 }
 
@@ -177,8 +176,8 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
  */
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
-	const std::string&, size_t size) : fontFace(face), fontSize(size),
-	_placer(vec2i(defaultTextureSize), false)
+	const std::string&, size_t size, size_t texSize) : fontFace(face), fontSize(size),
+	_placer(vec2i(static_cast<int>(texSize)), false), textureSize(texSize)
 {
     NSString* cFace = [NSString stringWithUTF8String:face.c_str()];
 	
@@ -228,7 +227,7 @@ CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position,
 	const vec2i& size, Texture texture, BinaryDataStorage& data)
 {
-	vec2i dest(position.x, defaultTextureSize - position.y - size.y);
+	vec2i dest(position.x, static_cast<int>(textureSize) - position.y - size.y);
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 

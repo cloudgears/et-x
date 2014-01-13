@@ -25,7 +25,7 @@ namespace et
 
 		public:
 			CharacterGenerator(RenderContext* _rc, const std::string& face,
-				const std::string& boldFace, size_t size);
+				const std::string& boldFace, size_t size, size_t textureSize = 1024);
 			
 			~CharacterGenerator();
 			

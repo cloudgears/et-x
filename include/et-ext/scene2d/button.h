@@ -30,6 +30,8 @@ namespace et
 			{
 				ImageLayout_Left,
 				ImageLayout_Right,
+				ImageLayout_Top,
+				ImageLayout_Bottom
 			};
 			
 			enum ContentMode
