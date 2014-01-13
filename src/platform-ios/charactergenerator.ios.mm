@@ -13,7 +13,8 @@ using namespace et::s2d;
 class et::s2d::CharacterGeneratorPrivate
 {
 	public:
-		CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size);
+		CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, size_t size,
+			size_t textureSize);
 		~CharacterGeneratorPrivate();
 
 		void updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
@@ -24,6 +25,7 @@ class et::s2d::CharacterGeneratorPrivate
 	public:
 		std::string _fontFace;
 		size_t _fontSize;
+		size_t _textureSize;
 	
 		RectPlacer _placer;
    
@@ -35,11 +37,10 @@ class et::s2d::CharacterGeneratorPrivate
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face,
 	const std::string& boldFace, size_t size, size_t texSize) : _rc(rc),
-	_private(new CharacterGeneratorPrivate(face, boldFace, size)), _face(face), _size(size),
+	_private(new CharacterGeneratorPrivate(face, boldFace, size, texSize)), _face(face), _size(size)
 {
-	vec2i textureSize(texSize);
-	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, textureSize,
-		GL_RGBA, GL_UNSIGNED_BYTE, BinaryDataStorage(4 * textureSize.square(), 0), face + "font");
+	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(texSize),
+		GL_RGBA, GL_UNSIGNED_BYTE, BinaryDataStorage(4 * sqr(texSize), 0), face + "font");
 }
 
 CharacterGenerator::~CharacterGenerator()
@@ -145,8 +146,8 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
  */
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
-	const std::string& boldFace, size_t size) : _fontFace(face), _fontSize(size),
-	_placer(vec2i(defaultTextureSize - 1), false)
+	const std::string& boldFace, size_t size, size_t texSize) : _fontFace(face), _fontSize(size),
+	_placer(vec2i(texSize - 1), false)
 {
     NSString* cFace = [NSString stringWithCString:face.c_str() encoding:NSASCIIStringEncoding];
     NSString* cBoldFace = [NSString stringWithCString:boldFace.c_str() encoding:NSASCIIStringEncoding];

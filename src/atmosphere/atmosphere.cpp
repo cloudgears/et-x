@@ -6,6 +6,7 @@
 using namespace et;
 
 extern const std::string atmospherePerVertexVS;
+extern const std::string atmosphereFastPerVertexVS;
 extern const std::string atmospherePerVertexFS;
 
 extern const std::string planetPerVertexVS;
@@ -22,7 +23,7 @@ Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
 	ObjectsCache localCache;
 	
 	_atmospherePerVertexProgram = rc->programFactory().genProgram("et~atmosphere~per-vertex~program",
-		atmospherePerVertexVS, atmospherePerVertexFS);
+		atmosphereFastPerVertexVS, atmospherePerVertexFS);
 	setProgramParameters(_atmospherePerVertexProgram);
 
 	setPlanetFragmentShader(defaultPlanetFragmentShader());
@@ -172,6 +173,7 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam, bool drawSky, b
 	
 	if (drawSky)
 	{
+		CullState cs = rs.cullState();
 		rs.setBlend(true, BlendState_Additive);
 		rs.setCulling(true, CullState_Front);
 		rs.bindProgram(_atmospherePerVertexProgram);
@@ -193,7 +195,7 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam, bool drawSky, b
 		rs.setWireframeRendering(false);
 		rs.setDepthFunc(DepthFunc_Less);
 #endif
-		rs.setCulling(true, CullState_Back);
+		rs.setCulling(true, cs);
 	}
 }
 
@@ -365,6 +367,17 @@ void Atmosphere::setShouldComputeScatteringOnPlanet(bool c)
 		return fScaleDepth * exp(x * (0.459 + x * (3.83 + x * (x * 5.25 - 6.80))) - 0.00287); \
 	}
 
+#define SCATTERING_INTEGRAL_FUNCTION_INTERIOR \
+{ \
+	float fHeight = length(vSamplePoint); \
+	float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight)); \
+	float fLightAngle = dot(vPrimaryLight, vSamplePoint) / fHeight; \
+	float fCameraAngle = dot(vRay, vSamplePoint) / fHeight; \
+	float fScatter = fStartOffset + fDepth * (scale(fLightAngle) - scale(fCameraAngle)); \
+	color += exp(-fScatter * vScatterScale) * (fDepth * scaledLength); \
+	vSamplePoint += vSampleRay; \
+}
+
 #define SCATTERING_INTEGRAL_FUNCTION  \
 	vec3 solveScatteringIntegral(in vec3 vSamplePoint, in vec3 vRay, in float fFar, in float fStartOffset) \
 	{ \
@@ -374,18 +387,23 @@ void Atmosphere::setShouldComputeScatteringOnPlanet(bool c)
 		vec3 vScatterScale = vInvWavelength * fKr4PI + fKm4PI; \
 		vec3 color = vec3(0.0); \
 		for (int i = 0; i < nSamples; i++) \
-		{ \
-			float fHeight = length(vSamplePoint); \
-			float fDepth = exp(fScaleOverScaleDepth * (fInnerRadius - fHeight)); \
-			float fLightAngle = dot(vPrimaryLight, vSamplePoint) / fHeight; \
-			float fCameraAngle = dot(vRay, vSamplePoint) / fHeight; \
-			float fScatter = fStartOffset + fDepth * (scale(fLightAngle) - scale(fCameraAngle)); \
-			color += exp(-fScatter * vScatterScale) * (fDepth * scaledLength); \
-			vSamplePoint += vSampleRay; \
-		} \
+			SCATTERING_INTEGRAL_FUNCTION_INTERIOR \
+		return color; \
+	} \
+	vec3 solveFastScatteringIntegral(in vec3 vSamplePoint, in vec3 vRay, in float fFar, in float fStartOffset) \
+	{ \
+		float sampleLength = fFar / fSamples; \
+		float scaledLength = fScale * sampleLength; \
+		vec3 vSampleRay = sampleLength * vRay; \
+		vec3 vScatterScale = vInvWavelength * fKr4PI + fKm4PI; \
+		vec3 color = vec3(0.0); \
+		SCATTERING_INTEGRAL_FUNCTION_INTERIOR \
+		SCATTERING_INTEGRAL_FUNCTION_INTERIOR \
+		SCATTERING_INTEGRAL_FUNCTION_INTERIOR \
+		SCATTERING_INTEGRAL_FUNCTION_INTERIOR \
+		SCATTERING_INTEGRAL_FUNCTION_INTERIOR \
 		return color; \
 	}
-
 /*
  *
  * Atmosphere vertex shader
@@ -410,14 +428,6 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	
 	void main(void)
 	{
-		/*
-		vec4 farFarAway = mInverseMVPMatrix * vec4(Vertex, 1.0, 1.0);
-		vec3 direction = normalize(farFarAway.xyz / farFarAway.w - vCamera);
-		float b = 2.0f * dot(direction, vCamera);
-		float c = dot(vCamera, vCamera) - fOuterRadius2;
-		float d = sqrt(max(0.0, b * b - 4.0f * c));
-		vVertex = vCamera + 0.5 * (-b + d) * direction;
-		*/
 		vVertex = normalize(Vertex) * fOuterRadius;
 		
 		float fCameraHeight = length(vCamera);
@@ -436,6 +446,41 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	}
 );
 
+const std::string atmosphereFastPerVertexVS = ET_TO_CONST_CHAR
+(
+ ATMOSPHERE_UNIFORMS
+ SCALE_FUNCTION
+ SCATTERING_INTEGRAL_FUNCTION
+ 
+ uniform mat4 mInverseMVPMatrix;
+ 
+ etVertexIn vec3 Vertex;
+ 
+ etVertexOut vec3 vVertex;
+ etVertexOut vec3 vDirection;
+ etVertexOut vec3 aFrontColor;
+ etVertexOut vec3 aSecondaryColor;
+ etVertexOut vec3 aSourceColor;
+ 
+ void main(void)
+ {
+	 vVertex = normalize(Vertex) * fOuterRadius;
+	 
+	 float fCameraHeight = length(vCamera);
+	 vec3 vRay = vVertex - vCamera;
+	 float fFar = length(vRay);
+	 vRay /= fFar;
+	 
+	 float fStartAngle = dot(vRay, vCamera) / fCameraHeight;
+	 float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
+	 
+	 vec3 vFrontColor = solveFastScatteringIntegral(vCamera, vRay, fFar, fStartOffset);
+	 vDirection = vCamera - vVertex;
+	 aFrontColor = fKrESun * (vFrontColor * vInvWavelength);
+	 aSecondaryColor = fKmESun * vFrontColor;
+	 gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
+ }
+ );
 /*
  *
  * Atmosphere fragment shader

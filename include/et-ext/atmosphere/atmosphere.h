@@ -25,7 +25,7 @@ namespace et
 			{ return _parameters; }
 		
 		void setPlanetFragmentShader(const std::string&);
-		
+
 		void setShouldComputeScatteringOnPlanet(bool);
 		
 		const vec3& cameraPosition() const
@@ -66,6 +66,7 @@ namespace et
 		VertexArrayObject _gridVAO;
 		
 		Program::Pointer _atmospherePerVertexProgram;
+		Program::Pointer _atmosphereFastPerVertexProgram;
 		Program::Pointer _planetPerVertexProgram;
 		
 		Dictionary _parameters;
