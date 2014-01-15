@@ -11,9 +11,9 @@
 using namespace et;
 using namespace et::s2d;
 
-Scene::Scene(RenderContext* rc) : _rc(rc), _renderer(rc),
-	_renderingElementBackground(new RenderingElement(rc)),
-	_background(Texture(), 0), _backgroundValid(true)
+Scene::Scene(RenderContext* rc) : _rc(rc),
+	_renderer(rc), _renderingElementBackground(new RenderingElement(rc)),
+	_background(Texture(), nullptr), _backgroundValid(true)
 {
 	_background.setPivotPoint(vec2(0.5f));
 	_background.setContentMode(ImageView::ContentMode_Fill);
