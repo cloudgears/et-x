@@ -185,7 +185,9 @@ const mat4& Element2d::finalTransform()
 
 void Element2d::buildFinalTransform()
 {
-	_transform = transform2DMatrix(_layout.angle, _layout.scale, _layout.position + offset());
+	_transform = translationMatrix(vec3(offset(), 0.0f)) *
+		transform2DMatrix(_layout.angle, _layout.scale, _layout.position);
+	
 	_finalTransform = _transform * parentFinalTransform();
 
 	setTransformValid(true);
