@@ -49,6 +49,8 @@ namespace et
 			void setImage(const Image& img);
 			void setImageForState(const Image& img, State s);
 			
+			void setCommonBackground(const Image& img);
+			
 			void setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, State s);
 			void setBackgroundForState(const Image& img, State s);
 
@@ -132,6 +134,7 @@ namespace et
 			SceneVertexList _textVertices;
 			SceneVertexList _imageVertices;
 			
+			Image _commonBackground;
 			StaticDataStorage<Image, State_max> _background;
 			StaticDataStorage<Image, State_max> _image;
 			

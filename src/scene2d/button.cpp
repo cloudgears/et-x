@@ -116,6 +116,12 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	
 	if (_backgroundColor.w > 0.0f)
 		buildColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
+	
+	if (_commonBackground.texture.valid())
+	{
+		buildImageVertices(_bgVertices, _commonBackground.texture, _commonBackground.descriptor,
+			rect(vec2(0.0f), size()), color(), transform);
+	}
 
 	if (_background[_state].texture.valid())
 	{
@@ -155,6 +161,12 @@ void Button::setBackgroundForState(const Texture& tex, const ImageDescriptor& de
 void Button::setBackgroundForState(const Image& img, State s)
 {
 	_background[s] = img;
+	invalidateContent();
+}
+
+void Button::setCommonBackground(const Image& img)
+{
+	_commonBackground = img;
 	invalidateContent();
 }
 
