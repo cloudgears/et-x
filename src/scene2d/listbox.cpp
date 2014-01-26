@@ -36,7 +36,7 @@ void ListboxPopup::buildVertices(SceneRenderer&)
 	if (background.texture.valid())
 	{
 		buildImageVertices(_backgroundVertices, background.texture, background.descriptor, 
-			rect(vec2(0.0), size()), color(), transform);
+			rect(vec2(0.0f), size()), color(), transform);
 	}
 
 	const StringList& values = _owner->_values;
@@ -211,7 +211,7 @@ void Listbox::buildVertices(SceneRenderer&)
 	if (_images[_state].texture.valid())
 	{
 		buildImageVertices(_backgroundVertices, _images[_state].texture, _images[_state].descriptor, 
-			rect(vec2(0.0), size()), color(), transform);
+			rect(vec2(0.0f), size()), color(), transform);
 	}
 
 	if (shouldDrawText())

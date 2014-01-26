@@ -15,10 +15,11 @@ using namespace et::s2d;
 const float colorPlaceholdersSize = 0.5f;
 
 Slider::Slider(Element2d* parent) :
-	Element2d(parent), _handleScale(1.0f), _min(0.0f), _max(1.0f), _value(0.5f), _drag(false),
+	Element2d(parent), _min(0.0f), _max(1.0f), _value(0.5f), _state(State_Default),
 	_sliderImagesMode(SliderImagesMode_Crop)
 {
-	
+	for (size_t i = 0; i < State_max; ++i)
+		_handleScale[i] = 1.0f;
 }
 
 void Slider::setRange(float aMin, float aMax)
@@ -65,7 +66,7 @@ void Slider::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_sliderRightVertices, _sliderRight.texture, program(), this);
 	
 	if (_handleVertices.lastElementIndex() > 0)
-		r.addVertices(_handleVertices, _handle.texture, program(), this);
+		r.addVertices(_handleVertices, _handle[_state].texture, program(), this);
 }
 
 void Slider::buildVertices(RenderContext*, SceneRenderer&)
@@ -78,7 +79,9 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 	_sliderRightVertices.setOffset(0);
 	_handleVertices.setOffset(0);
 	
-	float handleWidth = _handle.descriptor.size.x;
+	const auto& handleImage = _handle[_state];
+	
+	float handleWidth = handleImage.descriptor.size.x;
 	float halfHandleWidth = 0.5f * handleWidth;
 	float valuePoint = _value * mainRect.width;
 		
@@ -143,13 +146,12 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 		}
 	}
 
-	if (_handle.texture.valid())
+	if (handleImage.texture.valid())
 	{
-		rect r(vec2(0.0f), _handleScale * _handle.descriptor.size);
+		rect r(vec2(0.0f), _handleScale[_state] * handleImage.descriptor.size);
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
-		
-		buildImageVertices(_handleVertices, _handle.texture, _handle.descriptor, r, color(), transform);
+		buildImageVertices(_handleVertices, handleImage.texture, handleImage.descriptor, r, color(), transform);
 	}
 	else
 	{
@@ -168,10 +170,16 @@ void Slider::setBackgroundImage(const Image& i)
 	invalidateContent();
 }
 
-void Slider::setHandleImage(const Image& i, float scale)
+void Slider::setHandleImage(const Image& img, float scale)
 {
-	_handle = i;
-	_handleScale = scale;
+	for (size_t i = 0; i < State_max; ++i)
+		setHandleImageForState(img, scale, static_cast<State>(i));
+}
+
+void Slider::setHandleImageForState(const Image& img, float scale, State s)
+{
+	_handle[s] = img;
+	_handleScale[s] = scale;
 	invalidateContent();
 }
 
@@ -191,24 +199,22 @@ void Slider::setSliderFillColors(const vec4& l, const vec4& r)
 
 bool Slider::pointerPressed(const PointerInputInfo& p)
 {
-	_drag = true;
+	_state = State_Pressed;
 	updateValue(clamp(p.pos.x / size().x, 0.0f, 1.0f));
 	return true;
 }
 
 bool Slider::pointerMoved(const PointerInputInfo& p)
 {
-	if (_drag)
-	{
+	if (_state == State_Pressed)
 		updateValue(clamp(p.pos.x / size().x, 0.0f, 1.0f));
-	}
 	
 	return true;
 }
 
 bool Slider::pointerReleased(const PointerInputInfo&)
 {
-	_drag = false;
+	_state = State_Default;
 	
 	draggingFinished.invokeInMainRunLoop();
 	return true;
@@ -216,7 +222,7 @@ bool Slider::pointerReleased(const PointerInputInfo&)
 
 bool Slider::pointerCancelled(const PointerInputInfo&)
 {
-	_drag = false;
+	_state = State_Default;
 	return true;
 }
 

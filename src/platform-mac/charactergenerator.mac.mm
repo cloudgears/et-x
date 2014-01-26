@@ -241,7 +241,7 @@ void CharacterGeneratorPrivate::renderCharacter(NSAttributedString* value,
 	NSGraphicsContext* aContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];
 	[NSGraphicsContext setCurrentContext:aContext];
 
-	[value drawAtPoint:NSMakePoint(0.0, 0.0)];
+	[value drawAtPoint:NSMakePoint(0.0f, 0.0f)];
 	
 	[aContext flushGraphics];
 	CGContextRelease(context);

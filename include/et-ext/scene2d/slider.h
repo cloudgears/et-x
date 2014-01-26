@@ -31,6 +31,8 @@ namespace et
 			void setBackgroundColor(const vec4&);
 			
 			void setHandleImage(const Image&, float scale);
+			void setHandleImageForState(const Image&, float scale, State);
+			
 			void setSliderImages(const Image& left, const Image& right);
 			void setSliderFillColors(const vec4& l, const vec4& r);
 			
@@ -66,7 +68,7 @@ namespace et
 			Image _background;
 			Image _sliderLeft;
 			Image _sliderRight;
-			Image _handle;
+			Image _handle[State_max];
 
 			vec4 _sliderLeftColor;
 			vec4 _sliderRightColor;
@@ -78,13 +80,13 @@ namespace et
 			
 			vec4 _backgroundColor;
 			
-			float _handleScale;
+			float _handleScale[State_max];
 			
 			float _min;
 			float _max;
 			float _value;
 			
-			bool _drag;
+			State _state;
 			SliderImagesMode _sliderImagesMode;
         };
     }
