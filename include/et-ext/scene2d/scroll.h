@@ -50,6 +50,11 @@ namespace et
 		protected:
 			virtual void setOffsetDirectly(const vec2& o);
 			
+		protected:
+			void update(float t);
+			void animatorUpdated(BaseAnimator*);
+			void animatorFinished(BaseAnimator*);
+			
 		private:
 			void buildVertices(RenderContext* rc, SceneRenderer& r);
 			
@@ -70,11 +75,6 @@ namespace et
 			void broadcastMoved(const PointerInputInfo&);
 			void broadcastReleased(const PointerInputInfo&);
 			void broadcastCancelled(const PointerInputInfo&);
-			
-			void update(float t);
-			
-			void animatorUpdated(BaseAnimator*);
-			void animatorFinished(BaseAnimator*);
 			
 			float scrollOutOfContentXSize() const;
 			float scrollOutOfContentYSize() const;

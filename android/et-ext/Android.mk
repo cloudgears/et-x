@@ -34,8 +34,9 @@ LOCAL_SRC_FILES = $(SOURCE_PATH)json/json.cpp \
 	$(SOURCE_PATH)scene2d/textureatlas.cpp \
 	$(SOURCE_PATH)scene2d/textureatlaswriter.cpp \
 	$(SOURCE_PATH)scene2d/vertexbuilder.cpp \
-	$(SOURCE_PATH)platform-android/charactergenerator.android.cpp
-
+	$(SOURCE_PATH)platform-android/charactergenerator.android.cpp \
+	$(SOURCE_PATH)/atmosphere/atmosphere.cpp
+	
 LOCAL_STATIC_LIBRARIES := et jansson
 
 include $(BUILD_STATIC_LIBRARY)

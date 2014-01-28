@@ -227,6 +227,9 @@ namespace et
 
 			ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, name, setName)
 
+		protected:
+			void startUpdates(TimerPool* timerPool);
+			
 		private:
 			friend class Hierarchy<Element, LoadableObject>;
 
@@ -235,8 +238,6 @@ namespace et
 
 			Element& operator = (const Element&)
 				{ return *this; }
-
-			void startUpdates(TimerPool* timerPool);
 
 		private:
 			ElementLayout _autoLayout;
