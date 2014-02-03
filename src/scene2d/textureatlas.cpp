@@ -7,7 +7,7 @@
 
 #include <sstream>
 #include <et/app/application.h>
-#include <et/resources/textureloader.h>
+#include <et/imaging/textureloader.h>
 #include <et-ext/scene2d/textureatlas.h>
 
 using namespace et;
