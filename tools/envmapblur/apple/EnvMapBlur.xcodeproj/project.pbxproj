@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A53981FD18A3061F0063E8E0 /* hdrloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53981FC18A3061F0063E8E0 /* hdrloader.cpp */; };
 		A5896BE718A0279A00962607 /* json.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BC518A0279A00962607 /* json.cpp */; };
 		A5896BEB18A0279A00962607 /* charactergenerator.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5896BCC18A0279A00962607 /* charactergenerator.mac.mm */; };
 		A5896BED18A0279A00962607 /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD018A0279A00962607 /* button.cpp */; };
@@ -127,6 +128,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A53981FB18A306070063E8E0 /* hdrloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdrloader.h; sourceTree = "<group>"; };
+		A53981FC18A3061F0063E8E0 /* hdrloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hdrloader.cpp; sourceTree = "<group>"; };
 		A5896BA118A0279A00962607 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
 		A5896BA318A0279A00962607 /* baseclasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseclasses.h; sourceTree = "<group>"; };
 		A5896BA418A0279A00962607 /* baseconst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseconst.h; sourceTree = "<group>"; };
@@ -633,6 +636,7 @@
 			isa = PBXGroup;
 			children = (
 				A5F0948818A00AF70017B239 /* ddsloader.cpp */,
+				A53981FC18A3061F0063E8E0 /* hdrloader.cpp */,
 				A5F0948918A00AF70017B239 /* imageoperations.cpp */,
 				A5F0948A18A00AF70017B239 /* imagewriter.cpp */,
 				A5F0948B18A00AF70017B239 /* pngloader.cpp */,
@@ -927,6 +931,7 @@
 			isa = PBXGroup;
 			children = (
 				A5F0955718A00B1D0017B239 /* ddsloader.h */,
+				A53981FB18A306070063E8E0 /* hdrloader.h */,
 				A5F0955818A00B1D0017B239 /* imageoperations.h */,
 				A5F0955918A00B1D0017B239 /* imagewriter.h */,
 				A5F0955A18A00B1D0017B239 /* pngloader.h */,
@@ -1141,6 +1146,7 @@
 				A5F094D718A00AF70017B239 /* rectplacer.cpp in Sources */,
 				A5F094DF18A00AF70017B239 /* input.cpp in Sources */,
 				A5F094BD18A00AF70017B239 /* program.cpp in Sources */,
+				A53981FD18A3061F0063E8E0 /* hdrloader.cpp in Sources */,
 				A5F094CA18A00AF70017B239 /* invocation.cpp in Sources */,
 				A5896BF518A0279A00962607 /* label.cpp in Sources */,
 				A5F094EC18A00AF70017B239 /* criticalsection.unix.cpp in Sources */,

@@ -30,5 +30,6 @@ et::s2d::Button::Pointer ResourceManager::button(const std::string& text, et::s2
 	result->setTextColor(vec4(1.0f));
 	result->setTextPressedColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 	result->setBackgroundColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
+	result->setAutolayoutMask(s2d::LayoutMask_PositionPivot);
 	return result;
 }

@@ -20,12 +20,23 @@ namespace emb
 	public:
 		MainUI(ResourceManager&);
 		
-		void setImage(const et::s2d::Image&);
+		void setImages(const et::s2d::Image& original, const et::s2d::Image& processed);
+		
+		float angleValue() const
+			{ return _sliderAngle->value(); }
+
+		float exposureValue() const
+			{ return _sliderExposure->value(); }
 		
 	public:
 		ET_DECLARE_EVENT1(fileSelected, std::string)
+		ET_DECLARE_EVENT0(processSelected)
 		
 	private:
-		et::s2d::ImageView::Pointer _imageView;
+		et::s2d::ImageView::Pointer _imageViewOriginal;
+		et::s2d::ImageView::Pointer _imageViewProcessed;
+		
+		et::s2d::Slider::Pointer _sliderAngle;
+		et::s2d::Slider::Pointer _sliderExposure;
 	};
 }
