@@ -51,7 +51,7 @@ namespace et
 			
 			void setCommonBackground(const Image& img);
 			
-			void setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, State s);
+			void setBackground(const Image& img);
 			void setBackgroundForState(const Image& img, State s);
 
 			void adjustSize(float duration = 0.0f);
@@ -92,8 +92,11 @@ namespace et
 			void setTextPressedColor(const vec4& color);
 			const vec4& textPressedColor() const;
 			
-			void setBackgroundColor(const vec4& color);
+			void setBackgroundColor(const vec4&);
 			const vec4& backgroundColor() const;
+			
+			void setBackgroundTintColor(const vec4&, float);
+			const vec4& backgroundTintColor() const;
 
 			bool pointerPressed(const PointerInputInfo&);
 			bool pointerReleased(const PointerInputInfo&);
@@ -142,8 +145,11 @@ namespace et
 			vec4 _textPressedColor;
 			vec4 _pressedColor;
 			vec4 _backgroundColor;
+			vec4 _backgroundTintColor;
 			vec2 _textSize;
 			vec2 _contentOffset;
+			
+			Vector4Animator _backgroundTintAnimator;
 
 			Type _type;
 			State _state;
@@ -151,6 +157,7 @@ namespace et
 			ContentMode _contentMode;
 			Alignment _horizontalAlignment;
 			Alignment _verticalAlignment;
+			
 			bool _pressed;
 			bool _hovered;
 			bool _selected;

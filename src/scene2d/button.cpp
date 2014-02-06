@@ -15,12 +15,17 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(Button)
 
 Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _title(title), _font(font),
-	_textSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f), _pressedColor(0.5f, 0.5f, 0.5f, 1.0f),
-	_textPressedColor(vec3(0.0f), 1.0f), _type(Button::Type_PushButton), _state(State_Default),
+	_textSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f),
+	_pressedColor(0.5f, 0.5f, 0.5f, 1.0f), _backgroundTintColor(1.0f), _textPressedColor(vec3(0.0f), 1.0f),
+	_backgroundTintAnimator(timerPool()), _type(Button::Type_PushButton), _state(State_Default),
 	_imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit), _horizontalAlignment(Alignment_Center),
 	_verticalAlignment(Alignment_Center), _pressed(false), _hovered(false), _selected(false)
 {
 	setSize(sizeForText(title));
+	_backgroundTintAnimator.updated.connect([this]
+	{
+		invalidateContent();
+	});
 }
 
 void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
@@ -129,7 +134,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 			_pressedColor * alphaScale : alphaScale;
 		
 		buildImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
-			rect(vec2(0.0f), size()), backgroundScale * color(), transform);
+			rect(vec2(0.0f), size()), _backgroundTintColor * backgroundScale * color(), transform);
 	}
 
 	if (_title.size() > 0)
@@ -153,9 +158,12 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	}
 }
 
-void Button::setBackgroundForState(const Texture& tex, const ImageDescriptor& desc, State s)
+void Button::setBackground(const Image& img)
 {
-	setBackgroundForState(Image(tex, desc), s);
+	for (size_t i = 0; i < State_max; ++i)
+		_background[i] = img;
+	
+	invalidateContent();
 }
 
 void Button::setBackgroundForState(const Image& img, State s)
@@ -353,15 +361,33 @@ void Button::setImageLayout(ImageLayout l)
 	invalidateContent();
 }
 
-void Button::setBackgroundColor(const vec4& color)
+void Button::setBackgroundColor(const vec4& clr)
 {
-	_backgroundColor = color;
+	_backgroundColor = clr;
 	invalidateContent();
 }
 
 const vec4& Button::backgroundColor() const
 {
 	return _backgroundColor;
+}
+
+void Button::setBackgroundTintColor(const vec4& clr, float duration)
+{
+	if (duration == 0.0f)
+	{
+		_backgroundTintColor = clr;
+		invalidateContent();
+	}
+	else
+	{
+		_backgroundTintAnimator.animate(&_backgroundTintColor, _backgroundTintColor, clr, duration);
+	}
+}
+
+const vec4& Button::backgroundTintColor() const
+{
+	return _backgroundTintColor;
 }
 
 void Button::setContentMode(ContentMode m)
