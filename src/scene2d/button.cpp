@@ -401,7 +401,7 @@ vec2 Button::contentSize()
 	return sizeForText(_title);
 }
 
-void Button::adjustsPressedBackground(bool b)
+void Button::setShouldAdjustPressedBackground(bool b)
 {
 	_adjustPressedBackground = b;
 	invalidateContent();

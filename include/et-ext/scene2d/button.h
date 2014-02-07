@@ -118,7 +118,7 @@ namespace et
 			
 			vec2 contentSize();
 			
-			void adjustsPressedBackground(bool);
+			void setShouldAdjustPressedBackground(bool);
 			
 			void setHorizontalAlignment(Alignment);
 			void setVerticalAlignment(Alignment);
