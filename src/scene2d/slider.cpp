@@ -193,7 +193,7 @@ void Slider::setSliderImages(const Image& left, const Image& right)
 void Slider::setSliderFillColors(const vec4& l, const vec4& r)
 {
 	_sliderLeftColor = l;
-	_sliderRightColor = l;
+	_sliderRightColor = r;
 	invalidateContent();
 }
 
