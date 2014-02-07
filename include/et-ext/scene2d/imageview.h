@@ -62,7 +62,7 @@ namespace et
 			void setContentMode(ImageView::ContentMode cm);
 			void setTexture(const Texture& t, bool updateDescriptor);
 			void setImage(const Image& img);
-			void setBackgroundColor(const vec4& color);
+			void setBackgroundColor(const vec4& color, float duration = 0.0f);
 			
 			vec2 contentSize();
 
@@ -80,6 +80,7 @@ namespace et
 			ImageDescriptor _descriptor;
 			ImageView::ContentMode _contentMode;
 			vec4 _backgroundColor;
+			Vector4Animator _backgroundColorAnimator;
 		};
 
 		typedef std::vector<ImageView::Pointer> ImageViewList;

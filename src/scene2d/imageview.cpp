@@ -13,28 +13,34 @@ using namespace s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(ImageView)
 
 ImageView::ImageView(Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _contentMode(ImageView::ContentMode_Stretch)
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _backgroundColorAnimator(timerPool()),
+	_contentMode(ImageView::ContentMode_Stretch)
 {
+	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
 }
 
 ImageView::ImageView(const Texture& texture, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(texture),
-	_descriptor(ImageDescriptor(texture)), _contentMode(ImageView::ContentMode_Stretch)
+	_descriptor(ImageDescriptor(texture)), _backgroundColorAnimator(timerPool()),
+	_contentMode(ImageView::ContentMode_Stretch)
 {
+	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
 	setSize(_descriptor.size);
 }
 
 ImageView::ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent,
 	const std::string& name) : Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(texture),
-	_descriptor(i), _contentMode(ImageView::ContentMode_Stretch)
+	_descriptor(i), _backgroundColorAnimator(timerPool()), _contentMode(ImageView::ContentMode_Stretch)
 {
+	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
 	setSize(_descriptor.size, 0.0f);
 }
 
 ImageView::ImageView(const Image& img, Element2d* parent, const std::string& name) : 
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(img.texture), _descriptor(img.descriptor),
-	_contentMode(ImageView::ContentMode_Stretch)
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(img.texture),
+	_descriptor(img.descriptor), _backgroundColorAnimator(timerPool()), _contentMode(ImageView::ContentMode_Stretch)
 {
+	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
 	setSize(_descriptor.size, 0.0f);
 }
 
@@ -120,10 +126,17 @@ void ImageView::setImage(const Image& img)
 	invalidateContent();
 }
 
-void ImageView::setBackgroundColor(const vec4& color)
+void ImageView::setBackgroundColor(const vec4& color, float duration)
 {
-	_backgroundColor = color;
-	invalidateContent();
+	if (duration == 0.0f)
+	{
+		_backgroundColor = color;
+		invalidateContent();
+	}
+	else
+	{
+		_backgroundColorAnimator.animate(&_backgroundColor, _backgroundColor, color, duration);
+	}
 }
 
 ImageDescriptor ImageView::calculateImageFrame()
