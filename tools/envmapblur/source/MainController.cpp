@@ -60,7 +60,7 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 	
 	_offsetAndScales.reserve(numSamples);
 	
-	vec2 scale(1.0 / static_cast<float>(horizontalSamples), 1.0 / static_cast<float>(verticalSamples));
+	vec2 scale(1.0f / static_cast<float>(horizontalSamples), 1.0f / static_cast<float>(verticalSamples));
 	
 	vec2 realOffset;
 	realOffset.y = -scale.y * static_cast<float>(verticalSamples - 1);
@@ -100,20 +100,26 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 		ObjectsCache localCache;
 		
 		_loadedTexture = _rc->textureFactory().loadTexture(name, localCache);
-		_loadedTexture->setWrap(_rc, TextureWrap_Repeat, TextureWrap_ClampToEdge);
-		
-		_framebuffer = _rc->framebufferFactory().createFramebuffer(_loadedTexture->size(), "framebuffer",
-			GL_RGBA32F, GL_RGBA, GL_FLOAT, 0, 0, 0);
-		_framebuffer->addSameRendertarget();
-		
-		_framebuffer->renderTarget(0)->setWrap(_rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
-		_framebuffer->renderTarget(1)->setWrap(_rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
-		
-		_rc->renderState().bindFramebuffer(_framebuffer);
-		_framebuffer->setCurrentRenderTarget(0);
-		_rc->renderer()->renderFullscreenTexture(_loadedTexture);
-		_rc->renderState().bindDefaultFramebuffer();
-		
+		if (_loadedTexture.valid())
+		{
+			_loadedTexture->setWrap(_rc, TextureWrap_Repeat, TextureWrap_ClampToEdge);
+
+			_framebuffer = _rc->framebufferFactory().createFramebuffer(_loadedTexture->size(), "framebuffer",
+				GL_RGBA32F, GL_RGBA, GL_FLOAT, 0, 0, 0);
+			_framebuffer->addSameRendertarget();
+
+			_framebuffer->renderTarget(0)->setWrap(_rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
+			_framebuffer->renderTarget(1)->setWrap(_rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
+
+			_rc->renderState().bindFramebuffer(_framebuffer);
+			_framebuffer->setCurrentRenderTarget(0);
+			_rc->renderer()->renderFullscreenTexture(_loadedTexture);
+			_rc->renderState().bindDefaultFramebuffer();
+		}
+		else
+		{
+			_framebuffer.reset(nullptr);
+		}
 		_mainUi->setImages(_loadedTexture, _framebuffer->renderTarget(0));
 	});
 	_mainUi->processSelected.connect([this]()
@@ -213,7 +219,7 @@ void MainController::renderPreview()
 	rs.setDepthTest(true);
 	rs.setCulling(true, CullState_Back);
 	rs.bindVertexArray(_vaoSphere);
-	rs.bindTexture(0, _framebuffer->renderTarget(0));
+	rs.bindTexture(0, _framebuffer.valid() ? _framebuffer->renderTarget(0) : Texture());
 	rs.bindProgram(programs.preview);
 	programs.preview->setPrimaryLightPosition(lightPosition);
 	programs.preview->setCameraProperties(_camera);
