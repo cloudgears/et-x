@@ -34,7 +34,6 @@ namespace et
 			const vec4& backgroundColor() const
 				{ return _backgroundColor; }
 			
-			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);
 			void fitToWidth(float);
 			void adjustSize();
 			
@@ -51,6 +50,7 @@ namespace et
 			vec2 contentSize();
 
 		private:
+			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);
 			void buildVertices(RenderContext* rc, SceneRenderer& renderer);
 			void update(float t);
 			

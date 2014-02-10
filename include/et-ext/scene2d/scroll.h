@@ -52,8 +52,6 @@ namespace et
 			
 		protected:
 			void update(float t);
-			void animatorUpdated(BaseAnimator*);
-			void animatorFinished(BaseAnimator*);
 			
 		private:
 			void buildVertices(RenderContext* rc, SceneRenderer& r);

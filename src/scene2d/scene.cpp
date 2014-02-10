@@ -414,23 +414,22 @@ void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
  * Layout Entry
  */
 
-Scene::LayoutEntry::LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l) :  owner(own),
+Scene::LayoutEntry::LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l) :
 	layout(l), animator(own->timerPoolForLayout(l)), offsetAlpha(0.0f, 0.0f, 1.0f),
 	state(Scene::LayoutEntry::State_Still)
 {
-	animator.setDelegate(this);
+	animator.finished.connect([this, own]()
+	{
+		Invocation1 i;
+		i.setTarget(own, &Scene::layoutEntryTransitionFinished, this);
+		i.invokeInMainRunLoop();
+	});
 	l->initRenderingElement(rc);
 }
 
 void Scene::LayoutEntry::animateTo(const vec3& oa, float duration, State s)
 {
 	state = s;
+	animator.setTimeInterpolationFunction(layout->positionInterpolationFunction());
 	animator.animate(&offsetAlpha, offsetAlpha, oa, duration);
-}
-
-void Scene::LayoutEntry::animatorFinished(BaseAnimator*)
-{
-	Invocation1 i;
-	i.setTarget(owner, &Scene::layoutEntryTransitionFinished, this);
-	i.invokeInMainRunLoop();
 }

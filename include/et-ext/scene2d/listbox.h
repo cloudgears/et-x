@@ -40,7 +40,6 @@ namespace et
 			ListboxPopup(Listbox* owner, const std::string& name = std::string());
 			
 			void setBackgroundImage(const Image& img);
-			void addToRenderQueue(RenderContext*, SceneRenderer&);
 
 			bool pointerPressed(const PointerInputInfo&);
 			bool pointerMoved(const PointerInputInfo&);
@@ -48,13 +47,11 @@ namespace et
 			void pointerEntered(const PointerInputInfo&);
 			void pointerLeaved(const PointerInputInfo&);
 
-			void animatorUpdated(BaseAnimator*);
-			void animatorFinished(BaseAnimator*);
-
 			void hideText();
 			void revealText();
 
 		private:
+			void addToRenderQueue(RenderContext*, SceneRenderer&);
 			void buildVertices(SceneRenderer& gr);
 
 		private:
@@ -62,7 +59,7 @@ namespace et
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _selectionVertices;
 			SceneVertexList _textVertices;
-			FloatAnimator* _textAlphaAnimator;
+			FloatAnimator _textAlphaAnimator;
 			int _selectedIndex;
 			float _textAlpha;
 			bool _pressed;
@@ -80,8 +77,6 @@ namespace et
 			void setBackgroundImage(const Image& img);
 			void setSelectionImage(const Image& img);
 			void setPopupDirection(ListboxPopupDirection d);
-
-			void addToRenderQueue(RenderContext*, SceneRenderer&);
 
 			bool containsPoint(const vec2& p, const vec2&);
 
@@ -116,9 +111,11 @@ namespace et
 			ET_DECLARE_EVENT1(popupClosed, Listbox*)
 
 		private:
+			void addToRenderQueue(RenderContext*, SceneRenderer&);
+			void buildVertices(SceneRenderer& gr);
+			
 			void didChangeFrame();
 			
-			void buildVertices(SceneRenderer& gr);
 			void configurePopup();
 
 			void setState(ListboxState s);
@@ -142,8 +139,8 @@ namespace et
 			StringList _values;
 			ListboxState _state;
 			vec2 _contentOffset;
-			int _selectedIndex;
 			ListboxPopupDirection _direction;
+			int _selectedIndex;
 			bool _popupOpened;
 			bool _popupOpening;
 			bool _popupValid;

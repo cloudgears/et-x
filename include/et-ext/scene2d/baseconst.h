@@ -71,6 +71,7 @@ namespace et
 		enum LayoutMask
 		{
 			LayoutMask_None = 0x00,
+			
 			LayoutMask_Position = 0x01,
 			LayoutMask_Size = 0x02,
 			LayoutMask_Pivot = 0x04,
@@ -78,12 +79,11 @@ namespace et
 			LayoutMask_Scale = 0x10,
 			LayoutMask_Children = 0x20,
 
-			LayoutMask_PositionPivot = LayoutMask_Position | LayoutMask_Pivot | LayoutMask_Children,
+			LayoutMask_NoSize = LayoutMask_Position | LayoutMask_Pivot |
+				LayoutMask_Angle | LayoutMask_Scale | LayoutMask_Children,
 			
-			LayoutMask_Frame = LayoutMask_Position | LayoutMask_Size | LayoutMask_Children,
-			
-			LayoutMask_All = LayoutMask_Frame | LayoutMask_Pivot | LayoutMask_Angle | LayoutMask_Scale |
-				LayoutMask_Children
+			LayoutMask_All = LayoutMask_Position | LayoutMask_Size | LayoutMask_Pivot |
+				LayoutMask_Angle | LayoutMask_Scale | LayoutMask_Children,
 		};
 		
 		enum Location

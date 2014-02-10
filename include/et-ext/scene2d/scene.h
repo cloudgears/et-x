@@ -129,7 +129,7 @@ namespace et
 			void reloadObject(LoadableObject::Pointer, ObjectsCache&);
 			
 		private:
-			class LayoutEntry : public Shared, public AnimatorDelegate
+			class LayoutEntry : public Shared
 			{
 			public:
 				ET_DECLARE_POINTER(LayoutEntry)
@@ -149,11 +149,7 @@ namespace et
 			private:
 				ET_DENY_COPY(LayoutEntry)
 				
-			private:
-				void animatorFinished(BaseAnimator*);
-
 			public:
-				Scene* owner;
 				Layout::Pointer layout;
 				Vector3Animator animator;
 				vec3 offsetAlpha;

@@ -18,17 +18,7 @@ Element2d::Element2d(Element* parent, const std::string& name) :
 	_sizeAnimator(timerPool()), _colorAnimator(timerPool()), _scaleAnimator(timerPool()),
 	_angleAnimator(timerPool()), _color(1.0f)
 {
-	_sizeAnimator.setTag(AnimatedProperty_Size);
-	_colorAnimator.setTag(AnimatedProperty_Color);
-	_scaleAnimator.setTag(AnimatedProperty_Scale);
-	_angleAnimator.setTag(AnimatedProperty_Angle);
-	_positionAnimator.setTag(AnimatedProperty_Position);
-	
-	_sizeAnimator.setDelegate(this);
-	_colorAnimator.setDelegate(this);
-	_scaleAnimator.setDelegate(this);
-	_angleAnimator.setDelegate(this);
-	_positionAnimator.setDelegate(this);
+	initAnimators();
 }
 
 Element2d::Element2d(const rect& frame, Element* parent, const std::string& name) :
@@ -36,17 +26,34 @@ Element2d::Element2d(const rect& frame, Element* parent, const std::string& name
 	_sizeAnimator(timerPool()), _colorAnimator(timerPool()), _scaleAnimator(timerPool()),
 	_angleAnimator(timerPool()), _layout(frame), _desiredLayout(frame), _color(1.0f)
 {
+	initAnimators();
+}
+
+void Element2d::initAnimators()
+{
 	_sizeAnimator.setTag(AnimatedProperty_Size);
-	_colorAnimator.setTag(AnimatedProperty_Color);
-	_scaleAnimator.setTag(AnimatedProperty_Scale);
-	_angleAnimator.setTag(AnimatedProperty_Angle);
-	_positionAnimator.setTag(AnimatedProperty_Position);
+	_sizeAnimator.updated.connect<Element>(this, &Element::invalidateTransform);
+	_sizeAnimator.updated.connect<Element2d>(this, &Element2d::invalidateContent);
+	_sizeAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Size); });
 	
-	_sizeAnimator.setDelegate(this);
-	_colorAnimator.setDelegate(this);
-	_scaleAnimator.setDelegate(this);
-	_angleAnimator.setDelegate(this);
-	_positionAnimator.setDelegate(this);
+	_colorAnimator.setTag(AnimatedProperty_Color);
+	_colorAnimator.updated.connect<Element2d>(this, &Element2d::invalidateContent);
+	_colorAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Color); });
+	
+	_scaleAnimator.setTag(AnimatedProperty_Scale);
+	_scaleAnimator.updated.connect<Element>(this, &Element::invalidateTransform);
+	_scaleAnimator.updated.connect<Element2d>(this, &Element2d::invalidateContent);
+	_scaleAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Scale); });
+	
+	_angleAnimator.setTag(AnimatedProperty_Angle);
+	_angleAnimator.updated.connect<Element>(this, &Element::invalidateTransform);
+	_angleAnimator.updated.connect<Element2d>(this, &Element2d::invalidateContent);
+	_angleAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Angle); });
+	
+	_positionAnimator.setTag(AnimatedProperty_Position);
+	_positionAnimator.updated.connect<Element>(this, &Element::invalidateTransform);
+	_positionAnimator.updated.connect<Element2d>(this, &Element2d::invalidateContent);
+	_positionAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Position); });
 }
 
 void Element2d::setAngle(float anAngle, float duration)
@@ -193,24 +200,6 @@ void Element2d::buildFinalTransform()
 	setTransformValid(true);
 }
 
-void Element2d::animatorUpdated(BaseAnimator* a)
-{
-	AnimatedPropery prop = static_cast<AnimatedPropery>(a->tag());
-	
-	bool isAngle = (prop & AnimatedProperty_Angle) == AnimatedProperty_Angle;
-	bool isScale = (prop & AnimatedProperty_Scale) == AnimatedProperty_Scale;
-	bool isColor = (prop & AnimatedProperty_Color) == AnimatedProperty_Color;
-	
-	bool isFrame = ((prop & AnimatedProperty_Position) == AnimatedProperty_Position) ||
-		((prop & AnimatedProperty_Size) == AnimatedProperty_Size);
-
-	if (isFrame || isAngle || isScale)
-		invalidateTransform();
-
-	if (isFrame || isColor)
-		invalidateContent();
-}
-
 const mat4& Element2d::finalInverseTransform()
 {
 	if (!inverseTransformValid())
@@ -277,9 +266,6 @@ bool Element2d::visible() const
 
 void Element2d::rotate(float anAngle, float duration)
 	{ return setAngle(_layout.angle + anAngle, duration); }
-
-void Element2d::animatorFinished(BaseAnimator* a)
-	{ elementAnimationFinished.invoke(this, static_cast<AnimatedPropery>(a->tag())); }
 
 bool Element2d::containsPoint(const vec2& p, const vec2&)
 	{ return containLocalPoint(finalInverseTransform() * p); }

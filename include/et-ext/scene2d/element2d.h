@@ -81,10 +81,8 @@ namespace et
 			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, AnimatedPropery)
 
 		protected:
+			void initAnimators();
 			void buildFinalTransform();
-
-			void animatorUpdated(BaseAnimator*);
-			void animatorFinished(BaseAnimator*);
 			
 			SceneProgram program()
 				{ return _defaultProgram; }

@@ -17,10 +17,13 @@ const float textRevealDuration = 0.1f;
 ET_DECLARE_SCENE_ELEMENT_CLASS(ListboxPopup)
 
 ListboxPopup::ListboxPopup(Listbox* owner, const std::string& name) :
-	Element2d(owner, ET_S2D_PASS_NAME_TO_BASE_CLASS), _owner(owner), _textAlphaAnimator(0),
+	Element2d(owner, ET_S2D_PASS_NAME_TO_BASE_CLASS), _owner(owner), _textAlphaAnimator(timerPool()),
 	_selectedIndex(-1), _textAlpha(0.0f), _pressed(false)
 {
 	setFlag(Flag_RenderTopmost);
+	
+	_textAlphaAnimator.updated.connect<Element2d>(this, &ListboxPopup::invalidateContent);
+	_textAlphaAnimator.finished.connect(_owner, &Listbox::popupDidOpen);
 }
 
 void ListboxPopup::buildVertices(SceneRenderer&)
@@ -75,38 +78,14 @@ void ListboxPopup::buildVertices(SceneRenderer&)
 void ListboxPopup::revealText()
 {
 	hideText();
-
-	if (_textAlphaAnimator)
-		_textAlphaAnimator->destroy();
-
-	_textAlphaAnimator = new FloatAnimator(this, &_textAlpha, _textAlpha, 1.0f,
-		textRevealDuration, 0, timerPool());
+	
+	_textAlphaAnimator.animate(&_textAlpha, _textAlpha, 1.0f, textRevealDuration);
 }
 
 void ListboxPopup::hideText()
 {
 	_textAlpha = 0.0f;
 	invalidateContent();
-}
-
-void ListboxPopup::animatorUpdated(BaseAnimator* a)
-{
-	if (a == _textAlphaAnimator)
-		invalidateContent();
-
-	Element2d::animatorUpdated(a);
-}
-
-void ListboxPopup::animatorFinished(BaseAnimator* a)
-{
-	if (a == _textAlphaAnimator)
-	{
-		a->destroy();
-		_textAlphaAnimator = 0;
-		_owner->popupDidOpen();
-	}
-	else
-		Element2d::animatorFinished(a);
 }
 
 void ListboxPopup::addToRenderQueue(RenderContext*, SceneRenderer& r)

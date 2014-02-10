@@ -17,14 +17,11 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(ModalLayout)
 
 Layout::Layout(const std::string& name) :
 	Element2d(nullptr, ET_S2D_PASS_NAME_TO_BASE_CLASS), _currentElement(nullptr), _focusedElement(nullptr),
-	_capturedElement(nullptr), _valid(false), _dragging(false)
+	_capturedElement(nullptr), _valid(false), _dragging(false), _positionInterpolationFunction(linearInerpolation)
 {
 	setAutolayout(vec2(0.0f), LayoutMode_Absolute, vec2(1.0f),
 		LayoutMode_RelativeToContext, vec2(0.0f));
 }
-
-void Layout::adjustVerticalOffset(float) { }
-void Layout::resetVerticallastElementIndex() { }
 
 void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, SceneRenderer& gr)
 {

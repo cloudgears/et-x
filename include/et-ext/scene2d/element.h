@@ -23,7 +23,7 @@ namespace et
 		
 		typedef Hierarchy<Element, LoadableObject> ElementHierarchy;
 		class Element : public ElementHierarchy, public FlagsHolder, public EventReceiver,
-			public TimedObject, public AnimatorDelegate
+			public TimedObject
 		{
 		public:
 			ET_DECLARE_POINTER(Element)
@@ -211,12 +211,6 @@ namespace et
 			virtual mat4 parentFinalTransform()
 				{ return parent() ? parent()->finalTransform() : identityMatrix; }
 
-			virtual void animatorUpdated(BaseAnimator*) 
-				{ /* virtual */ }
-
-			virtual void animatorFinished(BaseAnimator*) 
-				{ /* virtual */ }
-
 			virtual Layout* owner()
 				{ return parent() ? parent()->owner() : 0; }
 
@@ -255,6 +249,15 @@ namespace et
 		float alignmentFactor(Alignment a);
 		std::string layoutModeToString(LayoutMode);
 		LayoutMode layoutModeFromString(const std::string&);
+		
+		inline float linearInerpolation(float t)
+			{ return t; }
+		
+		inline float sinBounceInterpolation(float t)
+			{ float v = t + 0.4 * sin(t * PI); return v * v; }
+		
+		inline float polynomialBounceInterpolation(float t)
+			{ float ts = t * t; return t + ts * (1.0f - ts); }
 	}
 	
 	typedef Animator<vec2> Vector2Animator;

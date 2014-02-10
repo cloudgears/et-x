@@ -199,7 +199,7 @@ void Element::setLocationInParent(Location l, const vec2& offset)
 {
 	vec2 actualOffset(0.5f * static_cast<float>(l % 3), 0.5f * static_cast<float>(l / 3));
 	setAutolayoutRelativeToParent(actualOffset + offset, vec2(0.0f), actualOffset);
-	setAutolayoutMask(LayoutMask_PositionPivot);
+	setAutolayoutMask(LayoutMask_NoSize);
 }
 
 void Element::setAutolayoutRelativeToParent(const vec2& pos, const vec2& sz, const vec2& pivot)

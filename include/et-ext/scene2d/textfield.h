@@ -35,8 +35,6 @@ namespace et
 			TextField(const Image& background, const std::string& text, Font::Pointer font,
 				Element* parent, const std::string& name = std::string());
 
-			void addToRenderQueue(RenderContext*, SceneRenderer&);
-
 			const std::string& text() const;
 			
 			void setText(const std::string& s);
@@ -58,8 +56,10 @@ namespace et
 			ET_DECLARE_EVENT1(editingFinished, TextField*)
 			
 		private:
-			void processMessage(const Message& msg);
+			void addToRenderQueue(RenderContext*, SceneRenderer&);
 			void buildVertices(RenderContext*, SceneRenderer&);
+			
+			void processMessage(const Message& msg);
 			void onCreateBlinkTimerExpired(NotifyTimer* t);
 
 		private:

@@ -25,20 +25,30 @@ namespace et
 			bool valid() const
 				{ return _valid; }
 			
-			void addToRenderQueue(RenderContext* rc, SceneRenderer& gr);
-
 			void update(float);
 			void cancelDragging(float returnDuration = 0.0f);
 
-			virtual void adjustVerticalOffset(float dy);
-			virtual void resetVerticallastElementIndex();
-			
 			void setActiveElement(Element* e);
 			
 			ET_DECLARE_EVENT2(layoutRequiresKeyboard, Layout*, Element*)
 			ET_DECLARE_EVENT1(layoutDoesntNeedKeyboard, Layout*)
 			
 			vec2 contentSize();
+			
+			template <typename F>
+			void setPositionInterpolationFunction(F func)
+				{ _positionInterpolationFunction = func; }
+			
+			const std::function<float(float)>& positionInterpolationFunction() const
+				{ return _positionInterpolationFunction; }
+			
+		public:
+			/*
+			 * Virtual functions to subclass
+			 */
+			virtual void adjustVerticalOffset(float dy) { }
+			
+			virtual void resetVerticallastElementIndex() { }
 			
 		protected:
 			friend class Scene;
@@ -64,20 +74,26 @@ namespace et
 			
 			Element* activeElement(const PointerInputInfo& p);
 			Element* getActiveElement(const PointerInputInfo& p, Element* e);
+			
 			void setCurrentElement(const PointerInputInfo& p, Element* e);
 			void addElementToRenderQueue(Element* element, RenderContext* rc, SceneRenderer& gr);
 			
 			void performDragging(const PointerInputInfo&);
+			void addToRenderQueue(RenderContext* rc, SceneRenderer& gr);
 
 		private:
 			RenderingElement::Pointer _renderingElement;
+			
+			std::function<float(float)> _positionInterpolationFunction;
 			
 			Element* _currentElement;
 			Element* _focusedElement;
 			Element* _capturedElement;
 			Element::List _topmostElements;
+			
 			vec2 _dragInitialPosition;
 			vec2 _dragInitialOffset;
+			
 			bool _valid;
 			bool _dragging;
 		};
