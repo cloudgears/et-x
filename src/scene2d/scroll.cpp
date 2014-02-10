@@ -471,7 +471,7 @@ void Scroll::adjustContentSize()
 {
 	vec2 size;
 	
-	for (auto& ptr : children())
+	for (const auto& ptr : children())
 	{
 		if (ptr->visible())
 			size = maxv(size, ptr->origin() + ptr->size());
