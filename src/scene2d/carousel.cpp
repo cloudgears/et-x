@@ -5,6 +5,9 @@
  *
  */
 
+#error Please exclude this from project, it is not ready.
+
+/*
 #include <algorithm>
 #include <et/core/et.h>
 #include <et-ext/scene2d/scenerenderer.h>
@@ -121,12 +124,16 @@ bool CarouselItem::rayIntersect(const ray3d& r)
 
 	return false;
 }
+ 
+*/
 
 /*
  *
  * Carousel
  *
- */ 
+ */
+
+/*
 Carousel::Carousel(const Camera& camera, Element* parent) : Element3D(camera, parent), 
 	_setItemAnimator(timerPool()), _alphaAnimator(timerPool()), _positionAnimator(timerPool()),
 	_selectedItem(0.0f), _lastUpdateTime(0.0f), _scale(1.0f), _direction(1.0f, 0.0f), 
@@ -570,12 +577,14 @@ void Carousel::setDirection(const vec2& d)
 	_direction = d;
 	buildItems();
 }
+*/
 
 /*
  * Helper functions
- */
+ *
 bool roundDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2)
 	{ return cos(i1->currentAngle()) < cos(i2->currentAngle()); }
 
 bool ribbonDistanceFunc(const CarouselItem::Pointer& i1, const CarouselItem::Pointer& i2)
 	{ return i1->transform()[3][2] < i2->transform()[3][2]; }
+// */
