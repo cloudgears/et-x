@@ -77,6 +77,10 @@ namespace et
 			const mat4& finalInverseTransform();
 			
 			vec2 positionInElement(const vec2& p);
+			
+			template <typename F>
+			void setPositionInterpolationFunction(F func)
+				{ _positionAnimator.setTimeInterpolationFunction(func); }
 
 			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, AnimatedPropery)
 
