@@ -69,6 +69,7 @@ namespace et
 			std::string _prefix;
 			std::string _actualText;
 			CharDescriptorList _charList;
+			CharDescriptorList _caretChar;
 			SceneVertexList _imageVertices;
 			SceneVertexList _textVertices;
 			SceneVertexList _backgroundVertices;

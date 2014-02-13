@@ -20,8 +20,10 @@ TextField::TextField(Font::Pointer font, Element* parent, const std::string& nam
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
+	_caretChar.push_back(_font->charDescription(caretChar));
+	
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
-	setFlag(Flag_RequiresKeyboard);
+	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
@@ -29,8 +31,10 @@ TextField::TextField(const std::string& text, Font::Pointer font, Element* paren
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
+	_caretChar.push_back(_font->charDescription(caretChar));
+	
 	setText(text);
-	setFlag(Flag_RequiresKeyboard);
+	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
@@ -39,9 +43,11 @@ TextField::TextField(const Image& background, const std::string& text, Font::Poi
 	_font(font), _background(background), _alignmentH(Alignment_Near), _alignmentV(Alignment_Center),
 	_secured(false), _caretVisible(false)
 {
+	_caretChar.push_back(_font->charDescription(caretChar));
+	
 	setText(text);
 	
-	setFlag(Flag_RequiresKeyboard);
+	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	setSize(font->measureStringSize(text));
 	
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
@@ -85,19 +91,33 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 		CharDescriptorList(_actualText.length(), _font->charDescription(securedChar)) :
 		_font->buildString(_actualText);
 	
+	vec2 textSize = _font->measureStringSize(_charList);
+	vec2 caretSize = _font->measureStringSize(_caretChar);
+	
+	float widthAdjustment = 0.0f;
+	
+	auto actualAlignment = _alignmentH;
+	
+	if (textSize.x + caretSize.x >= wholeRect.width)
+	{
+		actualAlignment = Alignment_Far;
+		textSize.x += caretSize.x;
+		textSize.y = etMax(caretSize.y, textSize.y);
+		widthAdjustment = caretSize.x;
+	}
+	
+	vec2 textOrigin = vec2(alignmentFactor(actualAlignment), alignmentFactor(_alignmentV)) * (size() - textSize);
+	
 	if (_charList.size())
 	{
-		buildStringVertices(_textVertices, _charList, _alignmentH, _alignmentV,
-			size() * vec2(alignmentFactor(_alignmentH), alignmentFactor(_alignmentV)),
+		buildStringVertices(_textVertices, _charList, Alignment_Near, Alignment_Near, textOrigin,
 			color() * alphaVector, transform);
 	}
 
 	if (_caretVisible)
 	{
-		vec2 textSize = _charList.empty() ? _font->measureStringSize(" ") * vec2(0.0f, 1.0f) : _font->measureStringSize(_charList);
-		vec2 textOrigin = vec2(alignmentFactor(_alignmentH), alignmentFactor(_alignmentV)) * (size() - textSize);
-		buildStringVertices(_textVertices, { _font->charDescription(caretChar) }, Alignment_Near,
-			Alignment_Near, textOrigin + vec2(textSize.x, 0.0f), color() * alphaVector, transform);
+		buildColorVertices(_textVertices, rect(textOrigin.x + textSize.x - widthAdjustment,
+			0.5f * (wholeRect.height - caretSize.y), caretSize.x, caretSize.y), color() * alphaVector, transform);
 	}
 	
 	setContentValid();
