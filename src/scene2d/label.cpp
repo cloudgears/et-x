@@ -227,7 +227,7 @@ void Label::fitToWidth(float w)
 {
 	if (_text.empty()) return;
 	
-	float minimalWidthToFit = _font->measureStringSize("W").x;
+	float minimalWidthToFit = _font->measureStringSize("W", _allowFormatting).x;
 	if (std::abs(w) < minimalWidthToFit) return;
 	
 	std::string newText;
@@ -243,7 +243,7 @@ void Label::fitToWidth(float w)
 		if (wsPos == std::string::npos)
 		{
 			std::string appended = latestLine + oldText;
-			vec2 measuredSize = _font->measureStringSize(appended);
+			vec2 measuredSize = _font->measureStringSize(appended, _allowFormatting);
 			if (measuredSize.x > w)
 			{
 				while (isWhitespaceChar(newText.back()))
@@ -263,7 +263,7 @@ void Label::fitToWidth(float w)
 		if (!isNewLineChar(nextCharStr[0]))
 			appended.append(nextCharStr);
 		
-		if (_font->measureStringSize(appended).x < w)
+		if (_font->measureStringSize(appended, _allowFormatting).x < w)
 		{
 			newText.append(word);
 			latestLine.append(word);
@@ -282,7 +282,7 @@ void Label::fitToWidth(float w)
 		{
 			std::string wBegin = word.substr(0, word.size() - 1);
 			appended = latestLine + wBegin;
-			while (_font->measureStringSize(appended).x > w)
+			while (_font->measureStringSize(appended, _allowFormatting).x > w)
 			{
 				wBegin.erase(wBegin.size() - 1);
 				appended = latestLine + wBegin;
