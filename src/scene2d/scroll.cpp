@@ -195,6 +195,11 @@ bool Scroll::pointerCancelled(const PointerInputInfo& p)
 	return true;
 }
 
+bool Scroll::pointerScrolled(const PointerInputInfo& p)
+{
+	return false;
+}
+
 void Scroll::invalidateChildren()
 {
 	for (auto& c : children())

@@ -200,16 +200,8 @@ void Scene::internal_replaceTopmostLayout(Layout::Pointer newLayout, AnimationDe
 
 void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 {
-	auto i = _layouts.begin();
-	while (i != _layouts.end())
-	{
-		if ((*i)->layout == l.oldLayout)
-			break;
-
-		++i;
-	}
-
-	internal_removeLayout(l.oldLayout, desc);
+	auto i = std::find_if(_layouts.begin(), _layouts.end(), [l](const LayoutEntry::Pointer& entry)
+		{ return entry->layout == l.oldLayout; });
 
 	if (i == _layouts.end())
 	{
@@ -232,6 +224,8 @@ void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 		_layouts.insert(i, layoutToShow);
 		animateLayoutAppearing(l.newLayout, layoutToShow.ptr(), desc.flags, desc.duration);
 	}
+
+	internal_removeLayout(l.oldLayout, desc);
 }
 
 void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor desc)

@@ -254,7 +254,7 @@ namespace et
 			{ return t; }
 		
 		inline float sinBounceInterpolation(float t)
-			{ float v = t + 0.4 * sin(t * PI); return v * v; }
+			{ float v = t + 0.4f * sin(t * PI); return v * v; }
 		
 		inline float polynomialBounceInterpolation(float t)
 			{ float ts = t * t; return t + ts * (1.0f - ts); }
@@ -266,3 +266,4 @@ namespace et
 	typedef Animator<mat4> MatrixAnimator;
 	typedef Animator<rect> RectAnimator;
 }
+	

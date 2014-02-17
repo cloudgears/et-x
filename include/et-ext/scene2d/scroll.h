@@ -66,6 +66,7 @@ namespace et
 			bool pointerMoved(const PointerInputInfo&);
 			bool pointerReleased(const PointerInputInfo&);
 			bool pointerCancelled(const PointerInputInfo&);
+			bool pointerScrolled(const PointerInputInfo&);
 			bool containsPoint(const vec2& p, const vec2& np);
 			
 			void invalidateChildren();
@@ -73,7 +74,7 @@ namespace et
 			void broadcastMoved(const PointerInputInfo&);
 			void broadcastReleased(const PointerInputInfo&);
 			void broadcastCancelled(const PointerInputInfo&);
-			
+
 			float scrollOutOfContentXSize() const;
 			float scrollOutOfContentYSize() const;
 
