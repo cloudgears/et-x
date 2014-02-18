@@ -87,8 +87,13 @@ bool Scene::pointerScrolled(const et::PointerInputInfo& p)
 
 void Scene::keyPressed(size_t key)
 {
-	if (_keyboardFocusedLayout.valid() && _keyboardFocusedElement.valid())
-		_keyboardFocusedElement->processMessage(Message(Message::Type_TextFieldControl, key));
+	if (_keyboardFocusedLayout.valid())
+	{
+		if (_keyboardFocusedElement.valid())
+			_keyboardFocusedElement->processMessage(Message(Message::Type_TextFieldControl, key));
+		else 
+			_keyboardFocusedLayout->keyPressed(key);
+	}
 }
 
 void Scene::charactersEntered(std::string p)
@@ -164,12 +169,14 @@ void Scene::onKeyboardNeeded(Layout* l, Element* element)
 {
 	_keyboardFocusedElement = Element::Pointer(element);
 	_keyboardFocusedLayout = Layout::Pointer(l);
+
 	input().activateSoftwareKeyboard();
 }
 
 void Scene::onKeyboardResigned(Layout*)
 {
 	input().deactivateSoftwareKeyboard();
+
 	_keyboardFocusedElement.reset(nullptr);
 	_keyboardFocusedLayout.reset(nullptr);
 }
@@ -236,6 +243,10 @@ void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor
 	layoutWillDisappear.invoke(oldLayout);
 	
 	oldLayout->willDisappear();
+
+	if (oldLayout->hasFlag(Flag_RequiresKeyboard))
+		onKeyboardResigned(oldLayout.ptr());
+
 	oldLayout->layoutDoesntNeedKeyboard.disconnect(this);
 	oldLayout->layoutRequiresKeyboard.disconnect(this);
 
@@ -278,6 +289,10 @@ void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntry* newEn
 	if ((animationFlags == AnimationFlag_None) || smallDuration)
 	{
 		newLayout->didAppear();
+
+		if (newLayout->hasFlag(Flag_RequiresKeyboard))
+			onKeyboardNeeded(newLayout.ptr(), nullptr);
+
 		layoutDidAppear.invoke(newLayout);
 	}
 	else 
@@ -313,6 +328,10 @@ void Scene::layoutEntryTransitionFinished(LayoutEntry* l)
 	{
 		layoutDidAppear.invoke(l->layout);
 		l->layout->didAppear();
+
+		if (l->layout->hasFlag(Flag_RequiresKeyboard))
+			onKeyboardNeeded(l->layout.ptr(), nullptr);
+
 		l->state = Scene::LayoutEntry::State_Still;
 	}
 }

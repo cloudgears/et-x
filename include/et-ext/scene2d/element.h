@@ -74,6 +74,8 @@ namespace et
 			
 			virtual void pointerLeaved(const PointerInputInfo&) { }
 
+			virtual void keyPressed(size_t) { }
+
 			virtual bool capturesPointer() const
 				{ return false; }
 			

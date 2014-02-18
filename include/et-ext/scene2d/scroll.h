@@ -41,12 +41,21 @@ namespace et
 			void setBackgroundColor(const vec4& color);
 			void setOverlayColor(const vec4& color);
 			void setScrollbarsColor(const vec4&);
-						
+
+			void setPointerScrollMultiplier(const vec2&);
+			void setPointerScrollDuration(float);
+
 			const vec2& lastElementIndex() const
 				{ return _offset; }
 			
 			void scrollToBottom(float duration = 0.0f);
 						
+			const vec2& pointerScrollMultiplier() const
+				{ return _pointerScrollMultiplier; }
+
+			float pointerScrollDuration() const
+				{ return _pointerScrollDuration; }
+
 		protected:
 			virtual void setOffsetDirectly(const vec2& o);
 			
@@ -95,7 +104,7 @@ namespace et
 			
 			bool verticalBounce() const
 				{ return (_bounce & Bounce_Vertical) != 0; }
-			
+
 			Element* getActiveElement(const PointerInputInfo&, Element* root);
 			void setActiveElement(const PointerInputInfo& p, Element* e);
 			
@@ -128,11 +137,13 @@ namespace et
 			vec2 _offset;
 			vec2 _velocity;
 			vec2 _bounceExtent;
+			vec2 _pointerScrollMultiplier;
 			vector2<BounceDirection> _bouncing;
 			size_t _bounce;
 			float _updateTime;
 			float _scrollbarsAlpha;
 			float _scrollbarsAlphaTarget;
+			float _pointerScrollDuration;
 
 			bool _pointerCaptured;
 			bool _manualScrolling;

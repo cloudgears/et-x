@@ -17,7 +17,8 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(ModalLayout)
 
 Layout::Layout(const std::string& name) :
 	Element2d(nullptr, ET_S2D_PASS_NAME_TO_BASE_CLASS), _currentElement(nullptr), _focusedElement(nullptr),
-	_capturedElement(nullptr), _valid(false), _dragging(false), _positionInterpolationFunction(linearInerpolation)
+	_capturedElement(nullptr), _valid(false), _dragging(false),
+	_positionInterpolationFunction(linearInerpolation)
 {
 	setAutolayout(vec2(0.0f), LayoutMode_Absolute, vec2(1.0f),
 		LayoutMode_RelativeToContext, vec2(0.0f));
@@ -224,6 +225,7 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 	else 
 	{
 		Element* active = activeElement(p);
+
 		setCurrentElement(p, active);
 
 		bool processed = active && active->pointerScrolled(PointerInputInfo(p.type,
@@ -343,15 +345,25 @@ void Layout::setActiveElement(Element* e)
 
 	_focusedElement = e;
 
-	bool needKeyboard = _focusedElement && _focusedElement->hasFlag(Flag_RequiresKeyboard);
+	bool needKeyboard = hasFlag(Flag_RequiresKeyboard) || 
+		(_focusedElement && _focusedElement->hasFlag(Flag_RequiresKeyboard));
 
 	if (_focusedElement)
+	{
 		_focusedElement->setFocus();
+
+		if (!_focusedElement->hasFlag(Flag_RequiresKeyboard))
+			_focusedElement = nullptr;
+	}
 	
 	if (needKeyboard)
+	{
 		layoutRequiresKeyboard.invoke(this, _focusedElement);
+	}
 	else
+	{
 		layoutDoesntNeedKeyboard.invoke(this);
+	}
 }
 
 void Layout::setInvalid()
