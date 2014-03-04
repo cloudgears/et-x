@@ -19,6 +19,9 @@ namespace et
 		void buildQuad(SceneVertexList& vertices, const SceneVertex& topLeft, const SceneVertex& topRight,
 			const SceneVertex& bottomLeft, const SceneVertex& bottomRight);
 		
+		void buildQuad(SceneVertexList& vertices, SceneVertex topLeft, SceneVertex topRight,
+			SceneVertex bottomLeft, SceneVertex bottomRight, const mat4& t);
+		
 		void buildStringVertices(SceneVertexList& vertices, const CharDescriptorList& chars,  Alignment hAlign,
 			Alignment vAlign, const vec2& pos, const vec4& color, const mat4& transform);
 

@@ -23,6 +23,7 @@
 #include <et-ext/scene2d/messageview.h>
 #include <et-ext/scene2d/slider.h>
 #include <et-ext/scene2d/table.h>
+#include <et-ext/scene2d/line.h>
 
 namespace et
 {

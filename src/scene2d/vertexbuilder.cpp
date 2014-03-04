@@ -24,6 +24,16 @@ void et::s2d::buildQuad(SceneVertexList& vertices, const SceneVertex& topLeft, c
 	vertices.push_back(topLeft);
 }
 
+void et::s2d::buildQuad(SceneVertexList& vertices, SceneVertex topLeft, SceneVertex topRight,
+	SceneVertex bottomLeft, SceneVertex bottomRight, const mat4& m)
+{
+	topLeft.position = m * topLeft.position;
+	topRight.position = m * topRight.position;
+	bottomLeft.position = m * bottomLeft.position;
+	bottomRight.position = m * bottomRight.position;
+	buildQuad(vertices, topLeft, topRight, bottomLeft, bottomRight);
+}
+
 void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescriptorList& chars,
 	Alignment hAlign, Alignment vAlign, const vec2& pos, const vec4& color,
 	const mat4& transform)
