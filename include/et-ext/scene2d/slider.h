@@ -24,6 +24,12 @@ namespace et
 				SliderImagesMode_Crop
 			};
 			
+			enum BackgroundImageMode
+			{
+				BackgroundImageMode_Center,
+				BackgroundImageMode_Stretch,
+			};
+			
 		public:
 			Slider(Element2d* parent);
 			
@@ -88,6 +94,7 @@ namespace et
 			
 			State _state;
 			SliderImagesMode _sliderImagesMode;
+			BackgroundImageMode _backgroundImageMode;
         };
     }
 }

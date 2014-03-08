@@ -16,7 +16,7 @@ const float colorPlaceholdersSize = 0.5f;
 
 Slider::Slider(Element2d* parent) :
 	Element2d(parent), _min(0.0f), _max(1.0f), _value(0.5f), _state(State_Default),
-	_sliderImagesMode(SliderImagesMode_Crop)
+	_sliderImagesMode(SliderImagesMode_Crop), _backgroundImageMode(BackgroundImageMode_Center)
 {
 	for (size_t i = 0; i < State_max; ++i)
 		_handleScale[i] = 1.0f;
@@ -90,8 +90,20 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_background.texture.valid())
 	{
-		buildImageVertices(_backgroundVertices, _background.texture,
-			_background.descriptor, mainRect, color(), transform);
+		if (_backgroundImageMode == BackgroundImageMode_Stretch)
+		{
+			buildImageVertices(_backgroundVertices, _background.texture,
+				_background.descriptor, mainRect, color(), transform);
+		}
+		else if (_backgroundImageMode == BackgroundImageMode_Center)
+		{
+			buildImageVertices(_backgroundVertices, _background.texture, _background.descriptor,
+				rect(0.5f * (mainRect.size() - _background.descriptor.size), _background.descriptor.size), color(), transform);
+		}
+		else
+		{
+			ET_FAIL("Invalid background image mode.");
+		}
 	}
 	
 	if (_value > 0.0f)
