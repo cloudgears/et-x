@@ -64,6 +64,9 @@ et::ValueBase::Pointer deserializeJson(const char* buffer, size_t len, ValueClas
 {
 	c = ValueClass_Invalid;
 	
+	if ((buffer == nullptr) || (len == 0))
+		return et::ValueBase::Pointer();
+	
 	json_error_t error = { };
 	json_t* root = json_loadb(buffer, len, 0, &error);
 	
