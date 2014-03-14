@@ -34,6 +34,7 @@
 		A5896C0418A027FC00962607 /* libjansson.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5896C0318A027FC00962607 /* libjansson.a */; };
 		A5896C0718A0289600962607 /* MainUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896C0518A0289600962607 /* MainUI.cpp */; };
 		A5896C0B18A02BF500962607 /* ResourceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896C0818A028FC00962607 /* ResourceManager.cpp */; };
+		A5B0DD5E18D3558B0006C9FA /* jpegloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B0DD5D18D3558B0006C9FA /* jpegloader.cpp */; };
 		A5F0940A18A00A440017B239 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0940718A00A440017B239 /* main.cpp */; };
 		A5F0940B18A00A440017B239 /* MainController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0940818A00A440017B239 /* MainController.cpp */; };
 		A5F094B918A00AF70017B239 /* framebuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0946418A00AF70017B239 /* framebuffer.cpp */; };
@@ -185,6 +186,7 @@
 		A5896C0618A0289600962607 /* MainUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainUI.h; path = ../source/ui/MainUI.h; sourceTree = "<group>"; };
 		A5896C0818A028FC00962607 /* ResourceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceManager.cpp; path = ../source/ui/ResourceManager.cpp; sourceTree = "<group>"; };
 		A5896C0918A028FC00962607 /* ResourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceManager.h; path = ../source/ui/ResourceManager.h; sourceTree = "<group>"; };
+		A5B0DD5D18D3558B0006C9FA /* jpegloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jpegloader.cpp; sourceTree = "<group>"; };
 		A5F093FA18A00A1E0017B239 /* EnvMapBlur.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EnvMapBlur.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5F0940718A00A440017B239 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../source/main.cpp; sourceTree = "<group>"; };
 		A5F0940818A00A440017B239 /* MainController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainController.cpp; path = ../source/MainController.cpp; sourceTree = "<group>"; };
@@ -635,6 +637,7 @@
 		A5F0948718A00AF70017B239 /* imaging */ = {
 			isa = PBXGroup;
 			children = (
+				A5B0DD5D18D3558B0006C9FA /* jpegloader.cpp */,
 				A5F0948818A00AF70017B239 /* ddsloader.cpp */,
 				A53981FC18A3061F0063E8E0 /* hdrloader.cpp */,
 				A5F0948918A00AF70017B239 /* imageoperations.cpp */,
@@ -1220,6 +1223,7 @@
 				A5896BFB18A0279A00962607 /* scenerenderer.cpp in Sources */,
 				A5896BFA18A0279A00962607 /* scene.cpp in Sources */,
 				A5896BEB18A0279A00962607 /* charactergenerator.mac.mm in Sources */,
+				A5B0DD5E18D3558B0006C9FA /* jpegloader.cpp in Sources */,
 				A5F094BF18A00AF70017B239 /* programfactory.cpp in Sources */,
 				A5896BF918A0279A00962607 /* renderingelement.cpp in Sources */,
 				A5896BED18A0279A00962607 /* button.cpp in Sources */,
@@ -1327,6 +1331,7 @@
 					"\"$PROJECT_DIR/../../../../engine/lib/osx\"",
 					"\"$PROJECT_DIR/../../../../engine-ext/lib/osx\"",
 				);
+				OTHER_LDFLAGS = "-ljpeg";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1345,6 +1350,7 @@
 					"\"$PROJECT_DIR/../../../../engine/lib/osx\"",
 					"\"$PROJECT_DIR/../../../../engine-ext/lib/osx\"",
 				);
+				OTHER_LDFLAGS = "-ljpeg";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
