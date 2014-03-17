@@ -41,14 +41,9 @@ namespace et
 			
 			const std::function<float(float)>& positionInterpolationFunction() const
 				{ return _positionInterpolationFunction; }
-			
+						
 		public:
-			/*
-			 * Virtual functions to subclass
-			 */
-			virtual void adjustVerticalOffset(float dy) { }
-			
-			virtual void resetVerticallastElementIndex() { }
+			virtual void activeElementChanged(s2d::Element*) { }
 			
 		protected:
 			friend class Scene;

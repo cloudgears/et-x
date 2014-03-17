@@ -357,13 +357,11 @@ void Layout::setActiveElement(Element* e)
 	}
 	
 	if (needKeyboard)
-	{
 		layoutRequiresKeyboard.invoke(this, _focusedElement);
-	}
 	else
-	{
 		layoutDoesntNeedKeyboard.invoke(this);
-	}
+	
+	activeElementChanged(_focusedElement);
 }
 
 void Layout::setInvalid()
