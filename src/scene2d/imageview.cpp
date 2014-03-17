@@ -161,9 +161,9 @@ ImageDescriptor ImageView::calculateImageFrame()
 				
 			if (_contentMode == ContentMode_Fill)
 			{
-				vec2 sizeAspect = frameSize / size();
-				float minScale = etMin(sizeAspect.x, sizeAspect.y);
-				frameSize /= minScale;
+				vec2 sizeAspect = frameSize / descSize;
+				float minScale = etMax(sizeAspect.x, sizeAspect.y);
+				frameSize = descSize * minScale;
 			}
 			else
 			{
