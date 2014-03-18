@@ -6,7 +6,6 @@
 using namespace et;
 
 extern const std::string atmospherePerVertexVS;
-extern const std::string atmosphereFastPerVertexVS;
 extern const std::string atmospherePerVertexFS;
 
 extern const std::string planetPerVertexVS;
@@ -23,7 +22,7 @@ Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
 	ObjectsCache localCache;
 	
 	_atmospherePerVertexProgram = rc->programFactory().genProgram("et~atmosphere~per-vertex~program",
-		atmosphereFastPerVertexVS, atmospherePerVertexFS);
+		atmospherePerVertexVS, atmospherePerVertexFS);
 	setProgramParameters(_atmospherePerVertexProgram);
 
 	setPlanetFragmentShader(defaultPlanetFragmentShader());
@@ -125,20 +124,14 @@ void Atmosphere::generateGeometry(RenderContext* rc)
 		BufferDrawType_Static, ia, BufferDrawType_Static);
 }
 
-void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam, bool drawSky, bool drawPlanet)
+void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool drawSky, bool drawPlanet)
 {
 	ET_ASSERT(drawSky || drawPlanet);
 	
 	auto& rs = _rc->renderState();
 	
-	vec3 direction = -cam.direction();
-	
-	vec3 upVector = unitY;
-	if (std::abs( (std::abs(dot(upVector, direction)) - 1.0f)) <= std::numeric_limits<float>::epsilon())
-		upVector = unitX;
-	
-	Camera adjustedCamera(cam);
-	adjustedCamera.lookAt(_cameraPosition, _cameraPosition + direction, upVector);
+	Camera adjustedCamera(baseCamera);
+	adjustedCamera.setPosition(_cameraPosition);
 
 	rs.bindVertexArray(_atmosphereVAO);
 	
@@ -184,9 +177,8 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam, bool drawSky, b
 			_skyParametersValid = true;
 		}
 		
-		_atmospherePerVertexProgram->setUniform("mInverseMVPMatrix", adjustedCamera.inverseModelViewProjectionMatrix());
-		_atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
 		_atmospherePerVertexProgram->setCameraProperties(adjustedCamera);
+		_atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
 		
 #if (DRAW_WIREFRAME)
@@ -195,85 +187,9 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& cam, bool drawSky, b
 		rs.setWireframeRendering(false);
 		rs.setDepthFunc(DepthFunc_Less);
 #endif
+		
 		rs.setCulling(true, cs);
 	}
-}
-
-void Atmosphere::performRendering(bool shouldClear, bool renderPlanet)
-{
-/*
-	auto& rs = _rc->renderState();
-
-	auto boundFramebuffer = rs.boundFramebuffer();
-	CullState cullState = rs.cullState();
-	BlendState blendState = rs.blendState();
-	bool blendEnabled = rs.blendEnabled();
-	bool cullEnabled = rs.cullEnabled();
-	bool depthTest = rs.depthTestEnabled();
-	bool depthMask = rs.depthMask();
-	vec4 clearColor = rs.clearColor();
-	
-	if (renderPlanet)
-	{
-		rs.bindProgram(_planetPerPixelProgram);
-		setProgramParameters(_planetPerPixelProgram);
-	}
-	
-	rs.bindProgram(_atmospherePerPixelProgram);
-	setProgramParameters(_atmospherePerPixelProgram);
-	
-	if (shouldClear)
-		rs.setClearColor(_ambientColor);
-	
-	rs.setDepthTest(true);
-	rs.setBlend(true, BlendState_Additive);
-	rs.setCulling(true, CullState_Front);
-	rs.bindVertexArray(_atmosphereVAO);
-	rs.bindFramebuffer(_framebuffer);
-	for (uint32_t i = 0; i < 6; ++i)
-	{
-		_framebuffer->setCurrentCubemapFace(i);
-		
-		if (shouldClear)
-		{
-			rs.setDepthMask(true);
-			_rc->renderer()->clear(true, true);
-		}
-		
-		rs.setDepthMask(false);
-		_atmospherePerPixelProgram->setMVPMatrix(_cubemapMatrices[i]);
-		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
-		
-		if (renderPlanet)
-		{
-			rs.setDepthMask(true);
-			rs.setBlend(false);
-			rs.setCulling(true, CullState_Back);
-			rs.bindProgram(_planetPerPixelProgram);
-			_planetPerPixelProgram->setMVPMatrix(_cubemapMatrices[i]);
-			_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
-			rs.setBlend(true, BlendState_Additive);
-			rs.bindProgram(_atmospherePerPixelProgram);
-			rs.setCulling(true, CullState_Front);
-		}
-	}
-	
-	rs.bindFramebuffer(boundFramebuffer);
-	rs.setBlend(blendEnabled, blendState);
-	rs.setCulling(cullEnabled, cullState);
-	rs.setDepthMask(depthMask);
-	rs.setDepthTest(depthTest);
-	
-	if (shouldClear)
-		rs.setClearColor(clearColor);
-	
-	_parametersValid = true;
-*/
-}
-
-Texture Atmosphere::environmentTexture()
-{
-	return Texture(); // _framebuffer->renderTarget();
 }
 
 void Atmosphere::setLightDirection(const vec3& l)
@@ -409,50 +325,11 @@ void Atmosphere::setShouldComputeScatteringOnPlanet(bool c)
  * Atmosphere vertex shader
  *
  */
-
 const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
-   (
-	ATMOSPHERE_UNIFORMS
-	SCALE_FUNCTION
-	SCATTERING_INTEGRAL_FUNCTION
-	
-	uniform mat4 mInverseMVPMatrix;
-	
-	etVertexIn vec3 Vertex;
-	
-	etVertexOut vec3 vVertex;
-	etVertexOut vec3 vDirection;
-	etVertexOut vec3 aFrontColor;
-	etVertexOut vec3 aSecondaryColor;
-	etVertexOut vec3 aSourceColor;
-	
-	void main(void)
-	{
-		vVertex = normalize(Vertex) * fOuterRadius;
-		
-		float fCameraHeight = length(vCamera);
-		vec3 vRay = vVertex - vCamera;
-		float fFar = length(vRay);
-		vRay /= fFar;
-
-		float fStartAngle = dot(vRay, vCamera) / fCameraHeight;
-		float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
-		
-		vec3 vFrontColor = solveScatteringIntegral(vCamera, vRay, fFar, fStartOffset);
-		vDirection = vCamera - vVertex;
-		aFrontColor = fKrESun * (vFrontColor * vInvWavelength);
-		aSecondaryColor = fKmESun * vFrontColor;
-		gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
-	}
-);
-
-const std::string atmosphereFastPerVertexVS = ET_TO_CONST_CHAR
 (
  ATMOSPHERE_UNIFORMS
  SCALE_FUNCTION
  SCATTERING_INTEGRAL_FUNCTION
- 
- uniform mat4 mInverseMVPMatrix;
  
  etVertexIn vec3 Vertex;
  
@@ -471,16 +348,20 @@ const std::string atmosphereFastPerVertexVS = ET_TO_CONST_CHAR
 	 float fFar = length(vRay);
 	 vRay /= fFar;
 	 
+	 vDirection = -vRay;
+	 
 	 float fStartAngle = dot(vRay, vCamera) / fCameraHeight;
 	 float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
 	 
 	 vec3 vFrontColor = solveFastScatteringIntegral(vCamera, vRay, fFar, fStartOffset);
-	 vDirection = vCamera - vVertex;
 	 aFrontColor = fKrESun * (vFrontColor * vInvWavelength);
 	 aSecondaryColor = fKmESun * vFrontColor;
+	 
 	 gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
+	 gl_Position.xy = -gl_Position.xy;
  }
  );
+
 /*
  *
  * Atmosphere fragment shader

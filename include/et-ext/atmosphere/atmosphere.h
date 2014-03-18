@@ -17,10 +17,6 @@ namespace et
 		
 		void renderAtmosphereWithGeometry(const Camera&, bool drawSky, bool drawPlanet);
 		
-		void performRendering(bool shouldClear, bool renderPlanet);
-		
-		Texture environmentTexture();
-		
 		Dictionary parameters()
 			{ return _parameters; }
 		
