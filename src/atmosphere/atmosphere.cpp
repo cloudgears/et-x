@@ -358,7 +358,7 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	 aSecondaryColor = fKmESun * vFrontColor;
 	 
 	 gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
-	 gl_Position.xy = -gl_Position.xy;
+//	 gl_Position.xy = -gl_Position.xy;
  }
  );
 
