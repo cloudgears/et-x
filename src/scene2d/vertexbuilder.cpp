@@ -36,14 +36,14 @@ void et::s2d::buildQuad(SceneVertexList& vertices, SceneVertex topLeft, SceneVer
 
 void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescriptorList& chars,
 	Alignment hAlign, Alignment vAlign, const vec2& pos, const vec4& color,
-	const mat4& transform)
+	const mat4& transform, float lineInterval)
 {
 	vec4 line;
 	std::vector<vec4> lines;
-
+	
 	for (const CharDescriptor& desc : chars)
 	{
-		line.w = etMax(line.w, desc.size.y);
+		line.w = etMax(line.w, lineInterval * desc.size.y);
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{
 			lines.push_back(line);

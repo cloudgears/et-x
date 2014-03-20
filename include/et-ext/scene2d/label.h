@@ -48,6 +48,8 @@ namespace et
 			void setText(const std::string& text, float duration = 0.0f);
 			
 			vec2 contentSize();
+			
+			void setLineInterval(float);
 
 		private:
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);
@@ -68,6 +70,7 @@ namespace et
 			vec2 _textSize;
 			vec2 _nextTextSize;
 			vec2 _shadowOffset;
+			float _lineInterval;
 			float _textFade;
 			float _textFadeDuration;
 			float _textFadeStartTime;

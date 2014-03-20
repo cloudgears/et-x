@@ -17,7 +17,7 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(Label)
 Label::Label(const std::string& text, Font::Pointer font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _text(text), _nextText(text), _font(font),
 	_vertices(0), _backgroundColor(0.0f), _shadowOffset(1.0f), _textFade(0.0f), _textFadeDuration(0.0f),
-	_textFadeStartTime(0.0f), _horizontalAlignment(Alignment_Near),
+	_textFadeStartTime(0.0f), _lineInterval(1.0f), _horizontalAlignment(Alignment_Near),
 	_verticalAlignment(Alignment_Near), _animatingText(false), _allowFormatting(false)
 {
 	setFlag(Flag_TransparentForPointer);
@@ -67,18 +67,18 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 			shadowColor.w = _shadowColor.w * color().w * fadeOut;
 			vec2 shadowOffset = textOffset + _shadowOffset;
 			buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
-				shadowOffset, shadowColor, transform);
+				shadowOffset, shadowColor, transform, _lineInterval);
 			
 			shadowColor.w = _shadowColor.w * color().w * fadeIn;
 			buildStringVertices(_vertices, _charListNextText, _horizontalAlignment,
-				_verticalAlignment, shadowOffset, shadowColor, transform);
+				_verticalAlignment, shadowOffset, shadowColor, transform, _lineInterval);
 		}
 
 		buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
-			textOffset, color() * vec4(1.0, 1.0, 1.0, fadeOut), transform);
+			textOffset, color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, _lineInterval);
 		
 		buildStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment,
-			textOffset, color() * vec4(1.0, 1.0, 1.0, fadeIn), transform);
+			textOffset, color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, _lineInterval);
 	}
 	else 
 	{
@@ -86,11 +86,11 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 		{
 			shadowColor.w = _shadowColor.w * color().w;
 			buildStringVertices(_vertices, _charListText, _horizontalAlignment,
-				_verticalAlignment, textOffset + _shadowOffset, shadowColor, transform);
+				_verticalAlignment, textOffset + _shadowOffset, shadowColor, transform, _lineInterval);
 		}
 
 		buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, 
-			textOffset, color(), transform);
+			textOffset, color(), transform, _lineInterval);
 	}
 
 	setContentValid();
@@ -328,4 +328,10 @@ void Label::fitToWidth(float w)
 vec2 Label::contentSize()
 {
 	return maxv(_nextTextSize, _textSize);
+}
+
+void Label::setLineInterval(float i)
+{
+	_lineInterval = i;
+	invalidateContent();
 }
