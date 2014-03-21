@@ -41,6 +41,8 @@ namespace et
 			void setBackgroundColor(const vec4& color);
 			void setOverlayColor(const vec4& color);
 			void setScrollbarsColor(const vec4&);
+			
+			void setMovementTreshold(float);
 
 			void setPointerScrollMultiplier(const vec2&);
 			void setPointerScrollDuration(float);
@@ -144,6 +146,7 @@ namespace et
 			float _scrollbarsAlpha;
 			float _scrollbarsAlphaTarget;
 			float _pointerScrollDuration;
+			float _movementTreshold;
 
 			bool _pointerCaptured;
 			bool _manualScrolling;

@@ -25,8 +25,8 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(Scroll)
 Scroll::Scroll(Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _offsetAnimator(timerPool()),
 	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f), _bounceExtent(0.5f),
-	_pointerScrollMultiplier(1.0f), _pointerScrollDuration(0.0f), _bounce(0), _pointerCaptured(false),
-	_manualScrolling(false)
+	_pointerScrollMultiplier(1.0f), _pointerScrollDuration(0.0f), _movementTreshold(SQRT_2), _bounce(0),
+	_pointerCaptured(false), _manualScrolling(false)
 {
 	_offsetAnimator.updated.connect([this](){ setOffsetDirectly(_offset); });
 
@@ -121,7 +121,13 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 	}
 	
 	vec2 offset = p.pos - _currentPointer.pos;
-	if (offset.dotSelf() < SQRT_2) return true;
+	if (offset.dotSelf() < _movementTreshold)
+	{
+		if (_capturedElement.valid() && _capturedElement->capturesPointer())
+			broadcastMoved(p);
+				
+		return true;
+	}
 
 	if (_manualScrolling)
 	{
@@ -621,4 +627,9 @@ void Scroll::setOverlayColor(const vec4& color)
 {
 	_overlayColor = color;
 	invalidateContent();
+}
+
+void Scroll::setMovementTreshold(float t)
+{
+	_movementTreshold = t;
 }
