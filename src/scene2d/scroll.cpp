@@ -121,11 +121,11 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 	}
 	
 	vec2 offset = p.pos - _currentPointer.pos;
-	if (offset.dotSelf() < _movementTreshold)
+	if (!_manualScrolling && (offset.dotSelf() < sqr(_movementTreshold)))
 	{
 		if (_capturedElement.valid() && _capturedElement->capturesPointer())
 			broadcastMoved(p);
-				
+		
 		return true;
 	}
 
