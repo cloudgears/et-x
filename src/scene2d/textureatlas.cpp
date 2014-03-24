@@ -142,7 +142,7 @@ bool TextureAtlas::hasImage(const std::string& key) const
 
 const s2d::Image& TextureAtlas::image(const std::string& key) const
 {
-	assert(key.length() > 0);
+	ET_ASSERT(key.length() > 0);
 	
 	if (_images.count(key) == 0)
 		return _emptyImage;

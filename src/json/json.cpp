@@ -92,7 +92,7 @@ et::ValueBase::Pointer deserializeJson(const char* buffer, size_t len, ValueClas
 	}
 	else
 	{
-		assert(false && "Unsupported (yet) root object type.");
+		ET_ASSERT(false && "Unsupported (yet) root object type.");
 	}
 	
 	json_decref(root);
@@ -101,25 +101,25 @@ et::ValueBase::Pointer deserializeJson(const char* buffer, size_t len, ValueClas
 
 StringValue deserializeString(json_t* json)
 {
-	assert(json_is_string(json));
+	ET_ASSERT(json_is_string(json));
 	return StringValue(std::string(json_string_value(json)));
 }
 
 IntegerValue deserializeInteger(json_t* json)
 {
-	assert(json_is_integer(json));
+	ET_ASSERT(json_is_integer(json));
 	return IntegerValue(static_cast<int>(json_integer_value(json) & 0xffffffff));
 }
 
 FloatValue deserializeFloat(json_t* json)
 {
-	assert(json_is_real(json));
+	ET_ASSERT(json_is_real(json));
 	return FloatValue(static_cast<float>(json_real_value(json)));
 }
 
 ArrayValue deserializeArray(json_t* json)
 {
-	assert(json_is_array(json));
+	ET_ASSERT(json_is_array(json));
 	
 	ArrayValue result;
 	for (size_t i = 0; i < json_array_size(json); ++i)
@@ -140,7 +140,7 @@ ArrayValue deserializeArray(json_t* json)
 		else if (value)
 		{
 			log::error("Unsupported JSON type: %d", value->type);
-			assert(false);
+			ET_ASSERT(false);
 		}
 	}
 	return result;
@@ -148,7 +148,7 @@ ArrayValue deserializeArray(json_t* json)
 
 Dictionary deserializeDictionary(json_t* root)
 {
-	assert(json_is_object(root));
+	ET_ASSERT(json_is_object(root));
 	
 	Dictionary result;
 	
@@ -177,7 +177,7 @@ Dictionary deserializeDictionary(json_t* root)
 		else if (value != nullptr)
 		{
 			log::error("Unsupported JSON type: %d", value->type);
-			assert(false);
+			ET_ASSERT(false);
 		}
 		child = json_object_iter_next(root, child);
 	}
@@ -245,7 +245,7 @@ json_t* serializeValue(ValueBase::Pointer v)
 	else
 	{
 		log::error("Unknown dictionary class %d", v->valueClass());
-		assert(false);
+		ET_ASSERT(false);
 	}
 	
 	return value;

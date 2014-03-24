@@ -236,7 +236,7 @@ void CharacterGeneratorPrivate::renderCharacter(NSAttributedString* value,
 {
 	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8, 4 * size.x,
 		colorSpace, kCGImageAlphaPremultipliedLast, nil, nil);
-	assert(context);
+	ET_ASSERT(context);
 
 	NSGraphicsContext* aContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];
 	[NSGraphicsContext setCurrentContext:aContext];

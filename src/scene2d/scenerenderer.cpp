@@ -49,7 +49,7 @@ void s2d::SceneRenderer::pushClipRect(const recti& value)
 
 void s2d::SceneRenderer::popClipRect()
 {
-	assert(_clip.size() > 1);
+	ET_ASSERT(_clip.size() > 1);
 	_clip.pop();
 }
 
@@ -102,7 +102,7 @@ void s2d::SceneRenderer::alloc(size_t count)
 SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& inTexture,
 	const SceneProgram& inProgram, Element* object, ElementRepresentation rep)
 {
-	assert(_renderingElement.valid());
+	ET_ASSERT(_renderingElement.valid());
 	
 	if (object && !object->hasFlag(Flag_DynamicRendering))
 		object = nullptr;
@@ -139,8 +139,8 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 	_renderingElement->changed = true;
 	_renderingElement->vertexList.applyOffset(count);
 
-	assert(lastVertexIndex < _renderingElement->vertexList.size());
-	assert(lastVertexIndex * _renderingElement->vertexList.typeSize() < _renderingElement->vertexList.dataSize());
+	ET_ASSERT(lastVertexIndex < _renderingElement->vertexList.size());
+	ET_ASSERT(lastVertexIndex * _renderingElement->vertexList.typeSize() < _renderingElement->vertexList.dataSize());
 
 	return _renderingElement->vertexList.element_ptr(lastVertexIndex);
 }

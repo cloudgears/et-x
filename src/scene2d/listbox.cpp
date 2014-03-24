@@ -278,7 +278,7 @@ void Listbox::pointerLeaved(const PointerInputInfo& p)
 
 void Listbox::showPopup()
 {
-	assert(false && "Need to move from frame to position+size");
+	ET_ASSERT(false && "Need to move from frame to position+size");
 /*
 	setState(ListboxState_Opened);
 	if (_popupOpening) return;
