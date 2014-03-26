@@ -269,14 +269,15 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 	
-	if (_capturedElement.valid())
+	Element* active = getActiveElement(globalPos, this);
+	
+	if (_capturedElement.valid() && (_capturedElement.ptr() != active))
 	{
 		PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
 		_capturedElement->pointerMoved(localPos);
 	}
 	
-	Element* active = getActiveElement(globalPos, this);
 	if (active != nullptr)
 	{
 		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),
@@ -295,7 +296,9 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 
-	if (_capturedElement.valid())
+	Element* active = getActiveElement(globalPos, this);
+	
+	if (_capturedElement.valid() && (_capturedElement.ptr() != active))
 	{
 		PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
@@ -303,7 +306,6 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 		_capturedElement.reset(nullptr);
 	}
 	
-	Element* active = getActiveElement(globalPos, this);
 	if (active != nullptr)
 	{
 		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),
@@ -322,7 +324,9 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 	
-	if (_capturedElement.valid())
+	Element* active = getActiveElement(globalPos, this);
+	
+	if (_capturedElement.valid() && (_capturedElement.ptr() != active))
 	{
 		PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
@@ -330,7 +334,6 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p)
 		_capturedElement.reset(nullptr);
 	}
 	
-	Element* active = getActiveElement(globalPos, this);
 	if (active != nullptr)
 	{
 		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),

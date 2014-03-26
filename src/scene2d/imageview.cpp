@@ -207,3 +207,13 @@ vec2 ImageView::contentSize()
 {
 	return _descriptor.size;
 }
+
+bool ImageView::pointerReleased(const PointerInputInfo& p)
+{
+	if (hasFlag(Flag_TransparentForPointer))
+		return false;
+	
+	onPointerReleased.invoke(p);
+	
+	return true;
+}
