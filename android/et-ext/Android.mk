@@ -2,6 +2,12 @@ LOCAL_PATH := $(call my-dir)
 
 INCLUDE_PATH := ../../include/
 SOURCE_PATH := ../../src/
+SOURCE_LIB := ../../lib/android/
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := jansson
+LOCAL_SRC_FILES := $(LIB_PATH)/libjansson.a
+include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
@@ -9,7 +15,6 @@ LOCAL_MODULE := et-ext
 
 LOCAL_C_INCLUDES := $(ENGINE_INCLUDES_PATH) $(LOCAL_PATH)/$(INCLUDE_PATH)
 
-LOCAL_CFLAGS := -UNDEBUG -DDEBUG
 LOCAL_CXXFLAGS := --std=c++11 $(LOCAL_CFLAGS)
 
 LOCAL_SRC_FILES = $(SOURCE_PATH)json/json.cpp \
@@ -40,6 +45,3 @@ LOCAL_SRC_FILES = $(SOURCE_PATH)json/json.cpp \
 LOCAL_STATIC_LIBRARIES := et jansson
 
 include $(BUILD_STATIC_LIBRARY)
-
-$(call import-add-path, $(LOCAL_PATH))
-$(call import-module, jansson)

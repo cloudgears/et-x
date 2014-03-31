@@ -63,7 +63,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data());
 	checkOpenGLError("glGetTexImage");
 	
-#elif (ET_PLATFORM_IOS)
+#elif (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
 	
 	auto fbo = rc->framebufferFactory().createFramebuffer(texture()->size(), "temp-buffer",
 		GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0, 0);
