@@ -108,7 +108,7 @@ StringValue deserializeString(json_t* json)
 IntegerValue deserializeInteger(json_t* json)
 {
 	ET_ASSERT(json_is_integer(json));
-	return IntegerValue(static_cast<int>(json_integer_value(json) & 0xffffffff));
+	return IntegerValue(json_integer_value(json));
 }
 
 FloatValue deserializeFloat(json_t* json)
@@ -171,9 +171,9 @@ Dictionary deserializeDictionary(json_t* root)
 		else if (json_is_null(value))
 			result.setDictionaryForKey(key, Dictionary());
 		else if (json_is_true(value))
-			result.setIntegerForKey(key, IntegerValue(1));
+			result.setIntegerForKey(key, IntegerValue(1ll));
 		else if (json_is_false(value))
-			result.setIntegerForKey(key, IntegerValue(0));
+			result.setIntegerForKey(key, IntegerValue(0ll));
 		else if (value != nullptr)
 		{
 			log::error("Unsupported JSON type: %d", value->type);
