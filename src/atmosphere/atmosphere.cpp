@@ -77,7 +77,7 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 		1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "1"})->content, 4.0f),
 		1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "2"})->content, 4.0f));
 	
-	int numSamples = _parameters.integerForKey(kIterationCount)->content;
+	int numSamples = _parameters.integerForKey(kIterationCount)->content & 0xffffffff;
 	
 	float fKr4PI = fKr * 4.0f * PI;
 	float fKm4PI = fKm * 4.0f * PI;

@@ -187,7 +187,7 @@ void GameCenter::authenticationCompleted()
 	Dictionary achievements = _private->options.dictionaryForKey(kUnlockedAchievements);
 	for (auto& p : achievements->content)
 	{
-		int completed = IntegerValue(p.second)->content;
+		int64_t completed = IntegerValue(p.second)->content;
 		std::string achievementId = p.first;
 		Invocation i;
 		i.setTarget([this, achievementId, completed]()
@@ -250,7 +250,7 @@ void GameCenterPrivate::setAchievement(const std::string& aId, bool completed)
 	if (completed)
 		achievements.removeObjectForKey(aId);
 	else
-		achievements.setIntegerForKey(aId, 0);
+		achievements.setIntegerForKey(aId, 0ll);
 	
 	options.setDictionaryForKey(kUnlockedAchievements, achievements);
 	saveOptions();
