@@ -198,6 +198,7 @@ bool Scroll::pointerReleased(const PointerInputInfo& p)
 bool Scroll::pointerCancelled(const PointerInputInfo& p)
 {
 	_pointerCaptured = false;
+	_currentPointer = PointerInputInfo();
 	broadcastCancelled(p);
 	return true;
 }

@@ -211,6 +211,49 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 	}
 }
 
+bool Layout::pointerCancelled(const et::PointerInputInfo& p)
+{
+	Element* active = activeElement(p);
+	if (_capturedElement)
+	{
+		bool processed = _capturedElement->pointerCancelled(PointerInputInfo(p.type,
+			_capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
+		
+		if ((p.type == PointerType_General) && _dragging)
+		{
+			if (Input::canGetCurrentPointerInfo())
+				cancelUpdates();
+			
+			_capturedElement->dragFinished.invoke(_capturedElement,
+				ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos), _dragInitialPosition, p.normalizedPos));
+			
+			_dragging = false;
+			_capturedElement = nullptr;
+			invalidateContent();
+		}
+		else if (processed)
+		{
+			_capturedElement = nullptr;
+			invalidateContent();
+		}
+		
+		return true;
+	}
+	else
+	{
+		setCurrentElement(p, active);
+		bool processed = false;
+		
+		if (active)
+		{
+			processed = active->pointerCancelled(PointerInputInfo(p.type, active->positionInElement(p.pos),
+				p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
+		}
+		
+		return processed;
+	}
+}
+
 bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 { 
 	if (hasFlag(Flag_TransparentForPointer)) return false;

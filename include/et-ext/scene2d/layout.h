@@ -53,10 +53,11 @@ namespace et
 			
 			void initRenderingElement(et::RenderContext* rc);
 			
-			bool pointerPressed(const et::PointerInputInfo&);
-			bool pointerMoved(const et::PointerInputInfo&);
-			bool pointerReleased(const et::PointerInputInfo&);
-			bool pointerScrolled(const et::PointerInputInfo&);
+			bool pointerPressed(const et::PointerInputInfo&) override;
+			bool pointerMoved(const et::PointerInputInfo&) override;
+			bool pointerReleased(const et::PointerInputInfo&) override;
+			bool pointerCancelled(const et::PointerInputInfo&) override;
+			bool pointerScrolled(const et::PointerInputInfo&) override;
 			
 			bool elementIsBeingDragged(s2d::Element*);
 			
