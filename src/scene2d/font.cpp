@@ -66,7 +66,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 #elif (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
 	
 	auto fbo = rc->framebufferFactory().createFramebuffer(texture()->size(), "temp-buffer",
-		GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0, 0);
+		GL_RGBA, GL_BGRA, GL_UNSIGNED_BYTE, 0, 0, 0);
 	
 	bool blendEnabled = rc->renderState().blendEnabled();
 	auto currentBuffer = rc->renderState().boundFramebuffer();
