@@ -96,6 +96,9 @@ namespace et
 			void setBackgroundTintColor(const vec4&, float);
 			const vec4& backgroundTintColor() const;
 
+			void setCommonBackgroundTintColor(const vec4&, float);
+			const vec4& commonBackgroundTintColor() const;
+			
 			bool pointerPressed(const PointerInputInfo&);
 			bool pointerReleased(const PointerInputInfo&);
 			bool pointerCancelled(const PointerInputInfo&);
@@ -146,10 +149,12 @@ namespace et
 			vec4 _pressedColor;
 			vec4 _backgroundColor;
 			vec4 _backgroundTintColor;
+			vec4 _commonBackgroundTintColor;
 			vec2 _textSize;
 			vec2 _contentOffset;
 			
 			Vector4Animator _backgroundTintAnimator;
+			Vector4Animator _commonBackgroundTintAnimator;
 
 			Type _type;
 			State _state;
