@@ -55,6 +55,8 @@ TextField::TextField(const Image& background, const std::string& text, Font::Poi
 
 void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
+	initProgram(r);
+	
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 	

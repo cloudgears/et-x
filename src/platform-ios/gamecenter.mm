@@ -25,8 +25,7 @@ const std::string kCompleted = "completed";
 
 using namespace et;
 
-@interface SharedGameCenterDelegate : NSObject <GKGameCenterControllerDelegate,
-	GKLeaderboardViewControllerDelegate, GKAchievementViewControllerDelegate>
+@interface SharedGameCenterDelegate : NSObject <GKGameCenterControllerDelegate>
 
 + (instancetype)instance;
 
@@ -301,12 +300,12 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 	[mainViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)leaderboardViewControllerDidFinish:(GKLeaderboardViewController*)viewController
+- (void)leaderboardViewControllerDidFinish:(GKGameCenterViewController*)viewController
 {
 	[self gameCenterViewControllerDidFinish:viewController];
 }
 
-- (void)achievementViewControllerDidFinish:(GKAchievementViewController*)viewController
+- (void)achievementViewControllerDidFinish:(GKGameCenterViewController*)viewController
 {
 	[self gameCenterViewControllerDidFinish:viewController];
 }
@@ -316,11 +315,11 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 	UIViewController* mainViewController = (__bridge UIViewController*)
 		reinterpret_cast<void*>(application().renderingContextHandle());
 	
-	GKAchievementViewController* gcController = [[GKAchievementViewController alloc] init];
+	GKGameCenterViewController* gcController = [[GKGameCenterViewController alloc] init];
 	if (gcController != nil)
 	{
+		gcController.viewState = GKGameCenterViewControllerStateAchievements;
 		gcController.gameCenterDelegate = [SharedGameCenterDelegate instance];
-		gcController.achievementDelegate = [SharedGameCenterDelegate instance];
 		[mainViewController presentViewController:gcController animated:YES completion:nil];
 	}
 	ET_OBJC_RELEASE(gcController)
@@ -343,9 +342,10 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 		}
 		else
 		{
-			GKLeaderboardViewController* gcController = [[GKLeaderboardViewController alloc] init];
+			GKGameCenterViewController* gcController = [[GKGameCenterViewController alloc] init];
 			if (gcController != nil)
 			{
+				gcController.viewState = GKGameCenterViewControllerStateLeaderboards;
 				for (GKLeaderboard* leaderboard in leaderboards)
 				{
 					NSString* lbId = [leaderboard respondsToSelector:@selector(identifier)] ?
@@ -354,9 +354,6 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 					if ([lbId isEqualToString:leaderboardId])
 					{
 						gcController.leaderboardCategory = leaderboard.category;
-						
-						gcController.leaderboardTimeScope = leaderboard.timeScope;
-						
 						if ([gcController respondsToSelector:@selector(setLeaderboardIdentifier:)])
 							gcController.leaderboardIdentifier = leaderboardId;
 						
@@ -365,7 +362,6 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 				}
 				
 				gcController.gameCenterDelegate = [SharedGameCenterDelegate instance];
-				gcController.leaderboardDelegate = [SharedGameCenterDelegate instance];
 				[mainViewController presentViewController:gcController animated:YES completion:nil];
 			}
 			ET_OBJC_RELEASE(gcController)
