@@ -59,13 +59,13 @@ void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		buildVertices(rc, r);
 	
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, _background.texture, r.defaultProgram(), this);
+		r.addVertices(_backgroundVertices, _background.texture, program(), this);
 
 	if (_imageVertices.lastElementIndex() > 0)
-		r.addVertices(_imageVertices, _background.texture, r.defaultProgram(), this);
+		r.addVertices(_imageVertices, _background.texture, program(), this);
 	
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _font->texture(), r.defaultProgram(), this);
+		r.addVertices(_textVertices, _font->texture(), program(), this);
 }
 
 void TextField::buildVertices(RenderContext*, SceneRenderer&)
@@ -111,7 +111,7 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	if (_charList.size())
 	{
 		buildStringVertices(_textVertices, _charList, Alignment_Near, Alignment_Near, textOrigin,
-			color() * alphaVector, transform);
+			color() * alphaVector, transform, 1.0f);
 	}
 
 	if (_caretVisible)

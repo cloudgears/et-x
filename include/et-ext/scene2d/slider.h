@@ -38,6 +38,7 @@ namespace et
 			
 			void setHandleImage(const Image&, float scale);
 			void setHandleImageForState(const Image&, float scale, State);
+			void setHandleFillColor(const vec4&);
 			
 			void setSliderImages(const Image& left, const Image& right);
 			void setSliderFillColors(const vec4& l, const vec4& r);
@@ -81,6 +82,7 @@ namespace et
 
 			vec4 _sliderLeftColor;
 			vec4 _sliderRightColor;
+			vec4 _handleFillColor;
 			
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _sliderLeftVertices;

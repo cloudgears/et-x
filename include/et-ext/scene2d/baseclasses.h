@@ -9,13 +9,6 @@ namespace et
 	{
 		class SceneRenderer;
 
-		enum ElementRepresentation
-		{
-			ElementRepresentation_2d,
-			ElementRepresentation_3d,
-			ElementRepresentation_max
-		};
-
 		template <typename T>
 		struct ElementClass
 		{

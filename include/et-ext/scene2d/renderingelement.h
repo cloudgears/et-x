@@ -23,11 +23,9 @@ namespace et
 			Texture texture;
 			SceneProgram program;
 			Element* object;
-			
-			ElementRepresentation representation;
-			
+						
 			RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
-				const SceneProgram& aProgram, Element* aObject, ElementRepresentation aRepresentation);
+				const SceneProgram& aProgram, Element* aObject);
 		};
 		
 		class RenderingElement : public Shared

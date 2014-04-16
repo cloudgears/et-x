@@ -214,10 +214,12 @@ const mat4& Element2d::finalInverseTransform()
 SceneProgram Element2d::initProgram(SceneRenderer& r)
 {
 	if (_defaultProgram.invalid())
-		_defaultProgram = r.defaultProgram();
-	
+		setDefaultProgram(r.defaultProgram());
 	return _defaultProgram;
 }
+
+void Element2d::setDefaultProgram(const SceneProgram& p)
+	{ _defaultProgram = p; }
 
 const vec4 Element2d::color() const
 	{ return vec4(_color.xyz(), finalAlpha()); }

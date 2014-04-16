@@ -6,8 +6,7 @@ using namespace emb;
 
 extern const std::string fullscreenVertexShader;
 
-extern const std::string gaussianBlurLatShader;
-extern const std::string gaussianBlurLonShader;
+extern const std::string gaussianBlurShader;
 
 extern const std::string previewVertexShader;
 extern const std::string previewFragmentShader;
@@ -26,22 +25,14 @@ void MainController::setRenderContextParameters(et::RenderContextParameters& p)
 	p.contextSize = p.contextBaseSize;
 	
 	_gestures.pointerPressed.connect([this](PointerInputInfo p)
-									 {
-										 _ui->pointerPressed(p);
-										 _cameraAngles.cancelInterpolation();
-									 });
-	_gestures.pointerReleased.connect([this](PointerInputInfo p)
-									  {
-										  _ui->pointerReleased(p);
-									  });
-	_gestures.pointerMoved.connect([this](PointerInputInfo p)
-								   {
-									   _ui->pointerMoved(p);
-								   });
-	_gestures.pointerCancelled.connect([this](PointerInputInfo p)
-									   {
-										   _ui->pointerCancelled(p);
-									   });
+	{
+		_ui->pointerPressed(p);
+		_cameraAngles.cancelInterpolation();
+	});
+	
+	_gestures.pointerReleased.connect([this](PointerInputInfo p) { _ui->pointerReleased(p); });
+	_gestures.pointerMoved.connect([this](PointerInputInfo p) { _ui->pointerMoved(p); });
+	_gestures.pointerCancelled.connect([this](PointerInputInfo p) { _ui->pointerCancelled(p); });
 	
 	_gestures.drag.connect(this, &MainController::onDrag);
 }
@@ -74,11 +65,6 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 		}
 		
 		realOffset.y += 2.0f * scale.y;
-	}
-	
-	for (const auto& p : _offsetAndScales)
-	{
-		log::info("(%f %f)", p.first.x, p.first.y);
 	}
 	
 	std::string fileToLoad;
@@ -163,10 +149,9 @@ void MainController::onDrag(et::vec2 v, et::PointerType)
 
 void MainController::loadPrograms()
 {
-	programs.gaussianBlurLat = _rc->programFactory().genProgram("gaussian-blur-lat", fullscreenVertexShader, gaussianBlurLatShader);
-	programs.gaussianBlurLat->setUniform("inputTexture", 0);
-	programs.gaussianBlurLon = _rc->programFactory().genProgram("gaussian-blur-lon", fullscreenVertexShader, gaussianBlurLonShader);
-	programs.gaussianBlurLon->setUniform("inputTexture", 0);
+	programs.gaussianBlur = _rc->programFactory().genProgram("gaussian-blur-lat", fullscreenVertexShader, gaussianBlurShader);
+	programs.gaussianBlur->setUniform("inputTexture", 0);
+	
 	programs.preview = _rc->programFactory().genProgram("preview", previewVertexShader, previewFragmentShader);
 	programs.preview->setUniform("colorTexture", 0);
 }
@@ -229,18 +214,21 @@ void MainController::renderPreview()
 
 void MainController::processImage_Pass1()
 {
+	if (_framebuffer.invalid()) return;
+	
 	auto& rs = _rc->renderState();
 	const auto& p = _offsetAndScales.at(_processingSample);
 	
 	rs.bindFramebuffer(_framebuffer);
-	rs.bindProgram(programs.gaussianBlurLat);
-	programs.gaussianBlurLat->setUniform("radius", _mainUi->angleValue());
-	programs.gaussianBlurLat->setUniform("vertexOffset", p.first);
-	programs.gaussianBlurLat->setUniform("vertexScale", p.second);
+	rs.bindProgram(programs.gaussianBlur);
+	
+	programs.gaussianBlur->setUniform("radius", _mainUi->angleValue());
+	programs.gaussianBlur->setUniform("vertexOffset", p.first);
+	programs.gaussianBlur->setUniform("vertexScale", p.second);
 	
 	_framebuffer->setCurrentRenderTarget(1);
 	rs.bindTexture(0, _loadedTexture);
-	programs.gaussianBlurLat->setUniform("texel", _loadedTexture->texel() * vec2(1.0f, 0.0f));
+	programs.gaussianBlur->setUniform("texel", _loadedTexture->texel() * vec2(1.0f, 0.0f));
 	_rc->renderer()->fullscreenPass();
 
 	_framebuffer->setCurrentRenderTarget(0);
@@ -261,14 +249,14 @@ void MainController::processImage_Pass2()
 	const auto& p = _offsetAndScales.at(_processingSample);
 	
 	rs.bindFramebuffer(_framebuffer);
-	rs.bindProgram(programs.gaussianBlurLat);
-	programs.gaussianBlurLat->setUniform("radius", _mainUi->angleValue());
-	programs.gaussianBlurLat->setUniform("vertexOffset", p.first);
-	programs.gaussianBlurLat->setUniform("vertexScale", p.second);
+	rs.bindProgram(programs.gaussianBlur);
+	programs.gaussianBlur->setUniform("radius", _mainUi->angleValue());
+	programs.gaussianBlur->setUniform("vertexOffset", p.first);
+	programs.gaussianBlur->setUniform("vertexScale", p.second);
 	
 	_framebuffer->setCurrentRenderTarget(0);
 	rs.bindTexture(0, _framebuffer->renderTarget(1));
-	programs.gaussianBlurLat->setUniform("texel", _framebuffer->renderTarget(0)->texel() * vec2(0.0f, 1.0f));
+	programs.gaussianBlur->setUniform("texel", _framebuffer->renderTarget(0)->texel() * vec2(0.0f, 1.0f));
 	_rc->renderer()->fullscreenPass();
 	
 	_processingSample++;
@@ -295,62 +283,33 @@ const std::string fullscreenVertexShader = ET_TO_CONST_CHAR
  void main()
  {
 	 vec2 adjustedVertex = vertexOffset + vertexScale * Vertex;
-	 
 	 vertexNormalized = 0.5 + 0.5 * adjustedVertex;
 	 gl_Position = vec4(adjustedVertex, 0.0, 1.0);
  }
  );
 
-const std::string gaussianBlurLonShader = ET_TO_CONST_CHAR
-(
- void main()
- {
-	 etFragmentOut = vec4(1.0);
- }
-);
-
-const std::string gaussianBlurLatShader = ET_TO_CONST_CHAR
+const std::string gaussianBlurShader = ET_TO_CONST_CHAR
 (
  uniform sampler2D inputTexture;
- uniform int intRadius;
  uniform float radius;
  uniform vec2 texel;
  
  etFragmentIn vec2 vertexNormalized;
  
- const float halfPi = 1.5707963268;
- const float pi = 3.1415926536;
- const float doublePi = 6.2831853072;
- 
  float gauss(float x, float sigma)
  {
-	 float x_sqr = x * x;
 	 float sigma_sqr = sigma * sigma;
-	 float sqrt_value = 1.0 / sqrt(doublePi * sigma_sqr);
-	 float exp_value = exp(-x_sqr / (2.0 * sigma_sqr));
-	 return sqrt_value * exp_value;
+	 return exp(-0.5 * x * x / sigma_sqr) / sqrt(DOUBLE_PI * sigma_sqr);
  }
  
  vec2 texCoordToAngles(in vec2 texCoord)
- {
-	 vec2 result = vec2(0.0);
-	 result.x = -pi + doublePi * texCoord.x;
-	 result.y = -halfPi + pi * texCoord.y;
-	 return result;
- }
+	 { return PI * vec2(2.0 * texCoord.x - 1.0, texCoord.y - 0.5); }
  
  vec2 anglesToTexCoord(in vec2 angles)
- {
-	 vec2 result = vec2(0.0);
-	 result.x = (angles.x + pi) / doublePi;
-	 result.y = (angles.y + halfPi) / pi;
-	 return result;
- }
+	 { return vec2(angles.x / DOUBLE_PI + 0.5, angles.y / PI + 0.5); }
  
  vec3 anglesToVector(in vec2 angles)
- {
-	 return normalize(vec3(cos(angles.y) * cos(angles.x), sin(angles.y), cos(angles.y) * sin(angles.x)));
- }
+	 { return normalize(vec3(cos(angles.y) * cos(angles.x), sin(angles.y), cos(angles.y) * sin(angles.x))); }
  
  vec2 vectorToAngles(in vec3 vector)
  {
@@ -358,86 +317,76 @@ const std::string gaussianBlurLatShader = ET_TO_CONST_CHAR
 	 return vec2(atan(n.z, n.x), asin(n.y));
  }
  
- vec3 slerp(in vec3 p0, in vec3 p1, float t)
- {
-	 float cosTheta = dot(p0, p1);
-	 
-	 if (abs(cosTheta) > 0.999)
-		 return mix(p0, p1, t);
-	 
-	 float theta = 1.0 - cosTheta * cosTheta;
-	 return (p0 * sin(theta * (1.0 - t)) + p1 * sin(theta * t)) / sin(theta);
- }
- 
  void main()
  {
 	 vec2 baseAngles = texCoordToAngles(vertexNormalized);
+	 
 	 vec3 baseVector = anglesToVector(baseAngles);
-	 
 	 vec3 forwardVector = anglesToVector(baseAngles + radius * texel);
-	 vec2 forwardAngles = vectorToAngles(forwardVector);
-	 
 	 vec3 backwardVector = anglesToVector(baseAngles - radius * texel);
-	 vec2 backwardAngles = vectorToAngles(backwardVector);
 	 
 	 vec3 forwardAxis = normalize(cross(baseVector, forwardVector));
 	 vec3 backwardAxis = normalize(cross(baseVector, backwardVector));
 	 
-	 vec4 color = vec4(0.0);
-	 float gain = 0.0;
-
-	 float angle = 0.0;
-	 float deltaAngle = 0.1 * dot(texel, vec2(pi, halfPi));
+	 float x = forwardAxis.x;
+	 float y = forwardAxis.y;
+	 float z = forwardAxis.z;
+	 
+	 float deltaAngle = dot(texel, vec2(PI, HALF_PI));
+	 
+	 float cosTheta = cos(deltaAngle);
+	 float sinTheta = sin(deltaAngle);
+	 float invCosTheta = 1.0 - cosTheta;
+	 
+	 mat3 forwardMatrix;
+	 forwardMatrix[0][0] = cosTheta + invCosTheta * x * x;
+	 forwardMatrix[0][1] = invCosTheta * y * x - sinTheta * z;
+	 forwardMatrix[0][2] = invCosTheta * x * z + sinTheta * y;
+	 forwardMatrix[1][0] = invCosTheta * y * x + sinTheta * z;
+	 forwardMatrix[1][1] = cosTheta + invCosTheta * y * y;
+	 forwardMatrix[1][2] = invCosTheta * y * z - sinTheta * x;
+	 forwardMatrix[2][0] = invCosTheta * x * z - sinTheta * y;
+	 forwardMatrix[2][1] = invCosTheta * z * y + sinTheta * x;
+	 forwardMatrix[2][2] = cosTheta + invCosTheta * z * z;
+	 
+	 x = backwardAxis.x;
+	 y = backwardAxis.y;
+	 z = backwardAxis.z;
+	 
+	 mat3 backwardMatrix;
+	 backwardMatrix[0][0] = cosTheta + invCosTheta * x * x;
+	 backwardMatrix[0][1] = invCosTheta * y * x - sinTheta * z;
+	 backwardMatrix[0][2] = invCosTheta * x * z + sinTheta * y;
+	 backwardMatrix[1][0] = invCosTheta * y * x + sinTheta * z;
+	 backwardMatrix[1][1] = cosTheta + invCosTheta * y * y;
+	 backwardMatrix[1][2] = invCosTheta * y * z - sinTheta * x;
+	 backwardMatrix[2][0] = invCosTheta * x * z - sinTheta * y;
+	 backwardMatrix[2][1] = invCosTheta * z * y + sinTheta * x;
+	 backwardMatrix[2][2] = cosTheta + invCosTheta * z * z;
+	 
 	 float sigma = radius / 3.333333;
-	 float sum = 0.0;
+	 float gain = gauss(0.0, sigma);
+	 
+	 vec4 color = gain * etTexture2D(inputTexture, vertexNormalized);
+	 
+	 forwardVector = baseVector;
+	 backwardVector = baseVector;
+	 
+	 float angle = deltaAngle;
 	 while (angle <= radius)
 	 {
 		 float gaussianScale = gauss(angle, sigma);
-		 sum += gaussianScale;
 		 
-		 float cosTheta = cos(angle);
-		 float sinTheta = sin(angle);
-		 float invCosTheta = 1.0 - cosTheta;
+		 forwardVector = normalize(forwardMatrix * forwardVector);
+		 backwardVector = normalize(backwardMatrix * backwardVector);
 		 
-		 mat3 matrix;
-		 
-		 float x = forwardAxis.x;
-		 float y = forwardAxis.y;
-		 float z = forwardAxis.z;
-		 
-		 matrix[0][0] = cosTheta + invCosTheta * x * x;
-		 matrix[0][1] = invCosTheta * y * x - sinTheta * z;
-		 matrix[0][2] = invCosTheta * x * z + sinTheta * y;
-		 matrix[1][0] = invCosTheta * y * x + sinTheta * z;
-		 matrix[1][1] = cosTheta + invCosTheta * y * y;
-		 matrix[1][2] = invCosTheta * y * z - sinTheta * x;
-		 matrix[2][0] = invCosTheta * x * z - sinTheta * y;
-		 matrix[2][1] = invCosTheta * z * y + sinTheta * x;
-		 matrix[2][2] = cosTheta + invCosTheta * z * z;
-		 
-		 vec3 rotatedVector = normalize(matrix * baseVector);
-		 float scale = gaussianScale * dot(rotatedVector, baseVector);
+		 float scale = gaussianScale * dot(forwardVector, baseVector);
+		 color += scale * etTexture2D(inputTexture, anglesToTexCoord(vectorToAngles(forwardVector)));
 		 gain += scale;
-		 color += scale * etTexture2D(inputTexture, anglesToTexCoord(vectorToAngles(rotatedVector)));
-
-		 x = backwardAxis.x;
-		 y = backwardAxis.y;
-		 z = backwardAxis.z;
 		 
-		 matrix[0][0] = cosTheta + invCosTheta * x * x;
-		 matrix[0][1] = invCosTheta * y * x - sinTheta * z;
-		 matrix[0][2] = invCosTheta * x * z + sinTheta * y;
-		 matrix[1][0] = invCosTheta * y * x + sinTheta * z;
-		 matrix[1][1] = cosTheta + invCosTheta * y * y;
-		 matrix[1][2] = invCosTheta * y * z - sinTheta * x;
-		 matrix[2][0] = invCosTheta * x * z - sinTheta * y;
-		 matrix[2][1] = invCosTheta * z * y + sinTheta * x;
-		 matrix[2][2] = cosTheta + invCosTheta * z * z;
-		 
-		 rotatedVector = normalize(matrix * baseVector);
-		 scale = gaussianScale * dot(rotatedVector, baseVector);
+		 scale = gaussianScale * dot(backwardVector, baseVector);
+		 color += scale * etTexture2D(inputTexture, anglesToTexCoord(vectorToAngles(backwardVector)));
 		 gain += scale;
-		 color += scale * etTexture2D(inputTexture, anglesToTexCoord(vectorToAngles(rotatedVector)));
 		 
 		 angle += deltaAngle;
 	 }
@@ -464,20 +413,16 @@ const std::string previewVertexShader = ET_TO_CONST_CHAR
 const std::string previewFragmentShader = ET_TO_CONST_CHAR
 (
  uniform sampler2D colorTexture;
- uniform vec3 vPrimaryLight;
  uniform float exposure;
- etFragmentIn vec3 vNormalWS;
  
- const float pi = 3.1415926536;
+ etFragmentIn vec3 vNormalWS;
  
  void main()
  {
 	 vec3 normal = normalize(vNormalWS);
 	 
-	 float x = 1.0 - (atan(normal.z, normal.x) + pi) / (2.0 * pi);
-	 float y = asin(normal.y) / pi + 0.5;
-	 
-	 etFragmentOut = 1.0 - exp(-exposure * etTexture2D(colorTexture, vec2(x, y)));
+	 etFragmentOut = 1.0 - exp(-exposure * etTexture2D(colorTexture,
+		0.5 + vec2(-0.5 * atan(normal.z, normal.x), asin(normal.y)) / PI));
  }
  );
 

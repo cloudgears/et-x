@@ -33,8 +33,7 @@ namespace emb
 	private:
 		struct
 		{
-			et::Program::Pointer gaussianBlurLat;
-			et::Program::Pointer gaussianBlurLon;
+			et::Program::Pointer gaussianBlur;
 			et::Program::Pointer preview;
 		} programs;
 

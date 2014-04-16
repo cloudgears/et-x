@@ -13,7 +13,6 @@
 		A5896BED18A0279A00962607 /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD018A0279A00962607 /* button.cpp */; };
 		A5896BEF18A0279A00962607 /* element.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD218A0279A00962607 /* element.cpp */; };
 		A5896BF018A0279A00962607 /* element2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD318A0279A00962607 /* element2d.cpp */; };
-		A5896BF118A0279A00962607 /* element3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD418A0279A00962607 /* element3d.cpp */; };
 		A5896BF218A0279A00962607 /* font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD518A0279A00962607 /* font.cpp */; };
 		A5896BF318A0279A00962607 /* fullscreenelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD618A0279A00962607 /* fullscreenelement.cpp */; };
 		A5896BF418A0279A00962607 /* imageview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD718A0279A00962607 /* imageview.cpp */; };
@@ -34,6 +33,7 @@
 		A5896C0418A027FC00962607 /* libjansson.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5896C0318A027FC00962607 /* libjansson.a */; };
 		A5896C0718A0289600962607 /* MainUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896C0518A0289600962607 /* MainUI.cpp */; };
 		A5896C0B18A02BF500962607 /* ResourceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896C0818A028FC00962607 /* ResourceManager.cpp */; };
+		A58B69DF18F879DD00565522 /* log.apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = A58B69DE18F879DD00565522 /* log.apple.mm */; };
 		A5B0DD5E18D3558B0006C9FA /* jpegloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B0DD5D18D3558B0006C9FA /* jpegloader.cpp */; };
 		A5F0940A18A00A440017B239 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0940718A00A440017B239 /* main.cpp */; };
 		A5F0940B18A00A440017B239 /* MainController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0940818A00A440017B239 /* MainController.cpp */; };
@@ -58,7 +58,6 @@
 		A5F094CD18A00AF70017B239 /* frustum.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0947A18A00AF70017B239 /* frustum.cpp */; };
 		A5F094CE18A00AF70017B239 /* conversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0947C18A00AF70017B239 /* conversion.cpp */; };
 		A5F094CF18A00AF70017B239 /* dictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0947D18A00AF70017B239 /* dictionary.cpp */; };
-		A5F094D018A00AF70017B239 /* log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0947E18A00AF70017B239 /* log.cpp */; };
 		A5F094D118A00AF70017B239 /* objectscache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0947F18A00AF70017B239 /* objectscache.cpp */; };
 		A5F094D218A00AF70017B239 /* plist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0948018A00AF70017B239 /* plist.cpp */; };
 		A5F094D318A00AF70017B239 /* stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0948118A00AF70017B239 /* stream.cpp */; };
@@ -138,7 +137,6 @@
 		A5896BA718A0279A00962607 /* charactergenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = charactergenerator.h; sourceTree = "<group>"; };
 		A5896BA818A0279A00962607 /* element.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = element.h; sourceTree = "<group>"; };
 		A5896BA918A0279A00962607 /* element2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = element2d.h; sourceTree = "<group>"; };
-		A5896BAA18A0279A00962607 /* element3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = element3d.h; sourceTree = "<group>"; };
 		A5896BAB18A0279A00962607 /* font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font.h; sourceTree = "<group>"; };
 		A5896BAC18A0279A00962607 /* fontbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontbase.h; sourceTree = "<group>"; };
 		A5896BAD18A0279A00962607 /* fontgen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontgen.h; sourceTree = "<group>"; };
@@ -163,7 +161,6 @@
 		A5896BD018A0279A00962607 /* button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = button.cpp; sourceTree = "<group>"; };
 		A5896BD218A0279A00962607 /* element.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = element.cpp; sourceTree = "<group>"; };
 		A5896BD318A0279A00962607 /* element2d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = element2d.cpp; sourceTree = "<group>"; };
-		A5896BD418A0279A00962607 /* element3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = element3d.cpp; sourceTree = "<group>"; };
 		A5896BD518A0279A00962607 /* font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font.cpp; sourceTree = "<group>"; };
 		A5896BD618A0279A00962607 /* fullscreenelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fullscreenelement.cpp; sourceTree = "<group>"; };
 		A5896BD718A0279A00962607 /* imageview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imageview.cpp; sourceTree = "<group>"; };
@@ -186,6 +183,7 @@
 		A5896C0618A0289600962607 /* MainUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainUI.h; path = ../source/ui/MainUI.h; sourceTree = "<group>"; };
 		A5896C0818A028FC00962607 /* ResourceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceManager.cpp; path = ../source/ui/ResourceManager.cpp; sourceTree = "<group>"; };
 		A5896C0918A028FC00962607 /* ResourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceManager.h; path = ../source/ui/ResourceManager.h; sourceTree = "<group>"; };
+		A58B69DE18F879DD00565522 /* log.apple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = log.apple.mm; sourceTree = "<group>"; };
 		A5B0DD5D18D3558B0006C9FA /* jpegloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jpegloader.cpp; sourceTree = "<group>"; };
 		A5F093FA18A00A1E0017B239 /* EnvMapBlur.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EnvMapBlur.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5F0940718A00A440017B239 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../source/main.cpp; sourceTree = "<group>"; };
@@ -212,7 +210,6 @@
 		A5F0947A18A00AF70017B239 /* frustum.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = frustum.cpp; sourceTree = "<group>"; };
 		A5F0947C18A00AF70017B239 /* conversion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = conversion.cpp; sourceTree = "<group>"; };
 		A5F0947D18A00AF70017B239 /* dictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dictionary.cpp; sourceTree = "<group>"; };
-		A5F0947E18A00AF70017B239 /* log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = log.cpp; sourceTree = "<group>"; };
 		A5F0947F18A00AF70017B239 /* objectscache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = objectscache.cpp; sourceTree = "<group>"; };
 		A5F0948018A00AF70017B239 /* plist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plist.cpp; sourceTree = "<group>"; };
 		A5F0948118A00AF70017B239 /* stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stream.cpp; sourceTree = "<group>"; };
@@ -442,7 +439,6 @@
 				A5896BA718A0279A00962607 /* charactergenerator.h */,
 				A5896BA818A0279A00962607 /* element.h */,
 				A5896BA918A0279A00962607 /* element2d.h */,
-				A5896BAA18A0279A00962607 /* element3d.h */,
 				A5896BAB18A0279A00962607 /* font.h */,
 				A5896BAC18A0279A00962607 /* fontbase.h */,
 				A5896BAD18A0279A00962607 /* fontgen.h */,
@@ -500,7 +496,6 @@
 				A5896BD018A0279A00962607 /* button.cpp */,
 				A5896BD218A0279A00962607 /* element.cpp */,
 				A5896BD318A0279A00962607 /* element2d.cpp */,
-				A5896BD418A0279A00962607 /* element3d.cpp */,
 				A5896BD518A0279A00962607 /* font.cpp */,
 				A5896BD618A0279A00962607 /* fullscreenelement.cpp */,
 				A5896BD718A0279A00962607 /* imageview.cpp */,
@@ -613,7 +608,6 @@
 			children = (
 				A5F0947C18A00AF70017B239 /* conversion.cpp */,
 				A5F0947D18A00AF70017B239 /* dictionary.cpp */,
-				A5F0947E18A00AF70017B239 /* log.cpp */,
 				A5F0947F18A00AF70017B239 /* objectscache.cpp */,
 				A5F0948018A00AF70017B239 /* plist.cpp */,
 				A5F0948118A00AF70017B239 /* stream.cpp */,
@@ -674,6 +668,7 @@
 		A5F0949418A00AF70017B239 /* platform-apple */ = {
 			isa = PBXGroup;
 			children = (
+				A58B69DE18F879DD00565522 /* log.apple.mm */,
 				A5F0949518A00AF70017B239 /* locale.apple.mm */,
 				A5F0949618A00AF70017B239 /* tools.apple.mm */,
 			);
@@ -1160,6 +1155,7 @@
 				A5F094D218A00AF70017B239 /* plist.cpp in Sources */,
 				A5F094E318A00AF70017B239 /* tools.apple.mm in Sources */,
 				A5F094D818A00AF70017B239 /* ddsloader.cpp in Sources */,
+				A58B69DF18F879DD00565522 /* log.apple.mm in Sources */,
 				A5F094F118A00AF70017B239 /* primitives.cpp in Sources */,
 				A5896BF318A0279A00962607 /* fullscreenelement.cpp in Sources */,
 				A5F094C418A00AF70017B239 /* vertexbufferdata.cpp in Sources */,
@@ -1197,7 +1193,6 @@
 				A5896BE718A0279A00962607 /* json.cpp in Sources */,
 				A5F094F918A00AF70017B239 /* timedobject.cpp in Sources */,
 				A5F094D918A00AF70017B239 /* imageoperations.cpp in Sources */,
-				A5F094D018A00AF70017B239 /* log.cpp in Sources */,
 				A5896BFE18A0279A00962607 /* table.cpp in Sources */,
 				A5896BFF18A0279A00962607 /* textfield.cpp in Sources */,
 				A5F094CD18A00AF70017B239 /* frustum.cpp in Sources */,
@@ -1231,7 +1226,6 @@
 				A5F094D318A00AF70017B239 /* stream.cpp in Sources */,
 				A5F094BB18A00AF70017B239 /* framebufferfactory.cpp in Sources */,
 				A5F094CE18A00AF70017B239 /* conversion.cpp in Sources */,
-				A5896BF118A0279A00962607 /* element3d.cpp in Sources */,
 				A5F094F318A00AF70017B239 /* renderer.cpp in Sources */,
 				A5896C0018A0279A00962607 /* textureatlas.cpp in Sources */,
 				A5F094C018A00AF70017B239 /* texture.cpp in Sources */,

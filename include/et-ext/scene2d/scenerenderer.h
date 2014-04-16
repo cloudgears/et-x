@@ -22,6 +22,7 @@ namespace et
 		{
 		public:
 			static const std::string defaultProgramName;
+			static const std::string defaultTextProgramName;
 			
 		public:
 			SceneRenderer(RenderContext* rc);
@@ -38,7 +39,6 @@ namespace et
 			void setRendernigElement(const RenderingElement::Pointer& r);
 
 			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element*);
-			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element*, ElementRepresentation);
 			
 			void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 			
@@ -47,6 +47,9 @@ namespace et
 			
 			const SceneProgram& defaultProgram() const
 				{ return _defaultProgram; }
+
+			const SceneProgram& defaultTextProgram() const
+				{ return _defaultTextProgram; }
 			
 			const Texture& lastUsedTexture() const
 				{ return _lastTexture; }
@@ -60,7 +63,7 @@ namespace et
 			void init(RenderContext* rc);
 			void alloc(size_t count);
 			
-			SceneVertex* allocateVertices(size_t, const Texture&, const SceneProgram&, Element*, ElementRepresentation);
+			SceneVertex* allocateVertices(size_t, const Texture&, const SceneProgram&, Element*);
 
 			ET_DENY_COPY(SceneRenderer)
 			
@@ -72,7 +75,9 @@ namespace et
 			Texture _defaultTexture;
 			
 			ObjectsCache _programsCache;
+			
 			SceneProgram _defaultProgram;
+			SceneProgram _defaultTextProgram;
 			SceneProgram _lastProgram;
 			
 			Camera _cameraFor3dElements;

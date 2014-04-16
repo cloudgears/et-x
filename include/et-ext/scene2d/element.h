@@ -155,7 +155,6 @@ namespace et
 			 * Required Methods
 			 */
 			virtual SceneProgram program() = 0;
-			virtual ElementRepresentation representation() const = 0;
 			
 			virtual vec2 origin() const = 0;
 			

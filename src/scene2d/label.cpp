@@ -21,8 +21,10 @@ Label::Label(const std::string& text, Font::Pointer font, Element2d* parent, con
 	_verticalAlignment(Alignment_Near), _animatingText(false), _allowFormatting(false)
 {
 	setFlag(Flag_TransparentForPointer);
+	
 	_charListText = _font->buildString(_text);
 	_charListNextText = _font->buildString(_nextText);
+	
 	adjustSize();
 }
 

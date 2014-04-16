@@ -23,9 +23,6 @@ namespace et
 			Element2d(Element* parent, const std::string& name = std::string());
 			Element2d(const rect& frame, Element* parent, const std::string& name = std::string());
 
-			virtual ElementRepresentation representation() const
-				{ return ElementRepresentation_2d; };
-
 			const vec2& size() const;
 			const vec2& position() const;
 			
@@ -92,7 +89,9 @@ namespace et
 				{ return _defaultProgram; }
 			
 			SceneProgram initProgram(SceneRenderer&);
-
+			
+			virtual void setDefaultProgram(const SceneProgram&);
+		
 		private:
 			Vector2Animator _positionAnimator;
 			Vector2Animator _sizeAnimator;

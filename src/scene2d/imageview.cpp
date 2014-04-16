@@ -47,7 +47,7 @@ ImageView::ImageView(const Image& img, Element2d* parent, const std::string& nam
 void ImageView::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
 	initProgram(r);
-
+	
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 

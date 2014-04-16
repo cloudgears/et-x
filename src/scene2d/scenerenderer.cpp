@@ -16,8 +16,11 @@ const size_t BlockSize = 2048;
 
 extern std::string et_scene2d_default_shader_vs;
 extern std::string et_scene2d_default_shader_fs;
+extern std::string et_scene2d_default_text_shader_fs;
 
 const std::string SceneRenderer::defaultProgramName = "et-scene2d-default-shader";
+const std::string SceneRenderer::defaultTextProgramName = "et-scene2d-default-text-shader";
+
 const std::string textureSamplerName = "inputTexture";
 const std::string additionalOffsetAndAlphaUniform = "additionalOffsetAndAlpha";
 
@@ -28,6 +31,9 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	
 	_defaultProgram = createProgramWithFragmentshader(defaultProgramName, et_scene2d_default_shader_fs);
 	_defaultProgram.program->setUniform(textureSamplerName, 0);
+	
+	_defaultTextProgram = createProgramWithFragmentshader(defaultTextProgramName, et_scene2d_default_text_shader_fs);
+	_defaultTextProgram.program->setUniform(textureSamplerName, 0);
 	
 	_defaultTexture = rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(1), GL_RGBA,
 		GL_UNSIGNED_BYTE, BinaryDataStorage(4, 0), "scene-default-texture");
@@ -100,7 +106,7 @@ void s2d::SceneRenderer::alloc(size_t count)
 }
 
 SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& inTexture,
-	const SceneProgram& inProgram, Element* object, ElementRepresentation rep)
+	const SceneProgram& inProgram, Element* object)
 {
 	ET_ASSERT(_renderingElement.valid());
 	
@@ -115,7 +121,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 	{
 		RenderChunk& lastChunk = _renderingElement->chunks.back();
 		
-		bool sameConfiguration = (lastChunk.representation == rep) && (lastChunk.clip == _clip.top()) &&
+		bool sameConfiguration = (lastChunk.clip == _clip.top()) &&
 			(lastChunk.texture == actualTexture) && (lastChunk.program.program == inProgram.program);
 		
 		if (sameConfiguration)
@@ -131,7 +137,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 		_lastProgram = inProgram;
 		_lastTexture = actualTexture;
 		_renderingElement->chunks.emplace_back(lastVertexIndex, count, _clip.top(),
-			_lastTexture, _lastProgram, object, rep);
+			_lastTexture, _lastProgram, object);
 	}
 	
 	alloc(count);
@@ -146,19 +152,13 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 }
 
 void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture& texture,
-	const SceneProgram& program, Element* owner, ElementRepresentation cls)
+	const SceneProgram& program, Element* owner)
 {
 	size_t count = vertices.lastElementIndex();
 	ET_ASSERT((count > 0) && _renderingElement.valid() && program.valid());
 	
-	etCopyMemory(allocateVertices(count, texture, program, owner, cls),
+	etCopyMemory(allocateVertices(count, texture, program, owner),
 		vertices.data(), count * vertices.typeSize());
-}
-
-void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture& texture,
-	const SceneProgram& program, Element* owner)
-{
-	addVertices(vertices, texture, program, owner, owner->representation());
 }
 
 void s2d::SceneRenderer::setRendernigElement(const RenderingElement::Pointer& r)
@@ -245,7 +245,7 @@ SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& n
 
 std::string et_scene2d_default_shader_vs =
 	"uniform mat4 mTransform;"
-	"uniform vec3 " + additionalOffsetAndAlphaUniform+ ";"
+	"uniform vec3 " + additionalOffsetAndAlphaUniform + ";"
 
 	"etVertexIn vec3 Vertex;"
 	"etVertexIn vec4 TexCoord0;"
@@ -268,6 +268,16 @@ std::string et_scene2d_default_shader_vs =
 	"}";
 
 std::string et_scene2d_default_shader_fs =
+	"uniform etLowp sampler2D " + textureSamplerName + ";"
+	"etFragmentIn etHighp vec2 texCoord;"
+	"etFragmentIn etLowp vec4 tintColor;"
+	"etFragmentIn etLowp vec4 additiveColor;"
+	"void main()"
+	"{"
+	"	etFragmentOut = etTexture2D(inputTexture, texCoord) * tintColor + additiveColor;"
+	"}";
+
+std::string et_scene2d_default_text_shader_fs =
 	"uniform etLowp sampler2D " + textureSamplerName + ";"
 	"etFragmentIn etHighp vec2 texCoord;"
 	"etFragmentIn etLowp vec4 tintColor;"

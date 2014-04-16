@@ -31,17 +31,19 @@ Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, 
 
 void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
+	initProgram(r);
+	
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 
 	if (_bgVertices.lastElementIndex() > 0)
-		r.addVertices(_bgVertices, _background[_state].texture, r.defaultProgram(), this);
+		r.addVertices(_bgVertices, _background[_state].texture, program(), this);
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _font->texture(), r.defaultProgram(), this);
+		r.addVertices(_textVertices, _font->texture(), program(), this);
 
 	if (_imageVertices.lastElementIndex() > 0)
-		r.addVertices(_imageVertices, _image[_state].texture, r.defaultProgram(), this);
+		r.addVertices(_imageVertices, _image[_state].texture, program(), this);
 }
 
 void Button::buildVertices(RenderContext*, SceneRenderer&)
