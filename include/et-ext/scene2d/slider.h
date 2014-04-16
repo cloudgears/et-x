@@ -54,6 +54,7 @@ namespace et
 			
 			void setValue(float v);
 			float value() const;
+			float normalizedValue() const;
 			
 			ET_DECLARE_EVENT1(changed, Slider*)
 			ET_DECLARE_EVENT1(valueChanged, float)
@@ -69,6 +70,8 @@ namespace et
 			bool pointerCancelled(const PointerInputInfo&);
 			
 			void updateValue(float);
+			
+			float handleWidth() const;
 			
         private:
 			Image _background;

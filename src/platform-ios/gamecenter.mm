@@ -10,6 +10,7 @@
 
 #include <et/app/application.h>
 #include <et/app/applicationnotifier.h>
+#include <et/platform-apple/objc.h>
 #include <et-ext/ios/gamecenter.h>
 #include <et-ext/json/json.h>
 
@@ -73,20 +74,19 @@ GameCenter::AuthorizationStatus GameCenter::status() const
 
 void GameCenter::authenticate()
 {
-	GKLocalPlayer* player = [GKLocalPlayer localPlayer];
-	player.authenticateHandler = ^(UIViewController* viewController, NSError* error)
+	[[GKLocalPlayer localPlayer] setAuthenticateHandler:^(UIViewController* viewController, NSError* error)
 	{
 		if (viewController != nil)
 		{
 			_private->status = AuthorizationStatus_Authorizing;
 			
-			UIViewController* mainViewController =
-				reinterpret_cast<UIViewController*>(application().renderingContextHandle());
+			UIViewController* mainViewController = (__bridge UIViewController*)
+				reinterpret_cast<void*>(application().renderingContextHandle());
 			[mainViewController presentViewController:viewController animated:YES completion:nil];
 		}
 		else
 		{
-			if (player.authenticated)
+			if ([[GKLocalPlayer localPlayer] isAuthenticated])
 			{
 				_private->status = AuthorizationStatus_Authorized;
 				authenticationCompleted();
@@ -99,7 +99,7 @@ void GameCenter::authenticate()
 		}
 		
 		authorizationStatusChanged.invokeInMainRunLoop(_private->status);
-	};
+	}];
 }
 
 void GameCenter::showLeaderboard(const std::string& ldId)
@@ -296,8 +296,8 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 
 - (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController*)gameCenterViewController
 {
-	UIViewController* mainViewController =
-		reinterpret_cast<UIViewController*>(application().renderingContextHandle());
+	UIViewController* mainViewController = (__bridge UIViewController*)
+		reinterpret_cast<void*>(application().renderingContextHandle());
 	[mainViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
@@ -313,8 +313,8 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 
 - (void)showAchievements
 {
-	UIViewController* mainViewController =
-		reinterpret_cast<UIViewController*>(application().renderingContextHandle());
+	UIViewController* mainViewController = (__bridge UIViewController*)
+		reinterpret_cast<void*>(application().renderingContextHandle());
 	
 	GKAchievementViewController* gcController = [[GKAchievementViewController alloc] init];
 	if (gcController != nil)
@@ -323,13 +323,13 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 		gcController.achievementDelegate = [SharedGameCenterDelegate instance];
 		[mainViewController presentViewController:gcController animated:YES completion:nil];
 	}
-	[gcController release];
+	ET_OBJC_RELEASE(gcController)
 }
 
 - (void)showLeaderboard:(NSString*)leaderboardId
 {
-	UIViewController* mainViewController =
-		reinterpret_cast<UIViewController*>(application().renderingContextHandle());
+	UIViewController* mainViewController = (__bridge UIViewController*)
+		reinterpret_cast<void*>(application().renderingContextHandle());
 	
 	[GKLeaderboard loadLeaderboardsWithCompletionHandler:^(NSArray *leaderboards, NSError *error)
 	{
@@ -368,7 +368,7 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 				gcController.leaderboardDelegate = [SharedGameCenterDelegate instance];
 				[mainViewController presentViewController:gcController animated:YES completion:nil];
 			}
-			[gcController release];
+			ET_OBJC_RELEASE(gcController)
 		}
 	}];
 }

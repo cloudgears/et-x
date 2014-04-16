@@ -40,13 +40,19 @@ void Slider::setRange(float aMin, float aMax)
 
 void Slider::setValue(float v)
 {
-	_value = (v - _min) / (_max - _min);
+	_value = clamp(v, _min, _max);
+	log::info("Set value: %f (%f -> %f)", _value, _min, _max);
 	invalidateContent();
 }
 
 float Slider::value() const
 {
-	return mix(_min, _max, _value);
+	return _value;
+}
+
+float Slider::normalizedValue() const
+{
+	return (_value - _min) / (_max - _min);
 }
 
 void Slider::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
@@ -81,9 +87,11 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 	
 	const auto& handleImage = _handle[_state];
 	
-	float handleWidth = handleImage.descriptor.size.x;
-	float halfHandleWidth = 0.5f * handleWidth;
-	float valuePoint = _value * mainRect.width;
+	float hw = handleWidth();
+	float halfHw = 0.5f * hw;
+	float valuePoint = halfHw + normalizedValue() * (mainRect.width - hw);
+	
+	log::info("Value (SL): %f", normalizedValue());
 		
 	if (_backgroundColor.w > 0.0f)
 		buildColorVertices(_backgroundVertices, mainRect, _backgroundColor, transform);
@@ -106,63 +114,50 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 		}
 	}
 	
-	if (_value > 0.0f)
+	if (_sliderLeft.texture.valid())
 	{
-		if (_sliderLeft.texture.valid())
-		{
-			auto desc = _sliderLeft.descriptor;
-			rect r(vec2(0.0f, 0.0f), desc.size);
-			r.top = 0.5f * (mainRect.height - r.height);
-			r.width = clamp(valuePoint, 0.0f, mainRect.width);
-			
-			if (_sliderImagesMode == SliderImagesMode_Crop)
-				desc.size.x *= _value;
-			
-			buildImageVertices(_sliderLeftVertices, _sliderLeft.texture, desc, r, color(), transform);
-		}
-		else
-		{
-			rect r(halfHandleWidth, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
-			r.top = 0.5f * (mainRect.height - r.height);
-			r.width = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
-			buildColorVertices(_sliderLeftVertices, r, _sliderLeftColor, transform);
-		}
+		auto desc = _sliderLeft.descriptor;
+		if (_sliderImagesMode == SliderImagesMode_Crop)
+			desc.size.x *= valuePoint / mainRect.width;
+		
+		rect r(0.0f, 0.5f * (mainRect.height - desc.size.y), valuePoint, desc.size.y);
+		buildImageVertices(_sliderLeftVertices, _sliderLeft.texture, desc, r, color(), transform);
+	}
+	else
+	{
+		rect r(halfHw, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
+		r.top = 0.5f * (mainRect.height - r.height);
+		r.width = clamp(valuePoint - halfHw, 0.0f, mainRect.width - hw);
+		buildColorVertices(_sliderLeftVertices, r, _sliderLeftColor, transform);
 	}
 	
-	if (_value < 1.0f)
+	if (_sliderRight.texture.valid())
 	{
-		if (_sliderRight.texture.valid())
+		auto desc = _sliderRight.descriptor;
+		if (_sliderImagesMode == SliderImagesMode_Crop)
 		{
-			auto desc = _sliderRight.descriptor;
-			
-			rect r(vec2(0.0f), desc.size);
-			r.top = 0.5f * (mainRect.height - r.height);
-			r.left = clamp(valuePoint, 0.0f, mainRect.width);
-			r.width = etMax(0.0f, mainRect.width - r.left);
-			
-			if (_sliderImagesMode == SliderImagesMode_Crop)
-			{
-				desc.origin.x += _value * desc.size.x;
-				desc.size.x *= (1.0f - _value);
-			}
-			
-			buildImageVertices(_sliderRightVertices, _sliderRight.texture, desc, r, color(), transform);
+			float aScale = valuePoint / mainRect.width;
+			desc.origin.x += aScale * desc.size.x;
+			desc.size.x *= 1.0f - aScale;
 		}
-		else
-		{
-			rect r(0.0f, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
-			r.top = 0.5f * (mainRect.height - r.height);
-			r.left = clamp(valuePoint, halfHandleWidth, mainRect.width - halfHandleWidth);
-			r.width = etMax(0.0f, mainRect.width - halfHandleWidth - r.left);
-			buildColorVertices(_sliderLeftVertices, r, _sliderRightColor, transform);
-		}
+		
+		rect r(valuePoint, 0.5f * (mainRect.height - desc.size.y), mainRect.width - valuePoint, desc.size.y);
+		buildImageVertices(_sliderRightVertices, _sliderRight.texture, desc, r, color(), transform);
+	}
+	else
+	{
+		rect r(0.0f, 0.0f, 0.0f, colorPlaceholdersSize * mainRect.height);
+		r.top = 0.5f * (mainRect.height - r.height);
+		r.left = clamp(valuePoint, halfHw, mainRect.width - halfHw);
+		r.width = etMax(0.0f, mainRect.width - halfHw - r.left);
+		buildColorVertices(_sliderLeftVertices, r, _sliderRightColor, transform);
 	}
 
 	if (handleImage.texture.valid())
 	{
 		rect r(vec2(0.0f), _handleScale[_state] * handleImage.descriptor.size);
 		r.top = 0.5f * (mainRect.height - r.height);
-		r.left = clamp(valuePoint - halfHandleWidth, 0.0f, mainRect.width - handleWidth);
+		r.left = clamp(valuePoint - halfHw, 0.0f, mainRect.width - hw);
 		buildImageVertices(_handleVertices, handleImage.texture, handleImage.descriptor, r, color(), transform);
 	}
 	else
@@ -212,14 +207,22 @@ void Slider::setSliderFillColors(const vec4& l, const vec4& r)
 bool Slider::pointerPressed(const PointerInputInfo& p)
 {
 	_state = State_Pressed;
-	updateValue(clamp(p.pos.x / size().x, 0.0f, 1.0f));
+	
+	float width = size().x;
+	float a = p.pos.x + (p.pos.x / width - 0.5f) * handleWidth();
+	updateValue(clamp(a / size().x, 0.0f, 1.0f));
+	
 	return true;
 }
 
 bool Slider::pointerMoved(const PointerInputInfo& p)
 {
 	if (_state == State_Pressed)
-		updateValue(clamp(p.pos.x / size().x, 0.0f, 1.0f));
+	{
+		float width = size().x;
+		float a = p.pos.x + (p.pos.x / width - 0.5f) * handleWidth();
+		updateValue(clamp(a / size().x, 0.0f, 1.0f));
+	}
 	
 	return true;
 }
@@ -227,7 +230,6 @@ bool Slider::pointerMoved(const PointerInputInfo& p)
 bool Slider::pointerReleased(const PointerInputInfo&)
 {
 	_state = State_Default;
-	
 	draggingFinished.invokeInMainRunLoop();
 	return true;
 }
@@ -240,7 +242,9 @@ bool Slider::pointerCancelled(const PointerInputInfo&)
 
 void Slider::updateValue(float v)
 {
-	_value = v;
+	_value = mix(_min, _max, v);
+	log::info("Update value: %f", _value);
+	
 	invalidateContent();
 	
 	changed.invoke(this);
@@ -257,4 +261,9 @@ void Slider::setSliderImageMode(SliderImagesMode mode)
 {
 	_sliderImagesMode = mode;
 	invalidateContent();
+}
+
+float Slider::handleWidth() const
+{
+	return _handle[_state].descriptor.size.x;
 }
