@@ -37,6 +37,8 @@ Scroll::Scroll(Element2d* parent, const std::string& name) :
 
 void Scroll::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
+	initProgram(r);
+	
 	if (!contentValid())
 		buildVertices(rc, r);
 	
