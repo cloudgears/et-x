@@ -32,9 +32,7 @@ namespace et
 	public:
 		static Dictionary defaultParameters();
 		static const std::string& defaultPlanetFragmentShader();
-		
-		static const std::string kAmbientColor;
-		
+				
 		static const std::string kWaveLength;
 		static const std::string kKr;
 		static const std::string kKm;
@@ -68,7 +66,7 @@ namespace et
 		Dictionary _parameters;
 		vec3 _lightDirection = unitY;
 		vec3 _cameraPosition;
-		vec4 _ambientColor;
+		
 		bool _skyParametersValid = false;
 		bool _groundParametersValid = false;
 		bool _computeScatteringOnPlanet = true;

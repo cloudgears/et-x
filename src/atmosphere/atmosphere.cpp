@@ -38,13 +38,7 @@ Dictionary Atmosphere::defaultParameters()
 	waveLength->content.push_back(FloatValue(0.720f));
 	waveLength->content.push_back(FloatValue(0.550f));
 	waveLength->content.push_back(FloatValue(0.480f));
-
-	ArrayValue ambientColor;
-	ambientColor->content.push_back(FloatValue(0.0f));
-	ambientColor->content.push_back(FloatValue(0.0f));
-	ambientColor->content.push_back(FloatValue(0.0f));
 	
-	result.setArrayForKey(kAmbientColor, ambientColor);
 	result.setArrayForKey(kWaveLength, waveLength);
 	
 	result.setFloatForKey(kKr, 0.0025f);
@@ -82,7 +76,6 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 	float fKr4PI = fKr * 4.0f * PI;
 	float fKm4PI = fKm * 4.0f * PI;
 	
-	prog->setUniform("ambientColor", _ambientColor);
 	prog->setUniform("nSamples", numSamples);
 	prog->setUniform("fSamples", static_cast<float>(numSamples));
 	prog->setUniform("vInvWavelength", waveLength);
@@ -194,7 +187,7 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 
 void Atmosphere::setLightDirection(const vec3& l)
 {
-	_lightDirection = l;
+	_lightDirection = l.normalized();
 } 
 
 void Atmosphere::setParameters(Dictionary d)
@@ -206,10 +199,6 @@ void Atmosphere::setParameters(Dictionary d)
 	float lat = _parameters.floatForKey(kLatitude)->content;
 	float lon = _parameters.floatForKey(kLongitude)->content;
 	float h = innerRadius + atmosphereHeight * _parameters.floatForKey(kHeightAboveSurface)->content;
-
-	_ambientColor.x = _parameters.floatForKeyPath({kAmbientColor, "0"})->content;
-	_ambientColor.y = _parameters.floatForKeyPath({kAmbientColor, "1"})->content;
-	_ambientColor.z = _parameters.floatForKeyPath({kAmbientColor, "2"})->content;
 	
 	_cameraPosition = h * fromSpherical(lat, lon);
 	
@@ -256,7 +245,6 @@ void Atmosphere::setShouldComputeScatteringOnPlanet(bool c)
 
 #define ATMOSPHERE_UNIFORMS \
 	uniform mat4 mModelViewProjection; \
-	uniform vec4 ambientColor; \
 	uniform vec3 vCamera; \
 	uniform vec3 vPrimaryLight; \
 	uniform vec3 vInvWavelength; \
@@ -354,11 +342,11 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	 float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
 	 
 	 vec3 vFrontColor = solveFastScatteringIntegral(vCamera, vRay, fFar, fStartOffset);
+	 
 	 aFrontColor = fKrESun * (vFrontColor * vInvWavelength);
 	 aSecondaryColor = fKmESun * vFrontColor;
 	 
 	 gl_Position = mModelViewProjection * vec4(vVertex, 1.0);
-//	 gl_Position.xy = -gl_Position.xy;
  }
  );
 
@@ -383,8 +371,10 @@ const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
 	 float fCos = dot(vPrimaryLight, vDirection) / length(vDirection);
 	 float onePlusfCos2 = 1.0 + fCos * fCos;
 	 float fRayleighPhase = 0.75 * onePlusfCos2;
+	 
 	 float fMiePhase = max(0.0, 1.5 * ((1.0 - g2) / (2.0 + g2)) * onePlusfCos2 / pow(1.0 + g2 - 2.0 * g * fCos, 1.5));
 	 vec3 aColor = fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor;
+	 
 	 etFragmentOut = vec4(1.0 - exp(-aColor), 1.0);
  }
  );
@@ -465,8 +455,6 @@ const std::string planetPerVertexFS = ET_TO_CONST_CHAR
 /*
  * Constants
  */
-const std::string Atmosphere::kAmbientColor = "ambient-color";
-
 const std::string Atmosphere::kWaveLength = "wave-length";
 const std::string Atmosphere::kKr = "kr";
 const std::string Atmosphere::kKm = "km";
