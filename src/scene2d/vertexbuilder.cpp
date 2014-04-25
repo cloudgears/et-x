@@ -38,12 +38,15 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 	Alignment hAlign, Alignment vAlign, const vec2& pos, const vec4& color,
 	const mat4& transform, float lineInterval)
 {
+	if (chars.empty()) return;
+	
 	vec4 line;
 	std::vector<vec4> lines;
 	
 	for (const CharDescriptor& desc : chars)
 	{
 		line.w = etMax(line.w, lineInterval * desc.size.y);
+		
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{
 			lines.push_back(line);
@@ -55,13 +58,17 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 		}
 	}
 	lines.push_back(line);
-
+	
+	if (lines.empty()) return;
+	
+	float textHeight = lines.back().y + lines.back().w;
+	
 	float hAlignFactor = alignmentFactor(hAlign);
 	float vAlignFactor = alignmentFactor(vAlign);
 	for (vec4& i : lines)
 	{
 		i.x -= hAlignFactor * i.z;
-		i.y -= vAlignFactor * i.w;
+		i.y -= vAlignFactor * textHeight;
 	}
 	
 	size_t lineIndex = 0;
