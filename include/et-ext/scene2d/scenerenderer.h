@@ -41,10 +41,7 @@ namespace et
 			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element*);
 			
 			void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
-			
-			const Camera& camera3d() const 
-				{ return _cameraFor3dElements; }
-			
+						
 			const SceneProgram& defaultProgram() const
 				{ return _defaultProgram; }
 
@@ -79,8 +76,7 @@ namespace et
 			SceneProgram _defaultProgram;
 			SceneProgram _defaultTextProgram;
 			SceneProgram _lastProgram;
-			
-			Camera _cameraFor3dElements;
+					
 			mat4 _defaultTransform;
 			
 			std::stack<recti> _clip;

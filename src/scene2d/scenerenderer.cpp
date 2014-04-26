@@ -79,14 +79,12 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 	}
 	
 	_defaultTransform = identityMatrix;
+	
 	_defaultTransform[0][0] =  2.0f / contextSize.x;
 	_defaultTransform[1][1] = -2.0f / contextSize.y;
 	_defaultTransform[3][0] = -1.0f;
 	_defaultTransform[3][1] = 1.0f;
 	_defaultTransform[3][3] = 1.0f;
-	
-	_cameraFor3dElements.perspectiveProjection(DEG_30, contextSize.aspect(), 0.1f, 10.0f);
-	_cameraFor3dElements.lookAt(vec3(0.0f, 0.0f, std::cos(DEG_15) / std::sin(DEG_15)), vec3(0.0f), unitY);
 }
 
 void s2d::SceneRenderer::alloc(size_t count)

@@ -332,17 +332,17 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 	 vVertex = normalize(Vertex) * fOuterRadius;
 	 
 	 float fCameraHeight = length(vCamera);
+	 
 	 vec3 vRay = vVertex - vCamera;
 	 float fFar = length(vRay);
 	 vRay /= fFar;
-	 
-	 vDirection = -vRay;
 	 
 	 float fStartAngle = dot(vRay, vCamera) / fCameraHeight;
 	 float fStartOffset = exp(fScaleOverScaleDepth * (fInnerRadius - fCameraHeight)) * scale(fStartAngle);
 	 
 	 vec3 vFrontColor = solveFastScatteringIntegral(vCamera, vRay, fFar, fStartOffset);
 	 
+	 vDirection = vCamera - vVertex;
 	 aFrontColor = fKrESun * (vFrontColor * vInvWavelength);
 	 aSecondaryColor = fKmESun * vFrontColor;
 	 
@@ -360,7 +360,7 @@ const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
 (
  PRECISION_STRING
  ATMOSPHERE_UNIFORMS
-
+ 
  etFragmentIn vec3 vVertex;
  etFragmentIn vec3 vDirection;
  etFragmentIn vec3 aFrontColor;
@@ -368,11 +368,13 @@ const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
  
  void main (void)
  {
-	 float fCos = dot(vPrimaryLight, vDirection) / length(vDirection);
+	 float fCos = dot(vPrimaryLight, vDirection / length(vDirection));
+	 
 	 float onePlusfCos2 = 1.0 + fCos * fCos;
 	 float fRayleighPhase = 0.75 * onePlusfCos2;
 	 
-	 float fMiePhase = max(0.0, 1.5 * ((1.0 - g2) / (2.0 + g2)) * onePlusfCos2 / pow(1.0 + g2 - 2.0 * g * fCos, 1.5));
+	 float fMieDenom = 1.0 + g2 - 2.0 * g * fCos;
+	 float fMiePhase = max(0.0, 1.5 * ((1.0 - g2) / (2.0 + g2)) * onePlusfCos2 / fMieDenom / sqrt(fMieDenom));
 	 vec3 aColor = fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor;
 	 
 	 etFragmentOut = vec4(1.0 - exp(-aColor), 1.0);
