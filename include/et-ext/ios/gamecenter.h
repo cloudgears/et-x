@@ -28,6 +28,7 @@ namespace et
 		
 		void authenticate();
 		
+		void showLeaderboards();
 		void showLeaderboard(const std::string&);
 		void reportScoreForLeaderboard(const std::string&, int64_t value);
 		

@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 INCLUDE_PATH := ../../include/
 SOURCE_PATH := ../../src/
-SOURCE_LIB := ../../lib/android/
+LIB_PATH := ../../lib/android/
 
 include $(CLEAR_VARS)
 LOCAL_MODULE    := jansson
@@ -15,18 +15,19 @@ LOCAL_MODULE := et-ext
 
 LOCAL_C_INCLUDES := $(ENGINE_INCLUDES_PATH) $(LOCAL_PATH)/$(INCLUDE_PATH)
 
-LOCAL_CXXFLAGS := --std=c++11 $(LOCAL_CFLAGS)
+LOCAL_CPPFLAGS += --std=c++11 -Wno-extern-c-compat
+LOCAL_CFLAGS += -Wno-extern-c-compat
 
 LOCAL_SRC_FILES = $(SOURCE_PATH)json/json.cpp \
 	$(SOURCE_PATH)scene2d/button.cpp \
 	$(SOURCE_PATH)scene2d/element.cpp \
 	$(SOURCE_PATH)scene2d/element2d.cpp \
-	$(SOURCE_PATH)scene2d/element3d.cpp \
 	$(SOURCE_PATH)scene2d/font.cpp \
 	$(SOURCE_PATH)scene2d/fullscreenelement.cpp \
 	$(SOURCE_PATH)scene2d/imageview.cpp \
 	$(SOURCE_PATH)scene2d/label.cpp \
 	$(SOURCE_PATH)scene2d/layout.cpp \
+	$(SOURCE_PATH)scene2d/line.cpp \
 	$(SOURCE_PATH)scene2d/listbox.cpp \
 	$(SOURCE_PATH)scene2d/messageview.cpp \
 	$(SOURCE_PATH)scene2d/renderingelement.cpp \

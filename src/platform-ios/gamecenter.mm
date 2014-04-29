@@ -30,6 +30,7 @@ using namespace et;
 + (instancetype)instance;
 
 - (void)showAchievements;
+- (void)showLeaderboards;
 - (void)showLeaderboard:(NSString*)leaderboardId;
 
 @end
@@ -107,6 +108,15 @@ void GameCenter::showLeaderboard(const std::string& ldId)
 	{
 		[[SharedGameCenterDelegate instance] performSelectorOnMainThread:@selector(showLeaderboard:)
 			withObject:[NSString stringWithUTF8String:ldId.c_str()] waitUntilDone:NO];
+	}
+}
+
+void GameCenter::showLeaderboards()
+{
+	if ([[GKLocalPlayer localPlayer] isAuthenticated])
+	{
+		[[SharedGameCenterDelegate instance] performSelectorOnMainThread:@selector(showLeaderboards)
+			withObject:nil waitUntilDone:NO];
 	}
 }
 
@@ -323,6 +333,35 @@ std::string GameCenterPrivate::hashForScore(Dictionary score)
 		[mainViewController presentViewController:gcController animated:YES completion:nil];
 	}
 	ET_OBJC_RELEASE(gcController)
+}
+
+- (void)showLeaderboards
+{
+	UIViewController* mainViewController = (__bridge UIViewController*)
+	reinterpret_cast<void*>(application().renderingContextHandle());
+	
+	[GKLeaderboard loadLeaderboardsWithCompletionHandler:^(NSArray *leaderboards, NSError *error)
+	 {
+		 if (error != nil)
+		 {
+			 NSLog(@"Unable to load leaderboards\n%@", error);
+		 }
+		 else if (leaderboards.count == 0)
+		 {
+			 NSLog(@"There is no leaderboards for this application");
+		 }
+		 else
+		 {
+			 GKGameCenterViewController* gcController = [[GKGameCenterViewController alloc] init];
+			 if (gcController != nil)
+			 {
+				 gcController.viewState = GKGameCenterViewControllerStateLeaderboards;
+				 gcController.gameCenterDelegate = [SharedGameCenterDelegate instance];
+				 [mainViewController presentViewController:gcController animated:YES completion:nil];
+			 }
+			 ET_OBJC_RELEASE(gcController)
+		 }
+	 }];
 }
 
 - (void)showLeaderboard:(NSString*)leaderboardId

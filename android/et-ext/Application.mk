@@ -1,3 +1,1 @@
-NDK_TOOLCHAIN_VERSION = clang
 APP_MODULES := et-ext
-APP_PLATFORM := android-18
