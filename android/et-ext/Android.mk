@@ -15,8 +15,8 @@ LOCAL_MODULE := et-ext
 
 LOCAL_C_INCLUDES := $(ENGINE_INCLUDES_PATH) $(LOCAL_PATH)/$(INCLUDE_PATH)
 
-LOCAL_CPPFLAGS += --std=c++11 -Wno-extern-c-compat
-LOCAL_CFLAGS += -Wno-extern-c-compat
+LOCAL_CPPFLAGS += --std=c++11 -Wno-extern-c-compat -DDEBUG -UNDEBUG
+LOCAL_CFLAGS += -Wno-extern-c-compat -DDEBUG -UNDEBUG
 
 LOCAL_SRC_FILES = $(SOURCE_PATH)json/json.cpp \
 	$(SOURCE_PATH)scene2d/button.cpp \
