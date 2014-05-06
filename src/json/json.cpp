@@ -11,7 +11,7 @@
 using namespace et;
 using namespace et::json;
 
-et::ValueBase::Pointer deserializeJson(const char*, size_t, ValueClass&);
+et::ValueBase::Pointer deserializeJson(const char*, size_t, ValueClass&, bool);
 
 ArrayValue deserializeArray(json_t* json);
 Dictionary deserializeDictionary(json_t* json);
@@ -54,13 +54,13 @@ std::string et::json::serialize(const et::ArrayValue& arr, bool readableFormat)
 	return serialized;
 }
 
-et::ValueBase::Pointer et::json::deserialize(const char* input, ValueClass& c)
-	{ return deserializeJson(input, strlen(input), c); }
+et::ValueBase::Pointer et::json::deserialize(const char* input, ValueClass& c, bool printErrors)
+	{ return deserializeJson(input, strlen(input), c, printErrors); }
 
-et::ValueBase::Pointer  et::json::deserialize(const std::string& s, ValueClass& c)
-	{ return deserializeJson(s.c_str(), s.length(), c); }
+et::ValueBase::Pointer  et::json::deserialize(const std::string& s, ValueClass& c, bool printErrors)
+	{ return deserializeJson(s.c_str(), s.length(), c, printErrors); }
 
-et::ValueBase::Pointer deserializeJson(const char* buffer, size_t len, ValueClass& c)
+et::ValueBase::Pointer deserializeJson(const char* buffer, size_t len, ValueClass& c, bool printErrors)
 {
 	c = ValueClass_Invalid;
 	
@@ -72,8 +72,11 @@ et::ValueBase::Pointer deserializeJson(const char* buffer, size_t len, ValueClas
 	
 	if (error.line != -1)
 	{
-		log::error("JSON parsing error (%d,%d): %s %s", error.line, error.column, error.source, error.text);
-		log::error("%s", buffer);
+		if (printErrors)
+		{
+			log::error("JSON parsing error (%d,%d): %s %s", error.line, error.column, error.source, error.text);
+			log::error("%s", buffer);
+		}
 		json_decref(root);
 		return ValueBase::Pointer();
 	}
@@ -92,7 +95,7 @@ et::ValueBase::Pointer deserializeJson(const char* buffer, size_t len, ValueClas
 	}
 	else
 	{
-		ET_ASSERT(false && "Unsupported (yet) root object type.");
+		ET_FAIL("Unsupported root object type.");
 	}
 	
 	json_decref(root);

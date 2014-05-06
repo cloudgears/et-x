@@ -9,6 +9,7 @@
 #include <et/core/conversion.h>
 #include <et/core/serialization.h>
 #include <et/app/application.h>
+#include <et/rendering/rendercontext.h>
 #include <et/imaging/imagewriter.h>
 #include <et-ext/scene2d/font.h>
 
@@ -18,7 +19,6 @@ using namespace et::s2d;
 Font::Font(const CharacterGenerator::Pointer& generator) :
 	_generator(generator)
 {
-	
 }
 
 void Font::saveToFile(RenderContext* rc, const std::string& fileName)
@@ -92,9 +92,8 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 
 void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
 {
-	std::string resolvedFileName =
-		application().environment().resolveScalableFileName(fileName, rc->screenScaleFactor());
-
+	std::string resolvedFileName = application().resolveFileName(fileName);
+	
 	InputStream fontFile(resolvedFileName, StreamMode_Binary);
 	if (fontFile.invalid()) return;
 

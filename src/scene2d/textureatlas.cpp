@@ -6,8 +6,11 @@
  */
 
 #include <sstream>
+#include <et/core/conversion.h>
 #include <et/app/application.h>
+#include <et/rendering/rendercontext.h>
 #include <et/imaging/textureloader.h>
+#include <et-ext/json/json.h>
 #include <et-ext/scene2d/textureatlas.h>
 
 using namespace et;
@@ -29,109 +32,141 @@ TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, Objec
 
 void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache, bool async)
 {
-	std::string resolvedFileName =
-		application().environment().resolveScalableFileName(filename, rc->screenScaleFactor());
-
-	InputStream descFile(resolvedFileName, StreamMode_Text);
-	if (descFile.invalid()) return;
-
-	std::string filePath = getFilePath(resolvedFileName);
-	int lineNumber = 1;
-
-	while (!descFile.stream().eof())
+	std::string resolvedFileName = application().resolveFileName(filename);
+	if (!fileExists(resolvedFileName)) return;
+	
+	application().pushSearchPath(getFilePath(resolvedFileName));
+	
+	ValueClass vc = ValueClass_Invalid;
+	Dictionary atlas = json::deserialize(loadTextFile(resolvedFileName), vc, false);
+	
+	if (vc == ValueClass_Dictionary)
 	{
-		std::string token;
-		std::string line;
-
-		descFile.stream() >> token;
-		std::getline(descFile.stream(), line);
-
-		if (token == "texture:")
+		ArrayValue textures = atlas.arrayForKey("textures");
+		for (Dictionary tex : textures->content)
 		{
-			std::string textureId = trim(line);
-			std::string textureName = application().environment().resolveScalableFileName(textureId, 1);
-			
-			if (!fileExists(textureName))
-				textureName = application().environment().resolveScalableFileName(filePath + textureId, 1);
-			
-			_textures[textureId] = rc->textureFactory().loadTexture(textureName, cache, async);
-			
+			auto textureId = tex.stringForKey("id")->content;
+			auto textureFile = tex.stringForKey("filename")->content;
+			_textures[textureId] = rc->textureFactory().loadTexture(textureFile, cache, async);
 			if (_textures[textureId].valid())
 				_textures[textureId]->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
 		}
-		else if (token == "image:")
+		
+		ArrayValue images = atlas.arrayForKey("images");
+		for (Dictionary img : images->content)
 		{
-			trim(line);
-			if ((*line.begin() == '{') && (*line.rbegin() == '}'))
+			auto name = img.stringForKey("name")->content;
+			auto tex = img.stringForKey("texture")->content;
+			auto r = arrayToRect(img.arrayForKey("rect"));
+			vec4 offset = arrayToVec4(img.arrayForKey("offset"));
+			
+			_images[name] = Image(_textures[tex],
+				ImageDescriptor(r.origin(), r.size(), ContentOffset(offset.x, offset.y, offset.z, offset.w)));
+		}
+	}
+	else
+	{
+		InputStream descFile(resolvedFileName, StreamMode_Text);
+		if (descFile.valid())
+		{
+			int lineNumber = 1;
+			while (!descFile.stream().eof())
 			{
-				line = line.substr(1, line.length() - 2);
-				trim(line);
-				std::istringstream parser(line);
-
-				std::string imageName;
-				std::string textureName;
-				rect sourceRect;
-				rect contentOffset;
-
-				while (!parser.eof())
+				std::string token;
+				std::string line;
+				
+				descFile.stream() >> token;
+				std::getline(descFile.stream(), line);
+				
+				if (token == "texture:")
 				{
-					std::string aToken;
-					parser >> aToken;
-					if (aToken == "name:")
+					std::string textureId = trim(line);
+					std::string textureName = application().resolveFileName(textureId);
+					
+					if (!fileExists(textureName))
+						textureName = application().resolveFileName(textureId);
+					
+					_textures[textureId] = rc->textureFactory().loadTexture(textureName, cache, async);
+					
+					if (_textures[textureId].valid())
+						_textures[textureId]->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
+				}
+				else if (token == "image:")
+				{
+					trim(line);
+					if ((*line.begin() == '{') && (*line.rbegin() == '}'))
 					{
-						parser >> imageName;
-						if (*imageName.begin() == '"')
-							imageName.erase(0, 1);
-						if (*imageName.rbegin() == '"')
-							imageName.erase(imageName.length() - 1);
-					}
-					else if (aToken == "texture:")
-					{
-						parser >> textureName;
-						if (*textureName.begin() == '"')
-							textureName.erase(0, 1);
-						if (*textureName.rbegin() == '"')
-							textureName.erase(textureName.length() - 1);
-					}
-					else if (aToken == "rect:")
-					{
-						std::string sRect;
-						parser >> sRect;
-						sourceRect = parseRectString(sRect);
-					}
-					else if (aToken == "offset:")
-					{
-						std::string offset;
-						parser >> offset;
-						contentOffset = parseRectString(offset);
+						line = line.substr(1, line.length() - 2);
+						trim(line);
+						std::istringstream parser(line);
+						
+						std::string imageName;
+						std::string textureName;
+						rect sourceRect;
+						rect contentOffset;
+						
+						while (!parser.eof())
+						{
+							std::string aToken;
+							parser >> aToken;
+							if (aToken == "name:")
+							{
+								parser >> imageName;
+								if (*imageName.begin() == '"')
+									imageName.erase(0, 1);
+								if (*imageName.rbegin() == '"')
+									imageName.erase(imageName.length() - 1);
+							}
+							else if (aToken == "texture:")
+							{
+								parser >> textureName;
+								if (*textureName.begin() == '"')
+									textureName.erase(0, 1);
+								if (*textureName.rbegin() == '"')
+									textureName.erase(textureName.length() - 1);
+							}
+							else if (aToken == "rect:")
+							{
+								std::string sRect;
+								parser >> sRect;
+								sourceRect = parseRectString(sRect);
+							}
+							else if (aToken == "offset:")
+							{
+								std::string offset;
+								parser >> offset;
+								contentOffset = parseRectString(offset);
+							}
+							else
+							{
+								log::warning("Unknown token at line %d : %s", lineNumber, aToken.c_str());
+							}
+						}
+						
+						ImageDescriptor desc(sourceRect.origin(), sourceRect.size());
+						
+						desc.contentOffset = ContentOffset(contentOffset[0], contentOffset[1],
+														   contentOffset[2], contentOffset[3]);
+						
+						_images[imageName] = Image(_textures[textureName], desc);
 					}
 					else
 					{
-						log::warning("Unknown token at line %d : %s", lineNumber, aToken.c_str());
+						log::warning("Unable to parse image token at line %d : %s", lineNumber, line.c_str());
 					}
 				}
-
-				ImageDescriptor desc(sourceRect.origin(), sourceRect.size());
-
-				desc.contentOffset = ContentOffset(contentOffset[0], contentOffset[1],
-					contentOffset[2], contentOffset[3]);
-
-				_images[imageName] = Image(_textures[textureName], desc);
-			}
-			else 
-			{
-				log::warning("Unable to parse image token at line %d : %s", lineNumber, line.c_str());
+				else
+				{
+					if (token.length() && line.length())
+						log::warning("Unknown token at line %d : %s", lineNumber, token.c_str());
+				}
+				
+				++lineNumber;
 			}
 		}
-		else 
-		{
-			if (token.length() && line.length())
-				log::warning("Unknown token at line %d : %s", lineNumber, token.c_str());
-		}
-
-		++lineNumber;
 	}
-
+	application().popSearchPaths();
+	
 	_loaded = true;
 }
 
