@@ -216,7 +216,7 @@ void MainController::render(et::RenderContext* rc)
 		auto cm = cubemapMatrixProjectionArray(cubemapCamera.modelViewProjectionMatrix(), vec3(0.0f));
 
 		vec2i textureSize = _framebuffer->renderTarget(0)->size() / 2;
-		textureSize = vec2i(roundToHighestPowerOfTwo(etMin(textureSize.x, textureSize.y)) / 2);
+		textureSize = vec2i(static_cast<int>(roundToHighestPowerOfTwo(etMin(textureSize.x, textureSize.y)) / 2));
 
 		size_t mipLevel = 0;
 		while (textureSize.x >= 4)

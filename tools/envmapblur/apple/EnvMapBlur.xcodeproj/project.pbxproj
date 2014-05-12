@@ -34,6 +34,7 @@
 		A5896C0718A0289600962607 /* MainUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896C0518A0289600962607 /* MainUI.cpp */; };
 		A5896C0B18A02BF500962607 /* ResourceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896C0818A028FC00962607 /* ResourceManager.cpp */; };
 		A58B69DF18F879DD00565522 /* log.apple.mm in Sources */ = {isa = PBXBuildFile; fileRef = A58B69DE18F879DD00565522 /* log.apple.mm */; };
+		A5A8673F1920F77600A71D37 /* pathresolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A8673E1920F77600A71D37 /* pathresolver.cpp */; };
 		A5B0DD5E18D3558B0006C9FA /* jpegloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B0DD5D18D3558B0006C9FA /* jpegloader.cpp */; };
 		A5F0940A18A00A440017B239 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0940718A00A440017B239 /* main.cpp */; };
 		A5F0940B18A00A440017B239 /* MainController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F0940818A00A440017B239 /* MainController.cpp */; };
@@ -184,6 +185,7 @@
 		A5896C0818A028FC00962607 /* ResourceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceManager.cpp; path = ../source/ui/ResourceManager.cpp; sourceTree = "<group>"; };
 		A5896C0918A028FC00962607 /* ResourceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceManager.h; path = ../source/ui/ResourceManager.h; sourceTree = "<group>"; };
 		A58B69DE18F879DD00565522 /* log.apple.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = log.apple.mm; sourceTree = "<group>"; };
+		A5A8673E1920F77600A71D37 /* pathresolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pathresolver.cpp; sourceTree = "<group>"; };
 		A5B0DD5D18D3558B0006C9FA /* jpegloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jpegloader.cpp; sourceTree = "<group>"; };
 		A5F093FA18A00A1E0017B239 /* EnvMapBlur.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EnvMapBlur.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5F0940718A00A440017B239 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../source/main.cpp; sourceTree = "<group>"; };
@@ -582,6 +584,7 @@
 		A5F0947118A00AF70017B239 /* app */ = {
 			isa = PBXGroup;
 			children = (
+				A5A8673E1920F77600A71D37 /* pathresolver.cpp */,
 				A5F0947218A00AF70017B239 /* appevironment.cpp */,
 				A5F0947318A00AF70017B239 /* application.cpp */,
 				A5F0947418A00AF70017B239 /* backgroundthread.cpp */,
@@ -1195,6 +1198,7 @@
 				A5F094D918A00AF70017B239 /* imageoperations.cpp in Sources */,
 				A5896BFE18A0279A00962607 /* table.cpp in Sources */,
 				A5896BFF18A0279A00962607 /* textfield.cpp in Sources */,
+				A5A8673F1920F77600A71D37 /* pathresolver.cpp in Sources */,
 				A5F094CD18A00AF70017B239 /* frustum.cpp in Sources */,
 				A5F094E018A00AF70017B239 /* opengl.common.cpp in Sources */,
 				A5F094C818A00AF70017B239 /* backgroundthread.cpp in Sources */,
