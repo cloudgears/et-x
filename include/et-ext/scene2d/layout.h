@@ -28,7 +28,7 @@ namespace et
 			void update(float);
 			void cancelDragging(float returnDuration = 0.0f);
 
-			void setActiveElement(Element* e);
+			void setActiveElement(Element::Pointer e);
 			
 			ET_DECLARE_EVENT2(layoutRequiresKeyboard, Layout*, Element*)
 			ET_DECLARE_EVENT1(layoutDoesntNeedKeyboard, Layout*)
@@ -71,7 +71,7 @@ namespace et
 			Element* activeElement(const PointerInputInfo& p);
 			Element* getActiveElement(const PointerInputInfo& p, Element* e);
 			
-			void setCurrentElement(const PointerInputInfo& p, Element* e);
+			void setCurrentElement(const PointerInputInfo& p, Element::Pointer e);
 			void addElementToRenderQueue(Element* element, RenderContext* rc, SceneRenderer& gr);
 			
 			void performDragging(const PointerInputInfo&);
@@ -82,9 +82,9 @@ namespace et
 			
 			std::function<float(float)> _positionInterpolationFunction;
 			
-			Element* _currentElement;
-			Element* _focusedElement;
-			Element* _capturedElement;
+			Element::Pointer _currentElement;
+			Element::Pointer _focusedElement;
+			Element::Pointer _capturedElement;
 			Element::List _topmostElements;
 			
 			vec2 _dragInitialPosition;

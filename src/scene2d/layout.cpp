@@ -69,8 +69,8 @@ void Layout::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 			addElementToRenderQueue(t.ptr(), rc, gr);
 	}
 	
-	if (elementIsBeingDragged(_capturedElement))
-		addElementToRenderQueue(_capturedElement, rc, gr);
+	if (elementIsBeingDragged(_capturedElement.ptr()))
+		addElementToRenderQueue(_capturedElement.ptr(), rc, gr);
 	
 	_valid = true;
 }
@@ -79,7 +79,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 { 
 	if (hasFlag(Flag_TransparentForPointer)) return false;
 
-	if (_capturedElement)
+	if (_capturedElement.valid())
 	{
 		_capturedElement->pointerPressed(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos), 
 			p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
@@ -87,12 +87,12 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 	}
 	else 
 	{
-		Element* active = activeElement(p);
+		Element::Pointer active(activeElement(p));
 		setCurrentElement(p, active);
 		bool processed = false;
-		if (!active)
+		if (active.invalid())
 		{
-			setActiveElement(nullptr);
+			setActiveElement(Element::Pointer());
 		}
 		else
 		{
@@ -112,7 +112,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 					_dragInitialPosition = active->position();
 					_dragInitialOffset = elementPos;
 					
-					_capturedElement->dragStarted.invoke(_capturedElement,
+					_capturedElement->dragStarted.invoke(_capturedElement.ptr(),
 						ElementDragInfo(_dragInitialPosition, _dragInitialPosition, p.normalizedPos));
 
 					if (Input::canGetCurrentPointerInfo())
@@ -141,7 +141,7 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 {
 	if (hasFlag(Flag_TransparentForPointer)) return false;
 
-	if (_capturedElement)
+	if (_capturedElement.valid())
 	{
 		if (!Input::canGetCurrentPointerInfo() && (p.type == PointerType_General) && _dragging)
 			performDragging(p);
@@ -153,11 +153,10 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 	}
 	else 
 	{
-		Element* active = activeElement(p);
-		
+		Element::Pointer active(activeElement(p));
 		setCurrentElement(p, active);
 
-		bool processed = active && active->pointerMoved(PointerInputInfo(p.type,
+		bool processed = active.valid() && active->pointerMoved(PointerInputInfo(p.type,
 			active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
 		return processed;
@@ -168,8 +167,9 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 { 
 	if (hasFlag(Flag_TransparentForPointer)) return false;
 
-	Element* active = activeElement(p);
-	if (_capturedElement)
+	Element::Pointer active(activeElement(p));
+	
+	if (_capturedElement.valid())
 	{
 		bool processed = _capturedElement->pointerReleased(PointerInputInfo(p.type,
 			_capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id,
@@ -180,17 +180,17 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 			if (Input::canGetCurrentPointerInfo())
 				cancelUpdates();
 
-			_capturedElement->dragFinished.invoke(_capturedElement,
+			_capturedElement->dragFinished.invoke(_capturedElement.ptr(),
 				ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos),
 				_dragInitialPosition, p.normalizedPos));
 
 			_dragging = false;
-			_capturedElement = nullptr;
+			_capturedElement.reset(nullptr);
 			invalidateContent();
 		}
 		else if (processed) 
 		{
-			_capturedElement = nullptr;
+			_capturedElement.reset(nullptr);
 			invalidateContent();
 		}
 
@@ -201,7 +201,7 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 		setCurrentElement(p, active);
 		bool processed = false;
 
-		if (active)
+		if (active.valid())
 		{
 			processed = active->pointerReleased(PointerInputInfo(p.type, active->positionInElement(p.pos), 
 				p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
@@ -213,8 +213,8 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 
 bool Layout::pointerCancelled(const et::PointerInputInfo& p)
 {
-	Element* active = activeElement(p);
-	if (_capturedElement)
+	Element::Pointer active(activeElement(p));
+	if (_capturedElement.valid())
 	{
 		bool processed = _capturedElement->pointerCancelled(PointerInputInfo(p.type,
 			_capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
@@ -224,16 +224,16 @@ bool Layout::pointerCancelled(const et::PointerInputInfo& p)
 			if (Input::canGetCurrentPointerInfo())
 				cancelUpdates();
 			
-			_capturedElement->dragFinished.invoke(_capturedElement,
+			_capturedElement->dragFinished.invoke(_capturedElement.ptr(),
 				ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos), _dragInitialPosition, p.normalizedPos));
 			
 			_dragging = false;
-			_capturedElement = nullptr;
+			_capturedElement.reset(nullptr);
 			invalidateContent();
 		}
 		else if (processed)
 		{
-			_capturedElement = nullptr;
+			_capturedElement.reset(nullptr);
 			invalidateContent();
 		}
 		
@@ -244,7 +244,7 @@ bool Layout::pointerCancelled(const et::PointerInputInfo& p)
 		setCurrentElement(p, active);
 		bool processed = false;
 		
-		if (active)
+		if (active.valid())
 		{
 			processed = active->pointerCancelled(PointerInputInfo(p.type, active->positionInElement(p.pos),
 				p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
@@ -258,7 +258,7 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 { 
 	if (hasFlag(Flag_TransparentForPointer)) return false;
 
-	if (_capturedElement)
+	if (_capturedElement.valid())
 	{
 		_capturedElement->pointerScrolled(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos),
 			p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
@@ -267,11 +267,11 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 	}
 	else 
 	{
-		Element* active = activeElement(p);
+		Element::Pointer active(activeElement(p));
 
 		setCurrentElement(p, active);
 
-		bool processed = active && active->pointerScrolled(PointerInputInfo(p.type,
+		bool processed = active.valid() && active->pointerScrolled(PointerInputInfo(p.type,
 			active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
 		return processed;
@@ -324,22 +324,22 @@ Element* Layout::getActiveElement(const PointerInputInfo& p, Element* el)
 	return el->hasFlag(Flag_TransparentForPointer) ? nullptr : el;
 }
 
-void Layout::setCurrentElement(const PointerInputInfo& p, Element* e)
+void Layout::setCurrentElement(const PointerInputInfo& p, Element::Pointer e)
 {
 	if (e == _currentElement) return;
 
-	if (_currentElement)
+	if (_currentElement.valid())
 	{
 		_currentElement->pointerLeaved(p);
-		_currentElement->hoverEnded.invoke(_currentElement);
+		_currentElement->hoverEnded.invoke(_currentElement.ptr());
 	}
 
 	_currentElement = e;
 
-	if (_currentElement)
+	if (_currentElement.valid())
 	{
 		_currentElement->pointerEntered(p);
-		_currentElement->hoverStarted.invoke(_currentElement);
+		_currentElement->hoverStarted.invoke(_currentElement.ptr());
 	}
 }
 
@@ -352,13 +352,13 @@ void Layout::performDragging(const PointerInputInfo& p)
 	
 	_capturedElement->setPosition(_capturedElement->position() + delta, 0.0f);
 	
-	_capturedElement->dragged.invoke(_capturedElement,
+	_capturedElement->dragged.invoke(_capturedElement.ptr(),
 		ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
 }
 
 bool Layout::elementIsBeingDragged(s2d::Element* e)
 {
-	return _dragging && (e != nullptr) && (e == _capturedElement);
+	return _dragging && (e != nullptr) && (e == _capturedElement.ptr());
 }
 
 void Layout::update(float)
@@ -372,39 +372,39 @@ void Layout::cancelDragging(float returnDuration)
 	if (_dragging)
 	{
 		_capturedElement->setPosition(_dragInitialPosition, returnDuration);
-		_capturedElement = nullptr;
+		_capturedElement.reset(nullptr);
 		_dragging = false;
 		
 		invalidateContent();
 	}
 }
 
-void Layout::setActiveElement(Element* e)
+void Layout::setActiveElement(Element::Pointer e)
 {
 	if (_focusedElement == e) return;
 	
-	if (_focusedElement)
-		_focusedElement->resignFocus(e);
+	if (_focusedElement.valid())
+		_focusedElement->resignFocus(e.ptr());
 
 	_focusedElement = e;
 
 	bool needKeyboard = hasFlag(Flag_RequiresKeyboard) || 
-		(_focusedElement && _focusedElement->hasFlag(Flag_RequiresKeyboard));
+		(_focusedElement.valid() && _focusedElement->hasFlag(Flag_RequiresKeyboard));
 
-	if (_focusedElement)
+	if (_focusedElement.valid())
 	{
 		_focusedElement->setFocus();
 
 		if (!_focusedElement->hasFlag(Flag_RequiresKeyboard))
-			_focusedElement = nullptr;
+			_focusedElement.reset(nullptr);
 	}
 	
 	if (needKeyboard)
-		layoutRequiresKeyboard.invoke(this, _focusedElement);
+		layoutRequiresKeyboard.invoke(this, _focusedElement.ptr());
 	else
 		layoutDoesntNeedKeyboard.invoke(this);
 	
-	activeElementChanged(_focusedElement);
+	activeElementChanged(_focusedElement.ptr());
 }
 
 void Layout::setInvalid()

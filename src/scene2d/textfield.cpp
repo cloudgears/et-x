@@ -142,7 +142,7 @@ void TextField::processMessage(const Message& msg)
 			{
 				returnReceived.invoke(this);
 				if (_editingFlags.hasFlag(EditingFlag_ResignFocusOnReturn))
-					owner()->setActiveElement(nullptr);
+					owner()->setActiveElement(Element::Pointer());
 				break;
 			}
 				
