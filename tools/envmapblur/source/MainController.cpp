@@ -1,10 +1,13 @@
 #include <et/primitives/primitives.h>
+#include <et/imaging/imagewriter.h>
 #include "maincontroller.h"
 
 using namespace et;
 using namespace emb;
 
 extern const std::string fullscreenVertexShader;
+
+extern const std::string cubemapFragmentShader;
 
 extern const std::string gaussianBlurShader;
 
@@ -16,10 +19,12 @@ const vec3 lightPosition = normalize(vec3(1.0f, 1.0f, 1.0f));
 void MainController::setApplicationParameters(et::ApplicationParameters& p)
 {
 	p.windowStyle = WindowStyle_Caption | WindowStyle_Sizable;
+	p.shouldSuspendOnDeactivate = false;
 }
 
 void MainController::setRenderContextParameters(et::RenderContextParameters& p)
 {
+	p.multisamplingQuality = MultisamplingQuality_None;
 	p.supportedInterfaceOrientations = InterfaceOrientation_AnyLandscape;
 	p.contextBaseSize = vec2i(1600, 900);
 	p.contextSize = p.contextBaseSize;
@@ -114,6 +119,11 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 		_shouldProcessPass2 = false;
 		_processingSample = 0;
 	});
+	_mainUi->saveSelected.connect([this](std::string f)
+	{
+		_fileToSave = f;
+		_shouldSaveToFile = true;
+	});
 	
 	if (fileExists(fileToLoad))
 		_mainUi->fileSelected.invokeInMainRunLoop(fileToLoad);
@@ -149,9 +159,14 @@ void MainController::onDrag(et::vec2 v, et::PointerType)
 
 void MainController::loadPrograms()
 {
-	programs.gaussianBlur = _rc->programFactory().genProgram("gaussian-blur-lat", fullscreenVertexShader, gaussianBlurShader);
+	programs.gaussianBlur = _rc->programFactory().genProgram("gaussian-blur", fullscreenVertexShader, gaussianBlurShader);
 	programs.gaussianBlur->setUniform("inputTexture", 0);
-	
+
+	programs.cubemap = _rc->programFactory().genProgram("cubemap", fullscreenVertexShader, cubemapFragmentShader);
+	programs.cubemap->setUniform("colorTexture", 0);
+	programs.cubemap->setUniform("vertexOffset", vec2(0.0f));
+	programs.cubemap->setUniform("vertexScale", vec2(1.0f));
+
 	programs.preview = _rc->programFactory().genProgram("preview", previewVertexShader, previewFragmentShader);
 	programs.preview->setUniform("colorTexture", 0);
 }
@@ -192,6 +207,49 @@ void MainController::render(et::RenderContext* rc)
 	rc->renderState().setDepthMask(true);
 	rc->renderer()->clear(true, true);
 	renderPreview();
+
+	if (_shouldSaveToFile && _framebuffer.valid())
+	{
+		Camera cubemapCamera;
+		cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 1.0f, 100.0f);
+		cubemapCamera.setModelViewMatrix(identityMatrix);
+		auto cm = cubemapMatrixProjectionArray(cubemapCamera.modelViewProjectionMatrix(), vec3(0.0f));
+
+		vec2i textureSize = _framebuffer->renderTarget(0)->size() / 2;
+		textureSize = vec2i(roundToHighestPowerOfTwo(etMin(textureSize.x, textureSize.y)) / 2);
+
+		size_t mipLevel = 0;
+		while (textureSize.x >= 4)
+		{
+			auto fb = rc->framebufferFactory().createCubemapFramebuffer(textureSize.x, "cb", GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 0, 0, 0);
+			rc->renderState().bindFramebuffer(fb);
+			rc->renderState().bindProgram(programs.cubemap);
+			rc->renderState().bindTexture(0, _framebuffer->renderTarget(0));
+			programs.cubemap->setUniform("exposure", _mainUi->exposureValue());
+
+			BinaryDataStorage data(4 * textureSize.square(), 0);
+			for (uint32_t i = 0; i < 6; ++i)
+			{
+				fb->setCurrentCubemapFace(i);
+				rc->renderState().setClearColor(vec4(0.0f));
+				rc->renderer()->clear(true, false);
+
+				programs.cubemap->setMVPMatrix(cm[i].inverse());
+				rc->renderer()->fullscreenPass();
+
+				glReadPixels(0, 0, textureSize.x, textureSize.y, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+
+				ImageWriter::writeImageToFile(_fileToSave + "~level-" + intToStr(mipLevel) + "~face-" + intToStr(i) + ".png",
+					data, textureSize, 4, 8, ImageFormat_PNG, false);
+			}
+
+			textureSize /= 2;
+			mipLevel++;
+		}
+		rc->renderState().bindDefaultFramebuffer();
+		rc->renderState().setClearColor(vec4(0.5f));
+		_shouldSaveToFile = false;
+	}
 	
 	_ui->render(rc);
 }
@@ -276,17 +334,32 @@ IApplicationDelegate* Application::initApplicationDelegate()
 
 const std::string fullscreenVertexShader = ET_TO_CONST_CHAR
 (
- uniform vec2 vertexScale;
- uniform vec2 vertexOffset;
- etVertexIn vec2 Vertex;
- etVertexOut vec2 vertexNormalized;
- void main()
- {
-	 vec2 adjustedVertex = vertexOffset + vertexScale * Vertex;
-	 vertexNormalized = 0.5 + 0.5 * adjustedVertex;
-	 gl_Position = vec4(adjustedVertex, 0.0, 1.0);
- }
- );
+	uniform vec2 vertexScale;
+	uniform vec2 vertexOffset;
+	etVertexIn vec2 Vertex;
+	etVertexOut vec2 vertexNormalized;
+	void main()
+	{
+		vec2 adjustedVertex = vertexOffset + vertexScale * Vertex;
+		vertexNormalized = 0.5 + 0.5 * adjustedVertex;
+		gl_Position = vec4(adjustedVertex, 0.0, 1.0);
+	}
+);
+
+const std::string cubemapFragmentShader = ET_TO_CONST_CHAR
+(
+	uniform sampler2D colorTexture;
+	uniform mat4 mModelViewProjection;
+	uniform float exposure;
+	etFragmentIn vec2 vertexNormalized;
+	void main()
+	{
+		vec3 normal = normalize((mModelViewProjection * vec4(2.0 * vertexNormalized - 1.0, 1.0, 1.0)).xyz);
+	 
+		etFragmentOut = 1.0 - exp(-exposure * etTexture2D(colorTexture,
+			0.5 + vec2(-0.5 * atan(normal.z, normal.x), asin(normal.y)) / PI));
+	}
+);
 
 const std::string gaussianBlurShader = ET_TO_CONST_CHAR
 (

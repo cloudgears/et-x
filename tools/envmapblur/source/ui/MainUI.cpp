@@ -40,6 +40,15 @@ MainUI::MainUI(ResourceManager& rm)
 		processSelected.invokeInMainRunLoop();
 	});
 	
+	b = rm.button("Save", this);
+	b->setLocationInParent(s2d::Location_Center);
+	b->clicked.connect([this](s2d::Button*)
+	{
+		auto fileName = selectFile(StringList(), SelectFileMode_Save, std::string());
+		if (!fileName.empty())
+			saveSelected.invokeInMainRunLoop(fileName);
+	});
+	
 	_sliderAngle = s2d::Slider::Pointer::create(this);
 	_sliderAngle->setAutolayoutRelativeToParent(vec2(0.75f, 0.0f), vec2(0.5f, 0.05f), vec2(0.5f, 0.0));
 	_sliderAngle->setSliderFillColors(vec4(0.25f, 1.0f, 0.5f, 1.0f), vec4(2.0f / 3.0f));

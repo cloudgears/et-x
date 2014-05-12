@@ -31,6 +31,7 @@ namespace emb
 	public:
 		ET_DECLARE_EVENT1(fileSelected, std::string)
 		ET_DECLARE_EVENT0(processSelected)
+		ET_DECLARE_EVENT1(saveSelected, std::string)
 		
 	private:
 		et::s2d::ImageView::Pointer _imageViewOriginal;

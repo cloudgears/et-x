@@ -62,7 +62,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libpng16.lib;jansson.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jpeg.lib;opengl32.lib;libpng16.lib;jansson.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -81,7 +81,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>libpng16.lib;jansson.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>jpeg.lib;opengl32.lib;libpng16.lib;jansson.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -101,13 +101,13 @@
     <ClCompile Include="..\..\..\..\engine\src\app\backgroundthread.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\app\events.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\app\invocation.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\app\pathresolver.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\app\runloop.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\camera\camera.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\camera\frustum.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\collision\collision.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\conversion.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\dictionary.cpp" />
-    <ClCompile Include="..\..\..\..\engine\src\core\log.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\objectscache.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\plist.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\stream.cpp" />
@@ -119,6 +119,7 @@
     <ClCompile Include="..\..\..\..\engine\src\imaging\hdrloader.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\imaging\imageoperations.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\imaging\imagewriter.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\imaging\jpegloader.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\imaging\pngloader.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\imaging\pvrdecompressor.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\imaging\pvrloader.cpp" />
@@ -135,6 +136,7 @@
     <ClCompile Include="..\..\..\..\engine\src\platform-win\input.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\locale.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\location.win.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\log.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\mutex.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\opengl.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\orientation.win.cpp" />
@@ -164,7 +166,6 @@
     <ClCompile Include="..\..\..\src\scene2d\button.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\element.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\element2d.cpp" />
-    <ClCompile Include="..\..\..\src\scene2d\element3d.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\font.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\fullscreenelement.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\imageview.cpp" />

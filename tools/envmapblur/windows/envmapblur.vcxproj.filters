@@ -40,9 +40,6 @@
     <ClCompile Include="..\..\..\src\scene2d\element2d.cpp">
       <Filter>engine-ext</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\scene2d\element3d.cpp">
-      <Filter>engine-ext</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\font.cpp">
       <Filter>engine-ext</Filter>
     </ClCompile>
@@ -158,9 +155,6 @@
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\core\dictionary.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\core\log.cpp">
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\core\objectscache.cpp">
@@ -314,6 +308,15 @@
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\vertexdeclaration.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\log.win.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\app\pathresolver.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\imaging\jpegloader.cpp">
       <Filter>engine</Filter>
     </ClCompile>
   </ItemGroup>

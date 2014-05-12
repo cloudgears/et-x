@@ -35,6 +35,7 @@ namespace emb
 		{
 			et::Program::Pointer gaussianBlur;
 			et::Program::Pointer preview;
+			et::Program::Pointer cubemap;
 		} programs;
 
 	private:
@@ -53,9 +54,11 @@ namespace emb
 		ResourceManager _rm;
 		MainUI::Pointer _mainUi;
 		
+		std::string _fileToSave;
 		size_t _processingSample = 0;
 		
 		bool _shouldProcessPass1 = false;
 		bool _shouldProcessPass2 = false;
+		bool _shouldSaveToFile = false;
 	};
 }
