@@ -215,6 +215,7 @@ SceneProgram Element2d::initProgram(SceneRenderer& r)
 {
 	if (_defaultProgram.invalid())
 		setDefaultProgram(r.defaultProgram());
+	
 	return _defaultProgram;
 }
 

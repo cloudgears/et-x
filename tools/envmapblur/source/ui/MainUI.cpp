@@ -62,6 +62,7 @@ MainUI::MainUI(ResourceManager& rm)
 	
 	auto lab = rm.label("5.00º", _sliderAngle.ptr());
 	lab->setAutolayoutRelativeToParent(vec2(0.5f, 1.0f), vec2(0.0f), vec2(0.5f, 0.0f));
+	lab->setAutolayoutMask(s2d::LayoutMask_NoSize);
 	
 	_sliderExposure = s2d::Slider::Pointer::create(this);
 	_sliderExposure->setAutolayoutRelativeToParent(vec2(0.75f, 1.0f), vec2(0.5f, 0.05f), vec2(0.5f, 1.0f));
@@ -76,6 +77,7 @@ MainUI::MainUI(ResourceManager& rm)
 	
 	lab = rm.label("1.00", _sliderExposure.ptr());
 	lab->setAutolayoutRelativeToParent(vec2(0.5f, 0.0f), vec2(0.0f), vec2(0.5f, 1.0f));
+	lab->setAutolayoutMask(s2d::LayoutMask_NoSize);
 }
 
 void MainUI::setImages(const et::s2d::Image& original, const et::s2d::Image& processed)

@@ -20,7 +20,6 @@ void ResourceManager::load(et::RenderContext* rc)
 et::s2d::Label::Pointer ResourceManager::label(const std::string& text, et::s2d::Element2d* parent)
 {
 	auto result = s2d::Label::Pointer::create(text, fonts.mainFont, parent);
-	result->setColor(vec4(1.0f));
 	return result;
 }
 

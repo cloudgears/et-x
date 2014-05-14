@@ -67,7 +67,7 @@ void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_imageVertices, _background.texture, program(), this);
 	
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _font->texture(), program(), this);
+		r.addVertices(_textVertices, _font->texture(), r.defaultTextProgram(), this);
 }
 
 void TextField::buildVertices(RenderContext*, SceneRenderer&)

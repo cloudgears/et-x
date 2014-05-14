@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A53981FD18A3061F0063E8E0 /* hdrloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53981FC18A3061F0063E8E0 /* hdrloader.cpp */; };
+		A5704F4A1922CD9D00B1F2F5 /* charactergenerator.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5704F491922CD9D00B1F2F5 /* charactergenerator.mac.mm */; };
 		A5896BE718A0279A00962607 /* json.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BC518A0279A00962607 /* json.cpp */; };
-		A5896BEB18A0279A00962607 /* charactergenerator.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5896BCC18A0279A00962607 /* charactergenerator.mac.mm */; };
 		A5896BED18A0279A00962607 /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD018A0279A00962607 /* button.cpp */; };
 		A5896BEF18A0279A00962607 /* element.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD218A0279A00962607 /* element.cpp */; };
 		A5896BF018A0279A00962607 /* element2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD318A0279A00962607 /* element2d.cpp */; };
@@ -131,6 +131,7 @@
 /* Begin PBXFileReference section */
 		A53981FB18A306070063E8E0 /* hdrloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdrloader.h; sourceTree = "<group>"; };
 		A53981FC18A3061F0063E8E0 /* hdrloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hdrloader.cpp; sourceTree = "<group>"; };
+		A5704F491922CD9D00B1F2F5 /* charactergenerator.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = charactergenerator.mac.mm; sourceTree = "<group>"; };
 		A5896BA118A0279A00962607 /* json.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = json.h; sourceTree = "<group>"; };
 		A5896BA318A0279A00962607 /* baseclasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseclasses.h; sourceTree = "<group>"; };
 		A5896BA418A0279A00962607 /* baseconst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseconst.h; sourceTree = "<group>"; };
@@ -158,7 +159,6 @@
 		A5896BBC18A0279A00962607 /* textureatlaswriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = textureatlaswriter.h; sourceTree = "<group>"; };
 		A5896BBD18A0279A00962607 /* vertexbuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexbuilder.h; sourceTree = "<group>"; };
 		A5896BC518A0279A00962607 /* json.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = json.cpp; sourceTree = "<group>"; };
-		A5896BCC18A0279A00962607 /* charactergenerator.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = charactergenerator.mac.mm; sourceTree = "<group>"; };
 		A5896BD018A0279A00962607 /* button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = button.cpp; sourceTree = "<group>"; };
 		A5896BD218A0279A00962607 /* element.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = element.cpp; sourceTree = "<group>"; };
 		A5896BD318A0279A00962607 /* element2d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = element2d.cpp; sourceTree = "<group>"; };
@@ -487,7 +487,7 @@
 		A5896BCB18A0279A00962607 /* platform-mac */ = {
 			isa = PBXGroup;
 			children = (
-				A5896BCC18A0279A00962607 /* charactergenerator.mac.mm */,
+				A5704F491922CD9D00B1F2F5 /* charactergenerator.mac.mm */,
 			);
 			path = "platform-mac";
 			sourceTree = "<group>";
@@ -1153,6 +1153,7 @@
 				A5F094EC18A00AF70017B239 /* criticalsection.unix.cpp in Sources */,
 				A5896BF018A0279A00962607 /* element2d.cpp in Sources */,
 				A5F094FC18A00AF70017B239 /* vertexarray.cpp in Sources */,
+				A5704F4A1922CD9D00B1F2F5 /* charactergenerator.mac.mm in Sources */,
 				A5896BF418A0279A00962607 /* imageview.cpp in Sources */,
 				A5F094EA18A00AF70017B239 /* sound.openal.mac.mm in Sources */,
 				A5F094D218A00AF70017B239 /* plist.cpp in Sources */,
@@ -1221,7 +1222,6 @@
 				A5F0940A18A00A440017B239 /* main.cpp in Sources */,
 				A5896BFB18A0279A00962607 /* scenerenderer.cpp in Sources */,
 				A5896BFA18A0279A00962607 /* scene.cpp in Sources */,
-				A5896BEB18A0279A00962607 /* charactergenerator.mac.mm in Sources */,
 				A5B0DD5E18D3558B0006C9FA /* jpegloader.cpp in Sources */,
 				A5F094BF18A00AF70017B239 /* programfactory.cpp in Sources */,
 				A5896BF918A0279A00962607 /* renderingelement.cpp in Sources */,

@@ -55,13 +55,16 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	fOut.flush();
 	fOut.close();
 	
-	BinaryDataStorage imageData(4 * texture()->size().square());
-	
 #if (ET_PLATFORM_MAC || ET_PLATFORM_WIN)
 	
+	BinaryDataStorage imageData(texture()->size().square());
+	
 	rc->renderState().bindTexture(0, texture());
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data());
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE, imageData.data());
 	checkOpenGLError("glGetTexImage");
+	
+	ImageWriter::writeImageToFile(getFilePath(fileName) + textureFile, imageData,
+		texture()->size(), 1, 8, ImageFormat_PNG, true);
 	
 #elif (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
 	
@@ -75,6 +78,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	rc->renderState().setBlend(false, BlendState_Current);
 	rc->renderer()->renderFullscreenTexture(texture());
 	
+	BinaryDataStorage imageData(4 * texture()->size().square());
 	glReadPixels(0, 0, fbo->size().x, fbo->size().y, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data());
 	checkOpenGLError("glReadPixels");
 	
@@ -83,11 +87,19 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	
 	fbo.reset(nullptr);
 	
-#endif
+	auto ptr = imageData.begin();
+	auto off = imageData.begin();
+	auto end = imageData.end();
+	while (off != end)
+	{
+		*ptr++ = *off;
+		off += 4;
+	}
 	
 	ImageWriter::writeImageToFile(getFilePath(fileName) + textureFile, imageData,
-		texture()->size(), 4, 8, ImageFormat_PNG, true);
+		texture()->size(), 1, 8, ImageFormat_PNG, true);
 	
+#endif
 }
 
 void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
@@ -102,8 +114,8 @@ void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	int version = deserializeInt(fontFile.stream());
 	ET_ASSERT(version >= FONT_VERSION_2)
 	
-	std::string face = deserializeString(fontFile.stream());
-	deserializeInt(fontFile.stream()); // -> size
+	deserializeString(fontFile.stream());
+	deserializeInt(fontFile.stream());
 	
 	std::string textureFile = deserializeString(fontFile.stream());
 	std::string layoutFile = deserializeString(fontFile.stream());

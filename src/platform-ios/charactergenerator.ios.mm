@@ -32,15 +32,15 @@ class et::s2d::CharacterGeneratorPrivate
         UIFont* _font;
         UIFont* _boldFont;
         CGContextRef _context;
-		CGColorSpaceRef _colorSpace;
+		CGColorRef whiteColor;
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face,
 	const std::string& boldFace, size_t size, size_t texSize) : _rc(rc),
 	_private(new CharacterGeneratorPrivate(face, boldFace, size, texSize)), _face(face), _size(size)
 {
-	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(static_cast<int>(texSize)),
-		GL_RGBA, GL_UNSIGNED_BYTE, BinaryDataStorage(4 * sqr(texSize), 0), face + "font");
+	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RED, vec2i(static_cast<int>(texSize)),
+		GL_RED, GL_UNSIGNED_BYTE, BinaryDataStorage(sqr(texSize), 0), face + "font");
 }
 
 CharacterGenerator::~CharacterGenerator()
@@ -63,7 +63,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 	{
 		rect textureRect;
 		
-		BinaryDataStorage data(charSize.square() * 4, 0);
+		BinaryDataStorage data(charSize.square(), 0);
 		
 		_private->_placer.place(charSize + vec2i(2), textureRect);
 		
@@ -101,7 +101,7 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 	{
 		rect textureRect;
 		
-		BinaryDataStorage data(charSize.square() * 4, 0);
+		BinaryDataStorage data(charSize.square(), 0);
 		_private->_placer.place(charSize + vec2i(2), textureRect);
 		_private->renderCharacter(wString, charSize, true, data);
 		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
@@ -168,6 +168,9 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 	}
 	ET_ASSERT(_boldFont);
 	
+	whiteColor = [[UIColor whiteColor] CGColor];
+	CGColorRetain(whiteColor);
+	
 #if (!ET_OBJC_ARC_ENABLED)
 	[_font retain];
 	[_boldFont retain];
@@ -180,6 +183,8 @@ CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
     [_font release];
 	[_boldFont release];
 #endif
+	
+	CGColorRelease(whiteColor);
 }
 
 void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position,
@@ -192,31 +197,24 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& po
 void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& size,
 	bool bold, BinaryDataStorage& data)
 {
-	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+	CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
 	ET_ASSERT(colorSpace);
 	
 	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8,
-		4 * size.x, colorSpace, kCGImageAlphaPremultipliedLast, 0, 0);
+		size.x, colorSpace, kCGImageAlphaNone, 0, 0);
 	ET_ASSERT(context);
 	
 	CGContextSetTextDrawingMode(context, kCGTextFill);
-	CGContextSetFillColorWithColor(context, [[UIColor whiteColor] CGColor]);
+	CGContextSetFillColorWithColor(context, whiteColor);
 	CGContextSetShouldAntialias(context, YES);
 	CGContextSetShouldSmoothFonts(context, YES);
 	CGContextSetShouldSubpixelPositionFonts(context, YES);
 	CGContextSetShouldSubpixelQuantizeFonts(context, NO);
 	UIGraphicsPushContext(context);
-	
-	[value drawAtPoint:CGPointZero withFont:(bold ? _boldFont : _font)];
+
+	[value drawAtPoint:CGPointZero withFont:(bold ? _boldFont : _font) ];
 	
 	UIGraphicsPopContext();
 	CGContextRelease(context);
 	CGColorSpaceRelease(colorSpace);
-
-	unsigned int* ptr = reinterpret_cast<unsigned int*>(data.data());
-	unsigned int* endPtr = ptr + data.dataSize() / 4;
-	while (ptr != endPtr)
-	{
-		*ptr++ |= 0x00FFFFFF;
-	}
 }

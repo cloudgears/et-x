@@ -282,5 +282,6 @@ std::string et_scene2d_default_text_shader_fs =
 	"etFragmentIn etLowp vec4 additiveColor;"
 	"void main()"
 	"{"
-	"	etFragmentOut = etTexture2D(inputTexture, texCoord) * tintColor + additiveColor;"
+	"	etFragmentOut = tintColor + additiveColor;"
+	"	etFragmentOut.w *= etTexture2D(inputTexture, texCoord).x;"
 	"}";
