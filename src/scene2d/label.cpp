@@ -30,6 +30,8 @@ Label::Label(const std::string& text, Font::Pointer font, Element2d* parent, con
 
 void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
+	initProgram(r);
+	
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 
