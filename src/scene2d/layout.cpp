@@ -434,6 +434,20 @@ vec2 Layout::contentSize()
 	return vec2(0.0f);
 }
 
+void Layout::cancelInteractions()
+{
+	cancelInteractionsInElement(this, PointerInputInfo());
+}
+
+void Layout::cancelInteractionsInElement(Element* e, const PointerInputInfo& info)
+{
+	e->pointerCancelled(info);
+	
+	for (auto c : e->children())
+		cancelInteractionsInElement(c.ptr(), info);
+}
+
+
 /*
  *
  * Modal Layout

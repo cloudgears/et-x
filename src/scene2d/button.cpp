@@ -215,12 +215,8 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 
 bool Button::pointerCancelled(const PointerInputInfo& p)
 {
-	if ((p.type != PointerType_General) || !_pressed) return false;
-	
 	_pressed = false;
-	State newState = _selected ? State_Selected : State_Default;
-	
-	setCurrentState(newState);
+	setCurrentState(_selected ? State_Selected : State_Default);
 	cancelled.invoke(this);
 	return true;
 }

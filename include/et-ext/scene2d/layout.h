@@ -26,7 +26,9 @@ namespace et
 				{ return _valid; }
 			
 			void update(float);
+			
 			void cancelDragging(float returnDuration = 0.0f);
+			void cancelInteractions();
 
 			void setActiveElement(Element::Pointer e);
 			
@@ -41,9 +43,10 @@ namespace et
 			
 			const std::function<float(float)>& positionInterpolationFunction() const
 				{ return _positionInterpolationFunction; }
+			
 						
 		public:
-			virtual void activeElementChanged(s2d::Element*) { }
+			virtual void activeElementChanged(Element*) { }
 			
 		protected:
 			friend class Scene;
@@ -51,15 +54,17 @@ namespace et
 			RenderingElement::Pointer renderingElement()
 				{ return _renderingElement; }
 			
-			void initRenderingElement(et::RenderContext* rc);
+			void initRenderingElement(RenderContext* rc);
 			
-			bool pointerPressed(const et::PointerInputInfo&) override;
-			bool pointerMoved(const et::PointerInputInfo&) override;
-			bool pointerReleased(const et::PointerInputInfo&) override;
-			bool pointerCancelled(const et::PointerInputInfo&) override;
-			bool pointerScrolled(const et::PointerInputInfo&) override;
+			bool pointerPressed(const PointerInputInfo&) override;
+			bool pointerMoved(const PointerInputInfo&) override;
+			bool pointerReleased(const PointerInputInfo&) override;
+			bool pointerCancelled(const PointerInputInfo&) override;
+			bool pointerScrolled(const PointerInputInfo&) override;
 			
-			bool elementIsBeingDragged(s2d::Element*);
+			bool elementIsBeingDragged(Element*);
+			
+			void cancelInteractionsInElement(Element*, const PointerInputInfo&);
 			
 		private:
 			Layout* owner()
@@ -103,10 +108,10 @@ namespace et
 			ImageView::Pointer backgroundFade()
 				{ return _backgroundFade; }
 
-			bool pointerPressed(const et::PointerInputInfo&);
-			bool pointerMoved(const et::PointerInputInfo&);
-			bool pointerReleased(const et::PointerInputInfo&);
-			bool pointerScrolled(const et::PointerInputInfo&);
+			bool pointerPressed(const PointerInputInfo&);
+			bool pointerMoved(const PointerInputInfo&);
+			bool pointerReleased(const PointerInputInfo&);
+			bool pointerScrolled(const PointerInputInfo&);
 			
 		private:
 			ImageView::Pointer _backgroundFade;

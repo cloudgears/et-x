@@ -242,11 +242,12 @@ void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor
 
 	layoutWillDisappear.invoke(oldLayout);
 	
-	oldLayout->willDisappear();
-
 	if (oldLayout->hasFlag(Flag_RequiresKeyboard))
 		onKeyboardResigned(oldLayout.ptr());
 
+	oldLayout->cancelInteractions();
+	oldLayout->willDisappear();
+	
 	oldLayout->layoutDoesntNeedKeyboard.disconnect(this);
 	oldLayout->layoutRequiresKeyboard.disconnect(this);
 
