@@ -213,9 +213,10 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 	return true;
 }
 
-bool Button::pointerCancelled(const PointerInputInfo& p)
+bool Button::pointerCancelled(const PointerInputInfo&)
 {
 	_pressed = false;
+	
 	setCurrentState(_selected ? State_Selected : State_Default);
 	cancelled.invoke(this);
 	return true;
