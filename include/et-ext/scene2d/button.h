@@ -123,6 +123,8 @@ namespace et
 			
 			void setHorizontalAlignment(Alignment);
 			void setVerticalAlignment(Alignment);
+			
+			void processMessage(const Message&) override;
 
 		protected:
 			void performClick();
