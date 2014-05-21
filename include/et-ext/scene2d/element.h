@@ -150,6 +150,9 @@ namespace et
 				{ return static_cast<T*>(baseChildWithName(name, recursive)); }
 			
 			void removeAllChildren();
+			
+			virtual Layout* owner()
+				{ return parent() ? parent()->owner() : nullptr; }
 
 			/*
 			 * Required Methods
@@ -211,9 +214,6 @@ namespace et
 
 			virtual mat4 parentFinalTransform()
 				{ return parent() ? parent()->finalTransform() : identityMatrix; }
-
-			virtual Layout* owner()
-				{ return parent() ? parent()->owner() : 0; }
 
 			void startUpdates();
 			TimerPool::Pointer timerPool();
