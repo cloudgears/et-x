@@ -81,17 +81,17 @@ namespace et
 
 			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, AnimatedPropery)
 
+			virtual void setDefaultProgram(const SceneProgram&);
+			
+			virtual SceneProgram program() const
+				{ return _defaultProgram; }
+			
 		protected:
 			void initAnimators();
 			void buildFinalTransform();
 			
-			SceneProgram program()
-				{ return _defaultProgram; }
-			
 			SceneProgram initProgram(SceneRenderer&);
 			
-			virtual void setDefaultProgram(const SceneProgram&);
-		
 		private:
 			Vector2Animator _positionAnimator;
 			Vector2Animator _sizeAnimator;
