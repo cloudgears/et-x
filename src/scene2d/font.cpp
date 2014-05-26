@@ -195,7 +195,8 @@ CharDescriptorList Font::buildString(const std::string& s, bool formatted)
 		return parseString(s);
 
 	CharDescriptorList result;
-	ET_ITERATE(s, auto, i, result.push_back(charDescription(i)));
+	for (const auto& i : s)
+		result.push_back(charDescription(i));
 	return result;
 }
 
@@ -205,7 +206,8 @@ CharDescriptorList Font::buildString(const std::wstring& s, bool formatted)
 		return parseString(s);
 
 	CharDescriptorList result;
-	ET_ITERATE(s, auto, i, result.push_back(charDescription(i)));
+	for (const auto& i : s)
+		result.push_back(charDescription(i));
 	return result;
 }
 
