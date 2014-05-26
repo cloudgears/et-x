@@ -53,6 +53,7 @@ namespace et
 			virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) { }
 			
 			virtual SceneProgram initProgram(SceneRenderer&);
+			virtual void setDefaultProgram(et::Program::Pointer&) { }
 			virtual void setProgramParameters(et::Program::Pointer&) { }
 
 			virtual bool pointerPressed(const PointerInputInfo&)
@@ -150,11 +151,14 @@ namespace et
 				{ return static_cast<T*>(baseChildWithName(name, recursive)); }
 			
 			void removeAllChildren();
+			
+			virtual Layout* owner()
+				{ return parent() ? parent()->owner() : nullptr; }
 
 			/*
 			 * Required Methods
 			 */
-			virtual SceneProgram program() = 0;
+			virtual SceneProgram program() const = 0;
 			
 			virtual vec2 origin() const = 0;
 			
@@ -211,9 +215,6 @@ namespace et
 
 			virtual mat4 parentFinalTransform()
 				{ return parent() ? parent()->finalTransform() : identityMatrix; }
-
-			virtual Layout* owner()
-				{ return parent() ? parent()->owner() : 0; }
 
 			void startUpdates();
 			TimerPool::Pointer timerPool();

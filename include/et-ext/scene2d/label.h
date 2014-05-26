@@ -50,6 +50,8 @@ namespace et
 			vec2 contentSize();
 			
 			void setLineInterval(float);
+			
+			void processMessage(const Message&) override;
 
 		private:
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);

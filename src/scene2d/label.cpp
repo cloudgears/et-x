@@ -337,3 +337,9 @@ void Label::setLineInterval(float i)
 	_lineInterval = i;
 	invalidateContent();
 }
+
+void Label::processMessage(const Message& msg)
+{
+	if (msg.type == Message::Type_SetText)
+		setText(msg.text, msg.duration);
+}

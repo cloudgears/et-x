@@ -451,3 +451,9 @@ const vec4& Button::pressedColor() const
 {
 	return _pressedColor;
 }
+
+void Button::processMessage(const Message& msg)
+{
+	if (msg.type == Message::Type_SetText)
+		setTitle(msg.text);
+}

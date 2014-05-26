@@ -149,11 +149,13 @@ namespace et
 				Type_None,
 				Type_TextInput,
 				Type_TextFieldControl,
+				Type_SetText,
 			};
 
-			size_t type;
-			size_t param;
+			size_t type = 0;
+			size_t param = 0;
 			std::string text;
+			float duration = 0.0f;
 
 			Message(size_t aType, size_t aParam) :
 				type(aType), param(aParam) { }
