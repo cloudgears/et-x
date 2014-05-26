@@ -70,16 +70,17 @@ namespace et
 			bool capturePointer() const;
 
 			const std::string& title() const 
-				{ return _title; }
+				{ return _nextTitle; }
 
-			void setTitle(const std::string& t);
+			void setTitle(const std::string&, float duration = 0.0f);
 
 			const Image& imageForState(State s) const
 				{ return _image[s]; }
 			
 			void setImageLayout(ImageLayout l);
 
-			const vec2& textSize();
+			const vec2& textSize() const
+				{ return _maxTextSize; }
 
 			void setTextColor(const vec4& color);
 			const vec4& textColor() const;
@@ -137,10 +138,16 @@ namespace et
 
 		private:
 			Font::Pointer _font;
-			std::string _title;
+			
+			std::string _currentTitle;
+			std::string _nextTitle;
+			
 			SceneVertexList _bgVertices;
 			SceneVertexList _textVertices;
 			SceneVertexList _imageVertices;
+			
+			CharDescriptorList _currentTitleCharacters;
+			CharDescriptorList _nextTitleCharacters;
 			
 			Image _commonBackground;
 			StaticDataStorage<Image, State_max> _background;
@@ -152,9 +159,12 @@ namespace et
 			vec4 _backgroundColor;
 			vec4 _backgroundTintColor;
 			vec4 _commonBackgroundTintColor;
-			vec2 _textSize;
+			vec2 _currentTextSize;
+			vec2 _nextTextSize;
+			vec2 _maxTextSize;
 			vec2 _contentOffset;
 			
+			FloatAnimator _titleAnimator;
 			Vector4Animator _backgroundTintAnimator;
 			Vector4Animator _commonBackgroundTintAnimator;
 
@@ -165,10 +175,12 @@ namespace et
 			Alignment _horizontalAlignment;
 			Alignment _verticalAlignment;
 			
-			bool _pressed;
-			bool _hovered;
-			bool _selected;
-			bool _adjustPressedBackground;
+			float _titleTransition = 0.0f;
+			
+			bool _pressed = false;
+			bool _hovered = false;
+			bool _selected = false;
+			bool _adjustPressedBackground = false;
 		};
 	}
 }

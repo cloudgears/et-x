@@ -108,8 +108,6 @@ void Label::setText(const std::string& text, float duration)
 		_text = text;
 		_nextText = text;
 		_charListText = _font->buildString(_text, _allowFormatting);
-		
-		adjustSize();
 	}
 	else 
 	{
@@ -129,10 +127,9 @@ void Label::setText(const std::string& text, float duration)
 		_animatingText = true;
 		_textFadeStartTime = actualTime();
 		_textFadeDuration = duration;
-		
-		adjustSize();
 	}
 
+	adjustSize();
 	invalidateContent();
 }
 

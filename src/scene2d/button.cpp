@@ -14,19 +14,37 @@ using namespace et::s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Button)
 
 Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _title(title), _font(font),
-	_textSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f),
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _currentTitle(title), _font(font),
+	_currentTextSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f),
 	_pressedColor(0.5f, 0.5f, 0.5f, 1.0f), _backgroundTintColor(1.0f), _commonBackgroundTintColor(1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _backgroundTintAnimator(timerPool()),
-	_commonBackgroundTintAnimator(timerPool()), _type(Button::Type_PushButton),
+	_commonBackgroundTintAnimator(timerPool()), _titleAnimator(timerPool()), _type(Button::Type_PushButton),
 	_state(State_Default), _imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit),
-	_horizontalAlignment(Alignment_Center), _verticalAlignment(Alignment_Center), _pressed(false),
-	_hovered(false), _selected(false)
+	_horizontalAlignment(Alignment_Center), _verticalAlignment(Alignment_Center)
 {
+	_nextTitle = _currentTitle;
+	_maxTextSize = _currentTextSize;
+	_currentTitleCharacters = _font->buildString(_currentTitle);
+	
 	setSize(sizeForText(title));
 	
 	_backgroundTintAnimator.updated.connect<s2d::Button>(this, &Button::invalidateContent);
 	_commonBackgroundTintAnimator.updated.connect<s2d::Button>(this, &Button::invalidateContent);
+	
+	_titleAnimator.updated.connect<Button>(this, &Button::invalidateContent);
+	
+	_titleAnimator.finished.connect([this]()
+	{
+		_currentTitle = _nextTitle;
+		_currentTextSize = _nextTextSize;
+		_currentTitleCharacters = _nextTitleCharacters;
+		
+		_maxTextSize = _currentTextSize;
+		_titleTransition = 0.0f;
+		
+		_nextTextSize = vec2(0.0f);
+		_nextTitleCharacters.clear();
+	});
 }
 
 void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
@@ -79,8 +97,8 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 		ET_FAIL("Uknown content mode");
 	}
 	
-	float contentGap = (imageSize.x > 0.0f) && (_textSize.x > 0.0f) ? 5.0f : 0.0f;
-	vec2 contentSize = imageSize + _textSize + vec2(contentGap);
+	float contentGap = (imageSize.x > 0.0f) && ((_currentTextSize.x > 0.0f) || (_nextTextSize.x > 0.0f)) ? 5.0f : 0.0f;
+	vec2 contentSize = imageSize + _maxTextSize + vec2(contentGap);
 
 	vec2 imageOrigin;
 	vec2 textOrigin;
@@ -88,24 +106,24 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	if (_imageLayout == ImageLayout_Right)
 	{
 		textOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
-			(frameSize - vec2(contentSize.x, _textSize.y));
-		
-		imageOrigin.x = textOrigin.x + contentGap + _textSize.x;
+			(frameSize - vec2(contentSize.x, _maxTextSize.y));
+				
+		imageOrigin.x = textOrigin.x + contentGap + _maxTextSize.x;
 		imageOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - imageSize.y);
 	}
 	else if (_imageLayout == ImageLayout_Top)
 	{
 		imageOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
-		(frameSize - vec2(imageSize.x, contentSize.y));
-		textOrigin.x = alignmentFactor(_horizontalAlignment) * (frameSize.x - _textSize.x);
+			(frameSize - vec2(imageSize.x, contentSize.y));
+		textOrigin.x = alignmentFactor(_horizontalAlignment) * (frameSize.x - _maxTextSize.x);
 		textOrigin.y = imageOrigin.y + contentGap + imageSize.y;
 	}
 	else if (_imageLayout == ImageLayout_Bottom)
 	{
 		textOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
-			(frameSize - vec2(_textSize.x, contentSize.y));
+			(frameSize - vec2(_maxTextSize.x, contentSize.y));
 		imageOrigin.x = alignmentFactor(_horizontalAlignment) * (frameSize.x - imageSize.x);
-		imageOrigin.y = textOrigin.y + contentGap + _textSize.y;
+		imageOrigin.y = textOrigin.y + contentGap + _maxTextSize.y;
 	}
 	else
 	{
@@ -113,7 +131,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 			(frameSize - vec2(contentSize.x, imageSize.y));
 		
 		textOrigin.x = imageOrigin.x + contentGap + imageSize.x;
-		textOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - _textSize.y);
+		textOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - _maxTextSize.y);
 	}
 	
 	vec4 alphaScale = vec4(1.0f, 1.0f, 1.0f, alpha());
@@ -140,13 +158,23 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 			rect(vec2(0.0f), size()), _backgroundTintColor * backgroundScale * color(), transform);
 	}
 
-	if (_title.size() > 0)
+	vec4 currentTextColor = (_state == State_Pressed) ? _textPressedColor : _textColor;
+	if (currentTextColor.w > 0.0f)
 	{
-		vec4 aColor = _state == State_Pressed ? _textPressedColor : _textColor;
-		if (aColor.w > 0.0f)
+		vec4 currentAlphaScale = alphaScale;
+		
+		currentAlphaScale.w = alphaScale.w * (1.0f - _titleTransition);
+		if (!_currentTitleCharacters.empty())
 		{
-			buildStringVertices(_textVertices, _font->buildString(_title), Alignment_Near,
-				Alignment_Near, textOrigin, aColor * alphaScale, transform);
+			buildStringVertices(_textVertices, _currentTitleCharacters, Alignment_Center,
+				Alignment_Center, textOrigin + 0.5f * _currentTextSize, currentTextColor * currentAlphaScale, transform);
+		}
+		
+		currentAlphaScale.w = alphaScale.w * _titleTransition;
+		if (!_nextTitleCharacters.empty())
+		{
+			buildStringVertices(_textVertices, _nextTitleCharacters, Alignment_Center,
+				Alignment_Center, textOrigin + 0.5f * _nextTextSize, currentTextColor * currentAlphaScale, transform);
 		}
 	}
 
@@ -259,17 +287,21 @@ void Button::performClick()
 	clicked.invoke(this);
 }
 
-const vec2& Button::textSize()
+void Button::setTitle(const std::string& t, float duration)
 {
-	return _textSize; 
-}
-
-void Button::setTitle(const std::string& t)
-{
-	if (_title == t) return;
-
-	_title = t;
-	_textSize = _font->measureStringSize(_title);
+	_nextTitle = t;
+	_nextTitleCharacters = _font->buildString(_nextTitle);
+	_nextTextSize = _font->measureStringSize(_nextTitle);
+	
+	_maxTextSize = maxv(_currentTextSize, _nextTextSize);
+	
+	_titleAnimator.cancelUpdates();
+	
+	if (duration == 0.0f)
+		_titleAnimator.finished.invoke();
+	else
+		_titleAnimator.animate(&_titleTransition, 0.0f, 1.0f, duration);
+		
 	invalidateContent();
 }
 
@@ -297,7 +329,7 @@ const vec4& Button::textPressedColor() const
 
 void Button::adjustSize(float duration)
 {
-	adjustSizeForText(_title, duration);
+	adjustSizeForText(_currentTitle, duration);
 }
 
 void Button::adjustSizeForText(const std::string& text, float duration)
@@ -420,7 +452,7 @@ void Button::setContentMode(ContentMode m)
 
 vec2 Button::contentSize()
 {
-	return sizeForText(_title);
+	return maxv(sizeForText(_currentTitle), sizeForText(_nextTitle));
 }
 
 void Button::setShouldAdjustPressedBackground(bool b)
@@ -455,5 +487,5 @@ const vec4& Button::pressedColor() const
 void Button::processMessage(const Message& msg)
 {
 	if (msg.type == Message::Type_SetText)
-		setTitle(msg.text);
+		setTitle(msg.text, msg.duration);
 }
