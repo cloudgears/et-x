@@ -81,7 +81,7 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	_textVertices.setOffset(0);
 	
 	if (_backgroundColor.w > 0.0f)
-		buildColorVertices(_backgroundVertices, wholeRect, _backgroundColor, transform);
+		buildColorVertices(_backgroundVertices, wholeRect, _backgroundColor * alphaVector, transform);
 	
 	if (_background.texture.valid())
 	{
@@ -118,7 +118,7 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_caretVisible)
 	{
-		buildColorVertices(_textVertices, rect(textOrigin.x + textSize.x - widthAdjustment,
+		buildColorVertices(_backgroundVertices, rect(textOrigin.x + textSize.x - widthAdjustment,
 			0.5f * (wholeRect.height - caretSize.y), caretSize.x, caretSize.y), color() * alphaVector, transform);
 	}
 	
