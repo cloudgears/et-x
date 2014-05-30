@@ -187,11 +187,11 @@ void CharacterGeneratorPrivate::renderCharacter(int value, bool bold, const vec2
 	GetDIBits(dc, bitmap, 0, size.y, data.binary(), &bitmapInfo, DIB_RGB_COLORS);
 
 	unsigned int* ptr = reinterpret_cast<unsigned int*>(data.data());
-	unsigned int* ptrEnd = reinterpret_cast<unsigned int*>(data.data() + data.dataSize());
+	uint32_t* ptrEnd = reinterpret_cast<unsigned int*>(data.data() + data.dataSize());
 	while (ptr != ptrEnd)
 	{
-		unsigned int& value = *ptr++;
-		value |= 0x00ffffff | ((((value & 0x000000ff) + ((value & 0x0000ff00) >> 8) + ((value & 0x00ff0000) >> 16)) / 3) << 24);
+		uint32_t& value = *ptr++;
+		value = (((value & 0x000000ff) + ((value & 0x0000ff00) >> 8) + ((value & 0x00ff0000) >> 16)) / 3);
 	}
 
 	DeleteObject(bitmap);
