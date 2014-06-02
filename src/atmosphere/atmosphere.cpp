@@ -244,25 +244,25 @@ void Atmosphere::setShouldComputeScatteringOnPlanet(bool c)
 #endif
 
 #define ATMOSPHERE_UNIFORMS \
-	uniform mat4 mModelViewProjection; \
-	uniform vec3 vCamera; \
-	uniform vec3 vPrimaryLight; \
-	uniform vec3 vInvWavelength; \
-	uniform float fOuterRadius; \
-	uniform float fOuterRadius2; \
-	uniform float fInnerRadius; \
-	uniform float fInnerRadius2; \
-	uniform float fKrESun; \
-	uniform float fKmESun; \
-	uniform float fKr4PI; \
-	uniform float fKm4PI; \
-	uniform float g; \
-	uniform float g2; \
-	uniform float fScale; \
-	uniform float fScaleDepth; \
-	uniform float fScaleOverScaleDepth; \
-	uniform float fSamples; \
-	uniform int nSamples; \
+	uniform etHighp mat4 mModelViewProjection; \
+	uniform etHighp vec3 vCamera; \
+	uniform etHighp vec3 vPrimaryLight; \
+	uniform etHighp vec3 vInvWavelength; \
+	uniform etHighp float fOuterRadius; \
+	uniform etHighp float fOuterRadius2; \
+	uniform etHighp float fInnerRadius; \
+	uniform etHighp float fInnerRadius2; \
+	uniform etHighp float fKrESun; \
+	uniform etHighp float fKmESun; \
+	uniform etHighp float fKr4PI; \
+	uniform etHighp float fKm4PI; \
+	uniform etHighp float g; \
+	uniform etHighp float g2; \
+	uniform etHighp float fScale; \
+	uniform etHighp float fScaleDepth; \
+	uniform etHighp float fScaleOverScaleDepth; \
+	uniform etHighp float fSamples; \
+	uniform etHighp int nSamples; \
 
 #define SCALE_FUNCTION \
 	float scale(float fCos) \
@@ -358,24 +358,23 @@ const std::string atmospherePerVertexVS = ET_TO_CONST_CHAR
 
 const std::string atmospherePerVertexFS = ET_TO_CONST_CHAR
 (
- PRECISION_STRING
  ATMOSPHERE_UNIFORMS
  
- etFragmentIn vec3 vVertex;
- etFragmentIn vec3 vDirection;
- etFragmentIn vec3 aFrontColor;
- etFragmentIn vec3 aSecondaryColor;
+ etFragmentIn etHighp vec3 vVertex;
+ etFragmentIn etHighp vec3 vDirection;
+ etFragmentIn etHighp vec3 aFrontColor;
+ etFragmentIn etHighp vec3 aSecondaryColor;
  
  void main (void)
  {
-	 float fCos = dot(vPrimaryLight, vDirection / length(vDirection));
+	 etHighp float fCos = dot(vPrimaryLight, vDirection / length(vDirection));
 	 
-	 float onePlusfCos2 = 1.0 + fCos * fCos;
-	 float fRayleighPhase = 0.75 * onePlusfCos2;
+	 etHighp float onePlusfCos2 = 1.0 + fCos * fCos;
+	 etHighp float fRayleighPhase = 0.75 * onePlusfCos2;
 	 
-	 float fMieDenom = 1.0 + g2 - 2.0 * g * fCos;
-	 float fMiePhase = max(0.0, 1.5 * ((1.0 - g2) / (2.0 + g2)) * onePlusfCos2 / fMieDenom / sqrt(fMieDenom));
-	 vec3 aColor = fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor;
+	 etHighp float fMieDenom = 1.0 + g2 - 2.0 * g * fCos;
+	 etHighp float fMiePhase = max(0.0, 1.5 * ((1.0 - g2) / (2.0 + g2)) * onePlusfCos2 / fMieDenom / sqrt(fMieDenom));
+	 etHighp vec3 aColor = fRayleighPhase * aFrontColor + fMiePhase * aSecondaryColor;
 	 
 	 etFragmentOut = vec4(1.0 - exp(-aColor), 1.0);
  }
@@ -443,16 +442,13 @@ const std::string planetPerVertexSimpleVS = ET_TO_CONST_CHAR
 
 const std::string planetPerVertexFS = ET_TO_CONST_CHAR
 (
- PRECISION_STRING
-
- etFragmentIn vec3 aColor;
+ etFragmentIn etHighp vec3 aColor;
  
  void main (void)
  {
 	 etFragmentOut = vec4(1.0 - exp(-aColor), 1.0);
  }
  );
-
 
 /*
  * Constants
