@@ -16,6 +16,9 @@
 using namespace et;
 using namespace et::s2d;
 
+vec4 colorTagToColor(const std::wstring& colorTag);
+size_t findClosingTag(const std::wstring& s, size_t startPos);
+
 Font::Font(const CharacterGenerator::Pointer& generator) :
 	_generator(generator)
 {
@@ -195,8 +198,10 @@ CharDescriptorList Font::buildString(const std::string& s, bool formatted)
 		return parseString(s);
 
 	CharDescriptorList result;
+	
 	for (const auto& i : s)
 		result.push_back(charDescription(i));
+	
 	return result;
 }
 
@@ -213,195 +218,100 @@ CharDescriptorList Font::buildString(const std::wstring& s, bool formatted)
 
 CharDescriptorList Font::parseString(const std::string& s)
 {
-	CharDescriptorList result;
-	
-	const char tagOpening = '<';
-	const char tagClosing = '>';
-	const char tagClosingId = '/';
-	const std::string tagBold("b");
-	const std::string tagColor("color");
-	const std::string tagColorOpen("color=#");
-
-	std::deque<vec4> colors;
-	colors.push_front(vec4(1.0f));
-
-	int nBoldTags = 0;
-	int nColorTags = 0;
-	bool readingTag = false;
-	bool closingTag = false;
-	std::string tag;
-
-	for (auto& c : s)
-	{
-		if (c == tagOpening)
-		{
-			readingTag = true;
-			closingTag = false;
-			tag = std::string();
-		}
-		else if (c == tagClosing)
-		{
-			if (readingTag)
-			{
-				if (closingTag)
-				{
-					if (tag == tagBold)
-					{
-						if (nBoldTags)
-							--nBoldTags;
-					}
-					else if (tag.find_first_of(tagColor) == 0)
-					{
-						if (nColorTags)
-						{
-							--nColorTags;
-							colors.pop_front();
-						}
-					}
-					else 
-					{
-						log::warning("Unknown tag `%s` passed in string: %s", tag.c_str(), s.c_str());
-					}
-				}
-				else
-				{
-					if (tag == tagBold)
-					{
-						nBoldTags++;
-					}
-					else if (tag.find(tagColorOpen) == 0)
-					{
-						nColorTags++;
-						tag.erase(0, tagColorOpen.size());
-						colors.push_front(strHexToVec4(tag));
-					}
-					else
-					{
-						log::warning("Unknown tag `%s` passed in string: %s", tag.c_str(), s.c_str());
-					}
-				}
-				readingTag = false;
-				closingTag = false;
-			}
-		}
-		else 
-		{
-			if (readingTag)
-			{
-				if (c == tagClosingId)
-				{
-					closingTag = true;
-				}
-				else if (!isWhitespaceChar(c))
-				{
-					tag += c;
-				}
-			}
-			else
-			{
-				result.push_back(nBoldTags ? boldCharDescription(c) : charDescription(c));
-				result.back().color = colors.front();
-			}
-		}
-	}
-
-	return result;
+	std::wstring ws;
+	ws.assign(s.begin(), s.end());
+	return parseString(ws);
 }
 
 CharDescriptorList Font::parseString(const std::wstring& s)
 {
-	CharDescriptorList result;
+	if (s.empty())
+		return CharDescriptorList();
 	
-	const wchar_t tagOpening = L'<';
-	const wchar_t tagClosing = L'>';
-	const wchar_t tagClosingId = L'/';
-	const std::wstring tagBold(L"b");
-	const std::wstring tagColor(L"color");
-	const std::wstring tagColorOpen(L"color=#");
-
-	std::deque<vec4> colors;
-	colors.push_front(vec4(1.0f));
-
-	int nBoldTags = 0;
-	int nColorTags = 0;
-	bool readingTag = false;
-	bool closingTag = false;
-	std::wstring tag;
-
-	for (auto& c : s)
+	std::wstring outputString(s);
+	
+	CharDescriptorList result(s.size());
+	for (size_t i = 0; i < s.size(); ++i)
+		result[i] = CharDescriptor(s[i]);
+	
+	const std::wstring boldTag = L"<b";
+	const std::wstring boldClosingTag = L"</b";
+	const std::wstring colorTag = L"<color";
+	const std::wstring colorClosingTag = L"</color";
+		
+	size_t tagPos = std::string::npos;
+	while ((tagPos = outputString.find(boldTag)) != std::string::npos)
 	{
-		if (c == tagOpening)
+		auto tagStart = tagPos;
+		auto sI = outputString.begin() + tagStart;
+		auto rI = result.begin() + tagStart;
+		auto distance = findClosingTag(outputString, tagStart) - tagStart;
+		sI = outputString.erase(sI, sI + distance);
+		rI = result.erase(rI, rI + distance);
+		
+		tagStart = outputString.find(boldClosingTag);
+		if (tagStart == std::string::npos)
 		{
-			readingTag = true;
-			closingTag = false;
-			tag = std::wstring();
+			for (; rI != result.end(); ++rI)
+				rI->params |= CharParameter_Bold;
 		}
-		else if (c == tagClosing)
+		else
 		{
-			if (readingTag)
-			{
-				if (closingTag)
-				{
-					if (tag == tagBold)
-					{
-						if (nBoldTags)
-							--nBoldTags;
-					}
-					else if (tag.find_first_of(tagColor) == 0)
-					{
-						if (nColorTags)
-						{
-							--nColorTags;
-							colors.pop_front();
-						}
-					}
-					else 
-					{
-						log::warning("Unknown tag `%S` passed in string: %S", tag.c_str(), s.c_str());
-					}
-				}
-				else
-				{
-					if (tag == tagBold)
-					{
-						nBoldTags++;
-					}
-					else if (tag.find(tagColorOpen) == 0)
-					{
-						nColorTags++;
-						tag.erase(0, tagColorOpen.size());
-						colors.push_front(strHexToVec4(tag));
-					}
-					else
-					{
-						log::warning("Unknown tag `%S` passed in string: %S", tag.c_str(), s.c_str());
-					}
-				}
-				readingTag = false;
-				closingTag = false;
-			}
-		}
-		else 
-		{
-			if (readingTag)
-			{
-				if (c == tagClosingId)
-				{
-					closingTag = true;
-				}
-				else if (!isWhitespaceChar(c))
-				{
-					tag += c;
-				}
-			}
-			else
-			{
-				result.push_back(nBoldTags ? boldCharDescription(c) : charDescription(c));
-				result.back().color = colors.front();
-			}
+			auto sE = outputString.begin() + tagStart;
+			auto rE = result.begin() + tagStart;
+			 
+			for (; rI != rE; ++rI)
+				rI->params |= CharParameter_Bold;
+			
+			distance = findClosingTag(outputString, tagStart) - tagStart;
+			outputString.erase(sE, sE + distance);
+			result.erase(rE, rE + distance);
 		}
 	}
+	
+	tagPos = std::string::npos;
+	while ((tagPos = outputString.find(colorTag)) != std::string::npos)
+	{
+		auto tagStart = tagPos;
+		auto tagEnd = findClosingTag(outputString, tagStart);
+		auto sI = outputString.begin() + tagStart;
+		auto rI = result.begin() + tagStart;
+		auto distance = tagEnd - tagStart;
+		
+		auto posToCopy = tagStart + colorTag.length();
+		std::wstring colorTagString = outputString.substr(posToCopy, tagEnd - posToCopy - 1);
+		vec4 color = colorTagToColor(colorTagString);
+		
+		sI = outputString.erase(sI, sI + distance);
+		rI = result.erase(rI, rI + distance);
+		
+		tagStart = outputString.find(colorClosingTag);
+		if (tagStart == std::string::npos)
+		{
+			for (; rI != result.end(); ++rI)
+				rI->color = color;
+		}
+		else
+		{
+			auto sE = outputString.begin() + tagStart;
+			auto rE = result.begin() + tagStart;
 
+			for (; rI != rE; ++rI)
+				rI->color = color;
+			
+			distance = findClosingTag(outputString, tagStart) - tagStart;
+			outputString.erase(sE, sE + distance);
+			result.erase(rE, rE + distance);
+		}
+	}
+	
+	for (auto& cd : result)
+	{
+		vec4 originalColor = cd.color;
+		cd = (cd.params & CharParameter_Bold) ? boldCharDescription(cd.value) : charDescription(cd.value);
+		cd.color = originalColor;
+	}
+	
 	return result;
 }
 
@@ -414,4 +324,51 @@ bool Font::isUtf8String(const std::string& s) const
 	}
 	
 	return false;
+}
+
+/*
+ * Service
+ */
+size_t findClosingTag(const std::wstring& s, size_t startPos)
+{
+	static const wchar_t closingTag = L'>';
+	
+	auto result = s.size() - startPos - 1;
+	while (startPos < s.size())
+	{
+		if (s[startPos++] == closingTag)
+		{
+			result = startPos;
+			break;
+		}
+	}
+	return result;
+}
+
+vec4 colorTagToColor(const std::wstring& colorTag)
+{
+	vec4 result(0.0f, 0.0f, 0.0f, 1.0f);
+	
+	std::wstring hex;
+	for (auto i = colorTag.begin(), e = colorTag.end(); i != e; ++i)
+	{
+		auto l = tolower(*i);
+		if (((l >= L'0') && (l <= L'9')) || ((l >= L'a') && (l <= L'f')))
+			hex.push_back(*i);
+	};
+	
+	int value = 0;
+	size_t pos = 0;
+	
+	for (auto i = hex.rbegin(), e = hex.rend(); (i != e) && (pos <= 8); ++i, ++pos)
+	{
+		value += hexCharacterToInt(*i) * ((pos % 2 == 0) ? 1 : 16);
+		
+		if ((pos % 2) == 1)
+		{
+			result[pos / 2] = static_cast<float>(value) / 255.0f;
+			value = 0;
+		}
+	}
+	return result;
 }
