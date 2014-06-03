@@ -177,7 +177,7 @@ void Label::adjustSize()
 	if (_animatingText)
 		_textSize = maxv(_textSize, _font->measureStringSize(_nextText, _allowFormatting));
 	
-	setSize(_textSize);
+//	setSize(_textSize);
 }
 
 void Label::setAllowFormatting(bool f)

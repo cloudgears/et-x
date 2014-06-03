@@ -167,14 +167,14 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 		if (!_currentTitleCharacters.empty())
 		{
 			buildStringVertices(_textVertices, _currentTitleCharacters, Alignment_Center,
-				Alignment_Center, textOrigin + 0.5f * _currentTextSize, currentTextColor * currentAlphaScale, transform);
+				Alignment_Center, textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
 		}
 		
 		currentAlphaScale.w = alphaScale.w * _titleTransition;
 		if (!_nextTitleCharacters.empty())
 		{
 			buildStringVertices(_textVertices, _nextTitleCharacters, Alignment_Center,
-				Alignment_Center, textOrigin + 0.5f * _nextTextSize, currentTextColor * currentAlphaScale, transform);
+				Alignment_Center, textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
 		}
 	}
 
