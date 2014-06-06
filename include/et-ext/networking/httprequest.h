@@ -30,14 +30,19 @@ namespace et
 		~HTTPRequest();
 		
 		void setCredentials(const std::string&, const std::string&);
+		void setParameter(const std::string&, const char*, size_t);
+		void setParameter(const std::string&, const Dictionary&);
+		
 		void perform();
 		
 		HTTPRequestResponsePointer response();
 		
+		bool succeeded() const;
+		
 	private:
 		friend int HTTPRequestProgressFunction(void*, double, double, double, double);
 		HTTPRequestPrivate* _private = nullptr;
-		char _privateData[128] = { };
+		char _privateData[256] = { };
 	};
 	
 	class HTTPRequestResponse : public Shared
