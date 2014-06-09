@@ -8,6 +8,7 @@
 #pragma once
 
 #include <et/core/containers.h>
+#include <et/app/events.h>
 
 namespace et
 {
@@ -30,8 +31,12 @@ namespace et
 		~HTTPRequest();
 		
 		void setCredentials(const std::string&, const std::string&);
-		void setParameter(const std::string&, const char*, size_t);
-		void setParameter(const std::string&, const Dictionary&);
+		
+		void addParameter(const std::string&, const char*, size_t);
+		void addParameter(const std::string&, const std::string&);
+		void addParameter(const std::string&, const Dictionary&);
+
+		void addFileParameter(const std::string&, const std::string&);
 		
 		void perform();
 		
@@ -39,8 +44,11 @@ namespace et
 		
 		bool succeeded() const;
 		
+		ET_DECLARE_EVENT2(downloadProgress, int64_t, int64_t)
+		ET_DECLARE_EVENT2(uploadProgress, int64_t, int64_t)
+		
 	private:
-		friend int HTTPRequestProgressFunction(void*, double, double, double, double);
+		friend int HTTPRequestProgressFunction(HTTPRequest*, double, double, double, double);
 		HTTPRequestPrivate* _private = nullptr;
 		char _privateData[256] = { };
 	};
@@ -59,7 +67,7 @@ namespace et
 		
 	private:
 		friend class HTTPRequest;
-		friend size_t HTTPRequestWriteFunction(const void*, size_t, size_t, void*);
+		friend size_t HTTPRequestWriteFunction(const void*, size_t, size_t, HTTPRequestPrivate*);
 		
 	private:
 		BinaryDataStorage _data;

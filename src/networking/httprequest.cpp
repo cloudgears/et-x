@@ -21,23 +21,28 @@ public:
 	std::string login;
 	std::string password;
 	std::map<std::string, BinaryDataStorage> params;
+	std::map<std::string, std::string> uploadFiles;
 	
 	HTTPRequestResponsePointer response;
 	
 	bool _succeeded = false;
 };
 
-size_t et::HTTPRequestWriteFunction(const void* data, size_t chunks, size_t chunkSize, void* pointer)
+size_t et::HTTPRequestWriteFunction(const void* data, size_t chunks, size_t chunkSize, HTTPRequestPrivate* req)
 {
 	size_t dataSize = chunks * chunkSize;
-	
-	reinterpret_cast<HTTPRequestPrivate*>(pointer)->response->_data.appendData(data, dataSize);
-	
+	req->response->_data.appendData(data, dataSize);
 	return dataSize;
 }
 
-int et::HTTPRequestProgressFunction(void* data, double downloadSize, double downloaded, double uploadSize, double uploaded)
+int et::HTTPRequestProgressFunction(HTTPRequest* req, double downloadSize, double downloaded, double uploadSize, double uploaded)
 {
+	if (downloadSize > 0)
+		req->downloadProgress.invokeInMainRunLoop(downloaded, downloadSize);
+	
+	if (uploadSize > 0)
+		req->uploadProgress.invokeInMainRunLoop(uploaded, uploadSize);
+	
 	return 0;
 }
 
@@ -61,17 +66,25 @@ void HTTPRequest::setCredentials(const std::string& login, const std::string& pa
 	_private->password = password;
 }
 
-void HTTPRequest::setParameter(const std::string& name, const Dictionary& d)
+void HTTPRequest::addParameter(const std::string& name, const Dictionary& d)
 {
-	auto str = json::serialize(d);
-	if (!str.empty())
-		setParameter(name, str.c_str(), str.size());
+	addParameter(name, json::serialize(d));
 }
 
-void HTTPRequest::setParameter(const std::string& name, const char* data, size_t dataSize)
+void HTTPRequest::addParameter(const std::string& name, const std::string& str)
+{
+	addParameter(name, str.c_str(), str.size());
+}
+
+void HTTPRequest::addParameter(const std::string& name, const char* data, size_t dataSize)
 {
 	_private->params[name].resize(dataSize);
 	etCopyMemory(_private->params[name].data(), data, dataSize);
+}
+
+void HTTPRequest::addFileParameter(const std::string& param, const std::string& filename)
+{
+	_private->uploadFiles.insert(std::make_pair(param, filename));
 }
 
 HTTPRequestResponsePointer HTTPRequest::response()
@@ -91,15 +104,23 @@ void HTTPRequest::perform()
 	if (!_private->password.empty())
 		curl_easy_setopt(curl, CURLOPT_PASSWORD, _private->password.c_str());
 	
-	if (!_private->params.empty())
+	if (_private->params.size() + _private->uploadFiles.size() > 0)
 	{
 		curl_httppost* params = nullptr;
 		curl_httppost* lastptr = nullptr;
+		
 		for (const auto& kv : _private->params)
 		{
 			curl_formadd(&params, &lastptr, CURLFORM_PTRNAME, kv.first.c_str(), CURLFORM_PTRCONTENTS,
 				kv.second.data(), CURLFORM_CONTENTSLENGTH, kv.second.size(), CURLFORM_END);
 		}
+		
+		for (const auto& kv : _private->uploadFiles)
+		{
+			curl_formadd(&params, &lastptr, CURLFORM_PTRNAME, kv.first.c_str(), CURLFORM_FILE,
+				kv.second.c_str(), CURLFORM_END);
+		}
+		
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, params);
 	}
 		
