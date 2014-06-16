@@ -281,10 +281,19 @@ bool Button::capturePointer() const
 
 void Button::performClick()
 {
-	if (_type == Type_CheckButton)
-		setSelected(!_selected);
+	float currentTime = timerPool()->actualTime();
+	if (currentTime > _lastClickTime + _clickTreshold)
+	{
+		_lastClickTime = currentTime;
+		
+		if (_type == Type_CheckButton)
+			setSelected(!_selected);
 	
-	clicked.invoke(this);
+		if (_shouldInvokeClickInRunLoop)
+			clicked.invokeInMainRunLoop(this);
+		else
+			clicked.invoke(this);
+	}
 }
 
 void Button::setTitle(const std::string& t, float duration)
@@ -488,4 +497,14 @@ void Button::processMessage(const Message& msg)
 {
 	if (msg.type == Message::Type_SetText)
 		setTitle(msg.text, msg.duration);
+}
+
+void Button::setClickTreshold(float value)
+{
+	_clickTreshold = value;
+}
+
+void Button::setShouldInvokeClickInRunLoop(bool b)
+{
+	_shouldInvokeClickInRunLoop = b;
 }

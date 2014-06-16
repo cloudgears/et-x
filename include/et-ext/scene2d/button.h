@@ -110,7 +110,7 @@ namespace et
 				{ return _type; }
 
 			void setType(Button::Type t);
-
+			
 			bool selected() const
 				{ return _selected; }
 			
@@ -126,6 +126,9 @@ namespace et
 			void setVerticalAlignment(Alignment);
 			
 			void processMessage(const Message&) override;
+			
+			void setClickTreshold(float);
+			void setShouldInvokeClickInRunLoop(bool);
 
 		protected:
 			void performClick();
@@ -175,12 +178,15 @@ namespace et
 			Alignment _horizontalAlignment;
 			Alignment _verticalAlignment;
 			
+			float _lastClickTime = 0.0f;
+			float _clickTreshold = 0.0f;
 			float _titleTransition = 0.0f;
 			
 			bool _pressed = false;
 			bool _hovered = false;
 			bool _selected = false;
 			bool _adjustPressedBackground = false;
+			bool _shouldInvokeClickInRunLoop = false;
 		};
 	}
 }
