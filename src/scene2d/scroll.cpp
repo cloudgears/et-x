@@ -60,9 +60,11 @@ void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 	_backgroundVertices.setOffset(0);
 	_overlayVertices.setOffset(0);
 
+	vec4 alphaScale(1.0f, alpha());
+	
 	if (_backgroundColor.w > 0.0f)
 	{
-		buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor,
+		buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), alphaScale * _backgroundColor,
 			Element2d::finalTransform());
 	}
 	
@@ -73,7 +75,7 @@ void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 		float barOffset = size().y * (_offset.y / _contentSize.y);
 		vec2 origin(size().x - 2.0f * scaledScollbarSize, -barOffset);
 		
-		vec4 adjutsedColor = _scrollbarsColor;
+		vec4 adjutsedColor = alphaScale * _scrollbarsColor;
 		adjutsedColor.w *= _scrollbarsAlpha;
 		
 		buildColorVertices(_overlayVertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
@@ -81,7 +83,7 @@ void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 	}
 	
 	if (_overlayColor.w > 0.0f)
-		buildColorVertices(_overlayVertices, rect(vec2(0.0f), size()), _overlayColor, Element2d::finalTransform());
+		buildColorVertices(_overlayVertices, rect(vec2(0.0f), size()), alphaScale * _overlayColor, Element2d::finalTransform());
 	
 	setContentValid();
 }
