@@ -187,7 +187,7 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 	if (font == nil)
 	{
 		log::error("Font %s not found. Using default font (Arial)", face.c_str());
-		font = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial" traits:0 weight:5 size:size];
+		font = [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica" traits:0 weight:5 size:size];
 	}
 	ET_ASSERT(font);
 	
@@ -197,7 +197,7 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
 	if (boldFont == nil)
 	{
 		log::error("Font %s not found. Using default font (Arial)", face.c_str());
-		boldFont = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial"
+		boldFont = [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica"
 			traits:NSBoldFontMask weight:5 size:size];
 	}
 	ET_ASSERT(boldFont);
