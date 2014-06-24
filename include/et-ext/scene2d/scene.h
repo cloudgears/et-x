@@ -80,6 +80,8 @@ namespace et
 			void showMessageView(MessageView::Pointer mv,
 				size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
 			
+			void broadcastMessage(const Message&);
+			
 			ET_DECLARE_EVENT1(layoutDidAppear, Layout::Pointer)
 			ET_DECLARE_EVENT1(layoutDidDisappear, Layout::Pointer)
 			ET_DECLARE_EVENT1(layoutWillAppear, Layout::Pointer)

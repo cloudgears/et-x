@@ -424,6 +424,12 @@ void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
 	l->autoLayout(_rc->size(), 0.0f);
 }
 
+void Scene::broadcastMessage(const Message& msg)
+{
+	for (auto l : _layouts)
+		l->layout->broardcastMessage(msg);
+}
+
 /*
  * Layout Entry
  */

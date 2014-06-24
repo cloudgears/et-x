@@ -1,6 +1,7 @@
 #pragma once
 
 #include <et/apiobjects/texture.h>
+#include <et/locale/locale.h>
 #include <et-ext/scene2d/baseconst.h>
 
 namespace et
@@ -150,6 +151,7 @@ namespace et
 				Type_TextInput,
 				Type_TextFieldControl,
 				Type_SetText,
+				Type_UpdateText,
 			};
 
 			size_t type = 0;
@@ -157,6 +159,9 @@ namespace et
 			std::string text;
 			float duration = 0.0f;
 
+			explicit Message(size_t aType) :
+				type(aType) { }
+			
 			Message(size_t aType, size_t aParam) :
 				type(aType), param(aParam) { }
 			
@@ -201,6 +206,21 @@ namespace et
 				{ return program.invalid(); }
 		};
 
+		struct LocalizedText
+		{
+			std::string key;
+			std::string cachedText;
+			
+			void setKey(const std::string& aKey)
+				{ key = aKey; updateCache(); }
+			
+			void updateCache()
+				{ cachedText = localized(key); }
+			
+			void clear()
+				{ key.clear(); cachedText.clear(); }
+		};
+		
 		typedef DataStorage<SceneVertex> SceneVertexList;
 	}
 }

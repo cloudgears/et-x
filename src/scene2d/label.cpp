@@ -15,15 +15,18 @@ using namespace et::s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Label)
 
 Label::Label(const std::string& text, Font::Pointer font, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _text(text), _nextText(text), _font(font),
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font),
 	_vertices(0), _backgroundColor(0.0f), _shadowOffset(1.0f), _textFade(0.0f), _textFadeDuration(0.0f),
 	_textFadeStartTime(0.0f), _lineInterval(1.0f), _horizontalAlignment(Alignment_Near),
 	_verticalAlignment(Alignment_Near), _animatingText(false), _allowFormatting(false)
 {
 	setFlag(Flag_TransparentForPointer);
 	
-	_charListText = _font->buildString(_text);
-	_charListNextText = _font->buildString(_nextText);
+	_text.setKey(text);
+	_nextText.setKey(text);
+	
+	_charListText = _font->buildString(_text.cachedText);
+	_charListNextText = _font->buildString(_nextText.cachedText);
 	
 	adjustSize();
 }
@@ -105,9 +108,10 @@ void Label::setText(const std::string& text, float duration)
 		_animatingText = false;
 		cancelUpdates();
 		
-		_text = text;
-		_nextText = text;
-		_charListText = _font->buildString(_text, _allowFormatting);
+		_text.setKey(text);
+		_nextText.setKey(text);
+		
+		_charListText = _font->buildString(_text.cachedText, _allowFormatting);
 	}
 	else 
 	{
@@ -116,12 +120,13 @@ void Label::setText(const std::string& text, float duration)
 		if (_animatingText)
 		{
 			_text = _nextText;
-			_charListText = _font->buildString(_text, _allowFormatting);
+			_charListText = _font->buildString(_text.cachedText, _allowFormatting);
 		}
 		
-		_nextText = text;
-		_charListNextText = _font->buildString(_nextText, _allowFormatting);
-		_nextTextSize = _font->measureStringSize(_nextText, _allowFormatting);
+		_nextText.setKey(text);
+		
+		_charListNextText = _font->buildString(_nextText.cachedText, _allowFormatting);
+		_nextTextSize = _font->measureStringSize(_nextText.cachedText, _allowFormatting);
 		
 		_textFade = 0.0f;
 		_animatingText = true;
@@ -137,10 +142,10 @@ vec2 Label::textSize()
 {
 	if (!contentValid())
 	{
-		_textSize = _font->measureStringSize(_text, _allowFormatting);
+		_textSize = _font->measureStringSize(_text.cachedText, _allowFormatting);
 
 		if (_animatingText)
-			_nextTextSize = _font->measureStringSize(_nextText, _allowFormatting);
+			_nextTextSize = _font->measureStringSize(_nextText.cachedText, _allowFormatting);
 	}
 
 	return _animatingText ? _nextTextSize : _textSize;
@@ -156,10 +161,10 @@ void Label::update(float t)
 		_animatingText = false;
 		
 		_text = _nextText;
-		_charListText = _font->buildString(_text, _allowFormatting);
-		_textSize = _font->measureStringSize(_text, _allowFormatting);
+		_charListText = _font->buildString(_text.cachedText, _allowFormatting);
+		_textSize = _font->measureStringSize(_text.cachedText, _allowFormatting);
 		
-		_nextText = std::string();
+		_nextText.clear();
 		_charListNextText.clear();
 		_nextTextSize = vec2(0.0f);
 		
@@ -172,19 +177,20 @@ void Label::update(float t)
 
 void Label::adjustSize()
 {
-	_textSize = _font->measureStringSize(_text, _allowFormatting);
+	_textSize = _font->measureStringSize(_text.cachedText, _allowFormatting);
 	
 	if (_animatingText)
-		_textSize = maxv(_textSize, _font->measureStringSize(_nextText, _allowFormatting));
+		_textSize = maxv(_textSize, _font->measureStringSize(_nextText.cachedText, _allowFormatting));
 	
-//	setSize(_textSize);
+	if (_autoAdjustSize)
+		setSize(_textSize);
 }
 
 void Label::setAllowFormatting(bool f)
 {
 	_allowFormatting = f;
-	_charListNextText = _font->buildString(_nextText, _allowFormatting);
-	_charListText = _font->buildString(_text, _allowFormatting);
+	_charListNextText = _font->buildString(_nextText.cachedText, _allowFormatting);
+	_charListText = _font->buildString(_text.cachedText, _allowFormatting);
 	invalidateContent();
 }
 
@@ -224,13 +230,13 @@ void Label::setShadowOffset(const vec2& offset)
 
 void Label::fitToWidth(float w)
 {
-	if (_text.empty()) return;
+	if (_text.cachedText.empty()) return;
 	
 	float minimalWidthToFit = _font->measureStringSize("W", _allowFormatting).x;
 	if (std::abs(w) < minimalWidthToFit) return;
 	
 	std::string newText;
-	std::string oldText = _text;
+	std::string oldText = _text.cachedText;
 	std::string latestLine;
 	
 	const std::string dividers(" \n\t\r");
@@ -339,4 +345,11 @@ void Label::processMessage(const Message& msg)
 {
 	if (msg.type == Message::Type_SetText)
 		setText(msg.text, msg.duration);
+	else if (msg.type == Message::Type_UpdateText)
+		setText(_text.key);
+}
+
+void Label::setShouldAutoAdjustSize(bool v)
+{
+	_autoAdjustSize = v;
 }

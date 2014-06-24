@@ -29,13 +29,15 @@ namespace et
 				{ return _font; }
 			
 			const std::string& text() const
-				{ return _text; }
+				{ return _text.cachedText; }
 			
 			const vec4& backgroundColor() const
 				{ return _backgroundColor; }
 			
 			void fitToWidth(float);
 			void adjustSize();
+			
+			void setShouldAutoAdjustSize(bool);
 			
 			void setAllowFormatting(bool);
 			void setBackgroundColor(const vec4&);
@@ -59,8 +61,8 @@ namespace et
 			void update(float t);
 			
 		private:
-			std::string _text;
-			std::string _nextText;
+			LocalizedText _text;
+			LocalizedText _nextText;
 			
 			CharDescriptorList _charListText;
 			CharDescriptorList _charListNextText;
@@ -80,6 +82,7 @@ namespace et
 			Alignment _verticalAlignment;
 			bool _animatingText;
 			bool _allowFormatting;
+			bool _autoAdjustSize = true;
 		};
 	}
 }

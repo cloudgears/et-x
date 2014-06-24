@@ -70,7 +70,7 @@ namespace et
 			bool capturePointer() const;
 
 			const std::string& title() const 
-				{ return _nextTitle; }
+				{ return _nextTitle.cachedText; }
 
 			void setTitle(const std::string&, float duration = 0.0f);
 
@@ -142,8 +142,8 @@ namespace et
 		private:
 			Font::Pointer _font;
 			
-			std::string _currentTitle;
-			std::string _nextTitle;
+			LocalizedText _currentTitle;
+			LocalizedText _nextTitle;
 			
 			SceneVertexList _bgVertices;
 			SceneVertexList _textVertices;

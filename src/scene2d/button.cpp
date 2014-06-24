@@ -14,17 +14,19 @@ using namespace et::s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Button)
 
 Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _currentTitle(title), _font(font),
-	_currentTextSize(font->measureStringSize(title)), _textColor(vec3(0.0f), 1.0f),
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _textColor(vec3(0.0f), 1.0f),
 	_pressedColor(0.5f, 0.5f, 0.5f, 1.0f), _backgroundTintColor(1.0f), _commonBackgroundTintColor(1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _backgroundTintAnimator(timerPool()),
 	_commonBackgroundTintAnimator(timerPool()), _titleAnimator(timerPool()), _type(Button::Type_PushButton),
 	_state(State_Default), _imageLayout(ImageLayout_Left), _contentMode(ContentMode_Fit),
 	_horizontalAlignment(Alignment_Center), _verticalAlignment(Alignment_Center)
 {
+	_currentTitle.setKey(title);
+	_currentTextSize = font->measureStringSize(_currentTitle.cachedText);
+	
 	_nextTitle = _currentTitle;
 	_maxTextSize = _currentTextSize;
-	_currentTitleCharacters = _font->buildString(_currentTitle);
+	_currentTitleCharacters = _font->buildString(_currentTitle.cachedText);
 	
 	setSize(sizeForText(title));
 	
@@ -298,9 +300,9 @@ void Button::performClick()
 
 void Button::setTitle(const std::string& t, float duration)
 {
-	_nextTitle = t;
-	_nextTitleCharacters = _font->buildString(_nextTitle);
-	_nextTextSize = _font->measureStringSize(_nextTitle);
+	_nextTitle.setKey(t);
+	_nextTitleCharacters = _font->buildString(_nextTitle.cachedText);
+	_nextTextSize = _font->measureStringSize(_nextTitle.cachedText);
 	
 	_maxTextSize = maxv(_currentTextSize, _nextTextSize);
 	
@@ -338,7 +340,7 @@ const vec4& Button::textPressedColor() const
 
 void Button::adjustSize(float duration)
 {
-	adjustSizeForText(_currentTitle, duration);
+	adjustSizeForText(_currentTitle.cachedText, duration);
 }
 
 void Button::adjustSizeForText(const std::string& text, float duration)
@@ -461,7 +463,7 @@ void Button::setContentMode(ContentMode m)
 
 vec2 Button::contentSize()
 {
-	return maxv(sizeForText(_currentTitle), sizeForText(_nextTitle));
+	return maxv(sizeForText(_currentTitle.cachedText), sizeForText(_nextTitle.cachedText));
 }
 
 void Button::setShouldAdjustPressedBackground(bool b)
@@ -497,6 +499,8 @@ void Button::processMessage(const Message& msg)
 {
 	if (msg.type == Message::Type_SetText)
 		setTitle(msg.text, msg.duration);
+	else if (msg.type == Message::Type_UpdateText)
+		setTitle(_nextTitle.key);
 }
 
 void Button::setClickTreshold(float value)
