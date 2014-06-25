@@ -43,7 +43,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 	if (vc == ValueClass_Dictionary)
 	{
 		ArrayValue textures = atlas.arrayForKey("textures");
-		for (Dictionary tex : textures->content)
+		for (const Dictionary& tex : textures->content)
 		{
 			auto textureId = tex.stringForKey("id")->content;
 			auto textureFile = tex.stringForKey("filename")->content;
@@ -53,7 +53,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 		}
 		
 		ArrayValue images = atlas.arrayForKey("images");
-		for (Dictionary img : images->content)
+		for (const Dictionary& img : images->content)
 		{
 			auto name = img.stringForKey("name")->content;
 			auto tex = img.stringForKey("texture")->content;

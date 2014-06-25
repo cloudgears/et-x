@@ -19,12 +19,13 @@ StringValue deserializeString(json_t* json);
 IntegerValue deserializeInteger(json_t* json);
 FloatValue deserializeFloat(json_t* json);
 
-json_t* serializeArray(ArrayValue);
-json_t* serializeString(StringValue);
-json_t* serializeInteger(IntegerValue);
-json_t* serializeFloat(FloatValue value);
-json_t* serializeDictionary(Dictionary);
-json_t* serializeValue(ValueBase::Pointer);
+json_t* serializeFloat(const FloatValue&);
+json_t* serializeArray(const ArrayValue&);
+json_t* serializeString(const StringValue&);
+json_t* serializeInteger(const IntegerValue&);
+json_t* serializeDictionary(const Dictionary&);
+
+json_t* serializeValue(const ValueBase::Pointer&);
 
 std::string et::json::serialize(const Dictionary& msg, bool readableFormat)
 {
@@ -188,7 +189,7 @@ Dictionary deserializeDictionary(json_t* root)
 	return result;
 }
 
-json_t* serializeArray(ArrayValue value)
+json_t* serializeArray(const ArrayValue& value)
 {
 	json_t* array = json_array();
 	
@@ -202,22 +203,22 @@ json_t* serializeArray(ArrayValue value)
 	return array;
 }
 
-json_t* serializeString(StringValue value)
+json_t* serializeString(const StringValue& value)
 {
 	return json_string(value->content.c_str());
 }
 
-json_t* serializeInteger(IntegerValue value)
+json_t* serializeInteger(const IntegerValue& value)
 {
 	return json_integer(value->content);
 }
 
-json_t* serializeFloat(FloatValue value)
+json_t* serializeFloat(const FloatValue& value)
 {
 	return json_real(value->content);
 }
 
-json_t* serializeDictionary(Dictionary msg)
+json_t* serializeDictionary(const Dictionary& msg)
 {
 	json_t* root = json_object();
 		
@@ -231,7 +232,7 @@ json_t* serializeDictionary(Dictionary msg)
 	return root;
 }
 
-json_t* serializeValue(ValueBase::Pointer v)
+json_t* serializeValue(const ValueBase::Pointer& v)
 {
 	json_t* value = nullptr;
 	

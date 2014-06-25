@@ -103,7 +103,7 @@ namespace et
 			
 			Dictionary autoLayoutDictionary() const;
 
-			void setAutolayout(Dictionary);
+			void setAutolayout(const Dictionary&);
 			void setAutolayout(const ElementLayout&);
 			void autolayoutFromFile(const std::string&);
 			
@@ -124,8 +124,8 @@ namespace et
 
 			void autoLayout(const vec2& contextSize, float duration = 0.0f);
 			
-			virtual void storeProperties(Dictionary) const { }
-			virtual void loadProperties(Dictionary) { }
+			virtual void storeProperties(const Dictionary&) const { }
+			virtual void loadProperties(const Dictionary&) { }
 			
 			virtual bool focused() const
 				{ return false; }

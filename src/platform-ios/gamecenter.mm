@@ -44,7 +44,7 @@ public:
 	GameCenter::AuthorizationStatus status = GameCenter::AuthorizationStatus_NotAuthorized;
 	
 public:
-	std::string hashForScore(Dictionary score);
+	std::string hashForScore(const Dictionary& score);
 	
 	void setScore(const std::string& lbUd, int64_t value, bool completed);
 	void setAchievement(const std::string& aId, bool completed);
@@ -282,7 +282,7 @@ void GameCenterPrivate::saveOptions()
 	}
 }
 
-std::string GameCenterPrivate::hashForScore(Dictionary score)
+std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 {
 	return "score-" + score.stringForKey(kLeaderboardId)->content + "-" +
 		intToStr(score.integerForKey(kValueLow)->content) + "-" + intToStr(score.integerForKey(kValueHigh)->content);

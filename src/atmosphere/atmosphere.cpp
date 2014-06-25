@@ -190,7 +190,7 @@ void Atmosphere::setLightDirection(const vec3& l)
 	_lightDirection = l.normalized();
 } 
 
-void Atmosphere::setParameters(Dictionary d)
+void Atmosphere::setParameters(const Dictionary& d)
 {
 	_parameters->content = d->content;
 	

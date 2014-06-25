@@ -13,7 +13,7 @@ namespace et
 		Atmosphere(RenderContext*, size_t textureSize);
 		
 		void setLightDirection(const vec3&);
-		void setParameters(Dictionary);
+		void setParameters(const Dictionary&);
 		
 		void renderAtmosphereWithGeometry(const Camera&, bool drawSky, bool drawPlanet);
 		

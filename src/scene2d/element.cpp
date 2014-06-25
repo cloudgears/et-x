@@ -245,7 +245,7 @@ et::Dictionary Element::autoLayoutDictionary() const
 	return result;
 }
 
-void Element::setAutolayout(Dictionary d)
+void Element::setAutolayout(const Dictionary& d)
 {
 	ElementLayout l = _autoLayout;
 	
