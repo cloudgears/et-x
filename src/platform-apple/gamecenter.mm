@@ -11,8 +11,14 @@
 #include <et/app/application.h>
 #include <et/app/applicationnotifier.h>
 #include <et/platform-apple/objc.h>
-#include <et-ext/ios/gamecenter.h>
+#include <et-ext/platform-apple/gamecenter.h>
 #include <et-ext/json/json.h>
+
+#if (TARGET_OS_IPHONE)
+#	define ViewControllerClass UIViewController
+#else
+#	define ViewControllerClass NSViewController
+#endif
 
 const std::string kReportedScores = "reported-scores";
 const std::string kUnlockedAchievements = "unlocked-achievements";
@@ -74,15 +80,17 @@ GameCenter::AuthorizationStatus GameCenter::status() const
 
 void GameCenter::authenticate()
 {
-	[[GKLocalPlayer localPlayer] setAuthenticateHandler:^(UIViewController* viewController, NSError* error)
+	[[GKLocalPlayer localPlayer] setAuthenticateHandler:^(ViewControllerClass* viewController, NSError* error)
 	{
 		if (viewController != nil)
 		{
 			_private->status = AuthorizationStatus_Authorizing;
 			
+#if (TARGET_OS_IPHONE)
 			UIViewController* mainViewController = (__bridge UIViewController*)
 				reinterpret_cast<void*>(application().renderingContextHandle());
 			[mainViewController presentViewController:viewController animated:YES completion:nil];
+#endif
 		}
 		else
 		{
@@ -305,9 +313,11 @@ std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 
 - (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController*)gameCenterViewController
 {
+#if (TARGET_OS_IPHONE)
 	UIViewController* mainViewController = (__bridge UIViewController*)
 		reinterpret_cast<void*>(application().renderingContextHandle());
 	[mainViewController dismissViewControllerAnimated:YES completion:nil];
+#endif
 }
 
 - (void)leaderboardViewControllerDidFinish:(GKGameCenterViewController*)viewController
@@ -322,6 +332,7 @@ std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 
 - (void)showAchievements
 {
+#if (TARGET_OS_IPHONE)
 	UIViewController* mainViewController = (__bridge UIViewController*)
 		reinterpret_cast<void*>(application().renderingContextHandle());
 	
@@ -333,10 +344,12 @@ std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 		[mainViewController presentViewController:gcController animated:YES completion:nil];
 	}
 	ET_OBJC_RELEASE(gcController)
+#endif
 }
 
 - (void)showLeaderboards
 {
+#if (TARGET_OS_IPHONE)
 	UIViewController* mainViewController = (__bridge UIViewController*)
 	reinterpret_cast<void*>(application().renderingContextHandle());
 	
@@ -362,10 +375,12 @@ std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 			 ET_OBJC_RELEASE(gcController)
 		 }
 	 }];
+#endif
 }
 
 - (void)showLeaderboard:(NSString*)leaderboardId
 {
+#if (TARGET_OS_IPHONE)
 	UIViewController* mainViewController = (__bridge UIViewController*)
 		reinterpret_cast<void*>(application().renderingContextHandle());
 	
@@ -406,6 +421,7 @@ std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 			ET_OBJC_RELEASE(gcController)
 		}
 	}];
+#endif
 }
 
 @end
