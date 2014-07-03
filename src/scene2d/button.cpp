@@ -153,7 +153,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_background[_state].texture.valid())
 	{
-		vec4 backgroundScale = ((_state == State_Pressed) && _adjustPressedBackground) ?
+		vec4 backgroundScale = (_adjustPressedBackground && ((_state == State_Pressed) || (_state == State_SelectedPressed))) ?
 			_pressedColor * alphaScale : alphaScale;
 		
 		buildImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
