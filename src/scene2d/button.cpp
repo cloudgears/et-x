@@ -227,6 +227,7 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 	if ((p.type != PointerType_General) || !_pressed) return false;
 	
 	_pressed = false;
+	released.invoke(this);
 
 	if (containLocalPoint(p.pos))
 	{

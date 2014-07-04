@@ -60,6 +60,7 @@ namespace et
 
 			ET_DECLARE_EVENT1(clicked, Button*)
 			ET_DECLARE_EVENT1(pressed, Button*)
+			ET_DECLARE_EVENT1(released, Button*)
 			ET_DECLARE_EVENT1(releasedInside, Button*)
 			ET_DECLARE_EVENT1(releasedOutside, Button*)
 			ET_DECLARE_EVENT1(cancelled, Button*)
