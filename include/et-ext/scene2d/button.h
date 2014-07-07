@@ -52,8 +52,8 @@ namespace et
 			void setBackground(const Image& img);
 			void setBackgroundForState(const Image& img, State s);
 
-			void adjustSize(float duration = 0.0f);
-			void adjustSizeForText(const std::string&, float duration = 0.0f);
+			void adjustSize(float duration = 0.0f, bool vertical = true, bool horizontal = true);
+			void adjustSizeForText(const std::string&, float duration = 0.0f, bool vertical = true, bool horizontal = true);
 			vec2 sizeForText(const std::string&);
 			
 			void setContentMode(ContentMode);

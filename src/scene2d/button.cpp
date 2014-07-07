@@ -339,14 +339,23 @@ const vec4& Button::textPressedColor() const
 	return _textPressedColor;
 }
 
-void Button::adjustSize(float duration)
+void Button::adjustSize(float duration, bool vertical, bool horizontal)
 {
-	adjustSizeForText(_currentTitle.cachedText, duration);
+	adjustSizeForText(_currentTitle.cachedText, duration, vertical, horizontal);
 }
 
-void Button::adjustSizeForText(const std::string& text, float duration)
+void Button::adjustSizeForText(const std::string& text, float duration, bool vertical, bool horizontal)
 {
-	setSize(sizeForText(text), duration);
+	vec2 currentSize = size();
+	vec2 newSize = sizeForText(text);
+	
+	if (horizontal)
+		currentSize.x = newSize.x;
+	
+	if (vertical)
+		currentSize.y = newSize.y;
+	
+	setSize(currentSize, duration);
 }
 
 vec2 Button::sizeForText(const std::string& text)
