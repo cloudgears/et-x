@@ -319,12 +319,6 @@ SceneProgram Element::initProgram(SceneRenderer& r)
 void Element::startUpdates(TimerPool* timerPool)
 	{ TimedObject::startUpdates(timerPool); }
 
-void Element::startUpdates()
-	{ TimedObject::startUpdates(); }
-
-TimerPool::Pointer Element::timerPool()
-	{ return mainTimerPool(); }
-
 Element* Element::baseChildWithName(const std::string& name, bool recursive)
 	{ return childWithNameCallback(name, this, recursive); }
 
@@ -337,6 +331,8 @@ void Element::setAutolayoutMask(size_t m)
 void Element::fillParent()
 	{ setAutolayoutRelativeToParent(vec2(0.0f), vec2(1.0f), vec2(0.0f)); }
 
+TimerPool* Element::timerPool()
+	{ return mainTimerPool().ptr(); }
 
 /*
  * Service functions

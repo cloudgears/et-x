@@ -435,7 +435,7 @@ void Scene::broadcastMessage(const Message& msg)
  */
 
 Scene::LayoutEntry::LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l) :
-	layout(l), animator(own->timerPoolForLayout(l)), offsetAlpha(0.0f, 0.0f, 1.0f),
+	layout(l), animator(mainTimerPool()), offsetAlpha(0.0f, 0.0f, 1.0f),
 	state(Scene::LayoutEntry::State_Still)
 {
 	animator.finished.connect([this, own]()

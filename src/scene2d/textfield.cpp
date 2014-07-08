@@ -11,8 +11,8 @@
 using namespace et;
 using namespace et::s2d;
 
-const int caretChar = '|';
-const int securedChar = L'•';
+const int caretChar = 0x007C;
+const int securedChar = 0x2022;
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(TextField)
 

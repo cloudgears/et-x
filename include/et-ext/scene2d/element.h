@@ -216,21 +216,20 @@ namespace et
 			virtual mat4 parentFinalTransform()
 				{ return parent() ? parent()->finalTransform() : identityMatrix; }
 
-			void startUpdates();
-			TimerPool::Pointer timerPool();
+			TimerPool* timerPool();
 
 			Element* childWithNameCallback(const std::string&, Element*, bool recursive);
 
 			ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, name, setName)
 
 		protected:
-			void startUpdates(TimerPool* timerPool);
+			void startUpdates(TimerPool* timerPool = nullptr);
 			
 		private:
 			friend class Hierarchy<Element, LoadableObject>;
 
 			Element(const Element&) : 
-				ElementHierarchy(0) { }
+				ElementHierarchy(nullptr) { }
 
 			Element& operator = (const Element&)
 				{ return *this; }
