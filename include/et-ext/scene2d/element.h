@@ -210,7 +210,7 @@ namespace et
 			void setTransformValid(bool v) 
 				{ _transformValid = v; }
 
-			void setIverseTransformValid(bool v)
+			void setInverseTransformValid(bool v)
 				{ _inverseTransformValid = v; }
 
 			virtual mat4 parentFinalTransform()
@@ -237,10 +237,10 @@ namespace et
 		private:
 			ElementLayout _autoLayout;
 
-			bool _enabled;
-			bool _transformValid;
-			bool _inverseTransformValid;
-			bool _contentValid;
+			bool _enabled = true;
+			bool _transformValid = false;
+			bool _inverseTransformValid = false;
+			bool _contentValid = false;
 		};
 
 		inline bool elementIsSelected(State s)

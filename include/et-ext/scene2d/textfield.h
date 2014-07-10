@@ -37,6 +37,9 @@ namespace et
 
 			const std::string& text() const;
 			
+			const Image& backgroundImage() const
+				{ return _background; }
+			
 			void setText(const std::string& s);
 			void setPrefix(const std::string& s);
 			
@@ -46,6 +49,7 @@ namespace et
 			void setBackgroundColor(const vec4& color);
 			void setVerticalAlignment(Alignment);
 			void setHorizontalAlignment(Alignment);
+			void setContentOffset(const vec2&);
 
 			void setFocus();
 			void resignFocus(Element*);
@@ -75,6 +79,7 @@ namespace et
 			SceneVertexList _backgroundVertices;
 			NotifyTimer _caretBlinkTimer;
 			vec4 _backgroundColor;
+			vec2 _contentOffset;
 			FlagsHolder _editingFlags;
 			Alignment _alignmentV;
 			Alignment _alignmentH;

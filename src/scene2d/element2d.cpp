@@ -205,7 +205,7 @@ const mat4& Element2d::finalInverseTransform()
 	if (!inverseTransformValid())
 	{
 		_finalInverseTransform = finalTransform().inverse();
-		setIverseTransformValid(true);
+		setInverseTransformValid(true);
 	}
 
 	return _finalInverseTransform;

@@ -108,7 +108,8 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 		widthAdjustment = caretSize.x;
 	}
 	
-	vec2 textOrigin = vec2(alignmentFactor(actualAlignment), alignmentFactor(_alignmentV)) * (size() - textSize);
+	vec2 textOrigin = _contentOffset + vec2(alignmentFactor(actualAlignment), alignmentFactor(_alignmentV)) *
+		((wholeRect.size() - 2.0f * _contentOffset) - textSize);
 	
 	if (_charList.size())
 	{
@@ -118,7 +119,7 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_caretVisible)
 	{
-		buildColorVertices(_backgroundVertices, rect(textOrigin.x + textSize.x - widthAdjustment,
+		buildColorVertices(_imageVertices, rect(textOrigin.x + textSize.x - widthAdjustment,
 			0.5f * (wholeRect.height - caretSize.y), caretSize.x, caretSize.y), color() * alphaVector, transform);
 	}
 	
@@ -246,4 +247,10 @@ void TextField::setPrefix(const std::string& s)
 void TextField::setEditingFlags(size_t f)
 {
 	_editingFlags.setFlags(f);
+}
+
+void TextField::setContentOffset(const vec2& o)
+{
+	_contentOffset = o;
+	invalidateContent();
 }

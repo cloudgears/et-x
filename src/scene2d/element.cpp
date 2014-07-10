@@ -15,10 +15,7 @@ using namespace et;
 using namespace et::s2d;
 
 Element::Element(Element* parent, const std::string& name) :
-	ElementHierarchy(parent), tag(0), _name(name), _enabled(true), _transformValid(false),
-	_inverseTransformValid(false), _contentValid(false)
-{
-}
+	ElementHierarchy(parent), tag(0), _name(name) { }
 
 void Element::setParent(Element* element)
 {
@@ -43,9 +40,9 @@ void Element::invalidateContent()
 }
 
 void Element::invalidateTransform()
-{ 
-	_transformValid = false; 
-	_inverseTransformValid = false;
+{
+	setTransformValid(false);
+	setInverseTransformValid(false);
 
 	for (Element::List::iterator i = children().begin(), e = children().end(); i != e; ++i)
 		(*i)->invalidateTransform();
