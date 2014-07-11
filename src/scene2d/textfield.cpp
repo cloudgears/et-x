@@ -254,3 +254,9 @@ void TextField::setContentOffset(const vec2& o)
 	_contentOffset = o;
 	invalidateContent();
 }
+
+void TextField::setBackgroundImage(const Image& img)
+{
+	_background = img;
+	invalidateContent();
+}

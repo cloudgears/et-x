@@ -37,6 +37,8 @@ namespace et
 
 			const std::string& text() const;
 			
+			void setBackgroundImage(const Image&);
+			
 			const Image& backgroundImage() const
 				{ return _background; }
 			
