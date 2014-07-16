@@ -218,14 +218,14 @@ void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)
 	_additionalWindowOffset.top = static_cast<int>(offsetAndAlpha.y * _rc->size().y);
 }
 
-SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& name, const std::string& fs)
+SceneProgram SceneRenderer::createProgramWithShaders(const std::string& name, const std::string& vs, const std::string& fs)
 {
 	Program::Pointer existingProgram = _programsCache.findAnyObject(name);
 	
 	SceneProgram program;
 	if (existingProgram.invalid())
 	{
-		program.program = _rc->programFactory().genProgram(name, et_scene2d_default_shader_vs, fs);
+		program.program = _rc->programFactory().genProgram(name, vs, fs);
 		_programsCache.manage(program.program, ObjectLoader::Pointer());
 	}
 	else
@@ -239,6 +239,11 @@ SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& n
 		"Program should contain uniform for additional offset and alpha, of type vec3 and named additionalOffsetAndAlpha");
 	
 	return program;
+}
+
+SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& name, const std::string& fs)
+{
+	return createProgramWithShaders(name, et_scene2d_default_shader_vs, fs);
 }
 
 std::string et_scene2d_default_shader_vs =

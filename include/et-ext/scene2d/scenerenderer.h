@@ -55,6 +55,7 @@ namespace et
 				{ return _defaultTexture; }
 			
 			SceneProgram createProgramWithFragmentshader(const std::string& name, const std::string& fs);
+			SceneProgram createProgramWithShaders(const std::string& name, const std::string& vs, const std::string& fs);
 
 		private:
 			void init(RenderContext* rc);
