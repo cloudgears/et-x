@@ -23,6 +23,13 @@ namespace et
 			AuthorizationStatus_Authorized,
 		};
 		
+		struct Player
+		{
+			std::string playerId;
+			std::string alias;
+			std::string displayName;
+		};
+		
 	public:
 		AuthorizationStatus status() const;
 		
@@ -34,6 +41,9 @@ namespace et
 		
 		void showAchievements();
 		void unlockAchievement(const std::string&);
+		
+		const Player& player() const
+			{ return _player; }
 		
 		ET_DECLARE_EVENT1(authorizationStatusChanged, AuthorizationStatus)
 		ET_DECLARE_EVENT1(reportingFailed, std::string)
@@ -48,5 +58,6 @@ namespace et
 				
 	private:
 		GameCenterPrivate* _private;
+		Player _player;
 	};
 }

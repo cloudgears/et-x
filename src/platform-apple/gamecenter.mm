@@ -94,8 +94,12 @@ void GameCenter::authenticate()
 		}
 		else
 		{
-			if ([[GKLocalPlayer localPlayer] isAuthenticated])
+			GKLocalPlayer* player = [GKLocalPlayer localPlayer];
+			if ([player isAuthenticated])
 			{
+				_player.alias = std::string([[player alias] UTF8String]);
+				_player.displayName = std::string([[player displayName] UTF8String]);
+				_player.playerId = std::string([[player playerID] UTF8String]);
 				_private->status = AuthorizationStatus_Authorized;
 				authenticationCompleted();
 			}
@@ -313,6 +317,8 @@ std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 
 - (void)gameCenterViewControllerDidFinish:(GKGameCenterViewController*)gameCenterViewController
 {
+	(void)gameCenterViewController;
+	
 #if (TARGET_OS_IPHONE)
 	UIViewController* mainViewController = (__bridge UIViewController*)
 		reinterpret_cast<void*>(application().renderingContextHandle());
@@ -421,6 +427,8 @@ std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 			ET_OBJC_RELEASE(gcController)
 		}
 	}];
+#else
+	(void)leaderboardId;
 #endif
 }
 

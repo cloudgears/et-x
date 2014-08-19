@@ -74,8 +74,9 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 	[attrString addAttribute:NSForegroundColorAttributeName value:_private->whiteColor range:wholeString];
 
 	NSSize characterSize = [attrString size];
+	
 	vec2i charSize = vec2i(static_cast<int>(characterSize.width),
-        static_cast<int>(characterSize.height));
+		static_cast<int>((value == ET_NEWLINE) || (value == ET_RETURN) ? lineHeight() : characterSize.height));
 	
 	CharDescriptor desc(value);
 	
