@@ -262,10 +262,10 @@ void Element::setAutolayout(const Dictionary& d)
 		l.angle = d.floatForKey("angle", 0.0f)->content;
 	
 	if (d.hasKey("positionMode"))
-		l.layoutPositionMode = layoutModeFromString(d.stringForKey("positionMode", "absolute")->content);
+		l.layoutPositionMode = layoutModeFromString(d.stringForKey("positionMode", "parent_relative")->content);
 	
 	if (d.hasKey("sizeMode"))
-		l.layoutSizeMode = layoutModeFromString(d.stringForKey("sizeMode", "absolute")->content);
+		l.layoutSizeMode = layoutModeFromString(d.stringForKey("sizeMode", "parent_relative")->content);
 	
 	l.layoutMask =
 		(d.integerForKey("autolayout_position", l.layoutMask & LayoutMask_Position)->content ? LayoutMask_Position : 0) |
