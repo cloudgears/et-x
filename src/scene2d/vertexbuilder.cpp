@@ -306,9 +306,17 @@ void et::s2d::buildColorVertices(SceneVertexList& vertices, const rect& p, const
 	vec2 bottomLeft = topLeft + vec2(0.0f, p.height);
 	vec2 bottomRight = bottomLeft + vec2(p.width, 0.0f);
 	
-	vec4 texCoord(0.0f, 0.0f, 0.0f, 1.0f);
+	vec4 texCoord[] =
+	{
+		vec4(0.0f, 1.0f, 0.0f, 1.0f),
+		vec4(1.0f, 1.0f, 0.0f, 1.0f),
+		vec4(0.0f, 0.0f, 0.0f, 1.0f),
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+	};
 	
-	buildQuad(vertices, SceneVertex(transform * topLeft, texCoord, color),
-		SceneVertex(transform * topRight, texCoord, color), SceneVertex(transform * bottomLeft, texCoord, color),
-		SceneVertex(transform * bottomRight, texCoord, color));
+	buildQuad(vertices,
+		SceneVertex(transform * topLeft, texCoord[0], color),
+		SceneVertex(transform * topRight, texCoord[1], color),
+		SceneVertex(transform * bottomLeft, texCoord[2], color),
+		SceneVertex(transform * bottomRight, texCoord[3], color));
 }
