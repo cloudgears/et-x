@@ -33,11 +33,12 @@ Label::Label(const std::string& text, Font::Pointer font, Element2d* parent, con
 
 void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	initProgram(r);
-	
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 
+	if (_backgroundVertices.lastElementIndex() > 0)
+		r.addVertices(_backgroundVertices, Texture(), r.defaultProgram(), this);
+	
 	if (_vertices.lastElementIndex() > 0)
 		r.addVertices(_vertices, _font->texture(), r.defaultTextProgram(), this);
 }
@@ -49,12 +50,13 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 	vec2 textOffset = size() * alignment;
 	
 	_vertices.setOffset(0);
-
-	bool hasShadow = _shadowColor.w > 0.0f;
+	_backgroundVertices.setOffset(0);
+	
+	bool hasShadow = _shadowColor.w > std::numeric_limits<float>::epsilon();
 	vec4 shadowColor = _shadowColor;
 
-	if (_backgroundColor.w > 0.0f)
-		buildColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor, transform);
+	if (_backgroundColor.w > std::numeric_limits<float>::epsilon())
+		buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor, transform);
 
 	if (_charListText.empty() && _charListNextText.empty())
 	{

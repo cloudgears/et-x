@@ -68,6 +68,7 @@ namespace et
 			CharDescriptorList _charListNextText;
 			
 			Font::Pointer _font;
+			SceneVertexList _backgroundVertices;
 			SceneVertexList _vertices;
 			vec4 _backgroundColor;
 			vec4 _shadowColor;
