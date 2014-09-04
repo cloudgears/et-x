@@ -13,10 +13,15 @@ using namespace et::s2d;
 
 Scene::Scene(RenderContext* rc) : _rc(rc),
 	_renderer(rc), _renderingElementBackground(new RenderingElement(rc)),
-	_background(Texture(), nullptr), _backgroundValid(true)
+	_renderingElementOverlay(new RenderingElement(rc)),
+	_background(Image(), nullptr), _overlay(Image(), nullptr)
 {
 	_background.setPivotPoint(vec2(0.5f));
 	_background.setContentMode(ImageView::ContentMode_Fill);
+	
+	_overlay.setPivotPoint(vec2(0.5f));
+	_overlay.setContentMode(ImageView::ContentMode_Fill);
+	
 	layout(rc->size());
 }
 
@@ -117,23 +122,35 @@ void Scene::buildBackgroundVertices(RenderContext* rc)
 {
 	_renderer.setRendernigElement(_renderingElementBackground);
 	
-	if (!_backgroundValid)
+	if (!_background.contentValid())
 	{
 		_renderingElementBackground->clear();
 		_background.addToRenderQueue(rc, _renderer);
 	}
+}
+
+void Scene::buildOverlayVertices(RenderContext* rc)
+{
+	_renderer.setRendernigElement(_renderingElementOverlay);
 	
-	_backgroundValid = true;
+	if (!_overlay.contentValid())
+	{
+		_renderingElementOverlay->clear();
+		_overlay.addToRenderQueue(rc, _renderer);
+	}
 }
 
 void Scene::layout(const vec2& size)
 {
 	_screenSize = size;
 	_renderer.setProjectionMatrices(size);
+	
 	_background.setPosition(0.5f * size);
 	_background.setSize(size);
-	_backgroundValid = false;
 
+	_overlay.setPosition(0.5f * size);
+	_overlay.setSize(size);
+	
 	for (auto& i : _layouts)
 		i->layout->autoLayout(size, 0.0f);
 }
@@ -145,7 +162,7 @@ void Scene::render(RenderContext* rc)
 	if (_background.texture().valid())
 	{
 		_renderer.setAdditionalOffsetAndAlpha(vec3(0.0f, 0.0f, 1.0f));
-		buildBackgroundVertices(rc);
+		buildOverlayVertices(rc);
 		_renderer.render(rc);
 	}
 
@@ -156,13 +173,44 @@ void Scene::render(RenderContext* rc)
 		_renderer.render(rc);
 	}
 
+	if (_overlay.texture().valid())
+	{
+		_renderer.setAdditionalOffsetAndAlpha(vec3(0.0f, 0.0f, 1.0f));
+		buildOverlayVertices(rc);
+		_renderer.render(rc);
+	}
+	
 	_renderer.endRender(rc);
+}
+
+ImageView& Scene::backgroundImageView()
+{
+	return _background;
+}
+
+const ImageView& Scene::backgroundImageView() const
+{
+	return _background;
 }
 
 void Scene::setBackgroundImage(const Image& img)
 {
 	_background.setImage(img);
-	_backgroundValid = false;
+}
+
+ImageView& Scene::overlayImageView()
+{
+	return _overlay;
+}
+
+const ImageView& Scene::overlayImageView() const
+{
+	return _overlay;
+}
+
+void Scene::setOverlayImage(const Image& img)
+{
+	_overlay.setImage(img);
 }
 
 void Scene::onKeyboardNeeded(Layout* l, Element* element)

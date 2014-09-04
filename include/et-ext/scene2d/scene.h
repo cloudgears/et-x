@@ -66,8 +66,14 @@ namespace et
 			void pushLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None,
 				float duration = 0.3f);
 
+			ImageView& backgroundImageView();
+			const ImageView& backgroundImageView() const;
 			void setBackgroundImage(const Image& img);
 
+			ImageView& overlayImageView();
+			const ImageView& overlayImageView() const;
+			void setOverlayImage(const Image& img);
+			
 			bool pointerPressed(const et::PointerInputInfo&);
 			bool pointerMoved(const et::PointerInputInfo&);
 			bool pointerReleased(const et::PointerInputInfo&);
@@ -103,6 +109,7 @@ namespace et
 				Layout::Pointer layout);
 			
 			void buildBackgroundVertices(RenderContext* rc);
+			void buildOverlayVertices(RenderContext* rc);
 
 			void onKeyboardNeeded(Layout* l, Element* e);
 			void onKeyboardResigned(Layout* l);
@@ -164,14 +171,15 @@ namespace et
 			ObjectsCache _sharedCache;
 
 			RenderingElement::Pointer _renderingElementBackground;
+			RenderingElement::Pointer _renderingElementOverlay;
 			ImageView _background;
+			ImageView _overlay;
 			
 			Layout::Pointer _keyboardFocusedLayout;
 			Element::Pointer _keyboardFocusedElement;
 
 			LayoutEntryStack _layouts;
 			vec2 _screenSize;
-			bool _backgroundValid;
 		};
 
 	}

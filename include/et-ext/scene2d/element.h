@@ -40,7 +40,14 @@ namespace et
 
 			void setParent(Element* element);
 
+			bool transformValid() const
+				{ return _transformValid; }
+			
 			void invalidateTransform();
+			
+			bool contentValid() const
+				{ return _contentValid; }
+			
 			void invalidateContent();
 			
 			virtual bool enabled() const;
@@ -194,12 +201,6 @@ namespace et
 		protected:
 			void setContentValid()
 				{ _contentValid = true; }
-
-			bool contentValid() const
-				{ return _contentValid; }
-
-			bool transformValid() const
-				{ return _transformValid; }
 
 			bool inverseTransformValid()
 				{ return _inverseTransformValid; }
