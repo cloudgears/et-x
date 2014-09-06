@@ -488,13 +488,13 @@ void Scroll::setContentSize(const vec2& cs)
 	invalidateContent();
 }
 
-void Scroll::adjustContentSize()
+void Scroll::adjustContentSize(bool includeHiddenItems)
 {
 	vec2 size;
 	
 	for (const auto& ptr : children())
 	{
-		if (ptr->visible())
+		if (includeHiddenItems || ptr->visible())
 			size = maxv(size, ptr->origin() + ptr->size());
 	}
 

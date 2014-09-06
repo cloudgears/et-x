@@ -36,7 +36,7 @@ namespace et
 			void applyOffset(const vec2& dOffset, float duration = 0.0f);
 			
 			vec2 contentSize();
-			void adjustContentSize();
+			void adjustContentSize(bool includeHiddenItems = false);
 			
 			void setBackgroundColor(const vec4& color);
 			void setOverlayColor(const vec4& color);

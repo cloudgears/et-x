@@ -45,15 +45,21 @@ namespace et
 			
 			void setSliderImageMode(SliderImagesMode);
 			
+			const s2d::Image& sliderLeftImage() const
+				{ return _sliderLeft; }
+			
+			const s2d::Image& sliderRightImage() const
+				{ return _sliderRight; }
+			
 			float minValue() const
 				{ return _min; }
 			
 			float maxValue() const
 				{ return _max; }
 
-			void setRange(float aMin, float aMax);
+			void setRange(float aMin, float aMax, float duration = 0.0f);
 			
-			void setValue(float v);
+			void setValue(float v, float duration = 0.0f);
 			float value() const;
 			float normalizedValue() const;
 			
@@ -91,13 +97,13 @@ namespace et
 			
 			vec4 _backgroundColor;
 			
-			float _handleScale[State_max];
+			float _handleScale[State_max] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 			
-			float _min;
-			float _max;
-			float _value;
+			float _min = 0.0f;
+			float _max = 1.0f;
+			FloatAnimator _value;
 			
-			State _state;
+			State _state = State_Default;
 			SliderImagesMode _sliderImagesMode;
 			BackgroundImageMode _backgroundImageMode;
         };
