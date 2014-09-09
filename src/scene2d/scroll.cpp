@@ -204,12 +204,18 @@ bool Scroll::pointerCancelled(const PointerInputInfo& p)
 	_pointerCaptured = false;
 	_currentPointer = PointerInputInfo();
 	broadcastCancelled(p);
+	
 	return true;
 }
 
 bool Scroll::pointerScrolled(const PointerInputInfo& p)
 {
+#if (ET_PLATFORM_MAC)
+	applyOffset(p.scroll * size(), 0.0f);
+#else
 	applyOffset(p.scroll * _pointerScrollMultiplier, _pointerScrollDuration);
+#endif
+	
 	return true;
 }
 
@@ -441,8 +447,7 @@ void Scroll::update(float t)
 	
 	_updateTime = t;
 	
-	_scrollbarsAlpha =
-		mix(_scrollbarsAlpha, _scrollbarsAlphaTarget, etMin(1.0f, alphaAnimationScale * deltaTime));
+	_scrollbarsAlpha = mix(_scrollbarsAlpha, _scrollbarsAlphaTarget, etMin(1.0f, alphaAnimationScale * deltaTime));
 	
 	if (_scrollbarsAlpha < minAlpha)
 		_scrollbarsAlpha = 0.0f;
