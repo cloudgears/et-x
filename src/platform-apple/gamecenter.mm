@@ -10,7 +10,7 @@
 
 #include <et/app/application.h>
 #include <et/app/applicationnotifier.h>
-#include <et/platform-apple/objc.h>
+#include <et/platform-apple/apple.h>
 #include <et-ext/platform-apple/gamecenter.h>
 #include <et-ext/json/json.h>
 
