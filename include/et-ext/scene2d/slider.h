@@ -97,7 +97,7 @@ namespace et
 			
 			vec4 _backgroundColor;
 			
-			float _handleScale[State_max] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+			float _handleScale[State_max];
 			
 			float _min = 0.0f;
 			float _max = 1.0f;
