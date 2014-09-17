@@ -80,7 +80,7 @@ GameCenter::AuthorizationStatus GameCenter::status() const
 
 void GameCenter::authenticate()
 {
-	[[GKLocalPlayer localPlayer] setAuthenticateHandler:^(ViewControllerClass* viewController, NSError* error)
+	[[GKLocalPlayer localPlayer] setAuthenticateHandler:^(ViewControllerClass* viewController, NSError*)
 	{
 		if (viewController != nil)
 		{
@@ -106,7 +106,7 @@ void GameCenter::authenticate()
 			else
 			{
 				_private->status = AuthorizationStatus_NotAuthorized;
-				NSLog(@"Unable to authenticate to Game Center\n%@", error);
+				// NSLog(@"Unable to authenticate to Game Center\n%@", error);
 			}
 		}
 		
