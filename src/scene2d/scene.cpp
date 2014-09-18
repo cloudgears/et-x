@@ -157,6 +157,23 @@ void Scene::layout(const vec2& size)
 
 void Scene::render(RenderContext* rc)
 {
+	_prerenderElements.clear();
+	
+	for (auto& obj : _layouts)
+		obj->layout->collectPreRenderingObjects(obj->layout.ptr(), _prerenderElements);
+
+	if (!_prerenderElements.empty())
+	{
+		auto currentBuffer = rc->renderState().boundFramebuffer();
+		auto viewportSize = rc->renderState().viewportSize();
+		
+		for (auto e : _prerenderElements)
+			e->preRender(rc);
+		
+		rc->renderState().bindFramebuffer(currentBuffer);
+		rc->renderState().setViewportSize(viewportSize);
+	}
+	
 	_renderer.beginRender(rc);
 
 	if (_background.texture().valid())

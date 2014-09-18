@@ -58,6 +58,7 @@ namespace et
 
 			virtual void addToRenderQueue(RenderContext*, SceneRenderer&) { }
 			virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) { }
+			virtual void preRender(RenderContext*) { }
 			
 			virtual SceneProgram initProgram(SceneRenderer&);
 			virtual void setDefaultProgram(et::Program::Pointer&) { }

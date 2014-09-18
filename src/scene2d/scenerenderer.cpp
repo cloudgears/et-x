@@ -167,12 +167,14 @@ void s2d::SceneRenderer::setRendernigElement(const RenderingElement::Pointer& r)
 
 void s2d::SceneRenderer::beginRender(RenderContext* rc)
 {
-	rc->renderState().setDepthMask(true);
-	rc->renderer()->clear(false, true);
-
-	rc->renderState().setBlend(true, BlendState_Default);
+	if (rc->renderState().depthMask())
+	{
+		rc->renderer()->clear(false, true);
+		rc->renderState().setDepthMask(false);
+	}
+	
 	rc->renderState().setDepthTest(false);
-	rc->renderState().setDepthMask(false);
+	rc->renderState().setBlend(true, BlendState_Default);
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)

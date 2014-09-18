@@ -71,7 +71,9 @@ namespace et
 				{ return this; }
 			
 			void setInvalid();
-			void collectTopmostElements(Element* element);
+			void collectTopmostElements(Element*);
+			
+			void collectPreRenderingObjects(Element*, Element::List&);
 			
 			Element* activeElement(const PointerInputInfo& p);
 			Element* getActiveElement(const PointerInputInfo& p, Element* e);

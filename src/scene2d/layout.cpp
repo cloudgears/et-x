@@ -412,15 +412,28 @@ void Layout::setInvalid()
 	_valid = false;
 }
 
+void Layout::collectPreRenderingObjects(Element* element, Element::List& elementList)
+{
+	if (element->visible())
+	{
+		if (element->hasFlag(Flag_RequiresPreRendering))
+			elementList.push_back(Element::Pointer(element));
+		
+		for (auto& i : element->children())
+			collectPreRenderingObjects(i.ptr(), elementList);
+	}
+}
+
 void Layout::collectTopmostElements(Element* element)
 {
-	if (!element->visible()) return;
-	
-	if (element->hasFlag(Flag_RenderTopmost))
-		_topmostElements.push_back(Element::Pointer(element));
-
-	for (auto& i : element->children())
-		collectTopmostElements(i.ptr());
+	if (element->visible())
+	{
+		if (element->hasFlag(Flag_RenderTopmost))
+			_topmostElements.push_back(Element::Pointer(element));
+		
+		for (auto& i : element->children())
+			collectTopmostElements(i.ptr());
+	}
 }
 
 void Layout::initRenderingElement(et::RenderContext* rc)

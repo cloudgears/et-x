@@ -177,6 +177,7 @@ namespace et
 			
 			Layout::Pointer _keyboardFocusedLayout;
 			Element::Pointer _keyboardFocusedElement;
+			Element::List _prerenderElements;
 
 			LayoutEntryStack _layouts;
 			vec2 _screenSize;

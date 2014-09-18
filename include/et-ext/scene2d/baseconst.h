@@ -38,7 +38,8 @@ namespace et
 			Flag_HandlesChildEvents = 0x0010,
 			Flag_ClipToBounds = 0x0020,
 			Flag_HandlesChildLayout = 0x0040,
-			Flag_DynamicRendering = 0x0080
+			Flag_DynamicRendering = 0x0080,
+			Flag_RequiresPreRendering = 0x0100
 		};
 
 		enum AnimatedPropery
