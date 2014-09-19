@@ -64,7 +64,7 @@ void Line::buildLine(const vec2& p1, const vec2& p2, const vec4& tc, const vec4&
 	buildQuad(_vertices, tl, tr, bl, br);
 }
 
-void Line::buildVertices(SceneRenderer& r)
+void Line::buildVertices(SceneRenderer&)
 {
 	_vertices.setOffset(0);
 	
