@@ -31,6 +31,8 @@ namespace et
 			void setControlPoint(size_t index, const vec2&);
 			void setWidth(float);
 			
+			void setGradientColors(const vec4&, const vec4&);
+			
 			void setShadowColor(const vec4&);
 			void setShadowOffset(const vec2&);
 			
@@ -38,15 +40,17 @@ namespace et
 			void addToRenderQueue(RenderContext*, SceneRenderer&);
 			void buildVertices(SceneRenderer&);
 			
-			void buildLine(const vec2&, const vec2&, const vec4&, const vec4&, const mat4&);
+			void buildLine(const vec2&, const vec2&, const vec4&, const vec4&, const vec4&, const mat4&);
 			
 		private:
 			std::vector<vec2> _controlPoints;
 			SceneVertexList _vertices;
+			vec4 _startColor;
+			vec4 _endColor;
 			vec4 _shadowColor;
 			vec2 _shadowOffset;
-			float _width;
-			Type _type;
+			float _width = 1.0f;
+			Type _type = Type_Linear;
 		};
 	}
 }

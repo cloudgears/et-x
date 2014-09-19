@@ -14,7 +14,7 @@ using namespace et::s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Line)
 
 Line::Line(const vec2& from, const vec2& to, Element2d* parent) :
-	Element2d(parent), _width(1.0f), _type(Type_Linear)
+	Element2d(parent), _width(1.0f), _startColor(1.0f), _endColor(1.0f)
 {
 	setFlag(Flag_TransparentForPointer);
 	
@@ -54,13 +54,13 @@ void Line::addToRenderQueue(RenderContext*, SceneRenderer& r)
 	r.addVertices(_vertices, Texture(), program(), this);
 }
 
-void Line::buildLine(const vec2& p1, const vec2& p2, const vec4& tc, const vec4& clr, const mat4& t)
+void Line::buildLine(const vec2& p1, const vec2& p2, const vec4& tc, const vec4& clr1, const vec4& clr2, const mat4& t)
 {
 	vec2 n = 0.5f * _width * normalize(vec2(p2.y - p1.y, p1.x - p2.x));
-	SceneVertex tl(t * (p1 - n), tc, clr);
-	SceneVertex tr(t * (p1 + n), tc, clr);
-	SceneVertex bl(t * (p2 - n), tc, clr);
-	SceneVertex br(t * (p2 + n), tc, clr);
+	SceneVertex tl(t * (p1 - n), tc, clr1);
+	SceneVertex tr(t * (p1 + n), tc, clr1);
+	SceneVertex bl(t * (p2 - n), tc, clr2);
+	SceneVertex br(t * (p2 + n), tc, clr2);
 	buildQuad(_vertices, tl, tr, bl, br);
 }
 
@@ -68,7 +68,7 @@ void Line::buildVertices(SceneRenderer&)
 {
 	_vertices.setOffset(0);
 	
-	vec4 clr = color();
+	vec4 baseColor = color();
 	vec4 texCoord(0.0f, 0.0f, 0.0f, 1.0f);
 	mat4 tr = finalTransform();
 	
@@ -78,12 +78,12 @@ void Line::buildVertices(SceneRenderer&)
 		{
 			vec2 p1 = origin() + size() * _controlPoints.front() + _shadowOffset;
 			vec2 p2 = origin() + size() * _controlPoints.back() + _shadowOffset;
-			buildLine(p1, p2, texCoord, clr, tr);
+			buildLine(p1, p2, texCoord, _shadowColor, _shadowColor, tr);
 		}
 		
 		vec2 p1 = origin() + size() * _controlPoints.front();
 		vec2 p2 = origin() + size() * _controlPoints.back();
-		buildLine(p1, p2, texCoord, clr, tr);
+		buildLine(p1, p2, texCoord, baseColor * _startColor, baseColor * _endColor, tr);
 	}
 	else if (_type == Type_QuadraticBezier)
 	{
@@ -109,7 +109,7 @@ void Line::buildVertices(SceneRenderer&)
 			{
 				vec2 p1 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), t) + _shadowOffset;
 				vec2 p2 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), etMin(1.0f, t + dt)) + _shadowOffset;
-				buildLine(p1, p2, texCoord, _shadowColor, tr);
+				buildLine(p1, p2, texCoord, _shadowColor, _shadowColor, tr);
 				t += dt;
 			}
 		}
@@ -117,9 +117,11 @@ void Line::buildVertices(SceneRenderer&)
 		t = 0.0f;
 		while (t < 1.0f)
 		{
+			vec4 c1 = mix(_startColor, _endColor, t);
+			vec4 c2 = mix(_startColor, _endColor, t + dt);
 			vec2 p1 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), t);
 			vec2 p2 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), etMin(1.0f, t + dt));
-			buildLine(p1, p2, texCoord, clr, tr);
+			buildLine(p1, p2, texCoord, baseColor * c1, baseColor * c2, tr);
 			t += dt;
 		}
 	}
@@ -140,5 +142,12 @@ void Line::setShadowColor(const vec4& c)
 void Line::setShadowOffset(const vec2& o)
 {
 	_shadowOffset = o;
+	invalidateContent();
+}
+
+void Line::setGradientColors(const vec4& s, const vec4& e)
+{
+	_startColor = s;
+	_endColor = e;
 	invalidateContent();
 }

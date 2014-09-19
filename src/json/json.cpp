@@ -66,7 +66,7 @@ et::ValueBase::Pointer deserializeJson(const char* buffer, size_t len, ValueClas
 	c = ValueClass_Invalid;
 	
 	if ((buffer == nullptr) || (len == 0))
-		return et::ValueBase::Pointer();
+		return Dictionary();
 	
 	json_error_t error = { };
 	json_t* root = json_loadb(buffer, len, 0, &error);
@@ -79,7 +79,7 @@ et::ValueBase::Pointer deserializeJson(const char* buffer, size_t len, ValueClas
 			log::error("%s", buffer);
 		}
 		json_decref(root);
-		return ValueBase::Pointer();
+		return Dictionary();
 	}
 	
 	et::ValueBase::Pointer result;
