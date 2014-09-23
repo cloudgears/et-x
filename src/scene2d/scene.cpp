@@ -464,7 +464,7 @@ void Scene::popTopmostLayout(size_t animationFlags, float duration)
 }
 
 void Scene::replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout,
-						  size_t animationFlags, float duration)
+	size_t animationFlags, float duration)
 {
 	ET_INVOKE_THIS_CLASS_METHOD2(Scene, internal_replaceLayout, LayoutPair(oldLayout, newLayout),
 		AnimationDescriptor(animationFlags, duration))

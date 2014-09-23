@@ -132,9 +132,9 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 				break;
 				
 			case LayoutMode_RelativeToParent:
-				aSize = parent()->desiredSize() * _autoLayout.size;
+				aSize = _autoLayout.size * ((parent() == nullptr) ? contextSize : parent()->desiredSize());
 				break;
-				
+		
 			case LayoutMode_WrapContent:
 				aSize = contentSize();
 				break;
@@ -157,10 +157,7 @@ void Element::autoLayout(const vec2& contextSize, float duration)
 				break;
 				
 			case LayoutMode_RelativeToParent:
-				if (parent() == nullptr)
-					aPos = contextSize * _autoLayout.position;
-				else
-					aPos = parent()->desiredSize() * _autoLayout.position;
+				aPos = _autoLayout.position * ((parent() == nullptr) ? contextSize : parent()->desiredSize());
 				break;
 				
 			case LayoutMode_WrapContent:
