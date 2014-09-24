@@ -16,13 +16,14 @@
 using namespace et;
 using namespace et::s2d;
 
+size_t textLength(const wchar_t* text);
+std::wstring subString(const wchar_t* begin, const wchar_t* end);
+bool textBeginsFrom(const wchar_t* text, const wchar_t* entry);
+const wchar_t* findClosingBracket(const wchar_t* text);
 vec4 colorTagToColor(const std::wstring& colorTag);
-size_t findClosingTag(const std::wstring& s, size_t startPos);
 
 Font::Font(const CharacterGenerator::Pointer& generator) :
-	_generator(generator)
-{
-}
+	_generator(generator) { }
 
 void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 {
@@ -228,90 +229,64 @@ CharDescriptorList Font::parseString(const std::wstring& s)
 	if (s.empty())
 		return CharDescriptorList();
 	
-	std::wstring outputString(s);
-	
 	CharDescriptorList result(s.size());
-	for (size_t i = 0; i < s.size(); ++i)
-		result[i] = CharDescriptor(s[i]);
 	
-	const std::wstring boldTag = L"<b";
-	const std::wstring boldClosingTag = L"</b";
-	const std::wstring colorTag = L"<color";
-	const std::wstring colorClosingTag = L"</color";
-		
-	size_t tagPos = std::string::npos;
-	while ((tagPos = outputString.find(boldTag)) != std::string::npos)
+	static const wchar_t* boldTagStart = L"<b>";
+	static const wchar_t* boldTagEnd = L"</b>";
+	static const wchar_t* colorTagStart = L"<color=";
+	static const wchar_t* colorTagEnd = L"</color>";
+	
+	size_t resultSize = 0;
+	
+	size_t boldTags = 0;
+	std::stack<vec4> colorsStack;
+	colorsStack.push(vec4(1.0f));
+	
+	auto* b = s.data();
+	auto* e = b + s.size();
+	while (b < e)
 	{
-		auto tagStart = tagPos;
-		auto sI = outputString.begin() + tagStart;
-		auto rI = result.begin() + tagStart;
-		auto distance = findClosingTag(outputString, tagStart) - tagStart;
-		sI = outputString.erase(sI, sI + distance);
-		rI = result.erase(rI, rI + distance);
-		
-		tagStart = outputString.find(boldClosingTag);
-		if (tagStart == std::string::npos)
+		if (textBeginsFrom(b, boldTagStart))
 		{
-			for (; rI != result.end(); ++rI)
-				rI->params |= CharParameter_Bold;
+			++boldTags;
+			b += textLength(boldTagStart);
+			if (b >= e)
+				break;
+		}
+		else if (textBeginsFrom(b, boldTagEnd))
+		{
+			if (boldTags > 0)
+				--boldTags;
+			b += textLength(boldTagEnd);
+			if (b >= e)
+				break;
+		}
+		else if (textBeginsFrom(b, colorTagStart))
+		{
+			auto closingBracket = findClosingBracket(b);
+			colorsStack.push(colorTagToColor(subString(b, closingBracket)));
+			b = closingBracket + 1;
+			if (b >= e)
+				break;
+		}
+		else if (textBeginsFrom(b, colorTagEnd))
+		{
+			if (colorsStack.size() > 1)
+				colorsStack.pop();
+			b += textLength(colorTagEnd);
+			if (b >= e)
+				break;
 		}
 		else
 		{
-			auto sE = outputString.begin() + tagStart;
-			auto rE = result.begin() + tagStart;
-			 
-			for (; rI != rE; ++rI)
-				rI->params |= CharParameter_Bold;
-			
-			distance = findClosingTag(outputString, tagStart) - tagStart;
-			outputString.erase(sE, sE + distance);
-			result.erase(rE, rE + distance);
+			auto cd = (boldTags > 0) ? boldCharDescription(*b) : charDescription(*b);
+			cd.color = colorsStack.top();
+			result[resultSize++] = cd;
+			++b;
 		}
 	}
 	
-	tagPos = std::string::npos;
-	while ((tagPos = outputString.find(colorTag)) != std::string::npos)
-	{
-		auto tagStart = tagPos;
-		auto tagEnd = findClosingTag(outputString, tagStart);
-		auto sI = outputString.begin() + tagStart;
-		auto rI = result.begin() + tagStart;
-		auto distance = tagEnd - tagStart;
-		
-		auto posToCopy = tagStart + colorTag.length();
-		std::wstring colorTagString = outputString.substr(posToCopy, tagEnd - posToCopy - 1);
-		vec4 color = colorTagToColor(colorTagString);
-		
-		sI = outputString.erase(sI, sI + distance);
-		rI = result.erase(rI, rI + distance);
-		
-		tagStart = outputString.find(colorClosingTag);
-		if (tagStart == std::string::npos)
-		{
-			for (; rI != result.end(); ++rI)
-				rI->color = color;
-		}
-		else
-		{
-			auto sE = outputString.begin() + tagStart;
-			auto rE = result.begin() + tagStart;
-
-			for (; rI != rE; ++rI)
-				rI->color = color;
-			
-			distance = findClosingTag(outputString, tagStart) - tagStart;
-			outputString.erase(sE, sE + distance);
-			result.erase(rE, rE + distance);
-		}
-	}
-	
-	for (auto& cd : result)
-	{
-		vec4 originalColor = cd.color;
-		cd = (cd.params & CharParameter_Bold) ? boldCharDescription(cd.value) : charDescription(cd.value);
-		cd.color = originalColor;
-	}
-	
+	result.resize(resultSize);
 	return result;
 }
 
@@ -319,7 +294,7 @@ bool Font::isUtf8String(const std::string& s) const
 {
 	for (auto c : s)
 	{
-		if (c & 0x80)
+		if ((c & 0x80) != 0)
 			return true;
 	}
 	
@@ -329,19 +304,37 @@ bool Font::isUtf8String(const std::string& s) const
 /*
  * Service
  */
-size_t findClosingTag(const std::wstring& s, size_t startPos)
+bool textBeginsFrom(const wchar_t* text, const wchar_t* entry)
 {
-	static const wchar_t closingTag = L'>';
-	
-	auto result = s.size() - startPos - 1;
-	while (startPos < s.size())
+	do
 	{
-		if (s[startPos++] == closingTag)
-		{
-			result = startPos;
-			break;
-		}
-	}
+		if (*entry != *text)
+			return false;
+		++text;
+	} while (*(++entry));
+	return true;
+}
+
+const wchar_t* findClosingBracket(const wchar_t* text)
+{
+	static const wchar_t closingBracket = L'>';
+	do { if (*text == closingBracket) break; } while (*(++text));
+	return text;
+}
+
+size_t textLength(const wchar_t* text)
+{
+	size_t result = 0;
+	while (*text++)
+		++result;
+	return result;
+}
+
+std::wstring subString(const wchar_t* begin, const wchar_t* end)
+{
+	std::wstring result(end - begin + 1, 0);
+	while (begin != end)
+		result.push_back(*begin++);
 	return result;
 }
 
