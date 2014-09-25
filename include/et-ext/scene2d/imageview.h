@@ -12,6 +12,18 @@
 
 namespace et
 {
+	template <>
+	inline s2d::ImageDescriptor linearInterpolationFunction(const s2d::ImageDescriptor& v1,
+		const s2d::ImageDescriptor& v2, float t)
+	{
+		float invT = 1.0f - t;
+		s2d::ContentOffset co(v1.contentOffset.left * invT + v2.contentOffset.left * t,
+			v1.contentOffset.top * invT + v2.contentOffset.top * t,
+			v1.contentOffset.right * invT + v2.contentOffset.right * t,
+			v1.contentOffset.bottom * invT + v2.contentOffset.bottom * t);
+		return s2d::ImageDescriptor(mix(v1.origin, v2.origin, t), mix(v1.size, v2.size, t), co);
+	}
+	
 	namespace s2d
 	{
 		class ImageView : public Element2d
@@ -51,12 +63,12 @@ namespace et
 				{ return _texture; }
 
 			const ImageDescriptor& imageDescriptor() const
-				{ return _descriptor; }
+				{ return _descriptor.value(); }
 
 			const vec4& backgroundColor() const
 				{ return _backgroundColor; }
 			
-			void setImageDescriptor(const ImageDescriptor& d);
+			void setImageDescriptor(const ImageDescriptor& d, float duration = 0.0f);
 			void setContentMode(ImageView::ContentMode cm);
 			void setTexture(const Texture& t, bool updateDescriptor);
 			void setImage(const Image& img);
@@ -75,17 +87,17 @@ namespace et
 			void addToRenderQueue(RenderContext*, SceneRenderer&);
 			
 		private:
-			bool pointerReleased(const PointerInputInfo&);
+			void connectEvents();
 			
 			void buildVertices(RenderContext*, SceneRenderer&);
 
 		private:
 			Texture _texture;
 			SceneVertexList _vertices;
-			ImageDescriptor _descriptor;
-			ImageView::ContentMode _contentMode;
-			vec4 _backgroundColor;
+			Animator<ImageDescriptor> _descriptor;
 			Vector4Animator _backgroundColorAnimator;
+			vec4 _backgroundColor;
+			ContentMode _contentMode;
 		};
 
 		typedef std::vector<ImageView::Pointer> ImageViewList;

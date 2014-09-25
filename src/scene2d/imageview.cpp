@@ -13,35 +13,42 @@ using namespace s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(ImageView)
 
 ImageView::ImageView(Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _backgroundColorAnimator(timerPool()),
-	_contentMode(ImageView::ContentMode_Stretch)
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _descriptor(timerPool()),
+	_backgroundColorAnimator(timerPool()), _contentMode(ImageView::ContentMode_Stretch)
 {
-	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
+	connectEvents();
 }
 
 ImageView::ImageView(const Texture& texture, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(texture),
-	_descriptor(ImageDescriptor(texture)), _backgroundColorAnimator(timerPool()),
+	_descriptor(ImageDescriptor(texture), timerPool()), _backgroundColorAnimator(timerPool()),
 	_contentMode(ImageView::ContentMode_Stretch)
 {
-	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
-	setSize(_descriptor.size);
+	connectEvents();
+	setSize(_descriptor.value().size);
 }
 
 ImageView::ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent,
 	const std::string& name) : Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(texture),
-	_descriptor(i), _backgroundColorAnimator(timerPool()), _contentMode(ImageView::ContentMode_Stretch)
+	_descriptor(i, timerPool()), _backgroundColorAnimator(timerPool()), _contentMode(ImageView::ContentMode_Stretch)
 {
-	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
-	setSize(_descriptor.size, 0.0f);
+	connectEvents();
+	setSize(_descriptor.value().size, 0.0f);
 }
 
 ImageView::ImageView(const Image& img, Element2d* parent, const std::string& name) : 
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(img.texture),
-	_descriptor(img.descriptor), _backgroundColorAnimator(timerPool()), _contentMode(ImageView::ContentMode_Stretch)
+	_descriptor(img.descriptor, timerPool()), _backgroundColorAnimator(timerPool()),
+	_contentMode(ImageView::ContentMode_Stretch)
 {
+	connectEvents();
+	setSize(_descriptor.value().size, 0.0f);
+}
+
+void ImageView::connectEvents()
+{
+	_descriptor.updated.connect([this](){ invalidateContent(); });
 	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
-	setSize(_descriptor.size, 0.0f);
 }
 
 void ImageView::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
@@ -63,25 +70,25 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 	if (_backgroundColor.w > 0.0f)
 		buildColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor * vec4(1.0f, 1.0, 1.0f, alpha()), transform);
 	
-	if (_texture.valid())
+	if (_texture.valid() && (std::abs(_descriptor.value().size.square()) > 0.0f))
 	{
 		if (_contentMode == ContentMode_Tile)
 		{
-			_actualImageSize = _descriptor.size;
+			_actualImageSize = _descriptor.value().size;
 
-			size_t repeatsWidth = static_cast<size_t>(size().x / _descriptor.size.x);
-			size_t repeatsHeight = static_cast<size_t>(size().y / _descriptor.size.y);
+			size_t repeatsWidth = etMax(1ul, static_cast<size_t>(size().x / _descriptor.value().size.x));
+			size_t repeatsHeight = etMax(1ul, static_cast<size_t>(size().y / _descriptor.value().size.y));
 
-			_vertices.fitToSize(repeatsWidth * repeatsHeight * measuseVertexCountForImageDescriptor(_descriptor));
+			_vertices.fitToSize(repeatsWidth * repeatsHeight * measuseVertexCountForImageDescriptor(_descriptor.value()));
 
 			for (size_t v = 0; v < repeatsHeight; ++v)
 			{
 				for (size_t u = 0; u < repeatsWidth; ++u)
 				{
-					float fx = static_cast<float>(u * _descriptor.size.x);
-					float fy = static_cast<float>(v * _descriptor.size.y);
-					buildImageVertices(_vertices, _texture, _descriptor,
-						rect(vec2(fx, fy), _descriptor.size), color(), transform);
+					float fx = static_cast<float>(u * _descriptor.value().size.x);
+					float fy = static_cast<float>(v * _descriptor.value().size.y);
+					buildImageVertices(_vertices, _texture, _descriptor.value(),
+						rect(vec2(fx, fy), _descriptor.value().size), color(), transform);
 				}
 			}
 		}
@@ -96,10 +103,9 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 	setContentValid();
 }
 
-void ImageView::setImageDescriptor(const ImageDescriptor& d)
+void ImageView::setImageDescriptor(const ImageDescriptor& d, float duration)
 {
-	_descriptor = d;
-	invalidateContent();
+	_descriptor.animate(d, duration);
 }
 
 void ImageView::setContentMode(ImageView::ContentMode cm)
@@ -114,16 +120,17 @@ void ImageView::setContentMode(ImageView::ContentMode cm)
 void ImageView::setTexture(const Texture& t, bool updateDescriptor)
 {
 	_texture = t;
+	
 	if (updateDescriptor)
-		_descriptor = ImageDescriptor(t);
-	invalidateContent();
+		_descriptor.animate(ImageDescriptor(t), 0.0f);
+	else
+		invalidateContent();
 }
 
 void ImageView::setImage(const Image& img)
 {
 	_texture = img.texture;
-	_descriptor = img.descriptor;
-	invalidateContent();
+	_descriptor.animate(img.descriptor, 0.0f);
 }
 
 void ImageView::setBackgroundColor(const vec4& color, float duration)
@@ -141,13 +148,13 @@ void ImageView::setBackgroundColor(const vec4& color, float duration)
 
 ImageDescriptor ImageView::calculateImageFrame()
 {
-	ImageDescriptor desc = _descriptor;
+	ImageDescriptor desc = _descriptor.value();
 
 	switch (_contentMode)
 	{
 		case ContentMode_Center:
 		{
-			_actualImageSize = desc.size;
+			_actualImageSize = absv(desc.size);
 			_actualImageOrigin = 0.5f * (size() - desc.size);
 			break;
 		}
@@ -157,7 +164,7 @@ ImageDescriptor ImageView::calculateImageFrame()
 		case ContentMode_Fill:
 		{
 			vec2 frameSize = size();
-			vec2 descSize = absv(_descriptor.size);
+			vec2 descSize = absv(desc.size);
 				
 			if (_contentMode == ContentMode_Fill)
 			{
@@ -205,15 +212,5 @@ ImageDescriptor ImageView::calculateImageFrame()
 
 vec2 ImageView::contentSize()
 {
-	return _descriptor.size;
-}
-
-bool ImageView::pointerReleased(const PointerInputInfo& p)
-{
-	if (hasFlag(Flag_TransparentForPointer))
-		return false;
-	
-	onPointerReleased.invoke(p);
-	
-	return true;
+	return _descriptor.value().size;
 }
