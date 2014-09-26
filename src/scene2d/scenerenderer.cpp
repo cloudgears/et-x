@@ -233,6 +233,7 @@ SceneProgram SceneRenderer::createProgramWithShaders(const std::string& name, co
 	else
 	{
 		program.program = existingProgram;
+		_rc->renderState().bindProgram(program.program);
 	}
 	
 	program.additionalOffsetAndAlpha = program.program->getUniform(additionalOffsetAndAlphaUniform);
