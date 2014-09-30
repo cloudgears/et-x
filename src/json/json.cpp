@@ -23,6 +23,7 @@ json_t* serializeFloat(const FloatValue&);
 json_t* serializeArray(const ArrayValue&);
 json_t* serializeString(const StringValue&);
 json_t* serializeInteger(const IntegerValue&);
+json_t* serializeBoolean(const BooleanValue&);
 json_t* serializeDictionary(const Dictionary&);
 
 json_t* serializeValue(const ValueBase::Pointer&);
@@ -213,6 +214,11 @@ json_t* serializeInteger(const IntegerValue& value)
 	return json_integer(value->content);
 }
 
+json_t* serializeBoolean(const BooleanValue& value)
+{
+	return (value->content == 0) ? json_false() : json_true();
+}
+
 json_t* serializeFloat(const FloatValue& value)
 {
 	return json_real(value->content);
@@ -240,6 +246,8 @@ json_t* serializeValue(const ValueBase::Pointer& v)
 		value = serializeString(v);
 	else if (v->valueClass() == ValueClass_Integer)
 		value = serializeInteger(v);
+	else if (v->valueClass() == ValueClass_Boolean)
+		value = serializeBoolean(v);
 	else if (v->valueClass() == ValueClass_Float)
 		value = serializeFloat(v);
 	else if (v->valueClass() == ValueClass_Array)

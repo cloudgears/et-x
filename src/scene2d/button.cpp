@@ -349,6 +349,9 @@ void Button::adjustSizeForText(const std::string& text, float duration, bool ver
 	vec2 currentSize = size();
 	vec2 newSize = sizeForText(text);
 	
+	newSize.x += _image[0].descriptor.size.x;
+	newSize.y = etMax(newSize.y, _image[0].descriptor.size.y);
+	
 	if (horizontal)
 		currentSize.x = newSize.x;
 	
