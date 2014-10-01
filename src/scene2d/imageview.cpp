@@ -76,8 +76,8 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 		{
 			_actualImageSize = _descriptor.value().size;
 
-			size_t repeatsWidth = etMax(1ul, static_cast<size_t>(size().x / _descriptor.value().size.x));
-			size_t repeatsHeight = etMax(1ul, static_cast<size_t>(size().y / _descriptor.value().size.y));
+			size_t repeatsWidth = etMax(static_cast<size_t>(1), static_cast<size_t>(size().x / _descriptor.value().size.x));
+			size_t repeatsHeight = etMax(static_cast<size_t>(1), static_cast<size_t>(size().y / _descriptor.value().size.y));
 
 			_vertices.fitToSize(repeatsWidth * repeatsHeight * measuseVertexCountForImageDescriptor(_descriptor.value()));
 
