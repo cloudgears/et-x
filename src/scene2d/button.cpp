@@ -70,7 +70,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	
-	vec2 frameSize = size() + _contentOffset;
+	vec2 frameSize = size() + maxv(_contentOffset, vec2(0.0f));
 	vec2 imageSize = absv(_image[_state].descriptor.size);
 	
 	size_t sizeMode = _contentMode & 0x0000ffff;
@@ -137,6 +137,9 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	}
 	
 	vec4 alphaScale = vec4(1.0f, 1.0f, 1.0f, alpha());
+	
+	imageOrigin += minv(vec2(0.0f), _contentOffset);
+	textOrigin += minv(vec2(0.0f), _contentOffset);
 	
 	_bgVertices.setOffset(0);
 	_textVertices.setOffset(0);
