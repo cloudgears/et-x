@@ -34,6 +34,12 @@ namespace et
 			const vec4& backgroundColor() const
 				{ return _backgroundColor; }
 			
+			const Alignment horizontalAlignment() const
+				{ return _horizontalAlignment; }
+
+			const Alignment verticalAlignment() const
+				{ return _verticalAlignment; }
+			
 			void fitToWidth(float);
 			void adjustSize();
 			
@@ -79,8 +85,8 @@ namespace et
 			float _textFade;
 			float _textFadeDuration;
 			float _textFadeStartTime;
-			Alignment _horizontalAlignment;
-			Alignment _verticalAlignment;
+			Alignment _horizontalAlignment = Alignment_Near;
+			Alignment _verticalAlignment = Alignment_Near;
 			bool _animatingText;
 			bool _allowFormatting;
 			bool _autoAdjustSize = true;
