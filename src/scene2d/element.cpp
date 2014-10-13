@@ -202,6 +202,9 @@ void Element::setAutolayoutRelativeToParent(const vec2& pos, const vec2& sz, con
 void Element::setAutolayoutSizeMode(LayoutMode mode)
 	{ _autoLayout.layoutSizeMode = mode; }
 
+void Element::setAutolayoutPositionMode(LayoutMode mode)
+	{ _autoLayout.layoutPositionMode = mode; }
+
 et::Dictionary Element::autoLayoutDictionary() const
 {
 	Dictionary result;
