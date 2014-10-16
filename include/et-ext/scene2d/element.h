@@ -201,6 +201,8 @@ namespace et
 			ET_DECLARE_EVENT1(hoverEnded, Element*)
 
 		protected:
+			void childRemoved(Element*);
+			
 			void setContentValid()
 				{ _contentValid = true; }
 

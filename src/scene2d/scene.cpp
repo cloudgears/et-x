@@ -160,7 +160,7 @@ void Scene::render(RenderContext* rc)
 	_prerenderElements.clear();
 	
 	for (auto& obj : _layouts)
-		obj->layout->collectPreRenderingObjects(obj->layout.ptr(), _prerenderElements);
+		obj->layout->collectPreRenderingObjects(obj->layout, _prerenderElements);
 
 	if (!_prerenderElements.empty())
 	{

@@ -62,24 +62,24 @@ namespace et
 			bool pointerCancelled(const PointerInputInfo&) override;
 			bool pointerScrolled(const PointerInputInfo&) override;
 			
-			bool elementIsBeingDragged(Element*);
+			bool elementIsBeingDragged(Element::Pointer);
 			
-			void cancelInteractionsInElement(Element*, const PointerInputInfo&);
+			void cancelInteractionsInElement(Element::Pointer, const PointerInputInfo&);
 			
 		private:
 			Layout* owner()
 				{ return this; }
 			
 			void setInvalid();
-			void collectTopmostElements(Element*);
+			void collectTopmostElements(Element::Pointer);
 			
-			void collectPreRenderingObjects(Element*, Element::List&);
+			void collectPreRenderingObjects(Element::Pointer, Element::List&);
 			
-			Element* activeElement(const PointerInputInfo& p);
-			Element* getActiveElement(const PointerInputInfo& p, Element* e);
+			Element::Pointer activeElement(const PointerInputInfo& p);
+			Element::Pointer getActiveElement(const PointerInputInfo& p, Element::Pointer e);
 			
 			void setCurrentElement(const PointerInputInfo& p, Element::Pointer e);
-			void addElementToRenderQueue(Element* element, RenderContext* rc, SceneRenderer& gr);
+			void addElementToRenderQueue(Element::Pointer element, RenderContext* rc, SceneRenderer& gr);
 			
 			void performDragging(const PointerInputInfo&);
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& gr);

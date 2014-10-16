@@ -29,6 +29,12 @@ void Element::removeAllChildren()
 	removeChildren();
 }
 
+void Element::childRemoved(Element*)
+{
+	invalidateContent();
+	invalidateTransform();
+}
+
 void Element::invalidateContent()
 { 
 	_contentValid = false; 

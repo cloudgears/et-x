@@ -24,7 +24,7 @@ Layout::Layout(const std::string& name) :
 		LayoutMode_RelativeToContext, vec2(0.0f));
 }
 
-void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, SceneRenderer& gr)
+void Layout::addElementToRenderQueue(Element::Pointer element, RenderContext* rc, SceneRenderer& gr)
 {
 	if (!element->visible()) return;
 
@@ -44,8 +44,8 @@ void Layout::addElementToRenderQueue(Element* element, RenderContext* rc, SceneR
 	element->addToRenderQueue(rc, gr);
 	for (auto& c : element->children())
 	{
-		if (!elementIsBeingDragged(c.ptr()))
-			addElementToRenderQueue(c.ptr(), rc, gr);
+		if (!elementIsBeingDragged(c))
+			addElementToRenderQueue(c, rc, gr);
 	}
 	element->addToOverlayRenderQueue(rc, gr);
 	
@@ -59,18 +59,18 @@ void Layout::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 	
 	for (auto& c : children())
 	{
-		if (!elementIsBeingDragged(c.ptr()))
-			addElementToRenderQueue(c.ptr(), rc, gr);
+		if (!elementIsBeingDragged(c))
+			addElementToRenderQueue(c, rc, gr);
 	}
 
 	for (auto& t : _topmostElements)
 	{
-		if (!elementIsBeingDragged(t.ptr()))
-			addElementToRenderQueue(t.ptr(), rc, gr);
+		if (!elementIsBeingDragged(t))
+			addElementToRenderQueue(t, rc, gr);
 	}
 	
-	if (elementIsBeingDragged(_capturedElement.ptr()))
-		addElementToRenderQueue(_capturedElement.ptr(), rc, gr);
+	if (elementIsBeingDragged(_capturedElement))
+		addElementToRenderQueue(_capturedElement, rc, gr);
 	
 	_valid = true;
 }
@@ -151,16 +151,15 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 
 		return true;
 	}
-	else 
-	{
-		Element::Pointer active(activeElement(p));
-		setCurrentElement(p, active);
+	
+	Element::Pointer active(activeElement(p));
+	setCurrentElement(p, active);
+	
+	if (active.invalid())
+		return false;
 
-		bool processed = active.valid() && active->pointerMoved(PointerInputInfo(p.type,
-			active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
-
-		return processed;
-	}
+	return active->pointerMoved(PointerInputInfo(p.type, active->positionInElement(p.pos),
+		p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 }
 
 bool Layout::pointerReleased(const et::PointerInputInfo& p)
@@ -278,50 +277,50 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 	}
 }
 
-Element* Layout::activeElement(const PointerInputInfo& p)
+Element::Pointer Layout::activeElement(const PointerInputInfo& p)
 {
 	if (!_valid)
 	{
 		_topmostElements.clear();
 		for (auto& i : children())
-			collectTopmostElements(i.ptr());
+			collectTopmostElements(i);
 	}
 
-	Element* active = 0;
+	Element::Pointer active;
 	for (auto i = _topmostElements.rbegin(), e = _topmostElements.rend(); i != e; ++i)
 	{
-		active = getActiveElement(p, i->ptr());
-		if (active)	break;
+		active = getActiveElement(p, *i);
+		if (active.valid())	break;
 	}
 
-	if (!active)
+	if (active.invalid())
 	{
 		for (auto i = children().rbegin(), e = children().rend(); i != e; ++i)
 		{
-			active = getActiveElement(p, i->ptr());
-			if (active)	break;
+			active = getActiveElement(p, *i);
+			if (active.valid())	break;
 		}
 	}
 
 	return active;
 }
 
-Element* Layout::getActiveElement(const PointerInputInfo& p, Element* el)
+Element::Pointer Layout::getActiveElement(const PointerInputInfo& p, Element::Pointer el)
 {
 	if (!el->visible() || !el->enabled() || !el->containsPoint(p.pos, p.normalizedPos))
-		return nullptr;
+		return Element::Pointer();
 	
 	if (el->hasFlag(Flag_HandlesChildEvents))
 		return el;
 
 	for (auto ei = el->children().rbegin(), ee = el->children().rend(); ei != ee; ++ei)
 	{
-		Element* element = getActiveElement(p, ei->ptr());
-		if (element)
+		Element::Pointer element = getActiveElement(p, *ei);
+		if (element.valid())
 			return element;
 	}
 
-	return el->hasFlag(Flag_TransparentForPointer) ? nullptr : el;
+	return el->hasFlag(Flag_TransparentForPointer) ? Element::Pointer() : el;
 }
 
 void Layout::setCurrentElement(const PointerInputInfo& p, Element::Pointer e)
@@ -356,9 +355,9 @@ void Layout::performDragging(const PointerInputInfo& p)
 		ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
 }
 
-bool Layout::elementIsBeingDragged(s2d::Element* e)
+bool Layout::elementIsBeingDragged(s2d::Element::Pointer e)
 {
-	return _dragging && (e != nullptr) && (e == _capturedElement.ptr());
+	return _dragging && e.valid() && (e == _capturedElement);
 }
 
 void Layout::update(float)
@@ -412,7 +411,7 @@ void Layout::setInvalid()
 	_valid = false;
 }
 
-void Layout::collectPreRenderingObjects(Element* element, Element::List& elementList)
+void Layout::collectPreRenderingObjects(Element::Pointer element, Element::List& elementList)
 {
 	if (element->visible())
 	{
@@ -420,11 +419,11 @@ void Layout::collectPreRenderingObjects(Element* element, Element::List& element
 			elementList.push_back(Element::Pointer(element));
 		
 		for (auto& i : element->children())
-			collectPreRenderingObjects(i.ptr(), elementList);
+			collectPreRenderingObjects(i, elementList);
 	}
 }
 
-void Layout::collectTopmostElements(Element* element)
+void Layout::collectTopmostElements(Element::Pointer element)
 {
 	if (element->visible())
 	{
@@ -432,7 +431,7 @@ void Layout::collectTopmostElements(Element* element)
 			_topmostElements.push_back(Element::Pointer(element));
 		
 		for (auto& i : element->children())
-			collectTopmostElements(i.ptr());
+			collectTopmostElements(i);
 	}
 }
 
@@ -449,15 +448,15 @@ vec2 Layout::contentSize()
 
 void Layout::cancelInteractions()
 {
-	cancelInteractionsInElement(this, PointerInputInfo());
+	cancelInteractionsInElement(Element::Pointer(this), PointerInputInfo());
 }
 
-void Layout::cancelInteractionsInElement(Element* e, const PointerInputInfo& info)
+void Layout::cancelInteractionsInElement(Element::Pointer e, const PointerInputInfo& info)
 {
 	e->pointerCancelled(info);
 	
 	for (auto c : e->children())
-		cancelInteractionsInElement(c.ptr(), info);
+		cancelInteractionsInElement(c, info);
 }
 
 
