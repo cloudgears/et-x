@@ -146,7 +146,7 @@ void ListboxPopup::pointerLeaved(const PointerInputInfo&)
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(Listbox)
 
-Listbox::Listbox(Font::Pointer font, Element2d* parent, const std::string& name) :
+Listbox::Listbox(const Font::Pointer& font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _state(ListboxState_Default),
 	_contentOffset(0.0f), _selectedIndex(-1), _direction(ListboxPopupDirection_Bottom),
 	_popupOpened(false), _popupOpening(false), _popupValid(false)
@@ -278,7 +278,7 @@ void Listbox::pointerLeaved(const PointerInputInfo& p)
 
 void Listbox::showPopup()
 {
-	ET_ASSERT(false && "Need to move from frame to position+size");
+	ET_FAIL("Need to move from frame to position+size");
 /*
 	setState(ListboxState_Opened);
 	if (_popupOpening) return;

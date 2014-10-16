@@ -71,7 +71,7 @@ namespace et
 			ET_DECLARE_POINTER(Listbox)
 
 		public:
-			Listbox(Font::Pointer font, Element2d* parent, const std::string& name = std::string());
+			Listbox(const Font::Pointer& font, Element2d* parent, const std::string& name = std::string());
 
 			void setImage(const Image& img, ListboxState state);
 			void setBackgroundImage(const Image& img);

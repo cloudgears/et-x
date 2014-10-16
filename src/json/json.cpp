@@ -144,8 +144,7 @@ ArrayValue deserializeArray(json_t* json)
 			result->content.push_back(Dictionary());
 		else if (value)
 		{
-			log::error("Unsupported JSON type: %d", value->type);
-			ET_ASSERT(false);
+			ET_FAIL_FMT("Unsupported JSON type: %d", value->type);
 		}
 	}
 	return result;
@@ -181,8 +180,7 @@ Dictionary deserializeDictionary(json_t* root)
 			result.setIntegerForKey(key, IntegerValue(0ll));
 		else if (value != nullptr)
 		{
-			log::error("Unsupported JSON type: %d", value->type);
-			ET_ASSERT(false);
+			ET_FAIL_FMT("Unsupported JSON type: %d", value->type);
 		}
 		child = json_object_iter_next(root, child);
 	}
@@ -256,8 +254,7 @@ json_t* serializeValue(const ValueBase::Pointer& v)
 		value = serializeDictionary(v);
 	else
 	{
-		log::error("Unknown dictionary class %d", v->valueClass());
-		ET_ASSERT(false);
+		ET_FAIL_FMT("Unknown dictionary class %d", v->valueClass());
 	}
 	
 	return value;

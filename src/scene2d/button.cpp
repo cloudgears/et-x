@@ -13,7 +13,7 @@ using namespace et::s2d;
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(Button)
 
-Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, const std::string& name) :
+Button::Button(const std::string& title, const Font::Pointer& font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _textColor(vec3(0.0f), 1.0f),
 	_pressedColor(0.5f, 0.5f, 0.5f, 1.0f), _backgroundTintColor(1.0f), _commonBackgroundTintColor(1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _backgroundTintAnimator(timerPool()),
@@ -22,7 +22,7 @@ Button::Button(const std::string& title, Font::Pointer font, Element2d* parent, 
 	_horizontalAlignment(Alignment_Center), _verticalAlignment(Alignment_Center)
 {
 	_currentTitle.setKey(title);
-	_currentTextSize = font->measureStringSize(_currentTitle.cachedText);
+	_currentTextSize = _font->measureStringSize(_currentTitle.cachedText);
 	
 	_nextTitle = _currentTitle;
 	_maxTextSize = _currentTextSize;

@@ -10,7 +10,7 @@
 using namespace et;
 using namespace et::s2d;
 
-MessageView::MessageView(const std::string& title, const std::string& text, Font::Pointer font,
+MessageView::MessageView(const std::string& title, const std::string& text, const Font::Pointer& font,
 	const Image& bgImage, const std::string& button1title, const std::string& button2title)
 {
 	_imgBackground = ImageView::Pointer::create(bgImage, backgroundFade().ptr());

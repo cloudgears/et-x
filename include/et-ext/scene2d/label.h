@@ -20,12 +20,12 @@ namespace et
 			ET_DECLARE_POINTER(Label)
 
 		public:
-			Label(const std::string& text, Font::Pointer font, Element2d* parent,
+			Label(const std::string& text, const Font::Pointer& font, Element2d* parent,
 				const std::string& name = std::string());
 
 			vec2 textSize();
 			
-			Font::Pointer font()
+			const Font::Pointer& font() const
 				{ return _font; }
 			
 			const std::string& text() const

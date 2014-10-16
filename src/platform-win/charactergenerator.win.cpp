@@ -40,8 +40,8 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	size_t size, size_t texSize) : _rc(rc),
 	_private(new CharacterGeneratorPrivate(face, boldFace, size, texSize)), _face(face), _boldFace(boldFace), _size(size)
 {
-	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(texSize), GL_RGBA,
-		GL_UNSIGNED_BYTE, BinaryDataStorage(4 * sqr(texSize), 0), face + "font");
+	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(texSize & 0xffffffff), 
+		GL_RGBA, GL_UNSIGNED_BYTE, BinaryDataStorage(4 * sqr(texSize), 0), face + "font");
 }
 
 CharacterGenerator::~CharacterGenerator()
@@ -49,7 +49,7 @@ CharacterGenerator::~CharacterGenerator()
 	delete _private;
 }
 
-CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTexture)
+CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 {
 	SIZE characterSize = { };
 	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
@@ -80,7 +80,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTextu
 	return desc;
 }
 
-CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateTexture)
+CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 {
 	SIZE characterSize = { };
 	wchar_t string[2] = { static_cast<wchar_t>(value), 0 };
@@ -136,12 +136,12 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
  */
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, 
-	size_t size, size_t texSize) : _size(size), _face(face), _boldFace(boldFace), placer(vec2i(texSize), true),
-	_textureData(sqr(texSize) * 4), textureSize(texSize)
+	size_t size, size_t texSize) : _size(size), _face(face), _boldFace(boldFace), 
+	placer(vec2i(static_cast<int>(texSize)), true), _textureData(sqr(texSize) * 4), textureSize(texSize)
 {
 	commonDC = CreateCompatibleDC(nullptr);
 
-	int pointsSize = -MulDiv(size, GetDeviceCaps(commonDC, LOGPIXELSY), 72);
+	int pointsSize = -MulDiv(static_cast<int>(_size), GetDeviceCaps(commonDC, LOGPIXELSY), 72);
 
 	_font = CreateFont(pointsSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
 		CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, face.c_str());
@@ -160,7 +160,7 @@ CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position, const vec2i& size,
 	Texture texture, BinaryDataStorage& data)
 {
-	vec2i dest(position.x, textureSize - position.y - size.y);
+	vec2i dest(position.x, static_cast<int>(textureSize) - position.y - size.y);
 	texture->updatePartialDataDirectly(rc, dest, size, data.binary(), data.dataSize());
 }
 

@@ -495,6 +495,15 @@ void Scene::broadcastMessage(const Message& msg)
 		l->layout->broardcastMessage(msg);
 }
 
+void Scene::removeAllLayouts()
+{
+	for (auto l : _layouts)
+		l->layout.reset(nullptr);
+
+	_keyboardFocusedLayout.reset(nullptr);
+	_layouts.clear();
+}
+
 /*
  * Layout Entry
  */

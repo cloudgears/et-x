@@ -29,7 +29,7 @@ namespace et
 			ET_DECLARE_POINTER(MessageView)
 			
 		public:
-			MessageView(const std::string& title, const std::string& text, Font::Pointer font, const Image& bgImage = Image(),
+			MessageView(const std::string& title, const std::string& text, const Font::Pointer& font, const Image& bgImage = Image(),
 						const std::string& button1title = "Close", const std::string& button2title = "Ok");
 
 			void setContentOffset(const vec2& offset)

@@ -87,6 +87,8 @@ namespace et
 				size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
 			
 			void broadcastMessage(const Message&);
+
+			void removeAllLayouts();
 			
 			ET_DECLARE_EVENT1(layoutDidAppear, Layout::Pointer)
 			ET_DECLARE_EVENT1(layoutDidDisappear, Layout::Pointer)

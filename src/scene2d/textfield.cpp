@@ -16,7 +16,7 @@ const int securedChar = 0x2022;
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(TextField)
 
-TextField::TextField(Font::Pointer font, Element* parent, const std::string& name) :
+TextField::TextField(const Font::Pointer& font, Element* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
@@ -27,7 +27,7 @@ TextField::TextField(Font::Pointer font, Element* parent, const std::string& nam
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
-TextField::TextField(const std::string& text, Font::Pointer font, Element* parent, const std::string& name) :
+TextField::TextField(const std::string& text, const Font::Pointer& font, Element* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
@@ -38,7 +38,7 @@ TextField::TextField(const std::string& text, Font::Pointer font, Element* paren
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
-TextField::TextField(const Image& background, const std::string& text, Font::Pointer font,
+TextField::TextField(const Image& background, const std::string& text, const Font::Pointer& font,
 	Element* parent, const std::string& name) : Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS),
 	_font(font), _background(background), _alignmentH(Alignment_Near), _alignmentV(Alignment_Center),
 	_secured(false), _caretVisible(false)
@@ -48,7 +48,7 @@ TextField::TextField(const Image& background, const std::string& text, Font::Poi
 	setText(text);
 	
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
-	setSize(font->measureStringSize(text));
+	setSize(_font->measureStringSize(text));
 	
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }

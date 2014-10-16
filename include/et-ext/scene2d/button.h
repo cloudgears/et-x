@@ -41,7 +41,7 @@ namespace et
 			};
 
 		public:
-			Button(const std::string& title, Font::Pointer font, Element2d* parent,
+			Button(const std::string& title, const Font::Pointer& font, Element2d* parent,
 				const std::string& name = std::string());
 			
 			void setImage(const Image& img);
