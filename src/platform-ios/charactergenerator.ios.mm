@@ -72,10 +72,10 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
 			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
 		
-		desc.origin = textureRect.origin() + vec2(1.0f);
-		desc.size = textureRect.size() - vec2(2.0f);
-		desc.uvOrigin = _texture->getTexCoord(desc.origin);
-		desc.uvSize = desc.size / _texture->sizeFloat();
+		desc.pixelsOrigin = textureRect.origin() + vec2(1.0f);
+		desc.pixelsSize = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.pixelsOrigin);
+		desc.uvSize = desc.pixelsSize / _texture->sizeFloat();
 	}
 	
 #if (!ET_OBJC_ARC_ENABLED)
@@ -107,10 +107,10 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
 			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
 		
-		desc.origin = textureRect.origin() + vec2(1.0f);
-		desc.size = textureRect.size() - vec2(2.0f);
-		desc.uvOrigin = _texture->getTexCoord(desc.origin);
-		desc.uvSize = desc.size / _texture->sizeFloat();
+		desc.pixelsOrigin = textureRect.origin() + vec2(1.0f);
+		desc.pixelsSize = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.pixelsOrigin);
+		desc.uvSize = desc.pixelsSize / _texture->sizeFloat();
 	}
 	
 #if (!ET_OBJC_ARC_ENABLED)
@@ -134,11 +134,7 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
 	else
 		_chars[desc.value] = desc;
 	
-	rect r;
-	r.setOrigin(desc.origin - vec2(1.0f));
-	r.setSize(desc.size + vec2(2.0f));
-	
-	_private->_placer.addPlacedRect(r);
+	_private->_placer.addPlacedRect(rect(desc.pixelsOrigin - vec2(1.0f), desc.pixelsSize + vec2(2.0f)));
 }
 
 /*

@@ -22,11 +22,11 @@ Button::Button(const std::string& title, const Font::Pointer& font, Element2d* p
 	_horizontalAlignment(Alignment_Center), _verticalAlignment(Alignment_Center)
 {
 	_currentTitle.setKey(title);
-	_currentTextSize = _font->measureStringSize(_currentTitle.cachedText);
+	_currentTextSize = _font->measureStringSize(_currentTitle.cachedText, true);
 	
 	_nextTitle = _currentTitle;
 	_maxTextSize = _currentTextSize;
-	_currentTitleCharacters = _font->buildString(_currentTitle.cachedText);
+	_currentTitleCharacters = _font->buildString(_currentTitle.cachedText, true);
 	
 	setSize(sizeForText(title));
 	
@@ -305,8 +305,8 @@ void Button::performClick()
 void Button::setTitle(const std::string& t, float duration)
 {
 	_nextTitle.setKey(t);
-	_nextTitleCharacters = _font->buildString(_nextTitle.cachedText);
-	_nextTextSize = _font->measureStringSize(_nextTitle.cachedText);
+	_nextTitleCharacters = _font->buildString(_nextTitle.cachedText, true);
+	_nextTextSize = _font->measureStringSize(_nextTitle.cachedText, true);
 	
 	_maxTextSize = maxv(_currentTextSize, _nextTextSize);
 	
@@ -366,7 +366,7 @@ void Button::adjustSizeForText(const std::string& text, float duration, bool ver
 
 vec2 Button::sizeForText(const std::string& text)
 {
-	vec2 textSize = _font.valid() ? _font->measureStringSize("AA" + text + "AA") : vec2(0.0f);
+	vec2 textSize = _font.valid() ? _font->measureStringSize("AA" + text + "AA", true) : vec2(0.0f);
 	
 	for (size_t i = 0; i < State_max; ++i)
 		textSize = maxv(textSize, _background[i].descriptor.size);

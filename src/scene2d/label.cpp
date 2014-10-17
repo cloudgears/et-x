@@ -234,15 +234,48 @@ void Label::fitToWidth(float w)
 {
 	if (_text.cachedText.empty()) return;
 	
-	float minimalWidthToFit = _font->measureStringSize("W", _allowFormatting).x;
-	if (std::abs(w) < minimalWidthToFit) return;
+	setText(fitStringToWidthWithFont(_text.cachedText, _allowFormatting, _font, w));
+}
+
+vec2 Label::contentSize()
+{
+	return maxv(_nextTextSize, _textSize);
+}
+
+void Label::setLineInterval(float i)
+{
+	_lineInterval = i;
+	invalidateContent();
+}
+
+void Label::processMessage(const Message& msg)
+{
+	if (msg.type == Message::Type_SetText)
+		setText(msg.text, msg.duration);
+	else if (msg.type == Message::Type_UpdateText)
+		setText(_text.key);
+}
+
+void Label::setShouldAutoAdjustSize(bool v)
+{
+	_autoAdjustSize = v;
+}
+
+/*
+ * Service functions
+ */
+std::string Label::fitStringToWidthWithFont(std::string oldText, bool formatted, Font::Pointer font, float width)
+{
+	float minimalWidthToFit = font->measureStringSize("W", formatted).x;
+	
+	if (std::abs(width) < minimalWidthToFit)
+		return oldText;
 	
 	std::string newText;
-	std::string oldText = _text.cachedText;
 	std::string latestLine;
 	
 	const std::string dividers(" \n\t\r");
-		
+	
 	while (oldText.size())
 	{
 		size_t wsPos = oldText.find_first_of(dividers);
@@ -250,8 +283,8 @@ void Label::fitToWidth(float w)
 		if (wsPos == std::string::npos)
 		{
 			std::string appended = latestLine + oldText;
-			vec2 measuredSize = _font->measureStringSize(appended, _allowFormatting);
-			if (measuredSize.x > w)
+			vec2 measuredSize = font->measureStringSize(appended, formatted);
+			if (measuredSize.x > width)
 			{
 				while (isWhitespaceChar(newText.back()))
 					newText.erase(newText.end() - 1);
@@ -270,7 +303,7 @@ void Label::fitToWidth(float w)
 		if (!isNewLineChar(nextCharStr[0]))
 			appended.append(nextCharStr);
 		
-		if (_font->measureStringSize(appended, _allowFormatting).x < w)
+		if (font->measureStringSize(appended, formatted).x < width)
 		{
 			newText.append(word);
 			latestLine.append(word);
@@ -285,11 +318,11 @@ void Label::fitToWidth(float w)
 				latestLine.append(nextCharStr);
 			}
 		}
-		else if (_font->measureStringSize(word).x > w)
+		else if (font->measureStringSize(word).x > width)
 		{
 			std::string wBegin = word.substr(0, word.size() - 1);
 			appended = latestLine + wBegin;
-			while (_font->measureStringSize(appended, _allowFormatting).x > w)
+			while (font->measureStringSize(appended, formatted).x > width)
 			{
 				wBegin.erase(wBegin.size() - 1);
 				appended = latestLine + wBegin;
@@ -328,30 +361,6 @@ void Label::fitToWidth(float w)
 			}
 		}
 	}
-
-	setText(newText);
-}
-
-vec2 Label::contentSize()
-{
-	return maxv(_nextTextSize, _textSize);
-}
-
-void Label::setLineInterval(float i)
-{
-	_lineInterval = i;
-	invalidateContent();
-}
-
-void Label::processMessage(const Message& msg)
-{
-	if (msg.type == Message::Type_SetText)
-		setText(msg.text, msg.duration);
-	else if (msg.type == Message::Type_UpdateText)
-		setText(_text.key);
-}
-
-void Label::setShouldAutoAdjustSize(bool v)
-{
-	_autoAdjustSize = v;
+	
+	return newText;
 }

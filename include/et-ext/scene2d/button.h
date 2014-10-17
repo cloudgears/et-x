@@ -57,7 +57,13 @@ namespace et
 			vec2 sizeForText(const std::string&);
 			
 			void setContentMode(ContentMode);
+			
+			const Font::Pointer& font() const
+				{ return _font; }
 
+			Font::Pointer& font()
+				{ return _font; }
+			
 			ET_DECLARE_EVENT1(clicked, Button*)
 			ET_DECLARE_EVENT1(pressed, Button*)
 			ET_DECLARE_EVENT1(released, Button*)

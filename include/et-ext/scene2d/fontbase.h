@@ -27,20 +27,21 @@ namespace et
 			int value;
 			int params;
 			vec4 color;
-			vec2 origin;
-			vec2 size;
+			vec2 pixelsOrigin;
+			vec2 pixelsSize;
 			vec2 uvOrigin;
 			vec2 uvSize;
+			vec2 padding;
 			vec4i extra;
 			
-			CharDescriptor() : value(0), params(0) 
-				{ }
+			CharDescriptor() :
+				value(0), params(0) { }
 			
-			CharDescriptor(int c, int p = 0) : value(c), params(p), color(1.0f)
-				{ }
+			CharDescriptor(int c, int p = 0) :
+				value(c), params(p), color(1.0f) { }
 			
-			CharDescriptor(int c, int p, const vec2& sz) : value(c), params(p), color(1.0f), size(sz)
-				{ }
+			CharDescriptor(int c, int p, const vec2& sz) :
+				value(c), params(p), color(1.0f), pixelsSize(sz) { }
 		};
 
 

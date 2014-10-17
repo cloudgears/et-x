@@ -60,7 +60,7 @@ namespace et
 				{ return _boldChars; }
 			
 			float lineHeight() const
-				{ return _chars.size() ? _chars.begin()->second.size.y : static_cast<float>(_size); }
+				{ return _chars.empty() ? static_cast<float>(_size) : _chars.begin()->second.pixelsSize.y; }
 			
 			void setTexture(Texture);
 			void pushCharacter(const CharDescriptor&);

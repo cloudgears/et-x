@@ -154,7 +154,7 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 
 	for (auto& desc : s)
 	{
-		lineSize.y = etMax(lineSize.y, desc.size.y);
+		lineSize.y = etMax(lineSize.y, desc.pixelsSize.y + desc.padding.y);
 		
 		if ((desc.value == ET_RETURN) || (desc.value == ET_NEWLINE))
 		{
@@ -164,7 +164,7 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 		}
 		else 
 		{
-			lineSize.x += desc.size.x;
+			lineSize.x += desc.padding.x + desc.pixelsSize.x;
 		}
 	}
 	
@@ -233,14 +233,20 @@ CharDescriptorList Font::parseString(const std::wstring& s)
 	
 	static const wchar_t* boldTagStart = L"<b>";
 	static const wchar_t* boldTagEnd = L"</b>";
+	
 	static const wchar_t* colorTagStart = L"<color=";
 	static const wchar_t* colorTagEnd = L"</color>";
+	
+	static const wchar_t* scaleTagStart = L"<scale=";
+	static const wchar_t* scaleTagEnd = L"</scale>";
 	
 	size_t resultSize = 0;
 	
 	size_t boldTags = 0;
 	std::stack<vec4> colorsStack;
+	std::stack<float> scaleStack;
 	colorsStack.push(vec4(1.0f));
+	scaleStack.push(1.0f);
 	
 	auto* b = s.data();
 	auto* e = b + s.size();
@@ -277,16 +283,33 @@ CharDescriptorList Font::parseString(const std::wstring& s)
 			if (b >= e)
 				break;
 		}
+		else if (textBeginsFrom(b, scaleTagStart))
+		{
+			auto closingBracket = findClosingBracket(b);
+			scaleStack.push(std::wcstof(b + textLength(scaleTagStart), nullptr));
+			b = closingBracket + 1;
+			if (b >= e)
+				break;
+		}
+		else if (textBeginsFrom(b, scaleTagEnd))
+		{
+			if (scaleStack.size() > 1)
+				scaleStack.pop();
+			b += textLength(scaleTagEnd);
+			if (b >= e)
+				break;
+		}
 		else
 		{
 			auto cd = (boldTags > 0) ? boldCharDescription(*b) : charDescription(*b);
 			cd.color = colorsStack.top();
+			cd.pixelsSize *= scaleStack.top();
 			result[resultSize++] = cd;
 			++b;
 		}
 	}
 	
-	result.resize(resultSize);
+	result.shrink_to_fit();
 	return result;
 }
 
@@ -333,7 +356,7 @@ size_t textLength(const wchar_t* text)
 std::wstring subString(const wchar_t* begin, const wchar_t* end)
 {
 	std::wstring result(end - begin + 1, 0);
-	while (begin != end)
+	while (begin < end)
 		result.push_back(*begin++);
 	return result;
 }

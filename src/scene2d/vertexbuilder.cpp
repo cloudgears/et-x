@@ -35,8 +35,8 @@ void et::s2d::buildQuad(SceneVertexList& vertices, SceneVertex topLeft, SceneVer
 }
 
 void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescriptorList& chars,
-	Alignment hAlign, Alignment vAlign, const vec2& pos, const vec4& color,
-	const mat4& transform, float lineInterval)
+	Alignment hAlign, Alignment vAlign, const vec2& pos, const vec4& color, const mat4& transform,
+	float lineInterval)
 {
 	if (chars.empty()) return;
 	
@@ -45,7 +45,7 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 	
 	for (const CharDescriptor& desc : chars)
 	{
-		line.w = etMax(line.w, lineInterval * desc.size.y);
+		line.w = etMax(line.w, desc.padding.y + lineInterval * desc.pixelsSize.y);
 		
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{
@@ -54,7 +54,7 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 		}
 		else 
 		{
-			line.z += desc.size.x;
+			line.z += desc.pixelsSize.x + desc.padding.x;
 		}
 	}
 	lines.push_back(line);
@@ -85,10 +85,10 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 		}
 		else 
 		{
-			vec2 topLeft = line.xy() + pos;
-			vec2 bottomLeft = topLeft + vec2(0.0f, desc.size.y);
-			vec2 topRight = topLeft + vec2(desc.size.x, 0.0f);
-			vec2 bottomRight = bottomLeft + vec2(desc.size.x, 0.0f);
+			vec2 topLeft = line.xy() + desc.padding + pos;
+			vec2 bottomLeft = topLeft + vec2(0.0f, desc.pixelsSize.y);
+			vec2 topRight = topLeft + vec2(desc.pixelsSize.x, 0.0f);
+			vec2 bottomRight = bottomLeft + vec2(desc.pixelsSize.x, 0.0f);
 			
 			vec2 topLeftUV = desc.uvOrigin;
 			vec2 topRightUV = topLeftUV + vec2(desc.uvSize.x, 0.0f);
@@ -102,7 +102,7 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 				SceneVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, mask), charColor),
 				SceneVertex(floorv(transform * bottomRight), vec4(bottomRightUV, mask), charColor));
 			
-			line.x += desc.size.x;
+			line.x += desc.pixelsSize.x + desc.padding.x;
 		}
 	}
 }

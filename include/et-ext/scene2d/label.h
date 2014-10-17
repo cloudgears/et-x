@@ -18,6 +18,9 @@ namespace et
 		{
 		public:
 			ET_DECLARE_POINTER(Label)
+			
+			static std::string fitStringToWidthWithFont(std::string inputString, bool formatted,
+				Font::Pointer font, float width);
 
 		public:
 			Label(const std::string& text, const Font::Pointer& font, Element2d* parent,
