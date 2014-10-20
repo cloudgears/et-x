@@ -1,7 +1,11 @@
+#include <TargetConditionals.h>
+
 #include <UIKit/UIFont.h>
 #include <UIKit/UIColor.h>
 #include <UIKit/UIStringDrawing.h>
+#include <UIKit/NSStringDrawing.h>
 #include <UIKit/UIGraphics.h>
+
 #include <et/rendering/rendercontext.h>
 #include <et/geometry/rectplacer.h>
 #include <et/imaging/imagewriter.h>
@@ -29,10 +33,10 @@ class et::s2d::CharacterGeneratorPrivate
 	
 		RectPlacer _placer;
    
-        UIFont* _font;
-        UIFont* _boldFont;
-        CGContextRef _context;
-		CGColorRef whiteColor;
+        UIFont* font;
+        UIFont* boldFont;
+		UIColor* whiteColor;
+		CGColorRef whiteColorRef;
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face,
@@ -55,8 +59,14 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
     NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string)
 		encoding:NSUTF32LittleEndianStringEncoding];
 	
-    CGSize characterSize = [wString sizeWithFont:_private->_font];
-	vec2i charSize = vec2i(static_cast<int>(characterSize.width), static_cast<int>(characterSize.height));
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+	CGSize characterSize = [wString sizeWithAttributes:@{NSFontAttributeName:_private->font}];
+#else
+	CGSize characterSize = [wString sizeWithFont:_private->_font];
+#endif
+	
+	vec2i charSize = vec2i(static_cast<int>(characterSize.width + 0.5f),
+		static_cast<int>((value == ET_NEWLINE) || (value == ET_RETURN) ? lineHeight() : characterSize.height + 0.5f));
 	
 	CharDescriptor desc(value);
 	if (charSize.square() > 0)
@@ -93,8 +103,14 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
     NSString* wString = [[NSString alloc] initWithBytes:string length:sizeof(string)
 		encoding:NSUTF32LittleEndianStringEncoding];
 	
-    CGSize characterSize = [wString sizeWithFont:_private->_boldFont];
-	vec2i charSize = vec2i(static_cast<int>(characterSize.width), static_cast<int>(characterSize.height));
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+	CGSize characterSize = [wString sizeWithAttributes:@{NSFontAttributeName:_private->boldFont}];
+#else
+	CGSize characterSize = [wString sizeWithFont:_private->_boldFont];
+#endif
+
+	vec2i charSize = vec2i(static_cast<int>(characterSize.width + 0.5f),
+		static_cast<int>((value == ET_NEWLINE) || (value == ET_RETURN) ? lineHeight() : characterSize.height + 0.5f));
 	
 	CharDescriptor desc(value, CharParameter_Bold);
 	if (charSize.square() > 0)
@@ -148,39 +164,43 @@ CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face,
     NSString* cFace = [NSString stringWithCString:face.c_str() encoding:NSASCIIStringEncoding];
     NSString* cBoldFace = [NSString stringWithCString:boldFace.c_str() encoding:NSASCIIStringEncoding];
 	
-    _font = [UIFont fontWithName:cFace size:static_cast<float>(size)];
-	if (_font == nil)
+    font = [UIFont fontWithName:cFace size:static_cast<float>(size)];
+	if (font == nil)
 	{
 		log::warning("Font %s not found, using system font.", face.c_str());
-		_font = [UIFont systemFontOfSize:static_cast<float>(size)];
+		font = [UIFont systemFontOfSize:static_cast<float>(size)];
 	}
-	ET_ASSERT(_font);
+	ET_ASSERT(font);
 	
-    _boldFont = [UIFont fontWithName:cBoldFace size:static_cast<float>(size)];
-	if (_boldFont == nil)
+    boldFont = [UIFont fontWithName:cBoldFace size:static_cast<float>(size)];
+	if (boldFont == nil)
 	{
 		log::warning("Font %s not found, using system bold font.", boldFace.c_str());
-		_boldFont = [UIFont boldSystemFontOfSize:static_cast<float>(size)];
+		boldFont = [UIFont boldSystemFontOfSize:static_cast<float>(size)];
 	}
-	ET_ASSERT(_boldFont);
+	ET_ASSERT(boldFont);
 	
-	whiteColor = [[UIColor whiteColor] CGColor];
-	CGColorRetain(whiteColor);
+	whiteColor = [UIColor whiteColor];
+	
+	whiteColorRef = [whiteColor CGColor];
+	CGColorRetain(whiteColorRef);
 	
 #if (!ET_OBJC_ARC_ENABLED)
-	[_font retain];
-	[_boldFont retain];
+	[whiteColor retain];
+	[font retain];
+	[boldFont retain];
 #endif
 }
 
 CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
 {
 #if (!ET_OBJC_ARC_ENABLED)
-    [_font release];
-	[_boldFont release];
+    [font release];
+	[boldFont release];
+	[whiteColor release];
 #endif
 	
-	CGColorRelease(whiteColor);
+	CGColorRelease(whiteColorRef);
 }
 
 void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& position,
@@ -201,14 +221,21 @@ void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& si
 	ET_ASSERT(context);
 	
 	CGContextSetTextDrawingMode(context, kCGTextFill);
-	CGContextSetFillColorWithColor(context, whiteColor);
 	CGContextSetShouldAntialias(context, YES);
 	CGContextSetShouldSmoothFonts(context, YES);
 	CGContextSetShouldSubpixelPositionFonts(context, YES);
 	CGContextSetShouldSubpixelQuantizeFonts(context, NO);
 	UIGraphicsPushContext(context);
 
-	[value drawAtPoint:CGPointZero withFont:(bold ? _boldFont : _font) ];
+	UIFont* fontToDraw = (bold ? boldFont : font);
+	
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+	[value drawAtPoint:CGPointZero withAttributes:@{NSFontAttributeName:fontToDraw,
+		NSForegroundColorAttributeName:whiteColor}];
+#else
+	CGContextSetFillColorWithColor(context, whiteColor);
+	[value drawAtPoint:CGPointZero withFont:fontToDraw];
+#endif
 	
 	UIGraphicsPopContext();
 	CGContextRelease(context);

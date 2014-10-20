@@ -136,10 +136,19 @@ void GameCenter::reportScoreForLeaderboard(const std::string& lId, int64_t value
 {
 	if ([[GKLocalPlayer localPlayer] isAuthenticated])
 	{
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+		GKScore* score = [[GKScore alloc] initWithLeaderboardIdentifier:[NSString stringWithUTF8String:lId.c_str()]];
+#else
 		GKScore* score = [[GKScore alloc] initWithCategory:[NSString stringWithUTF8String:lId.c_str()]];
-		score.context = 0;
+#endif
 		score.value = value;
+		score.context = 0;
+		
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+		[GKScore reportScores:@[score] withCompletionHandler:^(NSError *error)
+#else
 		[score reportScoreWithCompletionHandler:^(NSError *error)
+#endif
 		{
 			if (error == nil)
 			{
@@ -177,12 +186,17 @@ void GameCenter::unlockAchievement(const std::string& achId)
 {
 	if ([[GKLocalPlayer localPlayer] isAuthenticated])
 	{
-		std::string localId = achId;
 		GKAchievement* ach = [[GKAchievement alloc] initWithIdentifier:[NSString stringWithUTF8String:achId.c_str()]];
 		ach.percentComplete = 100.0;
 		ach.showsCompletionBanner = YES;
 		
+		std::string localId = achId;
+		
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+		[GKAchievement reportAchievements:@[ach] withCompletionHandler:^(NSError *error)
+#else
 		[ach reportAchievementWithCompletionHandler:^(NSError *error)
+#endif
 		{
 			if (error == nil)
 			{
@@ -408,12 +422,13 @@ std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 				gcController.viewState = GKGameCenterViewControllerStateLeaderboards;
 				for (GKLeaderboard* leaderboard in leaderboards)
 				{
-					NSString* lbId = [leaderboard respondsToSelector:@selector(identifier)] ?
-						leaderboard.identifier : leaderboard.category;
-										
-					if ([lbId isEqualToString:leaderboardId])
-					{
+#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+					if ([leaderboard.identifier isEqualToString:leaderboardId]) {
+						gcController.leaderboardIdentifier = leaderboard.identifier;
+#else
+					if ([leaderboard.category isEqualToString:leaderboardId]) {
 						gcController.leaderboardCategory = leaderboard.category;
+#endif
 						if ([gcController respondsToSelector:@selector(setLeaderboardIdentifier:)])
 							gcController.leaderboardIdentifier = leaderboardId;
 						

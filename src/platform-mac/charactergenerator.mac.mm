@@ -121,8 +121,8 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 	[attrString addAttribute:NSForegroundColorAttributeName value:_private->whiteColor range:wholeString];
 
 	NSSize characterSize = [attrString size];
-	vec2i charSize = vec2i(static_cast<int>(characterSize.width),
-        static_cast<int>(characterSize.height));
+	vec2i charSize = vec2i(static_cast<int>(characterSize.width + 0.5f),
+		static_cast<int>((value == ET_NEWLINE) || (value == ET_RETURN) ? lineHeight() : characterSize.height + 0.5f));
 	
 	CharDescriptor desc(value, CharParameter_Bold);
 	if (charSize.square() > 0)
