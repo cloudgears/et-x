@@ -7,7 +7,6 @@
 
 #include <fstream>
 #include <GameKit/GameKit.h>
-
 #include <et/app/application.h>
 #include <et/app/applicationnotifier.h>
 #include <et/platform-apple/apple.h>
@@ -136,19 +135,19 @@ void GameCenter::reportScoreForLeaderboard(const std::string& lId, int64_t value
 {
 	if ([[GKLocalPlayer localPlayer] isAuthenticated])
 	{
-#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+#	if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0) || (__MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_8)
 		GKScore* score = [[GKScore alloc] initWithLeaderboardIdentifier:[NSString stringWithUTF8String:lId.c_str()]];
-#else
+#	else
 		GKScore* score = [[GKScore alloc] initWithCategory:[NSString stringWithUTF8String:lId.c_str()]];
-#endif
+#	endif
 		score.value = value;
 		score.context = 0;
 		
-#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+#	if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0) || (__MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_8)
 		[GKScore reportScores:@[score] withCompletionHandler:^(NSError *error)
-#else
+#	else
 		[score reportScoreWithCompletionHandler:^(NSError *error)
-#endif
+#	endif
 		{
 			if (error == nil)
 			{
@@ -422,13 +421,13 @@ std::string GameCenterPrivate::hashForScore(const Dictionary& score)
 				gcController.viewState = GKGameCenterViewControllerStateLeaderboards;
 				for (GKLeaderboard* leaderboard in leaderboards)
 				{
-#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+#				if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
 					if ([leaderboard.identifier isEqualToString:leaderboardId]) {
 						gcController.leaderboardIdentifier = leaderboard.identifier;
-#else
+#				else
 					if ([leaderboard.category isEqualToString:leaderboardId]) {
 						gcController.leaderboardCategory = leaderboard.category;
-#endif
+#				endif
 						if ([gcController respondsToSelector:@selector(setLeaderboardIdentifier:)])
 							gcController.leaderboardIdentifier = leaderboardId;
 						

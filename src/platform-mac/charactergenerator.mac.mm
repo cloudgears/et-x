@@ -232,8 +232,8 @@ void CharacterGeneratorPrivate::updateTexture(RenderContext* rc, const vec2i& po
 void CharacterGeneratorPrivate::renderCharacter(NSAttributedString* value,
 	const vec2i& size, NSFont*, BinaryDataStorage& data)
 {
-	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8, size.x,
-		colorSpace, kCGImageAlphaNone, nil, nil);
+	CGContextRef context = CGBitmapContextCreateWithData(data.data(), size.x, size.y, 8,
+		size.x, colorSpace, kCGImageAlphaNone, nil, nil);
 	ET_ASSERT(context);
 
 	NSGraphicsContext* aContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];
