@@ -179,7 +179,7 @@ void Scene::render(RenderContext* rc)
 	if (_background.texture().valid())
 	{
 		_renderer.setAdditionalOffsetAndAlpha(vec3(0.0f, 0.0f, 1.0f));
-		buildOverlayVertices(rc);
+		buildBackgroundVertices(rc);
 		_renderer.render(rc);
 	}
 
