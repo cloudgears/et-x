@@ -177,7 +177,6 @@ namespace et
 			ImageView _background;
 			ImageView _overlay;
 			
-			Layout::Pointer _keyboardFocusedLayout;
 			Element::Pointer _keyboardFocusedElement;
 			Element::List _prerenderElements;
 

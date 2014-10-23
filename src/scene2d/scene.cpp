@@ -92,18 +92,20 @@ bool Scene::pointerScrolled(const et::PointerInputInfo& p)
 
 void Scene::keyPressed(size_t key)
 {
-	if (_keyboardFocusedLayout.valid())
+	if (_keyboardFocusedElement.valid())
 	{
-		if (_keyboardFocusedElement.valid())
-			_keyboardFocusedElement->processMessage(Message(Message::Type_TextFieldControl, key));
-		else 
-			_keyboardFocusedLayout->keyPressed(key);
+		_keyboardFocusedElement->processMessage(Message(Message::Type_TextFieldControl, key));
+	}
+	else
+	{
+		for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+			(*i)->layout->keyPressed(key);
 	}
 }
 
 void Scene::charactersEntered(std::string p)
 {
-	if (_keyboardFocusedLayout.valid() && _keyboardFocusedElement.valid())
+	if (_keyboardFocusedElement.valid())
 		_keyboardFocusedElement->processMessage(Message(Message::Type_TextInput, p));
 }
 
@@ -230,20 +232,16 @@ void Scene::setOverlayImage(const Image& img)
 	_overlay.setImage(img);
 }
 
-void Scene::onKeyboardNeeded(Layout* l, Element* element)
+void Scene::onKeyboardNeeded(Layout*, Element* element)
 {
 	_keyboardFocusedElement = Element::Pointer(element);
-	_keyboardFocusedLayout = Layout::Pointer(l);
-
 	input().activateSoftwareKeyboard();
 }
 
 void Scene::onKeyboardResigned(Layout*)
 {
 	input().deactivateSoftwareKeyboard();
-
 	_keyboardFocusedElement.reset(nullptr);
-	_keyboardFocusedLayout.reset(nullptr);
 }
 
 void Scene::getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst)
@@ -500,7 +498,6 @@ void Scene::removeAllLayouts()
 	for (auto l : _layouts)
 		l->layout.reset(nullptr);
 
-	_keyboardFocusedLayout.reset(nullptr);
 	_layouts.clear();
 }
 
