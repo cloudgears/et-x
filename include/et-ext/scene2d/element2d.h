@@ -46,6 +46,24 @@ namespace et
 			bool visible() const;
 
 			/*
+			 * Animator accessors
+			 */
+			Vector2Animator& positionAnimator()
+				{ return _positionAnimator; }
+			
+			Vector2Animator& sizeAnimator()
+				{ return _sizeAnimator; }
+			
+			Vector4Animator& colorAnimator()
+				{ return _colorAnimator; }
+			
+			Vector2Animator& scaleAnimator()
+				{ return _scaleAnimator; }
+			
+			FloatAnimator& angleAnimator()
+				{ return _angleAnimator; }
+
+			/*
 			 * Setters
 			 */
 			virtual void setAngle(float angle, float duration = 0.0f);
