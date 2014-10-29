@@ -49,8 +49,7 @@ namespace et
 		
 	private:
 		friend int HTTPRequestProgressFunction(HTTPRequest*, double, double, double, double);
-		HTTPRequestPrivate* _private = nullptr;
-		char _privateData[256] = { };
+		ET_DECLARE_PIMPL(HTTPRequest, 256)
 	};
 	
 	class HTTPRequestResponse : public Shared

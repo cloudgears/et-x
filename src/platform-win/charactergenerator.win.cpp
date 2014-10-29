@@ -1,9 +1,20 @@
-#include <Windows.h>
-#include <et/geometry/rectplacer.h>
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
+ *
+ */
+
 #include <et-ext/scene2d/charactergenerator.h>
+
+#if (ET_PLATFORM_WIN)
+
+#include <et/geometry/rectplacer.h>
 #include <et/rendering/rendercontext.h>
 #include <et/imaging/imagewriter.h>
 #include <et/timers/intervaltimer.h>
+
+#include <Windows.h>
 
 using namespace et;
 using namespace et::s2d;
@@ -37,16 +48,17 @@ class et::s2d::CharacterGeneratorPrivate
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace, 
-	size_t size, size_t texSize) : _rc(rc),
-	_private(new CharacterGeneratorPrivate(face, boldFace, size, texSize)), _face(face), _boldFace(boldFace), _size(size)
+	size_t size, size_t texSize) : _rc(rc), _face(face), _boldFace(boldFace), _size(size)
 {
+	ET_PIMPL_INIT(CharacterGenerator, face, boldFace, size, texSize)
+
 	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(texSize & 0xffffffff), 
 		GL_RGBA, GL_UNSIGNED_BYTE, BinaryDataStorage(4 * sqr(texSize), 0), face + "font");
 }
 
 CharacterGenerator::~CharacterGenerator()
 {
-	delete _private;
+	ET_PIMPL_FINALIZE(CharacterGenerator)
 }
 
 CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
@@ -193,3 +205,5 @@ void CharacterGeneratorPrivate::renderCharacter(int value, bool bold, const vec2
 	DeleteObject(bitmap);
 	DeleteDC(dc);
 }
+
+#endif // ET_PLATFORM_WIN

@@ -19,7 +19,7 @@ public:
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face,
-	const std::string& boldFace, size_t size, size_t textureSize) : _rc(rc),
+	const std::string&, size_t size, size_t textureSize) : _rc(rc),
 	_private(new CharacterGeneratorPrivate(textureSize)), _face(face), _size(size)
 {
 	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(textureSize),
@@ -31,14 +31,14 @@ CharacterGenerator::~CharacterGenerator()
 	delete _private;
 }
 
-CharDescriptor CharacterGenerator::generateCharacter(int value, bool updateTexture)
+CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 {
 	CharDescriptor desc(value);
 	_chars[value] = desc;
 	return desc;
 }
 
-CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool updateTexture)
+CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 {
 	CharDescriptor desc(value, CharParameter_Bold);
 	_boldChars[value] = desc;
@@ -57,9 +57,5 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
 	else
 		_chars[desc.value] = desc;
 	
-	rect r;
-	r.setOrigin(desc.origin - vec2(1.0f));
-	r.setSize(desc.size + vec2(2.0f));
-	
-	_private->placer.addPlacedRect(r);
+	_private->placer.addPlacedRect(rect(desc.pixelsOrigin - vec2(1.0f), desc.pixelsSize + vec2(2.0f)));
 }

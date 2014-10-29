@@ -21,9 +21,10 @@ RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const
 /*
  * Rendering element
  */
-RenderingElement::RenderingElement(RenderContext* rc) : renderState(rc->renderState()),
-	indexArray(new IndexArray(IndexArrayFormat_16bit, 0, PrimitiveType_Triangles)), changed(false)
+RenderingElement::RenderingElement(RenderContext* rc) :
+	renderState(rc->renderState()), changed(false)
 {
+	indexArray = IndexArray::Pointer::create(IndexArrayFormat_16bit, 0, PrimitiveType_Triangles);
 	VertexDeclaration decl(true, Usage_Position, Type_Vec3);
 	decl.push_back(Usage_TexCoord0, Type_Vec4);
 	decl.push_back(Usage_Color, Type_Vec4);

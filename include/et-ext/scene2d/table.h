@@ -24,20 +24,21 @@ namespace et
 				Element2d::Pointer header;
 				Element2d::List items;
 				Element2d::Pointer footer;
+
+				Section();
 				
 			private:
-				Section();
 				friend class Table;
 				
 			private:
-				float headerOffset;
-				float footerOffset;
+				float headerOffset = 0.0f;
+				float footerOffset = 0.0f;
 				
-				float headerSize;
-				float itemsSize;
-				float footerSize;
+				float headerSize = 0.0f;
+				float itemsSize = 0.0f;
+				float footerSize = 0.0f;
 				
-				float sectionSize;
+				float sectionSize = 0.0f;
 			};
 			
 		public:

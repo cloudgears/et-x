@@ -14,7 +14,7 @@ extern const std::string planetPerVertexFS;
 
 #define DRAW_WIREFRAME	0
 
-Atmosphere::Atmosphere(RenderContext* rc, size_t textureSize) :
+Atmosphere::Atmosphere(RenderContext* rc, size_t) :
 	_rc(rc)
 {
 	setParameters(defaultParameters());

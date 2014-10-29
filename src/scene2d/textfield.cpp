@@ -151,11 +151,11 @@ void TextField::processMessage(const Message& msg)
 			{
 				if (_text.length() > 0)
 				{
-					size_t charToDelete = 1;
-					while ((_text.size() > charToDelete) && ((_text[_text.length() - charToDelete - 1] & 0x80) != 0))
-						   ++charToDelete;
+					size_t charToErase = 1;
+					while ((_text.size() > charToErase) && ((_text[_text.length() - charToErase - 1] & 0x80) != 0))
+						   ++charToErase;
 						   
-					setText(_text.substr(0, _text.length() - charToDelete));
+					setText(_text.substr(0, _text.length() - charToErase));
 				}
 				
 				textChanged.invoke(this);

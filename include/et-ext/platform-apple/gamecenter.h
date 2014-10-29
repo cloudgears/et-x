@@ -51,13 +51,14 @@ namespace et
 				
 	private:
 		GameCenter();
+		~GameCenter();
 		
 		ET_SINGLETON_COPY_DENY(GameCenter)
 		
 		void authenticationCompleted();
 				
 	private:
-		GameCenterPrivate* _private;
+		ET_DECLARE_PIMPL(GameCenter, 64)
 		Player _player;
 	};
 }

@@ -49,9 +49,10 @@ public:
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face,
-	const std::string& boldFace, size_t size, size_t texSize) : _rc(rc),
-	_private(new CharacterGeneratorPrivate(face, boldFace, size, texSize)), _face(face), _size(size)
+	const std::string& boldFace, size_t size, size_t texSize) : _rc(rc), _face(face), _size(size)
 {
+	ET_PIMPL_INIT(CharacterGenerator, face, boldFace, size, texSize)
+	
 	BinaryDataStorage emptyData(sqr(texSize), 0);
 	
 #if defined(GL_R8)
@@ -65,7 +66,7 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 
 CharacterGenerator::~CharacterGenerator()
 {
-	delete _private;
+	ET_PIMPL_FINALIZE(CharacterGenerator)
 }
 
 CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
@@ -98,10 +99,10 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
 			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
 		
-		desc.origin = textureRect.origin() + vec2(1.0f);
-		desc.size = textureRect.size() - vec2(2.0f);
-		desc.uvOrigin = _texture->getTexCoord(desc.origin);
-		desc.uvSize = desc.size / _texture->sizeFloat();
+		desc.pixelsOrigin = textureRect.origin() + vec2(1.0f);
+		desc.pixelsSize = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.pixelsOrigin);
+		desc.uvSize = desc.pixelsSize / _texture->sizeFloat();
 		
 		std::string imageName = application().environment().applicationDocumentsFolder() + "char-" + intToStr(value) + ".png";
 		ImageWriter::writeImageToFile(imageName, data, charSize, 1, 8, ImageFormat_PNG, true);
@@ -153,10 +154,10 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 		_private->updateTexture(_rc, vec2i(static_cast<int>(textureRect.left + 1.0f),
 			static_cast<int>(textureRect.top + 1.0f)), charSize, _texture, data);
 
-		desc.origin = textureRect.origin() + vec2(1.0f);
-		desc.size = textureRect.size() - vec2(2.0f);
-		desc.uvOrigin = _texture->getTexCoord(desc.origin);
-		desc.uvSize = desc.size / _texture->sizeFloat();
+		desc.pixelsOrigin = textureRect.origin() + vec2(1.0f);
+		desc.pixelsSize = textureRect.size() - vec2(2.0f);
+		desc.uvOrigin = _texture->getTexCoord(desc.pixelsOrigin);
+		desc.uvSize = desc.pixelsSize / _texture->sizeFloat();
 	}
 
 #if (!ET_OBJC_ARC_ENABLED)
@@ -182,11 +183,7 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
 	else
 		_chars[desc.value] = desc;
 	
-	rect r;
-	r.setOrigin(desc.origin - vec2(1.0f));
-	r.setSize(desc.size + vec2(2.0f));
-	
-	_private->_placer.addPlacedRect(r);
+	_private->_placer.addPlacedRect(rect(desc.pixelsOrigin - vec2(1.0f), desc.pixelsSize + vec2(2.0f)));
 }
 
 /*
@@ -270,7 +267,7 @@ struct SDFPoint
 		{ }
 	
 	SDFPoint(int x, int y, float af) :
-		dx(x), dy(y), f(af) { }
+		dx(x & 0xffff), dy(y & 0xffff), f(static_cast<int>(af)) { }
 };
 
 struct Grid
@@ -293,8 +290,7 @@ static inline void Put(Grid& g, int x, int y, const SDFPoint &p)
 	g.grid[y * (g.w + 2) + x] = p;
 }
 
-/* macro is a way faster than inline */
-void Compare(Grid& g, SDFPoint& p, int x, int y, int offsetx, int offsety)
+static void Compare(Grid& g, SDFPoint& p, int x, int y, int offsetx, int offsety)
 {
 	int add = 0;
 	

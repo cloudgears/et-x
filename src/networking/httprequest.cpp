@@ -11,8 +11,10 @@
 
 using namespace et;
 
+/*
 static int my_trace(CURL *handle, curl_infotype type, char *data, size_t size, void *userp);
 static void dump(const char *text, FILE *stream, unsigned char *ptr, size_t size, char nohex);
+*/
 
 class et::HTTPRequestPrivate
 {
@@ -38,26 +40,23 @@ size_t et::HTTPRequestWriteFunction(const void* data, size_t chunks, size_t chun
 int et::HTTPRequestProgressFunction(HTTPRequest* req, double downloadSize, double downloaded, double uploadSize, double uploaded)
 {
 	if (downloadSize > 0)
-		req->downloadProgress.invokeInMainRunLoop(downloaded, downloadSize);
+		req->downloadProgress.invokeInMainRunLoop(static_cast<int64_t>(downloaded), static_cast<int64_t>(downloadSize));
 	
 	if (uploadSize > 0)
-		req->uploadProgress.invokeInMainRunLoop(uploaded, uploadSize);
+		req->uploadProgress.invokeInMainRunLoop(static_cast<int64_t>(uploaded), static_cast<int64_t>(uploadSize));
 	
 	return 0;
 }
 
 HTTPRequest::HTTPRequest(const std::string& url)
 {
-	static_assert(sizeof(HTTPRequestPrivate) <= sizeof(_privateData), "Insufficient storage for HTTPRequestPrivate");
-	
-	_private = new(_privateData) HTTPRequestPrivate;
+	ET_PIMPL_INIT(HTTPRequest)
 	_private->url = url;
 }
 
 HTTPRequest::~HTTPRequest()
 {
-	_private->~HTTPRequestPrivate();
-	memset(_privateData, 0, sizeof(_privateData));
+	ET_PIMPL_FINALIZE(HTTPRequest)
 }
 
 void HTTPRequest::setCredentials(const std::string& login, const std::string& password)
@@ -161,9 +160,9 @@ bool HTTPRequest::succeeded() const
 
 /*
  * service
- */
+ *
 struct data {
-	char trace_ascii; /* 1 or 0 */
+	char trace_ascii; // 1 or 0
 };
 
 static void dump(const char *text, FILE *stream, unsigned char *ptr, size_t size, char nohex)
@@ -173,9 +172,9 @@ static void dump(const char *text, FILE *stream, unsigned char *ptr, size_t size
 	
 	unsigned int width=0x10;
 	
-	if(nohex)
-    /* without the hex output, we can fit more on screen */
+	if (nohex)
 		width = 0x40;
+    // without the hex output, we can fit more on screen
 	
 	fprintf(stream, "%s, %10.10ld bytes (0x%8.8lx)\n",
 			text, (long)size, (long)size);
@@ -185,7 +184,7 @@ static void dump(const char *text, FILE *stream, unsigned char *ptr, size_t size
 		fprintf(stream, "%4.4lx: ", (long)i);
 		
 		if(!nohex) {
-			/* hex not disabled, show it */
+			// hex not disabled, show it
 			for(c = 0; c < width; c++)
 				if(i+c < size)
 					fprintf(stream, "%02x ", ptr[i+c]);
@@ -194,20 +193,20 @@ static void dump(const char *text, FILE *stream, unsigned char *ptr, size_t size
 		}
 		
 		for(c = 0; (c < width) && (i+c < size); c++) {
-			/* check for 0D0A; if found, skip past and start a new line of output */
+			// check for 0D0A; if found, skip past and start a new line of output
 			if (nohex && (i+c+1 < size) && ptr[i+c]==0x0D && ptr[i+c+1]==0x0A) {
 				i+=(c+2-width);
 				break;
 			}
 			fprintf(stream, "%c",
 					(ptr[i+c]>=0x20) && (ptr[i+c]<0x80)?ptr[i+c]:'.');
-			/* check again for 0D0A, to avoid an extra \n if it's at width */
+			// check again for 0D0A, to avoid an extra \n if it's at width
 			if (nohex && (i+c+2 < size) && ptr[i+c+1]==0x0D && ptr[i+c+2]==0x0A) {
 				i+=(c+3-width);
 				break;
 			}
 		}
-		fputc('\n', stream); /* newline */
+		fputc('\n', stream); // newline
 	}
 	fflush(stream);
 }
@@ -215,14 +214,12 @@ static void dump(const char *text, FILE *stream, unsigned char *ptr, size_t size
 static int my_trace(CURL *handle, curl_infotype type, char *data, size_t size, void *userp)
 {
 	const char *text;
-	(void)handle; /* prevent compiler warning */
+	(void)handle;
 	
-	switch (type) {
+	switch (type) 
+ {
 		case CURLINFO_TEXT:
 			fprintf(stderr, "== Info: %s", data);
-		default: /* in case a new one is introduced to shock us */
-			return 0;
-			
 		case CURLINFO_HEADER_OUT:
 			text = "=> Send header";
 			break;
@@ -241,6 +238,8 @@ static int my_trace(CURL *handle, curl_infotype type, char *data, size_t size, v
 		case CURLINFO_SSL_DATA_IN:
 			text = "<= Recv SSL data";
 			break;
+		 default:
+			 return 0;
 	}
 	
 	struct data *config = (struct data *)userp;
@@ -252,3 +251,4 @@ static int my_trace(CURL *handle, curl_infotype type, char *data, size_t size, v
 	
 	return 0;
 }
+*/

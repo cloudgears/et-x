@@ -32,7 +32,8 @@ void Layout::addElementToRenderQueue(Element::Pointer element, RenderContext* rc
 
 	if (clipToBounds)
 	{
-		mat4 parentTransform = element->parent()->finalTransform();
+		const mat4& parentTransform = element->parent()->finalTransform();
+		
 		vec2 eSize = multiplyWithoutTranslation(element->size(), parentTransform);
 		vec2 eOrigin = parentTransform * element->origin();
 		

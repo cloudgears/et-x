@@ -1,3 +1,14 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
+ *
+ */
+
+#include <et-ext/scene2d/charactergenerator.h>
+
+#if (ET_PLATFORM_IOS)
+
 #include <TargetConditionals.h>
 
 #include <UIKit/UIFont.h>
@@ -9,7 +20,6 @@
 #include <et/rendering/rendercontext.h>
 #include <et/geometry/rectplacer.h>
 #include <et/imaging/imagewriter.h>
-#include <et-ext/scene2d/charactergenerator.h>
 
 using namespace et;
 using namespace et::s2d;
@@ -28,28 +38,29 @@ class et::s2d::CharacterGeneratorPrivate
 
 	public:
 		std::string _fontFace;
-		size_t _fontSize;
-		size_t _textureSize;
+		size_t _fontSize = 0;
+		size_t _textureSize = 0;
 	
 		RectPlacer _placer;
    
-        UIFont* font;
-        UIFont* boldFont;
-		UIColor* whiteColor;
-		CGColorRef whiteColorRef;
+        UIFont* font = nil;
+        UIFont* boldFont = nil;
+		UIColor* whiteColor = nil;
+		CGColorRef whiteColorRef = nullptr;
 };
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face,
-	const std::string& boldFace, size_t size, size_t texSize) : _rc(rc),
-	_private(new CharacterGeneratorPrivate(face, boldFace, size, texSize)), _face(face), _size(size)
+	const std::string& boldFace, size_t size, size_t texSize) : _rc(rc), _face(face), _size(size)
 {
+	ET_PIMPL_INIT(CharacterGenerator, face, boldFace, size, texSize);
+	
 	_texture = _rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_LUMINANCE, vec2i(static_cast<int>(texSize)),
 		GL_LUMINANCE, GL_UNSIGNED_BYTE, BinaryDataStorage(sqr(texSize), 0), face + "font");
 }
 
 CharacterGenerator::~CharacterGenerator()
 {
-	delete _private;
+	ET_PIMPL_FINALIZE(CharacterGenerator)
 }
 
 CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
@@ -241,3 +252,5 @@ void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& si
 	CGContextRelease(context);
 	CGColorSpaceRelease(colorSpace);
 }
+
+#endif // ET_PLATFORM_IOS

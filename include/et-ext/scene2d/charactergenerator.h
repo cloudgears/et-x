@@ -72,9 +72,10 @@ namespace et
 			CharDescriptor generateBoldCharacter(int value, bool updateTexture);
 
 		private:
-			RenderContext* _rc;
-			CharacterGeneratorPrivate* _private;
-
+			ET_DECLARE_PIMPL(CharacterGenerator, 128)
+			
+			RenderContext* _rc = nullptr;
+			
 			Texture _texture;
 			CharDescriptorMap _chars;
 			CharDescriptorMap _boldChars;
@@ -82,7 +83,7 @@ namespace et
 			std::string _face;
 			std::string _boldFace;
 
-			size_t _size;
+			size_t _size = 0;
 		};
 
 	}

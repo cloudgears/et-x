@@ -73,7 +73,7 @@ void Table::layoutChildren(const vec2& ownSize)
 Table::Section* Table::addSection(Element2d::Pointer header, const Element2d::List& items,
 	Element2d::Pointer footer)
 {
-	Section* section = new Section;
+	Section* section = sharedObjectFactory().createObject<Section>();
 	
 	if (header.valid())
 	{
@@ -144,7 +144,7 @@ void Table::clean()
 		
 		s->items.clear();
 		s->footer.reset(nullptr);
-		delete s;
+		sharedObjectFactory().deleteObject(s);
 	}
 	
 	_sections.clear();

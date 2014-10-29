@@ -12,8 +12,8 @@ using namespace et;
 using namespace et::s2d;
 
 Scene::Scene(RenderContext* rc) : _rc(rc),
-	_renderer(rc), _renderingElementBackground(new RenderingElement(rc)),
-	_renderingElementOverlay(new RenderingElement(rc)),
+	_renderer(rc), _renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc)),
+	_renderingElementOverlay(sharedObjectFactory().createObject<RenderingElement>(rc)),
 	_background(Image(), nullptr), _overlay(Image(), nullptr)
 {
 	_background.setPivotPoint(vec2(0.5f));
@@ -283,7 +283,7 @@ void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 		
 		if (layoutToShow.invalid())
 		{
-			layoutToShow.reset(new LayoutEntry(this, _rc, l.newLayout));
+			layoutToShow = LayoutEntry::Pointer::create(this, _rc, l.newLayout);
 		}
 		else
 		{

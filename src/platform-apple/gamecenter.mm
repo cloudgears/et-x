@@ -57,9 +57,10 @@ public:
 	void saveOptions();
 };
 
-GameCenter::GameCenter() :
-	_private(new GameCenterPrivate)
+GameCenter::GameCenter()
 {
+	ET_PIMPL_INIT(GameCenter)
+	
 	_private->optionsFileName = application().environment().applicationDocumentsFolder() + "gamecenter.options.json";
 	if (fileExists(_private->optionsFileName))
 	{
@@ -70,6 +71,11 @@ GameCenter::GameCenter() :
 	}
 	
 	authenticate();
+}
+
+GameCenter::~GameCenter()
+{
+	ET_PIMPL_FINALIZE(GameCenter)
 }
 
 GameCenter::AuthorizationStatus GameCenter::status() const
