@@ -73,7 +73,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, bool)
 #if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
 	CGSize characterSize = [wString sizeWithAttributes:@{NSFontAttributeName:_private->font}];
 #else
-	CGSize characterSize = [wString sizeWithFont:_private->_font];
+	CGSize characterSize = [wString sizeWithFont:_private->font];
 #endif
 	
 	vec2i charSize = vec2i(static_cast<int>(characterSize.width + 0.5f),
@@ -117,7 +117,7 @@ CharDescriptor CharacterGenerator::generateBoldCharacter(int value, bool)
 #if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
 	CGSize characterSize = [wString sizeWithAttributes:@{NSFontAttributeName:_private->boldFont}];
 #else
-	CGSize characterSize = [wString sizeWithFont:_private->_boldFont];
+	CGSize characterSize = [wString sizeWithFont:_private->boldFont];
 #endif
 
 	vec2i charSize = vec2i(static_cast<int>(characterSize.width + 0.5f),
@@ -244,7 +244,7 @@ void CharacterGeneratorPrivate::renderCharacter(NSString* value, const vec2i& si
 	[value drawAtPoint:CGPointZero withAttributes:@{NSFontAttributeName:fontToDraw,
 		NSForegroundColorAttributeName:whiteColor}];
 #else
-	CGContextSetFillColorWithColor(context, whiteColor);
+	CGContextSetFillColorWithColor(context, whiteColorRef);
 	[value drawAtPoint:CGPointZero withFont:fontToDraw];
 #endif
 	
