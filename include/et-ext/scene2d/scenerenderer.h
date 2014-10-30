@@ -59,7 +59,6 @@ namespace et
 
 		private:
 			void init(RenderContext* rc);
-			void alloc(size_t count);
 			
 			SceneVertex* allocateVertices(size_t, const Texture&, const SceneProgram&, Element2d*);
 

@@ -12,7 +12,7 @@
 using namespace et;
 using namespace et::s2d;
 
-const size_t BlockSize = 4096;
+const size_t maxVerticesPerRenderingElement = 65535;
 
 extern std::string et_scene2d_default_shader_vs;
 extern std::string et_scene2d_default_shader_fs;
@@ -87,22 +87,6 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 	_defaultTransform[3][3] = 1.0f;
 }
 
-void s2d::SceneRenderer::alloc(size_t count)
-{
-	if (_renderingElement.invalid()) return;
-
-	size_t currentOffset = _renderingElement->vertexList.lastElementIndex();
-	size_t currentSize = _renderingElement->vertexList.size();
-
-	if (currentOffset + count >= currentSize)
-	{
-		size_t newSize = currentSize + BlockSize * (1 + count / BlockSize);
-		_renderingElement->vertexList.resize(newSize);
-		_renderingElement->indexArray->resize(newSize);
-		_renderingElement->indexArray->linearize(newSize);
-	}
-}
-
 SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& inTexture,
 	const SceneProgram& inProgram, Element2d* object)
 {
@@ -134,11 +118,15 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 	{
 		_lastProgram = inProgram;
 		_lastTexture = actualTexture;
-		_renderingElement->chunks.emplace_back(lastVertexIndex, count, _clip.top(),
-			_lastTexture, _lastProgram, object);
+		_renderingElement->chunks.emplace_back(lastVertexIndex, count, _clip.top(), _lastTexture,
+			_lastProgram, object);
 	}
 	
-	alloc(count);
+	if (_renderingElement.valid() && (_renderingElement->vertexList.size() == 0))
+	{
+		log::info("allocating %zu vertices for rendering element...", maxVerticesPerRenderingElement);
+		_renderingElement->allocVertices(maxVerticesPerRenderingElement);
+	}
 	
 	_renderingElement->changed = true;
 	_renderingElement->vertexList.applyOffset(count);
@@ -183,9 +171,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 
 	RenderState& rs = rc->renderState();
 	Renderer* renderer = rc->renderer();
-
-	const IndexBuffer& indexBuffer =
-		_renderingElement->vertexArrayObject()->indexBuffer();
+	const IndexBuffer& indexBuffer = _renderingElement->vertexArrayObject()->indexBuffer();
 	
 	Program::Pointer lastBoundProgram;
 	for (auto& i : _renderingElement->chunks)

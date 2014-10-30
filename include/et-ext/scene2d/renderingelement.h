@@ -35,6 +35,8 @@ namespace et
 			
 		public:
 			RenderingElement(RenderContext* rc);
+			
+			void allocVertices(size_t);
 			void clear();
 
 			const VertexArrayObject& vertexArrayObject();

@@ -25,6 +25,7 @@ RenderingElement::RenderingElement(RenderContext* rc) :
 	renderState(rc->renderState()), changed(false)
 {
 	indexArray = IndexArray::Pointer::create(IndexArrayFormat_16bit, 0, PrimitiveType_Triangles);
+	
 	VertexDeclaration decl(true, Usage_Position, Type_Vec3);
 	decl.push_back(Usage_TexCoord0, Type_Vec4);
 	decl.push_back(Usage_Color, Type_Vec4);
@@ -33,6 +34,17 @@ RenderingElement::RenderingElement(RenderContext* rc) :
 
 	vao = rc->vertexBufferFactory().createVertexArrayObject(nameId, VertexArray::Pointer::create(decl, true),
 		BufferDrawType_Stream, indexArray, BufferDrawType_Static);
+}
+
+void RenderingElement::allocVertices(size_t sz)
+{
+	vertexList.resize(sz);
+	
+	indexArray->resize(sz);
+	indexArray->linearize(sz);
+	indexArray->setActualSize(0);
+	
+	changed = true;
 }
 
 void RenderingElement::clear()
@@ -46,13 +58,16 @@ void RenderingElement::clear()
 const VertexArrayObject& RenderingElement::vertexArrayObject()
 {
 	renderState.bindVertexArray(vao);
+	
+	if (indexArray->actualSize() == 0)
+	{
+		indexArray->setActualSize(vertexList.size());
+		vao->indexBuffer()->setData(indexArray);
+	}
 
 	if (changed)
 	{
-		size_t count = vertexList.lastElementIndex();
-		indexArray->setActualSize(count);
-		vao->vertexBuffer()->setData(vertexList.data(), count * vertexList.typeSize());
-		vao->indexBuffer()->setData(indexArray);
+		vao->vertexBuffer()->setData(vertexList.data(), vertexList.lastElementIndex() * vertexList.typeSize());
 		changed = false;
 	}
 

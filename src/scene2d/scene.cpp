@@ -16,6 +16,9 @@ Scene::Scene(RenderContext* rc) : _rc(rc),
 	_renderingElementOverlay(sharedObjectFactory().createObject<RenderingElement>(rc)),
 	_background(Image(), nullptr), _overlay(Image(), nullptr)
 {
+	_renderingElementBackground->allocVertices(256);
+	_renderingElementOverlay->allocVertices(256);
+	
 	_background.setPivotPoint(vec2(0.5f));
 	_background.setContentMode(ImageView::ContentMode_Fill);
 	
