@@ -27,13 +27,13 @@ namespace et
 			};
 			
 		public:
-			TextField(const Font::Pointer& font, Element* parent, const std::string& name = std::string());
+			TextField(const Font::Pointer& font, Element2d* parent, const std::string& name = std::string());
 			
-			TextField(const std::string& text, const Font::Pointer& font, Element* parent,
+			TextField(const std::string& text, const Font::Pointer& font, Element2d* parent,
 				const std::string& name = std::string());
 
 			TextField(const Image& background, const std::string& text, const Font::Pointer& font,
-				Element* parent, const std::string& name = std::string());
+				Element2d* parent, const std::string& name = std::string());
 
 			const std::string& text() const;
 			
@@ -54,7 +54,7 @@ namespace et
 			void setContentOffset(const vec2&);
 
 			void setFocus();
-			void resignFocus(Element*);
+			void resignFocus(Element2d*);
 			
 			ET_DECLARE_EVENT1(editingStarted, TextField*)
 			ET_DECLARE_EVENT1(textChanged, TextField*)

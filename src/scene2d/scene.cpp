@@ -232,9 +232,9 @@ void Scene::setOverlayImage(const Image& img)
 	_overlay.setImage(img);
 }
 
-void Scene::onKeyboardNeeded(Layout*, Element* element)
+void Scene::onKeyboardNeeded(Layout*, Element2d* element)
 {
-	_keyboardFocusedElement = Element::Pointer(element);
+	_keyboardFocusedElement = Element2d::Pointer(element);
 	input().activateSoftwareKeyboard();
 }
 
@@ -482,8 +482,8 @@ void Scene::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float d
 
 void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
 {
-	Element::Pointer l = obj;
-	l->autolayoutFromFile(obj->origin());
+	Element2d::Pointer l = obj;
+	l->autoLayoutFromFile(obj->origin());
 	l->autoLayout(_rc->size(), 0.0f);
 }
 

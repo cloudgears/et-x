@@ -7,44 +7,128 @@
 
 #pragma once
 
-#include <et-ext/scene2d/element.h>
+#include <et/input/input.h>
+#include <et/apiobjects/program.h>
+#include <et-ext/scene2d/baseclasses.h>
 
 namespace et
 {
 	namespace s2d
 	{
-		class Element2d : public Element
+		class Element2d;
+		class Layout;
+		
+		typedef Hierarchy<Element2d, LoadableObject> ElementHierarchy;
+		
+		class Element2d : public ElementHierarchy, public FlagsHolder, public EventReceiver, public TimedObject
 		{
 		public:
 			ET_DECLARE_POINTER(Element2d)
 			typedef std::list<Pointer> List;
 
+			union
+			{
+				size_t tag = 0;
+				int tag_i;
+			};
+			
 		public:
-			Element2d(Element* parent, const std::string& name = std::string());
-			Element2d(const rect& frame, Element* parent, const std::string& name = std::string());
-
-			const vec2& size() const;
-			const vec2& position() const;
+			Element2d(Element2d* parent, const std::string& name = std::string());
+			Element2d(const rect& frame, Element2d* parent, const std::string& name = std::string());
 			
-			const vec2& desiredSize() const;
-			const vec2& desiredPosition() const;
-			const vec2& desiredScale() const;
+			void setParent(Element2d* element);
 			
-			const vec2& scale() const;
-			const vec2& pivotPoint() const;
-
-			const vec4 color() const;
-
-			rect frame() const;
+			bool contentValid() const
+				{ return _contentValid; }
 			
-			vec2 origin() const;
-			vec2 offset() const;
-			vec2 contentSize();
-
-			float angle() const;
-			float alpha() const;
-			bool visible() const;
-
+			void invalidateContent();
+			
+			const ElementLayout& autoLayout() const
+				{ return _autoLayout; }
+			
+			Dictionary autoLayoutDictionary() const;
+			
+			void setAutolayout(const Dictionary&);
+			void setAutolayout(const ElementLayout&);
+			void setAutolayout(const vec2&, LayoutMode, const vec2&, LayoutMode, const vec2&);
+			void setAutolayoutPosition(const vec2&);
+			void setAutolayoutPositionMode(LayoutMode);
+			void setAutolayoutSize(const vec2&);
+			void setAutolayoutSizeMode(LayoutMode);
+			void setAutolayoutRelativeToParent(const vec2& pos, const vec2& sz, const vec2& pivot);
+			void setLocationInParent(Location, const vec2& offset = vec2(0.0f));
+			void setAutolayoutMask(size_t);
+			void fillParent();
+			
+			void autoLayoutFromFile(const std::string&);
+			void autoLayout(const vec2& contextSize, float duration = 0.0f);
+			
+			virtual bool focused() const
+				{ return _focused; }
+			
+			virtual void setFocus()
+				{ _focused = true; };
+			
+			virtual void resignFocus(Element2d*)
+				{ _focused = false; };
+			
+			virtual void didAppear() { }
+			virtual void willAppear() { }
+			
+			virtual void didDisappear() { }
+			virtual void willDisappear() { }
+			
+			virtual void willAutoLayout(float) { }
+			virtual void didAutoLayout(float) { }
+			
+			virtual void willChangeFrame() { }
+			virtual void didChangeFrame() { }
+			
+			virtual void storeProperties(const Dictionary&) const { }
+			virtual void loadProperties(const Dictionary&) { }
+			
+			virtual bool enabled() const;
+			virtual void setEnabled(bool enabled);
+			
+			virtual void broardcastMessage(const Message&);
+			virtual void processMessage(const Message&) { }
+			
+			virtual void addToRenderQueue(RenderContext*, SceneRenderer&) { }
+			virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) { }
+			virtual void preRender(RenderContext*) { }
+			
+			virtual void setDefaultProgram(et::Program::Pointer&) { }
+			virtual void setProgramParameters(et::Program::Pointer&) { }
+			
+			virtual bool pointerPressed(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
+			virtual bool pointerMoved(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
+			virtual bool pointerReleased(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
+			virtual bool pointerCancelled(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
+			virtual bool pointerScrolled(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
+			
+			virtual void pointerEntered(const PointerInputInfo&) { }
+			virtual void pointerLeaved(const PointerInputInfo&) { }
+			
+			virtual void keyPressed(size_t) { }
+			
+			virtual bool containsPoint(const vec2& p, const vec2&);
+			virtual bool containLocalPoint(const vec2& p);
+			
+			vec2 positionInElement(const vec2& p);
+			
+			virtual Layout* owner()
+				{ return parent() ? parent()->owner() : nullptr; }
+			
+			void bringToFront(Element2d* c);
+			void sendToBack(Element2d* c);
+			void removeAllChildren();
+			
+			Element2d* baseChildWithName(const std::string&, bool recursive);
+			
+			template <typename T>
+			T* childWithName(const std::string& name, bool recursive)
+				{ return static_cast<T*>(baseChildWithName(name, recursive)); }
+			
 			/*
 			 * Animator accessors
 			 */
@@ -63,54 +147,126 @@ namespace et
 			FloatAnimator& angleAnimator()
 				{ return _angleAnimator; }
 
+			rect frame() const;
+			vec2 origin() const;
+			vec2 offset() const;
+			
 			/*
-			 * Setters
+			 * Scale
 			 */
-			virtual void setAngle(float angle, float duration = 0.0f);
-			virtual void setScale(const vec2& scale, float duration = 0.0f);
-			virtual void setColor(const vec4& color, float duration = 0.0f);
-			virtual void setPivotPoint(const vec2& p, bool preservePosition = true);
+			const vec2& scale() const;
+			const vec2& desiredScale() const;
+			void setScale(const vec2& scale, float duration = 0.0f);
+			
+			/*
+			 * Pivot point
+			 */
+			const vec2& pivotPoint() const;
+			void setPivotPoint(const vec2& p, bool preservePosition = true);
 
 			/*
-			 * Convenience
+			 * Position
 			 */
+			const vec2& position() const;
+			const vec2& desiredPosition() const;
 			void setPosition(const vec2& p, float duration = 0.0f);
-			void setAlpha(float alpha, float duration = 0.0f);
 			void setPosition(float x, float y, float duration = 0.0f);
+			
+			/*
+			 * Size
+			 */
+			vec2 contentSize();
+			const vec2& size() const;
+			const vec2& desiredSize() const;
 			void setSize(const vec2& s, float duration = 0.0f);
 			void setSize(float w, float h, float duration = 0.0f);
-			void rotate(float angle, float duration = 0.0f);
-			void setVisible(bool visible, float duration = 0.0f);
-
-			virtual bool containsPoint(const vec2& p, const vec2&);
-			virtual bool containLocalPoint(const vec2& p);
-
-			float finalAlpha() const;
 			
+			/*
+			 * Rotation
+			 */
+			float angle() const;
+			void setAngle(float angle, float duration = 0.0f);
+			void rotate(float angle, float duration = 0.0f);
+			
+			/*
+			 * Visibility
+			 */
+			bool visible();
+			void setVisible(bool visible, float duration = 0.0f);
+			
+			/*
+			 * Color
+			 */
+			vec4 finalColor();
+			float finalAlpha();
+			const vec4& ownColor() const;
+			void setAlpha(float alpha, float duration = 0.0f);
+			void setColor(const vec4& color, float duration = 0.0f);
+
+			/*
+			 * Transformations
+			 */
 			const mat4& transform();
 			const mat4& finalTransform();
 			const mat4& finalInverseTransform();
 			
-			vec2 positionInElement(const vec2& p);
+			bool transformValid() const
+				{ return _transformValid; }
 			
-			template <typename F>
-			void setPositionInterpolationFunction(F func)
-				{ _positionAnimator.setTimeInterpolationFunction(func); }
-
+			void invalidateTransform();
+			
+			/*
+			 * Events
+			 */
+			ET_DECLARE_EVENT2(dragStarted, Element2d*, const ElementDragInfo&)
+			ET_DECLARE_EVENT2(dragged, Element2d*, const ElementDragInfo&)
+			ET_DECLARE_EVENT2(dragFinished, Element2d*, const ElementDragInfo&)
+			
+			ET_DECLARE_EVENT1(hoverStarted, Element2d*)
+			ET_DECLARE_EVENT1(hoverEnded, Element2d*)
+			
 			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, AnimatedPropery)
 
-			virtual void setDefaultProgram(const SceneProgram&);
-			
-			virtual SceneProgram program() const
-				{ return _defaultProgram; }
-			
 		protected:
 			void initAnimators();
 			void buildFinalTransform();
 			
-			SceneProgram initProgram(SceneRenderer&);
+			virtual SceneProgram initProgram(SceneRenderer&);
+			virtual void setDefaultProgram(const SceneProgram&);
+			virtual SceneProgram program() const
+				{ return _defaultProgram; }
+			
+			/*
+			 * From Element
+			 */
+			void childRemoved(Element2d*);
+			
+			void setContentValid()
+				{ _contentValid = true; }
+			
+			bool inverseTransformValid()
+				{ return _inverseTransformValid; }
+			
+			virtual void setInvalid()
+				{ if (parent()) parent()->setInvalid(); }
+			
+			void setTransformValid(bool v)
+				{ _transformValid = v; }
+			
+			void setInverseTransformValid(bool v)
+				{ _inverseTransformValid = v; }
+			
+			virtual mat4 parentFinalTransform()
+				{ return parent() ? parent()->finalTransform() : identityMatrix; }
+						
+			Element2d* childWithNameCallback(const std::string&, Element2d*, bool recursive);
+			
+			ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, name, setName)
 			
 		private:
+			friend class Hierarchy<Element2d, LoadableObject>;
+			ET_DENY_COPY(Element2d)
+			
 			Vector2Animator _positionAnimator;
 			Vector2Animator _sizeAnimator;
 			Vector4Animator _colorAnimator;
@@ -124,9 +280,34 @@ namespace et
 			mat4 _finalInverseTransform;
 			
 			ElementLayout _layout;
+			ElementLayout _autoLayout;
 			ElementLayout _desiredLayout;
 			
-			vec4 _color;
+			float _finalAlpha = 1.0f;
+			
+			bool _enabled = true;
+			bool _transformValid = false;
+			bool _inverseTransformValid = false;
+			bool _contentValid = false;
+			bool _finalAlphaValid = false;
+			bool _focused = false;
 		};
+		
+		inline bool elementIsSelected(State s)
+			{ return (s >= State_Selected) && (s < State_max); }
+		
+		State adjustState(State s);
+		float alignmentFactor(Alignment a);
+		std::string layoutModeToString(LayoutMode);
+		LayoutMode layoutModeFromString(const std::string&);
+		
+		inline float linearInerpolation(float t)
+			{ return t; }
+		
+		inline float sinBounceInterpolation(float t)
+			{ float v = t + 0.4f * std::sin(t * PI); return v * v; }
+		
+		inline float polynomialBounceInterpolation(float t)
+			{ float ts = t * t; return t + ts * (1.0f - ts); }
 	}
 }

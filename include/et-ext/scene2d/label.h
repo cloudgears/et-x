@@ -84,14 +84,14 @@ namespace et
 			vec2 _textSize;
 			vec2 _nextTextSize;
 			vec2 _shadowOffset;
-			float _lineInterval;
+			float _lineInterval = 1.0f;
 			float _textFade;
 			float _textFadeDuration;
 			float _textFadeStartTime;
 			Alignment _horizontalAlignment = Alignment_Near;
 			Alignment _verticalAlignment = Alignment_Near;
-			bool _animatingText;
-			bool _allowFormatting;
+			bool _animatingText = false;
+			bool _allowFormatting = false;
 			bool _autoAdjustSize = true;
 		};
 	}

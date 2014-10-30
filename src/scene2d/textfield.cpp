@@ -16,7 +16,7 @@ const int securedChar = 0x2022;
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(TextField)
 
-TextField::TextField(const Font::Pointer& font, Element* parent, const std::string& name) :
+TextField::TextField(const Font::Pointer& font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
@@ -27,7 +27,7 @@ TextField::TextField(const Font::Pointer& font, Element* parent, const std::stri
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
-TextField::TextField(const std::string& text, const Font::Pointer& font, Element* parent, const std::string& name) :
+TextField::TextField(const std::string& text, const Font::Pointer& font, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
@@ -39,7 +39,7 @@ TextField::TextField(const std::string& text, const Font::Pointer& font, Element
 }
 
 TextField::TextField(const Image& background, const std::string& text, const Font::Pointer& font,
-	Element* parent, const std::string& name) : Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS),
+	Element2d* parent, const std::string& name) : Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS),
 	_font(font), _background(background), _alignmentH(Alignment_Near), _alignmentV(Alignment_Center),
 	_secured(false), _caretVisible(false)
 {
@@ -72,7 +72,7 @@ void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 
 void TextField::buildVertices(RenderContext*, SceneRenderer&)
 {
-	vec4 alphaVector = vec4(1.0f, 1.0f, 1.0f, alpha());
+	vec4 alphaScale = vec4(1.0f, finalAlpha());
 	mat4 transform = finalTransform();
 	rect wholeRect(vec2(0.0f), size());
 
@@ -81,12 +81,12 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	_textVertices.setOffset(0);
 	
 	if (_backgroundColor.w > 0.0f)
-		buildColorVertices(_backgroundVertices, wholeRect, _backgroundColor * alphaVector, transform);
+		buildColorVertices(_backgroundVertices, wholeRect, _backgroundColor * alphaScale, transform);
 	
 	if (_background.texture.valid())
 	{
 		buildImageVertices(_imageVertices, _background.texture, _background.descriptor,
-			wholeRect, alphaVector, transform);
+			wholeRect, alphaScale, transform);
 	}
 
 	_charList = _secured ?
@@ -114,13 +114,13 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	if (_charList.size())
 	{
 		buildStringVertices(_textVertices, _charList, Alignment_Near, Alignment_Near, textOrigin,
-			color() * alphaVector, transform, 1.0f);
+			finalColor(), transform, 1.0f);
 	}
 
 	if (_caretVisible)
 	{
 		buildColorVertices(_imageVertices, rect(textOrigin.x + textSize.x - widthAdjustment,
-			0.5f * (wholeRect.height - caretSize.y), caretSize.x, caretSize.y), color() * alphaVector, transform);
+			0.5f * (wholeRect.height - caretSize.y), caretSize.x, caretSize.y), finalColor(), transform);
 	}
 	
 	setContentValid();
@@ -143,7 +143,7 @@ void TextField::processMessage(const Message& msg)
 			{
 				returnReceived.invoke(this);
 				if (_editingFlags.hasFlag(EditingFlag_ResignFocusOnReturn))
-					owner()->setActiveElement(Element::Pointer());
+					owner()->setActiveElement(Element2d::Pointer());
 				break;
 			}
 				
@@ -199,7 +199,7 @@ void TextField::setFocus()
 	editingStarted.invoke(this);
 }
 
-void TextField::resignFocus(Element*)
+void TextField::resignFocus(Element2d*)
 {
 	_caretBlinkTimer.cancelUpdates();
 	_caretVisible = false;

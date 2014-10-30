@@ -15,7 +15,7 @@ using namespace et::s2d;
  * Render chunk
  */
 RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
-	const SceneProgram& aProgram, Element* aObject) : first(aFirst), count(aCount), clip(aClip),
+	const SceneProgram& aProgram, Element2d* aObject) : first(aFirst), count(aCount), clip(aClip),
 	texture(aTexture), program(aProgram), object(aObject) { }
 
 /*

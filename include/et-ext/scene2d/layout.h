@@ -30,9 +30,9 @@ namespace et
 			void cancelDragging(float returnDuration = 0.0f);
 			void cancelInteractions();
 
-			void setActiveElement(Element::Pointer e);
+			void setActiveElement(Element2d::Pointer e);
 			
-			ET_DECLARE_EVENT2(layoutRequiresKeyboard, Layout*, Element*)
+			ET_DECLARE_EVENT2(layoutRequiresKeyboard, Layout*, Element2d*)
 			ET_DECLARE_EVENT1(layoutDoesntNeedKeyboard, Layout*)
 			
 			vec2 contentSize();
@@ -46,7 +46,7 @@ namespace et
 			
 						
 		public:
-			virtual void activeElementChanged(Element*) { }
+			virtual void activeElementChanged(Element2d*) { }
 			
 		protected:
 			friend class Scene;
@@ -62,37 +62,37 @@ namespace et
 			bool pointerCancelled(const PointerInputInfo&) override;
 			bool pointerScrolled(const PointerInputInfo&) override;
 			
-			bool elementIsBeingDragged(Element::Pointer);
+			bool elementIsBeingDragged(Element2d::Pointer);
 			
-			void cancelInteractionsInElement(Element::Pointer, const PointerInputInfo&);
+			void cancelInteractionsInElement(Element2d::Pointer, const PointerInputInfo&);
 			
 		private:
 			Layout* owner()
 				{ return this; }
 			
 			void setInvalid();
-			void collectTopmostElements(Element::Pointer);
+			void collectTopmostElements(Element2d::Pointer);
 			
-			void collectPreRenderingObjects(Element::Pointer, Element::List&);
+			void collectPreRenderingObjects(Element2d::Pointer, Element2d::List&);
 			
-			Element::Pointer activeElement(const PointerInputInfo& p);
-			Element::Pointer getActiveElement(const PointerInputInfo& p, Element::Pointer e);
+			Element2d::Pointer activeElement(const PointerInputInfo& p);
+			Element2d::Pointer getActiveElement(const PointerInputInfo& p, Element2d::Pointer e);
 			
-			void setCurrentElement(const PointerInputInfo& p, Element::Pointer e);
-			void addElementToRenderQueue(Element::Pointer element, RenderContext* rc, SceneRenderer& gr);
-			
+			void setCurrentElement(const PointerInputInfo& p, Element2d::Pointer e);
 			void performDragging(const PointerInputInfo&);
-			void addToRenderQueue(RenderContext* rc, SceneRenderer& gr);
 
+			void addToRenderQueue(RenderContext* rc, SceneRenderer& gr);
+			void addElementToRenderQueue(Element2d::Pointer& element, RenderContext* rc, SceneRenderer& gr);
+			
 		private:
 			RenderingElement::Pointer _renderingElement;
 			
 			std::function<float(float)> _positionInterpolationFunction;
 			
-			Element::Pointer _currentElement;
-			Element::Pointer _focusedElement;
-			Element::Pointer _capturedElement;
-			Element::List _topmostElements;
+			Element2d::Pointer _currentElement;
+			Element2d::Pointer _focusedElement;
+			Element2d::Pointer _capturedElement;
+			Element2d::List _topmostElements;
 			
 			vec2 _dragInitialPosition;
 			vec2 _dragInitialOffset;

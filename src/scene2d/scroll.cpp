@@ -60,7 +60,7 @@ void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 	_backgroundVertices.setOffset(0);
 	_overlayVertices.setOffset(0);
 
-	vec4 alphaScale(1.0f, alpha());
+	vec4 alphaScale(1.0f, finalAlpha());
 	
 	if (_backgroundColor.w > 0.0f)
 	{
@@ -127,7 +127,7 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 	vec2 offset = p.pos - _currentPointer.pos;
 	if (!_manualScrolling && (offset.dotSelf() < sqr(_movementTreshold)))
 	{
-		if (_capturedElement.valid() && _capturedElement->capturesPointer())
+		if (_capturedElement.valid())
 			broadcastMoved(p);
 		
 		return true;
@@ -160,7 +160,7 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		
 		applyOffset(sqr(offsetScale) * offset);
 	}
-	else if (_capturedElement.valid() && _capturedElement->capturesPointer())
+	else if (_capturedElement.valid())
 	{
 		broadcastMoved(p);
 	}
@@ -228,7 +228,7 @@ void Scroll::invalidateChildren()
 	}
 }
 
-Element* Scroll::getActiveElement(const PointerInputInfo& p, Element* root)
+Element2d* Scroll::getActiveElement(const PointerInputInfo& p, Element2d* root)
 {
 	if (root == this)
 	{
@@ -239,7 +239,7 @@ Element* Scroll::getActiveElement(const PointerInputInfo& p, Element* root)
 				return el;
 		}
 	}
-	else if (root->enabled() && root->visible() && root->containsPoint(p.pos, p.normalizedPos) && !root->hasFlag(Flag_TransparentForPointer))
+	else if (root->visible() && root->enabled() && root->containsPoint(p.pos, p.normalizedPos) && !root->hasFlag(Flag_TransparentForPointer))
 	{
 		for (auto cI = root->children().rbegin(), cE = root->children().rend(); cI != cE; ++cI)
 		{
@@ -280,7 +280,7 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 	
-	Element* active = getActiveElement(globalPos, this);
+	Element2d* active = getActiveElement(globalPos, this);
 	
 	if (_capturedElement.valid() && (_capturedElement.ptr() != active))
 	{
@@ -307,7 +307,7 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 
-	Element* active = getActiveElement(globalPos, this);
+	Element2d* active = getActiveElement(globalPos, this);
 	
 	if (_capturedElement.valid() && (_capturedElement.ptr() != active))
 	{
@@ -335,7 +335,7 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p)
 	PointerInputInfo globalPos(p.type, Element2d::finalTransform() * p.pos, p.normalizedPos, p.scroll,
 		p.id, p.timestamp, p.origin);
 	
-	Element* active = getActiveElement(globalPos, this);
+	Element2d* active = getActiveElement(globalPos, this);
 	
 	if (_capturedElement.valid() && (_capturedElement.ptr() != active))
 	{
@@ -358,7 +358,7 @@ bool Scroll::containsPoint(const vec2& p, const vec2& np)
 	return Element2d::containsPoint(p, np);
 }
 
-void Scroll::setActiveElement(const PointerInputInfo& p, Element* e)
+void Scroll::setActiveElement(const PointerInputInfo& p, Element2d* e)
 {
 	if (e == _activeElement.ptr()) return;
 	
@@ -497,7 +497,7 @@ void Scroll::adjustContentSize(bool includeHiddenItems)
 {
 	vec2 size;
 	
-	for (const auto& ptr : children())
+	for (auto ptr : children())
 	{
 		if (includeHiddenItems || ptr->visible())
 			size = maxv(size, ptr->origin() + ptr->size());

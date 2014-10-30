@@ -107,8 +107,8 @@ namespace et
 			bool verticalBounce() const
 				{ return (_bounce & Bounce_Vertical) != 0; }
 
-			Element* getActiveElement(const PointerInputInfo&, Element* root);
-			void setActiveElement(const PointerInputInfo& p, Element* e);
+			Element2d* getActiveElement(const PointerInputInfo&, Element2d* root);
+			void setActiveElement(const PointerInputInfo& p, Element2d* e);
 			
 		private:
 			enum BounceDirection
@@ -119,8 +119,8 @@ namespace et
 			};
 			
 		private:
-			Element::Pointer _activeElement;
-			Element::Pointer _capturedElement;
+			Element2d::Pointer _activeElement;
+			Element2d::Pointer _capturedElement;
 			
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _overlayVertices;

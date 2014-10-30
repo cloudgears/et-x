@@ -68,7 +68,7 @@ void Line::buildVertices(SceneRenderer&)
 {
 	_vertices.setOffset(0);
 	
-	vec4 baseColor = color();
+	vec4 baseColor = finalColor();
 	vec4 texCoord(0.0f, 0.0f, 0.0f, 1.0f);
 	mat4 tr = finalTransform();
 	

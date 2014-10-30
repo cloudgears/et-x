@@ -8,7 +8,7 @@
 #pragma once
 
 #include <et/apiobjects/vertexarrayobject.h>
-#include <et-ext/scene2d/element.h>
+#include <et-ext/scene2d/element2d.h>
 
 namespace et
 {
@@ -22,10 +22,10 @@ namespace et
 			
 			Texture texture;
 			SceneProgram program;
-			Element* object;
+			Element2d* object;
 						
 			RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
-				const SceneProgram& aProgram, Element* aObject);
+				const SceneProgram& aProgram, Element2d* aObject);
 		};
 		
 		class RenderingElement : public Shared
@@ -49,7 +49,7 @@ namespace et
 			SceneVertexList vertexList;
 			
 			VertexArrayObject vao;
-			bool changed;
+			bool changed = false;
 		};
 	}
 }

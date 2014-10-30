@@ -89,7 +89,7 @@ namespace et
 			void showPopup();
 			void hidePopup();
 
-			void resignFocus(Element*);
+			void resignFocus(Element2d*);
 
 			void setValues(const StringList& v);
 			void addValue(const std::string& v);

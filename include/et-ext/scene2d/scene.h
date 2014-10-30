@@ -113,7 +113,7 @@ namespace et
 			void buildBackgroundVertices(RenderContext* rc);
 			void buildOverlayVertices(RenderContext* rc);
 
-			void onKeyboardNeeded(Layout* l, Element* e);
+			void onKeyboardNeeded(Layout* l, Element2d* e);
 			void onKeyboardResigned(Layout* l);
 
 			void getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst);
@@ -177,8 +177,8 @@ namespace et
 			ImageView _background;
 			ImageView _overlay;
 			
-			Element::Pointer _keyboardFocusedElement;
-			Element::List _prerenderElements;
+			Element2d::Pointer _keyboardFocusedElement;
+			Element2d::List _prerenderElements;
 
 			LayoutEntryStack _layouts;
 			vec2 _screenSize;

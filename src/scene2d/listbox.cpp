@@ -39,7 +39,7 @@ void ListboxPopup::buildVertices(SceneRenderer&)
 	if (background.texture.valid())
 	{
 		buildImageVertices(_backgroundVertices, background.texture, background.descriptor, 
-			rect(vec2(0.0f), size()), color(), transform);
+			rect(vec2(0.0f), size()), finalColor(), transform);
 	}
 
 	const StringList& values = _owner->_values;
@@ -52,7 +52,7 @@ void ListboxPopup::buildVertices(SceneRenderer&)
 		float y0 = floorf(0.5f * (rowSize - _owner->_font->lineHeight()));
 		float dy = floorf(size().y / static_cast<float>(values.size()));
 
-		vec4 drawColor = color();
+		vec4 drawColor = finalColor();
 		drawColor.w *= _textAlpha;
 
 		vec2 textPos = _owner->_contentOffset + vec2(0.0f, y0);
@@ -190,7 +190,7 @@ void Listbox::buildVertices(SceneRenderer&)
 	if (_images[_state].texture.valid())
 	{
 		buildImageVertices(_backgroundVertices, _images[_state].texture, _images[_state].descriptor, 
-			rect(vec2(0.0f), size()), color(), transform);
+			rect(vec2(0.0f), size()), finalColor(), transform);
 	}
 
 	if (shouldDrawText())
@@ -198,7 +198,7 @@ void Listbox::buildVertices(SceneRenderer&)
 		std::string textToDraw = _prefix + _values[_selectedIndex];
 		vec2 textPos = _contentOffset + vec2(0.0f, 0.5f * (size().y - _font->lineHeight()));
 		buildStringVertices(_textVertices, _font->buildString(textToDraw), Alignment_Near, Alignment_Near,
-								textPos, color(), transform);
+			textPos, finalColor(), transform);
 	}
 
 	setContentValid();
@@ -322,7 +322,7 @@ void Listbox::hidePopup()
 	popupClosed.invoke(this);
 }
 
-void Listbox::resignFocus(Element* e)
+void Listbox::resignFocus(Element2d* e)
 {
 	if (e != _popup.ptr())
 		hidePopup();

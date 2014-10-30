@@ -12,7 +12,7 @@
 using namespace et;
 using namespace et::s2d;
 
-const size_t BlockSize = 2048;
+const size_t BlockSize = 4096;
 
 extern std::string et_scene2d_default_shader_vs;
 extern std::string et_scene2d_default_shader_fs;
@@ -104,14 +104,14 @@ void s2d::SceneRenderer::alloc(size_t count)
 }
 
 SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& inTexture,
-	const SceneProgram& inProgram, Element* object)
+	const SceneProgram& inProgram, Element2d* object)
 {
 	ET_ASSERT(_renderingElement.valid());
 	
 	if (object && !object->hasFlag(Flag_DynamicRendering))
 		object = nullptr;
 
-	Texture actualTexture = inTexture.valid() ? inTexture : _defaultTexture;
+	const Texture& actualTexture = inTexture.valid() ? inTexture : _defaultTexture;
 	
 	bool isDynamicObject = (object != nullptr) && (object->hasFlag(Flag_DynamicRendering));
 	bool shouldAdd = isDynamicObject || _renderingElement->chunks.empty();
@@ -119,8 +119,8 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 	{
 		RenderChunk& lastChunk = _renderingElement->chunks.back();
 		
-		bool sameConfiguration = (lastChunk.clip == _clip.top()) &&
-			(lastChunk.texture == actualTexture) && (lastChunk.program.program == inProgram.program);
+		bool sameConfiguration = (lastChunk.clip == _clip.top()) && (lastChunk.texture == actualTexture) &&
+			(lastChunk.program.program == inProgram.program);
 		
 		if (sameConfiguration)
 			lastChunk.count += count;
@@ -150,13 +150,13 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 }
 
 void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture& texture,
-	const SceneProgram& program, Element* owner)
+	const SceneProgram& program, Element2d* owner)
 {
 	size_t count = vertices.lastElementIndex();
 	ET_ASSERT((count > 0) && _renderingElement.valid() && program.valid());
 	
-	etCopyMemory(allocateVertices(count, texture, program, owner),
-		vertices.data(), count * vertices.typeSize());
+	auto target = allocateVertices(count, texture, program, owner);
+	etCopyMemory(target, vertices.data(), count * vertices.typeSize());
 }
 
 void s2d::SceneRenderer::setRendernigElement(const RenderingElement::Pointer& r)

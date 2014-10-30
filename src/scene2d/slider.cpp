@@ -93,20 +93,24 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 	float halfHw = 0.5f * hw;
 	float valuePoint = halfHw + normalizedValue() * (mainRect.width - hw);
 	
+	vec4 finalColorValue = finalColor();
+	vec4 alphaScale = vec4(1.0f, finalColorValue.w);
+	
 	if (_backgroundColor.w > 0.0f)
-		buildColorVertices(_backgroundVertices, mainRect, _backgroundColor, transform);
+		buildColorVertices(_backgroundVertices, mainRect, _backgroundColor * alphaScale, transform);
 
 	if (_background.texture.valid())
 	{
 		if (_backgroundImageMode == BackgroundImageMode_Stretch)
 		{
 			buildImageVertices(_backgroundVertices, _background.texture,
-				_background.descriptor, mainRect, color(), transform);
+				_background.descriptor, mainRect, finalColorValue, transform);
 		}
 		else if (_backgroundImageMode == BackgroundImageMode_Center)
 		{
 			buildImageVertices(_backgroundVertices, _background.texture, _background.descriptor,
-				rect(0.5f * (mainRect.size() - _background.descriptor.size), _background.descriptor.size), color(), transform);
+				rect(0.5f * (mainRect.size() - _background.descriptor.size), _background.descriptor.size),
+				finalColorValue, transform);
 		}
 		else
 		{
@@ -121,12 +125,12 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 			desc.size.x *= valuePoint / mainRect.width;
 		
 		rect r(0.0f, 0.5f * (mainRect.height - desc.size.y), valuePoint, desc.size.y);
-		buildImageVertices(_sliderLeftVertices, _sliderLeft.texture, desc, r, color(), transform);
+		buildImageVertices(_sliderLeftVertices, _sliderLeft.texture, desc, r, finalColorValue, transform);
 	}
 	else if (_sliderLeftColor.w > 0.0f)
 	{
 		rect r(0.0f, 0.5f * mainRect.height * (1.0f - colorPlaceholdersSize), valuePoint, mainRect.height * colorPlaceholdersSize);
-		buildColorVertices(_sliderLeftVertices, r, _sliderLeftColor, transform);
+		buildColorVertices(_sliderLeftVertices, r, _sliderLeftColor * alphaScale, transform);
 	}
 	
 	if (_sliderRight.texture.valid())
@@ -140,13 +144,13 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 		}
 		
 		rect r(valuePoint, 0.5f * (mainRect.height - desc.size.y), mainRect.width - valuePoint, desc.size.y);
-		buildImageVertices(_sliderRightVertices, _sliderRight.texture, desc, r, color(), transform);
+		buildImageVertices(_sliderRightVertices, _sliderRight.texture, desc, r, finalColorValue, transform);
 	}
 	else if (_sliderRightColor.w > 0.0f)
 	{
 		rect r(valuePoint, 0.5f * mainRect.height * (1.0f - colorPlaceholdersSize),
 			mainRect.width - valuePoint, mainRect.height * colorPlaceholdersSize);
-		buildColorVertices(_sliderLeftVertices, r, _sliderRightColor, transform);
+		buildColorVertices(_sliderLeftVertices, r, _sliderRightColor * alphaScale, transform);
 	}
 
 	if (handleImage.texture.valid())
@@ -154,12 +158,12 @@ void Slider::buildVertices(RenderContext*, SceneRenderer&)
 		rect r(vec2(0.0f), _handleScale[_state] * handleImage.descriptor.size);
 		r.top = 0.5f * (mainRect.height - r.height);
 		r.left = clamp(valuePoint - halfHw, 0.0f, mainRect.width - hw);
-		buildImageVertices(_handleVertices, handleImage.texture, handleImage.descriptor, r, color(), transform);
+		buildImageVertices(_handleVertices, handleImage.texture, handleImage.descriptor, r, finalColorValue, transform);
 	}
 	else if (_handleFillColor.w > 0.0f)
 	{
 		rect r(valuePoint - halfHw, 0.5f * (mainRect.height - hw), hw, hw);
-		buildColorVertices(_sliderLeftVertices, r, _handleFillColor, transform);
+		buildColorVertices(_sliderLeftVertices, r, _handleFillColor * alphaScale, transform);
 	}
 
 	setContentValid();

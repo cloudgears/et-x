@@ -54,9 +54,12 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 	
 	bool hasShadow = _shadowColor.w > std::numeric_limits<float>::epsilon();
 	vec4 shadowColor = _shadowColor;
+	
+	vec4 finalColorValue = finalColor();
+	vec4 alphaScale = vec4(1.0f, finalColorValue.w);
 
 	if (_backgroundColor.w > std::numeric_limits<float>::epsilon())
-		buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor, transform);
+		buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
 
 	if (_charListText.empty() && _charListNextText.empty())
 	{
@@ -71,33 +74,33 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 
 		if (hasShadow)
 		{
-			shadowColor.w = _shadowColor.w * color().w * fadeOut;
+			shadowColor.w = _shadowColor.w * alphaScale.w * fadeOut;
 			vec2 shadowOffset = textOffset + _shadowOffset;
 			buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
 				shadowOffset, shadowColor, transform, _lineInterval);
 			
-			shadowColor.w = _shadowColor.w * color().w * fadeIn;
+			shadowColor.w = _shadowColor.w * alphaScale.w * fadeIn;
 			buildStringVertices(_vertices, _charListNextText, _horizontalAlignment,
 				_verticalAlignment, shadowOffset, shadowColor, transform, _lineInterval);
 		}
 
 		buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
-			textOffset, color() * vec4(1.0, 1.0, 1.0, fadeOut), transform, _lineInterval);
+			textOffset, finalColorValue * vec4(1.0, fadeOut), transform, _lineInterval);
 		
 		buildStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment,
-			textOffset, color() * vec4(1.0, 1.0, 1.0, fadeIn), transform, _lineInterval);
+			textOffset, finalColorValue * vec4(1.0, fadeIn), transform, _lineInterval);
 	}
 	else 
 	{
 		if (hasShadow)
 		{
-			shadowColor.w = _shadowColor.w * color().w;
+			shadowColor.w = _shadowColor.w * alphaScale.w;
 			buildStringVertices(_vertices, _charListText, _horizontalAlignment,
 				_verticalAlignment, textOffset + _shadowOffset, shadowColor, transform, _lineInterval);
 		}
 
 		buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, 
-			textOffset, color(), transform, _lineInterval);
+			textOffset, finalColorValue, transform, _lineInterval);
 	}
 
 	setContentValid();

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et-ext/scene2d/element.h>
+#include <et-ext/scene2d/element2d.h>
 
 namespace et
 {

@@ -24,7 +24,7 @@ Layout::Layout(const std::string& name) :
 		LayoutMode_RelativeToContext, vec2(0.0f));
 }
 
-void Layout::addElementToRenderQueue(Element::Pointer element, RenderContext* rc, SceneRenderer& gr)
+void Layout::addElementToRenderQueue(Element2d::Pointer& element, RenderContext* rc, SceneRenderer& gr)
 {
 	if (!element->visible()) return;
 
@@ -88,12 +88,12 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 	}
 	else 
 	{
-		Element::Pointer active(activeElement(p));
+		Element2d::Pointer active(activeElement(p));
 		setCurrentElement(p, active);
 		bool processed = false;
 		if (active.invalid())
 		{
-			setActiveElement(Element::Pointer());
+			setActiveElement(Element2d::Pointer());
 		}
 		else
 		{
@@ -153,7 +153,7 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 		return true;
 	}
 	
-	Element::Pointer active(activeElement(p));
+	Element2d::Pointer active(activeElement(p));
 	setCurrentElement(p, active);
 	
 	if (active.invalid())
@@ -167,7 +167,7 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 { 
 	if (hasFlag(Flag_TransparentForPointer)) return false;
 
-	Element::Pointer active(activeElement(p));
+	Element2d::Pointer active(activeElement(p));
 	
 	if (_capturedElement.valid())
 	{
@@ -213,7 +213,7 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 
 bool Layout::pointerCancelled(const et::PointerInputInfo& p)
 {
-	Element::Pointer active(activeElement(p));
+	Element2d::Pointer active(activeElement(p));
 	if (_capturedElement.valid())
 	{
 		bool processed = _capturedElement->pointerCancelled(PointerInputInfo(p.type,
@@ -267,7 +267,7 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 	}
 	else 
 	{
-		Element::Pointer active(activeElement(p));
+		Element2d::Pointer active(activeElement(p));
 
 		setCurrentElement(p, active);
 
@@ -278,7 +278,7 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 	}
 }
 
-Element::Pointer Layout::activeElement(const PointerInputInfo& p)
+Element2d::Pointer Layout::activeElement(const PointerInputInfo& p)
 {
 	if (!_valid)
 	{
@@ -287,7 +287,7 @@ Element::Pointer Layout::activeElement(const PointerInputInfo& p)
 			collectTopmostElements(i);
 	}
 
-	Element::Pointer active;
+	Element2d::Pointer active;
 	for (auto i = _topmostElements.rbegin(), e = _topmostElements.rend(); i != e; ++i)
 	{
 		active = getActiveElement(p, *i);
@@ -306,25 +306,25 @@ Element::Pointer Layout::activeElement(const PointerInputInfo& p)
 	return active;
 }
 
-Element::Pointer Layout::getActiveElement(const PointerInputInfo& p, Element::Pointer el)
+Element2d::Pointer Layout::getActiveElement(const PointerInputInfo& p, Element2d::Pointer el)
 {
 	if (!el->visible() || !el->enabled() || !el->containsPoint(p.pos, p.normalizedPos))
-		return Element::Pointer();
+		return Element2d::Pointer();
 	
 	if (el->hasFlag(Flag_HandlesChildEvents))
 		return el;
 
 	for (auto ei = el->children().rbegin(), ee = el->children().rend(); ei != ee; ++ei)
 	{
-		Element::Pointer element = getActiveElement(p, *ei);
+		Element2d::Pointer element = getActiveElement(p, *ei);
 		if (element.valid())
 			return element;
 	}
 
-	return el->hasFlag(Flag_TransparentForPointer) ? Element::Pointer() : el;
+	return el->hasFlag(Flag_TransparentForPointer) ? Element2d::Pointer() : el;
 }
 
-void Layout::setCurrentElement(const PointerInputInfo& p, Element::Pointer e)
+void Layout::setCurrentElement(const PointerInputInfo& p, Element2d::Pointer e)
 {
 	if (e == _currentElement) return;
 
@@ -356,7 +356,7 @@ void Layout::performDragging(const PointerInputInfo& p)
 		ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
 }
 
-bool Layout::elementIsBeingDragged(s2d::Element::Pointer e)
+bool Layout::elementIsBeingDragged(s2d::Element2d::Pointer e)
 {
 	return _dragging && e.valid() && (e == _capturedElement);
 }
@@ -379,7 +379,7 @@ void Layout::cancelDragging(float returnDuration)
 	}
 }
 
-void Layout::setActiveElement(Element::Pointer e)
+void Layout::setActiveElement(Element2d::Pointer e)
 {
 	if (_focusedElement == e) return;
 	
@@ -412,24 +412,24 @@ void Layout::setInvalid()
 	_valid = false;
 }
 
-void Layout::collectPreRenderingObjects(Element::Pointer element, Element::List& elementList)
+void Layout::collectPreRenderingObjects(Element2d::Pointer element, Element2d::List& elementList)
 {
 	if (element->visible())
 	{
 		if (element->hasFlag(Flag_RequiresPreRendering))
-			elementList.push_back(Element::Pointer(element));
+			elementList.push_back(Element2d::Pointer(element));
 		
 		for (auto& i : element->children())
 			collectPreRenderingObjects(i, elementList);
 	}
 }
 
-void Layout::collectTopmostElements(Element::Pointer element)
+void Layout::collectTopmostElements(Element2d::Pointer element)
 {
 	if (element->visible())
 	{
 		if (element->hasFlag(Flag_RenderTopmost))
-			_topmostElements.push_back(Element::Pointer(element));
+			_topmostElements.push_back(Element2d::Pointer(element));
 		
 		for (auto& i : element->children())
 			collectTopmostElements(i);
@@ -449,10 +449,10 @@ vec2 Layout::contentSize()
 
 void Layout::cancelInteractions()
 {
-	cancelInteractionsInElement(Element::Pointer(this), PointerInputInfo());
+	cancelInteractionsInElement(Element2d::Pointer(this), PointerInputInfo());
 }
 
-void Layout::cancelInteractionsInElement(Element::Pointer e, const PointerInputInfo& info)
+void Layout::cancelInteractionsInElement(Element2d::Pointer e, const PointerInputInfo& info)
 {
 	e->pointerCancelled(info);
 	
