@@ -301,18 +301,18 @@ void et::s2d::buildImageVertices(SceneVertexList& vertices, const Texture& tex, 
 void et::s2d::buildColorVertices(SceneVertexList& vertices, const rect& p, const vec4& color,
 	const mat4& transform)
 {
-	vec2 topLeft = p.origin();
-	vec2 topRight = topLeft + vec2(p.width, 0.0f);
-	vec2 bottomLeft = topLeft + vec2(0.0f, p.height);
-	vec2 bottomRight = bottomLeft + vec2(p.width, 0.0f);
-	
-	vec4 texCoord[] =
+	static const vec4 texCoord[] =
 	{
 		vec4(0.0f, 1.0f, 0.0f, 1.0f),
 		vec4(1.0f, 1.0f, 0.0f, 1.0f),
 		vec4(0.0f, 0.0f, 0.0f, 1.0f),
 		vec4(1.0f, 0.0f, 0.0f, 1.0f),
 	};
+	
+	vec2 topLeft = p.origin();
+	vec2 topRight = topLeft + vec2(p.width, 0.0f);
+	vec2 bottomLeft = topLeft + vec2(0.0f, p.height);
+	vec2 bottomRight = bottomLeft + vec2(p.width, 0.0f);
 	
 	buildQuad(vertices,
 		SceneVertex(transform * topLeft, texCoord[0], color),

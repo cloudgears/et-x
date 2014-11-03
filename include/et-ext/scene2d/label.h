@@ -24,7 +24,7 @@ namespace et
 
 		public:
 			Label(const std::string& text, const Font::Pointer& font, Element2d* parent,
-				const std::string& name = std::string());
+				const std::string& name = emptyString);
 
 			vec2 textSize();
 			

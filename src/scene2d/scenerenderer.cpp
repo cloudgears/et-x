@@ -88,7 +88,7 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 }
 
 SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& inTexture,
-	const SceneProgram& inProgram, Element2d* object)
+	const SceneProgram& inProgram, Element2d* object, uint32_t pt)
 {
 	ET_ASSERT(_renderingElement.valid());
 	
@@ -104,7 +104,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 		RenderChunk& lastChunk = _renderingElement->chunks.back();
 		
 		bool sameConfiguration = (lastChunk.clip == _clip.top()) && (lastChunk.texture == actualTexture) &&
-			(lastChunk.program.program == inProgram.program);
+			(lastChunk.program.program == inProgram.program) && (lastChunk.primitiveType == pt);
 		
 		if (sameConfiguration)
 			lastChunk.count += count;
@@ -118,8 +118,9 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 	{
 		_lastProgram = inProgram;
 		_lastTexture = actualTexture;
+		
 		_renderingElement->chunks.emplace_back(lastVertexIndex, count, _clip.top(), _lastTexture,
-			_lastProgram, object);
+			_lastProgram, object, pt);
 	}
 	
 	if (_renderingElement.valid() && (_renderingElement->vertexList.size() == 0))
@@ -138,12 +139,12 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 }
 
 void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture& texture,
-	const SceneProgram& program, Element2d* owner)
+	const SceneProgram& program, Element2d* owner, uint32_t pt)
 {
 	size_t count = vertices.lastElementIndex();
 	ET_ASSERT((count > 0) && _renderingElement.valid() && program.valid());
 	
-	auto target = allocateVertices(count, texture, program, owner);
+	auto target = allocateVertices(count, texture, program, owner, pt);
 	etCopyMemory(target, vertices.data(), count * vertices.typeSize());
 }
 
@@ -190,7 +191,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 		rs.bindTexture(0, i.texture);
 		rs.setClip(true, i.clip + _additionalWindowOffset);
 		
-		renderer->drawElements(indexBuffer, i.first, i.count);
+		renderer->drawElements(i.primitiveType, indexBuffer, i.first, i.count);
 	}
 }
 

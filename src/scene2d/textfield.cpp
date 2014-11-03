@@ -166,7 +166,7 @@ void TextField::processMessage(const Message& msg)
 			{
 				if (_editingFlags.hasFlag(EditingFlag_ClearOnEscape))
 				{
-					setText(std::string());
+					setText(emptyString);
 					textChanged.invoke(this);
 				}
 				break;

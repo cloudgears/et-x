@@ -25,7 +25,7 @@ namespace et
 			};
 			
 		public:
-			Scroll(Element2d* parent, const std::string& name = std::string());
+			Scroll(Element2d* parent, const std::string& name = emptyString);
 			
 			void setBounce(size_t);
 			void setBounceExtent(const vec2&);

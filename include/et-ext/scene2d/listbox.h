@@ -37,7 +37,7 @@ namespace et
 			ET_DECLARE_POINTER(ListboxPopup)
 			
 		public:
-			ListboxPopup(Listbox* owner, const std::string& name = std::string());
+			ListboxPopup(Listbox* owner, const std::string& name = emptyString);
 			
 			void setBackgroundImage(const Image& img);
 
@@ -71,7 +71,7 @@ namespace et
 			ET_DECLARE_POINTER(Listbox)
 
 		public:
-			Listbox(const Font::Pointer& font, Element2d* parent, const std::string& name = std::string());
+			Listbox(const Font::Pointer& font, Element2d* parent, const std::string& name = emptyString);
 
 			void setImage(const Image& img, ListboxState state);
 			void setBackgroundImage(const Image& img);

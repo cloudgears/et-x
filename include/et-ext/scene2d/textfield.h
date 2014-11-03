@@ -27,13 +27,13 @@ namespace et
 			};
 			
 		public:
-			TextField(const Font::Pointer& font, Element2d* parent, const std::string& name = std::string());
+			TextField(const Font::Pointer& font, Element2d* parent, const std::string& name = emptyString);
 			
 			TextField(const std::string& text, const Font::Pointer& font, Element2d* parent,
-				const std::string& name = std::string());
+				const std::string& name = emptyString);
 
 			TextField(const Image& background, const std::string& text, const Font::Pointer& font,
-				Element2d* parent, const std::string& name = std::string());
+				Element2d* parent, const std::string& name = emptyString);
 
 			const std::string& text() const;
 			

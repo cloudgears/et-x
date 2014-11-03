@@ -20,7 +20,7 @@ MessageView::MessageView(const std::string& title, const std::string& text, cons
 	_title = Label::Pointer::create("<b>" + title + "</b>", font, _imgBackground.ptr());
 	_button1 = Button::Pointer::create(button1title, font, _imgBackground.ptr());
 	_button2 = Button::Pointer::create(button2title, font, _imgBackground.ptr());
-	_buttonCommon = Button::Pointer::create(std::string(), font, backgroundFade().ptr());
+	_buttonCommon = Button::Pointer::create(emptyString, font, backgroundFade().ptr());
 	
 	_imgBackground->setPivotPoint(vec2(0.5f));
 	

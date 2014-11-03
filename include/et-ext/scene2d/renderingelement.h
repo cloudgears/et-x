@@ -16,16 +16,18 @@ namespace et
 	{
 		struct RenderChunk
 		{
-			size_t first;
-			size_t count;
+			size_t first = 0;
+			size_t count = 0;
+			uint32_t primitiveType = PrimitiveType_Triangles;
+			
 			recti clip;
 			
 			Texture texture;
 			SceneProgram program;
-			Element2d* object;
-						
+			Element2d* object = nullptr;
+			
 			RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
-				const SceneProgram& aProgram, Element2d* aObject);
+				const SceneProgram& aProgram, Element2d* aObject, uint32_t pt);
 		};
 		
 		class RenderingElement : public Shared
@@ -45,7 +47,7 @@ namespace et
 			friend class SceneRenderer;
 			
 			RenderState& renderState;
-			std::vector<RenderChunk> chunks;
+			std::vector<RenderChunk, SharedBlockAllocatorSTDProxy<RenderChunk>> chunks;
 			
 			IndexArray::Pointer indexArray;
 			SceneVertexList vertexList;

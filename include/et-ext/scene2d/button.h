@@ -42,7 +42,7 @@ namespace et
 
 		public:
 			Button(const std::string& title, const Font::Pointer& font, Element2d* parent,
-				const std::string& name = std::string());
+				const std::string& name = emptyString);
 			
 			void setImage(const Image& img);
 			void setImageForState(const Image& img, State s);

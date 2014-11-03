@@ -38,7 +38,8 @@ namespace et
 			void setProjectionMatrices(const vec2& contextSize);
 			void setRendernigElement(const RenderingElement::Pointer& r);
 
-			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element2d*);
+			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element2d*,
+				uint32_t = PrimitiveType_Triangles);
 			
 			void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 						
@@ -60,7 +61,7 @@ namespace et
 		private:
 			void init(RenderContext* rc);
 			
-			SceneVertex* allocateVertices(size_t, const Texture&, const SceneProgram&, Element2d*);
+			SceneVertex* allocateVertices(size_t, const Texture&, const SceneProgram&, Element2d*, uint32_t);
 
 			ET_DENY_COPY(SceneRenderer)
 			

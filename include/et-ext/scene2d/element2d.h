@@ -33,8 +33,8 @@ namespace et
 			};
 			
 		public:
-			Element2d(Element2d* parent, const std::string& name = std::string());
-			Element2d(const rect& frame, Element2d* parent, const std::string& name = std::string());
+			Element2d(Element2d* parent, const std::string& name = emptyString);
+			Element2d(const rect& frame, Element2d* parent, const std::string& name = emptyString);
 			
 			void setParent(Element2d* element);
 			

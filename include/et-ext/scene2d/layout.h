@@ -20,7 +20,7 @@ namespace et
 			ET_DECLARE_POINTER(Layout)
 			
 		public:
-			Layout(const std::string& name = std::string());
+			Layout(const std::string& name = emptyString);
 			
 			bool valid() const
 				{ return _valid; }
@@ -104,7 +104,7 @@ namespace et
 		class ModalLayout : public Layout
 		{
 		public:
-			ModalLayout(const std::string& name = std::string());
+			ModalLayout(const std::string& name = emptyString);
 						
 		protected:
 			ImageView::Pointer backgroundFade()

@@ -19,7 +19,7 @@ namespace et
 			ET_DECLARE_POINTER(FullscreenElement)
 
 		public:
-			FullscreenElement(Element2d* parent, const std::string& name = std::string());
+			FullscreenElement(Element2d* parent, const std::string& name = emptyString);
 		};
 	}
 }

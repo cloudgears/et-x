@@ -45,16 +45,16 @@ namespace et
 
 		public:
 			ImageView(Element2d* parent,
-				const std::string& name = std::string());
+				const std::string& name = emptyString);
 			
 			ImageView(const Texture& texture, Element2d* parent,
-				const std::string& name = std::string());
+				const std::string& name = emptyString);
 
 			ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent,
-				const std::string& name = std::string());
+				const std::string& name = emptyString);
 			
 			ImageView(const Image&, Element2d* parent,
-				const std::string& name = std::string());
+				const std::string& name = emptyString);
 
 			const Texture& texture() const
 				{ return _texture; }

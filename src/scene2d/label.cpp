@@ -312,7 +312,7 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, bool formatted,
 			latestLine.append(word);
 			if (isNewLineChar(nextCharStr[0]))
 			{
-				latestLine = std::string();
+				latestLine = emptyString;
 				newText.append("\n");
 			}
 			else
@@ -354,7 +354,7 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, bool formatted,
 			
 			if (isNewLineChar(nextCharStr[0]))
 			{
-				latestLine = std::string();
+				latestLine = emptyString;
 				newText.append("\n");
 			}
 			else

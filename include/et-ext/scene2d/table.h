@@ -42,7 +42,7 @@ namespace et
 			};
 			
 		public:
-			Table(et::s2d::Element2d*, const std::string& name = std::string());
+			Table(et::s2d::Element2d*, const std::string& name = emptyString);
 			~Table();
 			
 			Section* addSection(Element2d::Pointer header, const Element2d::List& items,
