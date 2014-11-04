@@ -30,6 +30,13 @@ namespace et
 			const particles::PointSpriteEmitter& emitter() const
 				{ return _particles; }
 			
+			void setTexture(const et::Texture&);
+			void setBaseAndVariationParticles(const particles::PointSprite&, const particles::PointSprite&);
+			
+			void start();
+			void stop();
+			void pause();
+			
 		private:
 			void addToRenderQueue(RenderContext*, SceneRenderer&);
 			
@@ -38,10 +45,13 @@ namespace et
 			void setProgramParameters(et::Program::Pointer&);
 			
 		private:
+			et::Texture _texture;
+			et::Texture _defaultTexture;
 			et::s2d::SceneProgram _program;
 			SceneVertexList _vertices;
 			
 			particles::PointSpriteEmitter _particles;
+			
 			NotifyTimer _updateTimer;
 		};
 	}

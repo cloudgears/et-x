@@ -17,58 +17,95 @@ extern const std::string particlesFragmentShader;
 ET_DECLARE_SCENE_ELEMENT_CLASS(ParticlesElement)
 
 ParticlesElement::ParticlesElement(size_t amount, Element2d* parent, const std::string& name) :
-	s2d::Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _particles(amount)
+	s2d::Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _particles(amount), _vertices(amount, 0)
 {
-	setFlag(s2d::Flag_DynamicRendering);
+	setLocationInParent(s2d::Location_Center);
+	setFlag(s2d::Flag_DynamicRendering | s2d::Flag_TransparentForPointer);
 	
-	_vertices.resize(amount);
-	for (size_t i = 0; i < amount; ++i)
-		_vertices[i].texCoord = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	particles::PointSprite baseParticle;
+	particles::PointSprite variationParticle;
 	
-	fillParent();
+	baseParticle.position = vec3(0.0f);
+	baseParticle.velocity = vec3(0.0f, 0.0f, 0.0f);
+	baseParticle.acceleration = vec3(0.0f);
+	baseParticle.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	baseParticle.size = 3.0;
+	baseParticle.emitTime = actualTime();
+	baseParticle.lifeTime = 3.0f;
 	
-	particles::PointSprite base;
-	base.position = vec3(200.0f);
-	base.velocity = vec3(70.0f, -15.0f, 0.0f);
-	base.acceleration = vec3(0.0f);
-	base.color = vec4(0.4f, 0.5f, 0.95f, 1.0f);
-	base.size = 15.0;
-	base.emitTime = actualTime();
-	base.lifeTime = 3.0f;
-	
-	particles::PointSprite var;
-	var.position = vec3(5.0f, 5.0f, 0.0f);
-	var.velocity = vec3(35.0f, 10.0f, 0.0f);
-	var.acceleration = vec3(randomFloat(0.0f, 2.0f), randomFloat(0.0f, 0.5f), 0.0f);
-	var.color = vec4(0.15f, 0.1f, 0.05f, 0.0f);
-	var.size = 5.0f;
-	var.lifeTime = 2.5f;
-	
-	_particles.emit(amount, base, var);
+	variationParticle.position = vec3(5.0f, 5.0f, 0.0f);
+	variationParticle.velocity = vec3(15.0f, 15.0f, 0.0f);
+	variationParticle.acceleration = vec3(0.0f);
+	variationParticle.color = vec4(0.0f);
+	variationParticle.size = 1.0f;
+	variationParticle.lifeTime = 2.5f;
+
+	_particles.setBase(baseParticle);
+	_particles.setVariation(variationParticle);
 	
 	_updateTimer.expired.connect([this](NotifyTimer* timer)
 	{
 		_particles.update(timer->actualTime());
 		invalidateContent();
 	});
-	_updateTimer.start(timerPool(), 0.0f, NotifyTimer::RepeatForever);
 }
 
-void ParticlesElement::addToRenderQueue(RenderContext*, SceneRenderer& gr)
+void ParticlesElement::setBaseAndVariationParticles(const particles::PointSprite& b, const particles::PointSprite& v)
+{
+	_particles.setBase(b);
+	_particles.setVariation(v);
+}
+
+void ParticlesElement::start()
+{
+	_particles.emitMissingParticles(_updateTimer.actualTime());
+	
+	_updateTimer.start(timerPool(), 0.0f, NotifyTimer::RepeatForever);
+	invalidateContent();
+}
+
+void ParticlesElement::stop()
+{
+	_particles.clear();
+	_updateTimer.cancelUpdates();
+}
+
+void ParticlesElement::pause()
+{
+	_updateTimer.cancelUpdates();
+}
+
+void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 {
 	initProgram(gr);
 	
-	mat4 ft = finalTransform();
-
-	for (size_t i = 0; i < _particles.activeParticlesCount(); ++i)
+	if (_defaultTexture.invalid())
 	{
-		const auto& p = _particles.particle(i);
-		_vertices[i].position = vec3(p.position.xy(), p.size);
-		_vertices[i].color = p.color;
+		_defaultTexture = rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(1), GL_RGBA,
+			GL_UNSIGNED_BYTE, BinaryDataStorage(4, 255),  "particles-default-texture");
+		
+		if (_texture.invalid())
+			_texture = _defaultTexture;
 	}
-	_vertices.setOffset(_particles.activeParticlesCount());
 	
-	gr.addVertices(_vertices, Texture(), program(), this, PrimitiveType_Points);
+	if (_particles.activeParticlesCount() > 0)
+	{
+		vec4 fc = finalColor();
+		
+		if (!contentValid())
+		{
+			for (size_t i = 0; i < _particles.activeParticlesCount(); ++i)
+			{
+				const auto& p = _particles.particle(i);
+				_vertices[i].position = vec3(p.position.xy(), p.size);
+				_vertices[i].color = fc * p.color;
+			}
+			_vertices.setOffset(_particles.activeParticlesCount());
+			setContentValid();
+		}
+		
+		gr.addVertices(_vertices, _texture, program(), this, PrimitiveType_Points);
+	}
 }
 
 et::s2d::SceneProgram ParticlesElement::program() const
@@ -89,6 +126,11 @@ et::s2d::SceneProgram ParticlesElement::initProgram(et::s2d::SceneRenderer& r)
 void ParticlesElement::setProgramParameters(et::Program::Pointer& p)
 {
 	p->setUniform("finalTransform", finalTransform());
+}
+
+void ParticlesElement::setTexture(const et::Texture& t)
+{
+	_texture = t.invalid() ? _defaultTexture : t;
 }
 
 const std::string particlesVertexShader =
@@ -113,12 +155,11 @@ const std::string particlesVertexShader =
 "}";
 
 const std::string particlesFragmentShader =
+"uniform sampler2D inputTexture;"
 "etFragmentIn etLowp vec4 tintColor;"
 "void main()"
 "{"
-"	etLowp vec2 dUdV = 2.0 * (gl_PointCoord - vec2(0.5));"
-"	float alpha = tintColor.w * max(0.0, 1.0 - length(dUdV));"
-"	etFragmentOut = vec4(tintColor.xyz, alpha);"
+"	etFragmentOut = tintColor * etTexture2D(inputTexture, gl_PointCoord);"
 "}"
 "";
 
