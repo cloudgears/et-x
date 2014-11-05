@@ -152,8 +152,24 @@ void TextField::processMessage(const Message& msg)
 				if (_text.length() > 0)
 				{
 					size_t charToErase = 1;
-					while ((_text.size() > charToErase) && ((_text[_text.length() - charToErase - 1] & 0x80) != 0))
-						   ++charToErase;
+					while (_text.size() > charToErase)
+					{
+						auto lastChar = _text[_text.length() - charToErase];
+						if (lastChar & 0x80)
+						{
+							do
+							{
+								charToErase++;
+								lastChar = _text[_text.length() - charToErase];
+							}
+							while ((_text.size() > charToErase) && (lastChar & 0x40) == 0);
+							break;
+						}
+						else
+						{
+							break;
+						}
+					}
 						   
 					setText(_text.substr(0, _text.length() - charToErase));
 				}
