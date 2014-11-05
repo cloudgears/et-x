@@ -12,13 +12,10 @@ using namespace et;
 using namespace et::s2d;
 
 Scene::Scene(RenderContext* rc) : _rc(rc),
-	_renderer(rc), _renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc)),
-	_renderingElementOverlay(sharedObjectFactory().createObject<RenderingElement>(rc)),
+	_renderer(rc), _renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
+	_renderingElementOverlay(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
 	_background(Image(), nullptr), _overlay(Image(), nullptr)
 {
-	_renderingElementBackground->allocVertices(256);
-	_renderingElementOverlay->allocVertices(256);
-	
 	_background.setPivotPoint(vec2(0.5f));
 	_background.setContentMode(ImageView::ContentMode_Fill);
 	
@@ -118,8 +115,9 @@ void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer ele
 	
 	if (!layout->valid())
 	{
-		element->clear();
+		element->startAllocatingVertices();
 		layout->addToRenderQueue(rc, _renderer);
+		element->commitAllocatedVertices();
 	}
 }
 
@@ -129,8 +127,9 @@ void Scene::buildBackgroundVertices(RenderContext* rc)
 	
 	if (!_background.contentValid())
 	{
-		_renderingElementBackground->clear();
+		_renderingElementBackground->startAllocatingVertices();
 		_background.addToRenderQueue(rc, _renderer);
+		_renderingElementBackground->commitAllocatedVertices();
 	}
 }
 
@@ -140,8 +139,9 @@ void Scene::buildOverlayVertices(RenderContext* rc)
 	
 	if (!_overlay.contentValid())
 	{
-		_renderingElementOverlay->clear();
+		_renderingElementOverlay->startAllocatingVertices();
 		_overlay.addToRenderQueue(rc, _renderer);
+		_renderingElementOverlay->commitAllocatedVertices();
 	}
 }
 

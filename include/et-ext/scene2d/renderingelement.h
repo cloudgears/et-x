@@ -35,11 +35,17 @@ namespace et
 		public:
 			ET_DECLARE_POINTER(RenderingElement)
 			
-		public:
-			RenderingElement(RenderContext* rc);
+			enum
+			{
+				MaxCapacity = 65536
+			};
 			
-			void allocVertices(size_t);
-			void clear();
+		public:
+			RenderingElement(RenderContext* rc, size_t capacity);
+			
+			void startAllocatingVertices();
+			SceneVertex* allocateVertices(size_t);
+			void commitAllocatedVertices();
 
 			const VertexArrayObject& vertexArrayObject();
 
@@ -49,11 +55,16 @@ namespace et
 			RenderState& renderState;
 			std::vector<RenderChunk, SharedBlockAllocatorSTDProxy<RenderChunk>> chunks;
 			
-			IndexArray::Pointer indexArray;
-			SceneVertexList vertexList;
+			union
+			{
+				SceneVertex* mappedVertices;
+				void* mappedData = nullptr;
+			};
 			
+//			SceneVertexList vertexList;
+			size_t allocatedVertices = 0;
+			size_t dataSize = 0;
 			VertexArrayObject vao;
-			bool changed = false;
 		};
 	}
 }

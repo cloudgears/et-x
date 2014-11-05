@@ -12,8 +12,6 @@
 using namespace et;
 using namespace et::s2d;
 
-const size_t maxVerticesPerRenderingElement = 65535;
-
 extern std::string et_scene2d_default_shader_vs;
 extern std::string et_scene2d_default_shader_fs;
 extern std::string et_scene2d_default_text_shader_fs;
@@ -112,30 +110,16 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 			shouldAdd = true;
 	}
 
-	size_t lastVertexIndex = _renderingElement->vertexList.lastElementIndex();
-	
 	if (shouldAdd)
 	{
 		_lastProgram = inProgram;
 		_lastTexture = actualTexture;
 		
-		_renderingElement->chunks.emplace_back(lastVertexIndex, count, _clip.top(), _lastTexture,
-			_lastProgram, object, pt);
+		_renderingElement->chunks.emplace_back(_renderingElement->allocatedVertices, count,
+			_clip.top(), _lastTexture, _lastProgram, object, pt);
 	}
 	
-	if (_renderingElement.valid() && (_renderingElement->vertexList.size() == 0))
-	{
-		log::info("allocating %zu vertices for rendering element...", maxVerticesPerRenderingElement);
-		_renderingElement->allocVertices(maxVerticesPerRenderingElement);
-	}
-	
-	_renderingElement->changed = true;
-	_renderingElement->vertexList.applyOffset(count);
-
-	ET_ASSERT(lastVertexIndex < _renderingElement->vertexList.size());
-	ET_ASSERT(lastVertexIndex * _renderingElement->vertexList.typeSize() < _renderingElement->vertexList.dataSize());
-
-	return _renderingElement->vertexList.element_ptr(lastVertexIndex);
+	return _renderingElement->allocateVertices(count);
 }
 
 void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture& texture,

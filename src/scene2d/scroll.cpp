@@ -160,10 +160,6 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		
 		applyOffset(sqr(offsetScale) * offset);
 	}
-	else if (_capturedElement.valid())
-	{
-		broadcastMoved(p);
-	}
 	else if (!_pointerCaptured && (p.type == PointerType_General))
 	{
 		_manualScrolling = true;

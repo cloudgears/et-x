@@ -21,10 +21,11 @@ RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const
 /*
  * Rendering element
  */
-RenderingElement::RenderingElement(RenderContext* rc) :
-	renderState(rc->renderState()), changed(false)
+RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
+	renderState(rc->renderState())// , vertexList(capacity, 0)
 {
-	indexArray = IndexArray::Pointer::create(IndexArrayFormat_16bit, 0, PrimitiveType_Triangles);
+	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat_16bit, capacity, PrimitiveType_Triangles);
+	indexArray->linearize(capacity);
 	
 	VertexDeclaration decl(true, Usage_Position, Type_Vec3);
 	decl.push_back(Usage_TexCoord0, Type_Vec4);
@@ -32,44 +33,34 @@ RenderingElement::RenderingElement(RenderContext* rc) :
 	
 	std::string nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao";
 
-	vao = rc->vertexBufferFactory().createVertexArrayObject(nameId, VertexArray::Pointer::create(decl, true),
+	vao = rc->vertexBufferFactory().createVertexArrayObject(nameId, VertexArray::Pointer::create(decl, capacity),
 		BufferDrawType_Stream, indexArray, BufferDrawType_Static);
 }
 
-void RenderingElement::allocVertices(size_t sz)
+void RenderingElement::startAllocatingVertices()
 {
-	vertexList.resize(sz);
+	chunks.clear();
 	
-	indexArray->resize(sz);
-	indexArray->linearize(sz);
-	indexArray->setActualSize(0);
-	
-	changed = true;
+	renderState.bindVertexArray(vao);
+	mappedData = vao->vertexBuffer()->map(0, dataSize, VertexBufferData::MapBufferMode_WriteOnly);
+	allocatedVertices = 0;
 }
 
-void RenderingElement::clear()
+SceneVertex* RenderingElement::allocateVertices(size_t n)
 {
-	vertexList.setOffset(0);
-	indexArray->setActualSize(0);
-	chunks.clear();
-	changed = true;
+	auto result = mappedVertices + allocatedVertices;
+	allocatedVertices += n;
+	return result;
+}
+
+void RenderingElement::commitAllocatedVertices()
+{
+	renderState.bindVertexArray(vao);
+	vao->vertexBuffer()->unmap();
 }
 
 const VertexArrayObject& RenderingElement::vertexArrayObject()
 {
 	renderState.bindVertexArray(vao);
-	
-	if (indexArray->actualSize() == 0)
-	{
-		indexArray->setActualSize(vertexList.size());
-		vao->indexBuffer()->setData(indexArray);
-	}
-
-	if (changed)
-	{
-		vao->vertexBuffer()->setData(vertexList.data(), vertexList.lastElementIndex() * vertexList.typeSize());
-		changed = false;
-	}
-
 	return vao;
 }

@@ -439,7 +439,7 @@ void Layout::collectTopmostElements(Element2d::Pointer element)
 void Layout::initRenderingElement(et::RenderContext* rc)
 {
 	if (_renderingElement.invalid())
-		_renderingElement = RenderingElement::Pointer::create(rc);
+		_renderingElement = RenderingElement::Pointer::create(rc, RenderingElement::MaxCapacity);
 }
 
 vec2 Layout::contentSize()

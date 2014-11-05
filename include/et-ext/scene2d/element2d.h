@@ -207,8 +207,9 @@ namespace et
 			 * Transformations
 			 */
 			const mat4& transform();
-			const mat4& finalTransform();
-			const mat4& finalInverseTransform();
+			
+			virtual const mat4& finalTransform();
+			virtual const mat4& finalInverseTransform();
 			
 			bool transformValid() const
 				{ return _transformValid; }
