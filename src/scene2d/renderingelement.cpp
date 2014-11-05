@@ -22,7 +22,7 @@ RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const
  * Rendering element
  */
 RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
-	renderState(rc->renderState())// , vertexList(capacity, 0)
+	renderState(rc->renderState()), dataSize(sizeof(SceneVertex) * capacity)
 {
 	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat_16bit, capacity, PrimitiveType_Triangles);
 	indexArray->linearize(capacity);
