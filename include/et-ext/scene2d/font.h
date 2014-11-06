@@ -51,8 +51,6 @@ namespace et
 			vec2 measureStringSize(const CharDescriptorList& s);
 			
 		private:
-			bool isUtf8String(const std::string& s) const;
-
 			CharDescriptorList parseString(const std::string& s);
 			CharDescriptorList parseString(const std::wstring& s);
 

@@ -314,17 +314,6 @@ CharDescriptorList Font::parseString(const std::wstring& s)
 	return result;
 }
 
-bool Font::isUtf8String(const std::string& s) const
-{
-	for (auto c : s)
-	{
-		if ((c & 0x80) != 0)
-			return true;
-	}
-	
-	return false;
-}
-
 /*
  * Service
  */
