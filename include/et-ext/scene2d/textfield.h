@@ -45,6 +45,8 @@ namespace et
 			void setText(const std::string& s);
 			void setPrefix(const std::string& s);
 			
+			void setPlaceholder(const std::string& s);
+			
 			void setEditingFlags(size_t);
 
 			void setSecured(bool);
@@ -72,21 +74,28 @@ namespace et
 			Font::Pointer _font;
 			Image _background;
 			std::string _text;
+			std::string _placeholder;
 			std::string _prefix;
 			std::string _actualText;
-			CharDescriptorList _charList;
+			
+			CharDescriptorList _textCharacters;
+			CharDescriptorList _placeholderCharacters;
+			
 			CharDescriptorList _caretChar;
 			SceneVertexList _imageVertices;
 			SceneVertexList _textVertices;
 			SceneVertexList _backgroundVertices;
 			NotifyTimer _caretBlinkTimer;
+			
 			vec4 _backgroundColor;
 			vec2 _contentOffset;
+			
 			FlagsHolder _editingFlags;
 			Alignment _alignmentV;
 			Alignment _alignmentH;
-			bool _secured;
-			bool _caretVisible;
+			bool _secured = false;
+			bool _focused = false;
+			bool _caretVisible = false;
 		};
 	}
 }

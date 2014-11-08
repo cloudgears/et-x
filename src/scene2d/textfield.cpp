@@ -34,6 +34,7 @@ TextField::TextField(const std::string& text, const Font::Pointer& font, Element
 	_caretChar.push_back(_font->charDescription(caretChar));
 	
 	setText(text);
+	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
@@ -45,11 +46,11 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 {
 	_caretChar.push_back(_font->charDescription(caretChar));
 	
-	setText(text);
-	
-	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	setSize(_font->measureStringSize(text));
 	
+	setText(text);
+	setEditingFlags(EditingFlag_ResignFocusOnReturn);
+	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
@@ -89,18 +90,25 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 			wholeRect, alphaScale, transform);
 	}
 
-	_charList = _secured ?
-		CharDescriptorList(_actualText.length(), _font->charDescription(securedChar)) :
-		_font->buildString(_actualText);
-	
-	vec2 textSize = _font->measureStringSize(_charList);
+	vec2 textSize = _font->measureStringSize(_textCharacters);
 	vec2 caretSize = _font->measureStringSize(_caretChar);
-	
-	float widthAdjustment = 0.0f;
 	
 	auto actualAlignment = _alignmentH;
 	
-	if (textSize.x + caretSize.x >= wholeRect.width)
+	if (!_focused && !_placeholderCharacters.empty() && _textCharacters.empty())
+	{
+		vec2 placeholderSize = _font->measureStringSize(_placeholderCharacters);
+		
+		vec2 placeholderOrigin = _contentOffset + vec2(alignmentFactor(actualAlignment), alignmentFactor(_alignmentV)) *
+			((wholeRect.size() - 2.0f * _contentOffset) - placeholderSize);
+		
+		buildStringVertices(_textVertices, _placeholderCharacters, Alignment_Near, Alignment_Near,
+			placeholderOrigin, finalColor() * vec4(1.0f, 0.5f), transform, 1.0f);
+	}
+	
+	float widthAdjustment = 0.0f;
+	actualAlignment = _alignmentH;
+	if (_focused && (textSize.x + caretSize.x >= wholeRect.width - _contentOffset.x))
 	{
 		actualAlignment = Alignment_Far;
 		textSize.x += caretSize.x;
@@ -111,9 +119,9 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	vec2 textOrigin = _contentOffset + vec2(alignmentFactor(actualAlignment), alignmentFactor(_alignmentV)) *
 		((wholeRect.size() - 2.0f * _contentOffset) - textSize);
 	
-	if (_charList.size())
+	if (!_textCharacters.empty())
 	{
-		buildStringVertices(_textVertices, _charList, Alignment_Near, Alignment_Near, textOrigin,
+		buildStringVertices(_textVertices, _textCharacters, Alignment_Near, Alignment_Near, textOrigin,
 			finalColor(), transform, 1.0f);
 	}
 
@@ -130,6 +138,10 @@ void TextField::setText(const std::string& s)
 {
 	_text = s;
 	_actualText = _prefix + _text;
+	
+	_textCharacters = _secured ? CharDescriptorList(_actualText.length(), _font->charDescription(securedChar)) :
+		_font->buildString(_actualText);
+	
 	invalidateContent();
 }
 
@@ -209,6 +221,7 @@ void TextField::setSecured(bool s)
 void TextField::setFocus()
 {
 	_caretBlinkTimer.start(timerPool(), 0.5f, NotifyTimer::RepeatForever);
+	_focused = true;
 	_caretVisible = true;
 	invalidateContent();
 	
@@ -218,6 +231,7 @@ void TextField::setFocus()
 void TextField::resignFocus(Element2d*)
 {
 	_caretBlinkTimer.cancelUpdates();
+	_focused = false;
 	_caretVisible = false;
 	invalidateContent();
 	
@@ -274,5 +288,12 @@ void TextField::setContentOffset(const vec2& o)
 void TextField::setBackgroundImage(const Image& img)
 {
 	_background = img;
+	invalidateContent();
+}
+
+void TextField::setPlaceholder(const std::string& s)
+{
+	_placeholder = s;
+	_placeholderCharacters = _font->buildString(_placeholder);
 	invalidateContent();
 }
