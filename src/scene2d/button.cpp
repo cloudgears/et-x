@@ -138,8 +138,16 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	
 	vec4 alphaScale = vec4(1.0f, finalAlpha());
 	
-	imageOrigin += minv(vec2(0.0f), _contentOffset);
-	textOrigin += minv(vec2(0.0f), _contentOffset);
+	if (_horizontalAlignment == Alignment_Center)
+	{
+		imageOrigin += minv(vec2(0.0f), _contentOffset);
+		textOrigin += minv(vec2(0.0f), _contentOffset);
+	}
+	else
+	{
+		imageOrigin += _contentOffset;
+		textOrigin += _contentOffset;
+	}
 	
 	_bgVertices.setOffset(0);
 	_textVertices.setOffset(0);
