@@ -18,7 +18,7 @@ namespace et
 		{
 			size_t first = 0;
 			size_t count = 0;
-			uint32_t primitiveType = PrimitiveType_Triangles;
+			uint32_t primitiveType = 0;
 			
 			recti clip;
 			
@@ -27,7 +27,7 @@ namespace et
 			Element2d* object = nullptr;
 			
 			RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
-				const SceneProgram& aProgram, Element2d* aObject, uint32_t pt);
+				const SceneProgram& aProgram, Element2d* aObject, PrimitiveType pt);
 		};
 		
 		class RenderingElement : public Shared

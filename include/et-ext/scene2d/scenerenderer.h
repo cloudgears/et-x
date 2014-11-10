@@ -39,7 +39,7 @@ namespace et
 			void setRendernigElement(const RenderingElement::Pointer& r);
 
 			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element2d*,
-				uint32_t = PrimitiveType_Triangles);
+				PrimitiveType = PrimitiveType_Triangles);
 			
 			void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 						
@@ -61,7 +61,7 @@ namespace et
 		private:
 			void init(RenderContext* rc);
 			
-			SceneVertex* allocateVertices(size_t, const Texture&, const SceneProgram&, Element2d*, uint32_t);
+			SceneVertex* allocateVertices(size_t, const Texture&, const SceneProgram&, Element2d*, PrimitiveType);
 
 			ET_DENY_COPY(SceneRenderer)
 			
