@@ -73,10 +73,12 @@ namespace et
 		private:
 			Font::Pointer _font;
 			Image _background;
+			
 			std::string _text;
-			std::string _placeholder;
 			std::string _prefix;
 			std::string _actualText;
+			
+			LocalizedText _placeholder;
 			
 			CharDescriptorList _textCharacters;
 			CharDescriptorList _placeholderCharacters;

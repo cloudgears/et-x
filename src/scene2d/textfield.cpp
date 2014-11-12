@@ -293,7 +293,8 @@ void TextField::setBackgroundImage(const Image& img)
 
 void TextField::setPlaceholder(const std::string& s)
 {
-	_placeholder = s;
-	_placeholderCharacters = _font->buildString(_placeholder);
+	_placeholder.setKey(s);
+	_placeholderCharacters = _font->buildString(_placeholder.cachedText);
+	
 	invalidateContent();
 }
