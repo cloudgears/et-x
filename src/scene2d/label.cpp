@@ -256,7 +256,7 @@ void Label::processMessage(const Message& msg)
 	if (msg.type == Message::Type_SetText)
 		setText(msg.text, msg.duration);
 	else if (msg.type == Message::Type_UpdateText)
-		setText(_text.key);
+		setText(_text.key, msg.duration);
 }
 
 void Label::setShouldAutoAdjustSize(bool v)

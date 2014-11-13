@@ -210,6 +210,10 @@ void TextField::processMessage(const Message& msg)
 		textChanged.invoke(this);
 		invalidateContent();
 	}
+	else if (msg.type == Message::Type_UpdateText)
+	{
+		setPlaceholder(_placeholder.key);
+	}
 }
 
 void TextField::setSecured(bool s)

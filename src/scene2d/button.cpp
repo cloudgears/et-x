@@ -526,7 +526,7 @@ void Button::processMessage(const Message& msg)
 	if (msg.type == Message::Type_SetText)
 		setTitle(msg.text, msg.duration);
 	else if (msg.type == Message::Type_UpdateText)
-		setTitle(_nextTitle.key);
+		setTitle(_nextTitle.key, msg.duration);
 }
 
 void Button::setClickTreshold(float value)
