@@ -319,12 +319,12 @@ void Element2d::sendToBack(Element2d* c)
 	invalidateContent();
 }
 
-void Element2d::broardcastMessage(const Message& msg)
+void Element2d::broadcastMessage(const Message& msg)
 {
 	for (auto& c : children())
 	{
 		c->processMessage(msg);
-		c->broardcastMessage(msg);
+		c->broadcastMessage(msg);
 	}
 }
 

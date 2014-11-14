@@ -90,7 +90,7 @@ namespace et
 			virtual bool enabled() const;
 			virtual void setEnabled(bool enabled);
 			
-			virtual void broardcastMessage(const Message&);
+			virtual void broadcastMessage(const Message&);
 			virtual void processMessage(const Message&) { }
 			
 			virtual void addToRenderQueue(RenderContext*, SceneRenderer&) { }

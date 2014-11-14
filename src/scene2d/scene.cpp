@@ -493,7 +493,7 @@ void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
 void Scene::broadcastMessage(const Message& msg)
 {
 	for (auto l : _layouts)
-		l->layout->broardcastMessage(msg);
+		l->layout->broadcastMessage(msg);
 }
 
 void Scene::removeAllLayouts()
