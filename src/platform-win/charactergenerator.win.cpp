@@ -33,7 +33,7 @@ class et::s2d::CharacterGeneratorPrivate
 		void renderCharacter(int value, bool bold, const vec2i& size, BinaryDataStorage&);
 
 	public:
-		size_t _size;		
+		int _size;		
 		size_t textureSize;
 
 		std::string _face;
@@ -144,18 +144,16 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
  */
 
 CharacterGeneratorPrivate::CharacterGeneratorPrivate(const std::string& face, const std::string& boldFace, 
-	size_t size, size_t texSize) : _size(size), _face(face), _boldFace(boldFace), 
+	size_t size, size_t texSize) : _size(static_cast<int>(size)), _face(face), _boldFace(boldFace),
 	placer(vec2i(static_cast<int>(texSize)), true), _textureData(sqr(texSize) * 4), textureSize(texSize)
 {
 	commonDC = CreateCompatibleDC(nullptr);
 
-	int pointsSize = -MulDiv(static_cast<int>(_size), GetDeviceCaps(commonDC, LOGPIXELSY), 72);
+	_font = CreateFont(-_size, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_RASTER_PRECIS,
+		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, FF_DONTCARE, face.c_str());
 
-	_font = CreateFont(pointsSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-		CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, face.c_str());
-
-	_boldFont = CreateFont(pointsSize, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-		CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, boldFace.c_str());
+	_boldFont = CreateFont(-_size, 0, 0, 0, FW_BOLD, 0, 0, 0, DEFAULT_CHARSET, OUT_RASTER_PRECIS,
+		CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, FF_DONTCARE, boldFace.c_str());
 }
 
 CharacterGeneratorPrivate::~CharacterGeneratorPrivate()
