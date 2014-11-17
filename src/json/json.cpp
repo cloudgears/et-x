@@ -6,7 +6,7 @@
  */
 
 #include <jansson/jansson.h>
-#include <et-ext/json/json.h>
+#include <et/json/json.h>
 
 using namespace et;
 using namespace et::json;

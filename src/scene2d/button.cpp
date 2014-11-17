@@ -516,9 +516,18 @@ const vec4& Button::pressedColor() const
 void Button::processMessage(const Message& msg)
 {
 	if (msg.type == Message::Type_SetText)
+	{
 		setTitle(msg.text, msg.duration);
+	}
 	else if (msg.type == Message::Type_UpdateText)
+	{
 		setTitle(_nextTitle.key, msg.duration);
+	}
+	else if (msg.type == Message::Type_PerformAction)
+	{
+		if (msg.param == _action)
+			clicked.invoke(this);
+	}
 }
 
 void Button::setClickTreshold(float value)
@@ -529,4 +538,9 @@ void Button::setClickTreshold(float value)
 void Button::setShouldInvokeClickInRunLoop(bool b)
 {
 	_shouldInvokeClickInRunLoop = b;
+}
+
+bool Button::respondsToMessage(const Message& msg) const
+{
+	return (msg.type == Message::Type_PerformAction) && (msg.param == _action);
 }

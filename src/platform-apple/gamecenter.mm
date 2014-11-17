@@ -11,7 +11,7 @@
 #include <et/app/applicationnotifier.h>
 #include <et/platform-apple/apple.h>
 #include <et-ext/platform-apple/gamecenter.h>
-#include <et-ext/json/json.h>
+#include <et/json/json.h>
 
 #if (TARGET_OS_IPHONE)
 #	define ViewControllerClass UIViewController

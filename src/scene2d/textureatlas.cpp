@@ -10,7 +10,7 @@
 #include <et/app/application.h>
 #include <et/rendering/rendercontext.h>
 #include <et/imaging/textureloader.h>
-#include <et-ext/json/json.h>
+#include <et/json/json.h>
 #include <et-ext/scene2d/textureatlas.h>
 
 using namespace et;

@@ -91,7 +91,11 @@ namespace et
 			virtual void setEnabled(bool enabled);
 			
 			virtual void broadcastMessage(const Message&);
+			
 			virtual void processMessage(const Message&) { }
+			
+			virtual bool respondsToMessage(const Message&) const
+				{ return false; }
 			
 			virtual void addToRenderQueue(RenderContext*, SceneRenderer&) { }
 			virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) { }

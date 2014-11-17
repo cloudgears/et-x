@@ -22,7 +22,7 @@ RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const
  * Rendering element
  */
 RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
-	renderState(rc->renderState()), dataSize(sizeof(SceneVertex) * capacity)
+	renderState(rc->renderState())
 {
 	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat_16bit, capacity, PrimitiveType_Triangles);
 	indexArray->linearize(capacity);
@@ -30,6 +30,7 @@ RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
 	VertexDeclaration decl(true, Usage_Position, Type_Vec3);
 	decl.push_back(Usage_TexCoord0, Type_Vec4);
 	decl.push_back(Usage_Color, Type_Vec4);
+	dataSize = decl.dataSize() * capacity;
 	
 	std::string nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao";
 

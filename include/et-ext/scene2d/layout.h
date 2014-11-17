@@ -44,6 +44,7 @@ namespace et
 			const std::function<float(float)>& positionInterpolationFunction() const
 				{ return _positionInterpolationFunction; }
 			
+			Element2d::Pointer findFirstResponder(const Message&);
 						
 		public:
 			virtual void activeElementChanged(Element2d*) { }
@@ -65,6 +66,8 @@ namespace et
 			bool elementIsBeingDragged(Element2d::Pointer);
 			
 			void cancelInteractionsInElement(Element2d::Pointer, const PointerInputInfo&);
+			
+			Element2d::Pointer findFirstResponderStartingFrom(Element2d::Pointer, const Message&);
 			
 		private:
 			Layout* owner()

@@ -144,6 +144,14 @@ namespace et
 				currentPosition(c), initialPosition(i), normalizedPointerPosition(npp) { }
 		};
 
+		enum Action
+		{
+			Action_None = 0,
+			Action_Confirm,
+			Action_Cancel,
+			Action_max
+		};
+		
 		struct Message
 		{
 			enum Type
@@ -153,8 +161,9 @@ namespace et
 				Type_TextFieldControl,
 				Type_SetText,
 				Type_UpdateText,
+				Type_PerformAction
 			};
-
+			
 			size_t type = 0;
 			size_t param = 0;
 			std::string text;

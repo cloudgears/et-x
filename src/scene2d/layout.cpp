@@ -6,7 +6,7 @@
  */
 
 #include <et/rendering/rendercontext.h>
-#include <et-ext/json/json.h>
+#include <et/json/json.h>
 #include <et-ext/scene2d/layout.h>
 
 using namespace et;
@@ -458,6 +458,29 @@ void Layout::cancelInteractionsInElement(Element2d::Pointer e, const PointerInpu
 	
 	for (auto c : e->children())
 		cancelInteractionsInElement(c, info);
+}
+
+Element2d::Pointer Layout::findFirstResponder(const Message& msg)
+{
+	return findFirstResponderStartingFrom(Element2d::Pointer(this), msg);
+}
+
+Element2d::Pointer Layout::findFirstResponderStartingFrom(Element2d::Pointer base, const Message& msg)
+{
+	if (base->enabled() && base->visible())
+	{
+		for (auto i = base->children().rbegin(), e = base->children().rend(); i != e; ++i)
+		{
+			auto el = findFirstResponderStartingFrom(*i, msg);
+			if (el.valid())
+				return el;
+		}
+		
+		if (base->respondsToMessage(msg))
+			return base;
+	}
+	
+	return Element2d::Pointer();
 }
 
 

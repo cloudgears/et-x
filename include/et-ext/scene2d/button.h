@@ -79,6 +79,9 @@ namespace et
 			const std::string& title() const 
 				{ return _nextTitle.cachedText; }
 
+			const std::string& titleKey() const
+				{ return _nextTitle.key; }
+			
 			void setTitle(const std::string&, float duration = 0.0f);
 
 			const Image& imageForState(State s) const
@@ -136,9 +139,13 @@ namespace et
 			
 			void setClickTreshold(float);
 			void setShouldInvokeClickInRunLoop(bool);
+			
+			void setAction(Action a)
+				{ _action = a; }
 
 		protected:
 			void performClick();
+			bool respondsToMessage(const Message&) const;
 
 		private:
 			void buildVertices(RenderContext* rc, SceneRenderer& gr);
@@ -184,6 +191,7 @@ namespace et
 			ContentMode _contentMode;
 			Alignment _horizontalAlignment;
 			Alignment _verticalAlignment;
+			Action _action = Action_None;
 			
 			float _lastClickTime = 0.0f;
 			float _clickTreshold = 0.0f;

@@ -98,8 +98,27 @@ void Scene::keyPressed(size_t key)
 	}
 	else
 	{
-		for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
-			(*i)->layout->keyPressed(key);
+		if ((key == ET_KEY_RETURN) || (key == ET_KEY_ESCAPE))
+		{
+			Message msg(Message::Type_PerformAction);
+			msg.param = (key == ET_KEY_RETURN) ? Action_Confirm : Action_Cancel;
+			
+			for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+			{
+				auto responder = (*i)->layout->findFirstResponder(msg);
+				if (responder.valid())
+				{
+					responder->processMessage(msg);
+					break;
+				}
+			}
+			
+		}
+		else
+		{
+			for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+				(*i)->layout->keyPressed(key);
+		}
 	}
 }
 
