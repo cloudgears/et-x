@@ -327,10 +327,10 @@ void MainController::processImage_Pass2()
 }
 
 ApplicationIdentifier MainController::applicationIdentifier() const
-{ return ApplicationIdentifier(applicationIdentifierForCurrentProject(), "Cheetek", "EnvMapBlur"); }
+	{ return ApplicationIdentifier(applicationIdentifierForCurrentProject(), "Cheetek", "EnvMapBlur"); }
 
 IApplicationDelegate* Application::initApplicationDelegate()
-{ return new MainController; }
+	{ return sharedObjectFactory().createObject<MainController>(); }
 
 const std::string fullscreenVertexShader = ET_TO_CONST_CHAR
 (
