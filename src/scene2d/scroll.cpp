@@ -23,12 +23,12 @@ float bounceStopTreshold = 0.5f;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Scroll)
 
 Scroll::Scroll(Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _offsetAnimator(timerPool()),
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _contentOffsetAnimator(timerPool()),
 	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f), _bounceExtent(0.5f),
 	_pointerScrollMultiplier(1.0f), _pointerScrollDuration(0.0f), _movementTreshold(9.0f), _bounce(0),
 	_pointerCaptured(false), _manualScrolling(false)
 {
-	_offsetAnimator.updated.connect([this](){ setOffsetDirectly(_offset); });
+	_contentOffsetAnimator.updated.connect([this](){ setOffsetDirectly(_contentOffset); });
 
 	setFlag(Flag_HandlesChildEvents);
 	setFlag(Flag_ClipToBounds);
@@ -72,7 +72,7 @@ void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 	{
 		float scaledScollbarSize = scrollbarSize * static_cast<float>(rc->screenScaleFactor());
 		float barHeight = size().y * (size().y / _contentSize.y);
-		float barOffset = size().y * (_offset.y / _contentSize.y);
+		float barOffset = size().y * (_contentOffset.y / _contentSize.y);
 		vec2 origin(size().x - 2.0f * scaledScollbarSize, -barOffset);
 		
 		vec4 adjutsedColor = alphaScale * _scrollbarsColor;
@@ -90,8 +90,13 @@ void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 
 const mat4& Scroll::finalTransform()
 {
-	_localFinalTransform = Element2d::finalTransform();
-	_localFinalTransform[3] += vec4(_offset, 0.0f, 0.0f);
+	Element2d::finalTransform();
+	
+	_localFinalTransform = buildFinalTransform(offset(), angle(), scale(), position() + _contentOffset) * parentFinalTransform();
+	
+	if (_floorOffset)
+		_localFinalTransform[3].xy() = floorv(_localFinalTransform[3].xy());
+	
 	return _localFinalTransform;
 }
 
@@ -103,6 +108,8 @@ const mat4& Scroll::finalInverseTransform()
 
 bool Scroll::pointerPressed(const PointerInputInfo& p)
 {
+	_contentOffsetAnimator.cancelUpdates();
+	
 	if ((_currentPointer.id == 0) && (p.type == PointerType_General))
 	{
 		_previousPointer = p;
@@ -124,41 +131,43 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		return true;
 	}
 	
-	vec2 offset = p.pos - _currentPointer.pos;
-	if (!_manualScrolling && (offset.dotSelf() < sqr(_movementTreshold)))
+	vec2 aOffset = p.pos - _currentPointer.pos;
+	if (!_manualScrolling && (aOffset.dotSelf() < sqr(_movementTreshold)))
 	{
 		if (_capturedElement.valid())
 			broadcastMoved(p);
 		
 		return true;
 	}
-
+	
 	if (_manualScrolling)
 	{
-		vec2 offsetScale(1.0f);
+		vec4 defaultValues;
+		getDefaultValues(defaultValues);
 
-		if (-_offset.x < scrollLeftDefaultValue())
+		vec2 offsetScale(1.0f);
+		if (-_contentOffset.x < defaultValues.x)
 		{
-			float diff = std::abs(-_offset.x - scrollLeftDefaultValue());
+			float diff = std::abs(-_contentOffset.x - defaultValues.x);
 			offsetScale.x *= etMax(0.0f, 1.0f - diff / scrollOutOfContentXSize());
 		}
-		else if (-_offset.x > scrollRightDefaultValue())
+		else if (-_contentOffset.x > defaultValues.z)
 		{
-			float diff = std::abs(-_offset.x - scrollRightDefaultValue());
+			float diff = std::abs(-_contentOffset.x - defaultValues.z);
 			offsetScale.x *= etMax(0.0f, 1.0f - diff / scrollOutOfContentXSize());
 		}
-		if (-_offset.y < scrollUpperDefaultValue())
+		if (-_contentOffset.y < defaultValues.y)
 		{
-			float diff = std::abs(-_offset.y - scrollUpperDefaultValue());
+			float diff = std::abs(-_contentOffset.y - defaultValues.y);
 			offsetScale.y *= etMax(0.0f, 1.0f - diff / scrollOutOfContentYSize());
 		}
-		else if (-_offset.y > scrollLowerDefaultValue())
+		else if (-_contentOffset.y > defaultValues.w)
 		{
-			float diff = std::abs(-_offset.y - scrollLowerDefaultValue());
+			float diff = std::abs(-_contentOffset.y - defaultValues.w);
 			offsetScale.y *= etMax(0.0f, 1.0f - diff / scrollOutOfContentYSize());
 		}
 		
-		applyOffset(sqr(offsetScale) * offset);
+		applyContentOffset(sqr(offsetScale) * aOffset);
 	}
 	else if (!_pointerCaptured && (p.type == PointerType_General))
 	{
@@ -199,19 +208,17 @@ bool Scroll::pointerCancelled(const PointerInputInfo& p)
 {
 	_pointerCaptured = false;
 	_currentPointer = PointerInputInfo();
-	broadcastCancelled(p);
 	
+	broadcastCancelled(p);
 	return true;
 }
 
 bool Scroll::pointerScrolled(const PointerInputInfo& p)
 {
-#if (ET_PLATFORM_MAC)
-	applyOffset(p.scroll * size(), 0.0f);
-#else
-	applyOffset(p.scroll * _pointerScrollMultiplier, _pointerScrollDuration);
-#endif
-	
+	vec2 scrollValue;
+	scrollValue.x = p.scroll.x * (std::abs(p.scroll.x) < 1.0f ? size().x : _pointerScrollMultiplier.x);
+	scrollValue.y = p.scroll.y * (std::abs(p.scroll.y) < 1.0f ? size().y : _pointerScrollMultiplier.y);
+	applyContentOffset(scrollValue, _pointerScrollDuration);
 	return true;
 }
 
@@ -375,61 +382,70 @@ void Scroll::setActiveElement(const PointerInputInfo& p, Element2d* e)
 
 void Scroll::updateBouncing(float deltaTime)
 {
-	if (-_offset.x < scrollLeftDefaultValue())
+	vec4 defaultValues;
+	getDefaultValues(defaultValues);
+	
+	if (-_contentOffset.x < defaultValues.x)
 		_bouncing.x = BounceDirection_ToNear;
 	
-	if (-_offset.x > scrollRightDefaultValue())
+	if (-_contentOffset.x > defaultValues.z)
 		_bouncing.x = BounceDirection_ToFar;
 	
-	if (-_offset.y < scrollUpperDefaultValue())
+	if (-_contentOffset.y < defaultValues.y)
 		_bouncing.y = BounceDirection_ToNear;
 	
-	if (-_offset.y > scrollLowerDefaultValue())
+	if (-_contentOffset.y > defaultValues.w)
 		_bouncing.y = BounceDirection_ToFar;
 
-	if (_bouncing.x == BounceDirection_ToNear)
+	if (_bounce & Bounce_Horizontal)
 	{
-		float diff = -_offset.x - scrollLeftDefaultValue();
-		_velocity.x += 0.25f * size().x * diff * deltaTime;
-		if ((_velocity.x <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
+		if (_bouncing.x == BounceDirection_ToNear)
 		{
-			_velocity.x = 0.0f;
-			_offset.x = -scrollLeftDefaultValue();
-			_bouncing.x = BounceDirection_None;
+			float diff = -_contentOffset.x - defaultValues.x;
+			_velocity.x += 0.25f * size().x * diff * deltaTime;
+			if ((_velocity.x <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
+			{
+				_velocity.x = 0.0f;
+				_contentOffset.x = -defaultValues.x;
+				_bouncing.x = BounceDirection_None;
+			}
+		}
+		else if (_bouncing.x == BounceDirection_ToFar)
+		{
+			float diff = -_contentOffset.x - defaultValues.z;
+			_velocity.x += 0.25f * size().x * diff * deltaTime;
+			if ((_velocity.x <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
+			{
+				_velocity.x = 0.0f;
+				_contentOffset.x = -defaultValues.z;
+				_bouncing.x = BounceDirection_None;
+			}
 		}
 	}
-	else if (_bouncing.x == BounceDirection_ToFar)
+	
+	if (_bounce & Bounce_Vertical)
 	{
-		float diff = -_offset.x - scrollRightDefaultValue();
-		_velocity.x += 0.25f * size().x * diff * deltaTime;
-		if ((_velocity.x <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
+		if (_bouncing.y == BounceDirection_ToNear)
 		{
-			_velocity.x = 0.0f;
-			_offset.x = -scrollRightDefaultValue();
-			_bouncing.x = BounceDirection_None;
+			float diff = -_contentOffset.y - defaultValues.y;
+			_velocity.y += 0.25f * size().y * diff * deltaTime;
+			if ((_velocity.y <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
+			{
+				_velocity.y = 0.0f;
+				_contentOffset.y = -defaultValues.y;
+				_bouncing.y = BounceDirection_None;
+			}
 		}
-	}
-
-	if (_bouncing.y == BounceDirection_ToNear)
-	{
-		float diff = -_offset.y - scrollUpperDefaultValue();
-		_velocity.y += 0.25f * size().y * diff * deltaTime;
-		if ((_velocity.y <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
+		else if (_bouncing.y == BounceDirection_ToFar)
 		{
-			_velocity.y = 0.0f;
-			_offset.y = -scrollUpperDefaultValue();
-			_bouncing.y = BounceDirection_None;
-		}
-	}
-	else if (_bouncing.y == BounceDirection_ToFar)
-	{
-		float diff = -_offset.y - scrollLowerDefaultValue();
-		_velocity.y += 0.25f * size().y * diff * deltaTime;
-		if ((_velocity.y <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
-		{
-			_velocity.y = 0.0f;
-			_offset.y = -scrollLowerDefaultValue();
-			_bouncing.y = BounceDirection_None;
+			float diff = -_contentOffset.y - defaultValues.w;
+			_velocity.y += 0.25f * size().y * diff * deltaTime;
+			if ((_velocity.y <= bounceStopTreshold) && (std::abs(diff) <= bounceStopTreshold))
+			{
+				_velocity.y = 0.0f;
+				_contentOffset.y = -defaultValues.w;
+				_bouncing.y = BounceDirection_None;
+			}
 		}
 	}
 }
@@ -448,7 +464,7 @@ void Scroll::update(float t)
 	if (_scrollbarsAlpha < minAlpha)
 		_scrollbarsAlpha = 0.0f;
 
-	if (_manualScrolling || _offsetAnimator.running())
+	if (_manualScrolling || _contentOffsetAnimator.running())
 	{
 		_scrollbarsAlphaTarget = 1.0f;
 		float dt = _currentPointer.timestamp - _previousPointer.timestamp;
@@ -473,9 +489,9 @@ void Scroll::update(float t)
 
 	vec2 dp = _velocity * deltaTime;
 	
-	if (dp.dotSelf() > 1.0e-6)
+	if (dp.dotSelf() > std::numeric_limits<float>::epsilon())
 	{
-		applyOffset(dp);
+		applyContentOffset(dp);
 	}
 	else if (std::abs(_scrollbarsAlpha - _scrollbarsAlphaTarget) > minAlpha)
 	{
@@ -491,100 +507,108 @@ void Scroll::setContentSize(const vec2& cs)
 
 void Scroll::adjustContentSize(bool includeHiddenItems)
 {
-	vec2 size;
+	vec2 sizeToSet;
 	
 	for (auto ptr : children())
 	{
 		if (includeHiddenItems || ptr->visible())
-			size = maxv(size, ptr->origin() + ptr->size());
+			sizeToSet = maxv(sizeToSet, ptr->origin() + ptr->size());
 	}
 
-	setContentSize(size);
+	setContentSize(sizeToSet);
 }
 
-void Scroll::applyOffset(const vec2& dOffset, float duration)
+void Scroll::applyContentOffset(const vec2& dOffset, float duration)
 {
-	setOffset(_offset + dOffset, duration);
+	setContentOffset(_contentOffset + dOffset, duration);
 }
 
-void Scroll::setOffset(const vec2& aOffset, float duration)
+void Scroll::setContentOffset(const vec2& aOffset, float duration)
 {
-	_offsetAnimator.cancelUpdates();
+	_contentOffsetAnimator.cancelUpdates();
 	
 	if (duration == 0.0f)
 	{
-		_offsetAnimator.cancelUpdates();
 		setOffsetDirectly(aOffset);
 	}
 	else
 	{
-		_offsetAnimator.animate(&_offset, _offset, aOffset, duration);
+		_contentOffsetAnimator.animate(&_contentOffset, _contentOffset, aOffset, duration);
 	}
 }
 
+void Scroll::getLimits(vec4& values)
+{
+	vec4 defaultValues;
+	getDefaultValues(defaultValues);
+	
+	vec2 outSizes(scrollOutOfContentXSize(), scrollOutOfContentYSize());
+	
+	values.x = defaultValues.x - outSizes.x;
+	values.z = defaultValues.z + outSizes.x;
+	
+	values.y = defaultValues.y - outSizes.y;
+	values.w = defaultValues.w + outSizes.y;
+}
+
+void Scroll::getDefaultValues(vec4& values)
+{
+	vec2 scaledContentSize = maxv(vec2(0.0f), _contentSize - size());
+	
+	values.x = 0.0f;
+	values.y = 0.0f;
+	values.z = scaledContentSize.x;
+	values.w = scaledContentSize.y;
+}
+
 float Scroll::scrollOutOfContentXSize() const
-	{ return horizontalBounce() ? _bounceExtent.x * size().x : 0.001f; }
+{
+	return horizontalBounce() ? _bounceExtent.x * size().x : std::numeric_limits<float>::epsilon();
+}
 
 float Scroll::scrollOutOfContentYSize() const
-	{ return verticalBounce() ? _bounceExtent.y * size().y : 0.001f; }
-
-float Scroll::scrollUpperDefaultValue() const
-	{ return 0.0f; }
-
-float Scroll::scrollLowerDefaultValue() const
-	{ return etMax(0.0f, _contentSize.y - size().y); }
-
-float Scroll::scrollLeftDefaultValue() const
-	{ return 0.0f; }
-
-float Scroll::scrollRightDefaultValue() const
-	{ return etMax(0.0f, _contentSize.x - size().x); }
-
-float Scroll::scrollUpperLimit() const
-	{ return scrollUpperDefaultValue() - scrollOutOfContentYSize(); }
-
-float Scroll::scrollLowerLimit() const
-	{ return scrollLowerDefaultValue() + scrollOutOfContentYSize(); }
-
-float Scroll::scrollLeftLimit() const
-	{ return scrollLeftDefaultValue() - scrollOutOfContentXSize(); }
-
-float Scroll::scrollRightLimit() const
-	{ return scrollRightDefaultValue() + scrollOutOfContentXSize(); }
+{
+	return verticalBounce() ? _bounceExtent.y * size().y : std::numeric_limits<float>::epsilon();
+}
 
 void Scroll::setOffsetDirectly(const vec2& o)
 {
-	_offset = o;
-	vec2 actualOffset = -_offset;
+	_contentOffset = o;
 	
-	float leftLimit = scrollLeftLimit();
-	float rightLimit = scrollRightLimit();
-	float upperLimit = scrollUpperLimit();
-	float lowerLimit = scrollLowerLimit();
+	vec4 limits;
+	getLimits(limits);
 
-	if (actualOffset.x < leftLimit)
+	vec2 actualOffset = -_contentOffset;
+	
+	if (actualOffset.x < limits.x)
 	{
-		_offset.x = -leftLimit;
+		_contentOffset.x = -limits.x;
 		_velocity.x = 0.0f;
 	}
 	
-	if (actualOffset.x > rightLimit)
+	if (actualOffset.x > limits.z)
 	{
-		_offset.x = -rightLimit;
+		_contentOffset.x = -limits.z;
 		_velocity.x = 0.0f;
 	}
 
-	if (actualOffset.y < upperLimit)
+	if (actualOffset.y < limits.y)
 	{
-		_offset.y = -upperLimit;
+		_contentOffset.y = -limits.y;
 		_velocity.y = 0.0f;
 	}
 	
-	if (actualOffset.y > lowerLimit)
+	if (actualOffset.y > limits.w)
 	{
-		_offset.y = -lowerLimit;
+		_contentOffset.y = -limits.w;
 		_velocity.y = 0.0f;
 	}
+	
+	vec2 dl(limits.x - limits.z, limits.y - limits.w);
+	if (std::abs(dl.x) < std::numeric_limits<float>::epsilon()) dl.x = _contentSize.x;
+	if (std::abs(dl.y) < std::numeric_limits<float>::epsilon()) dl.y = _contentSize.y;
+	
+	contentOffsetPercentageUpdated.invoke(_contentOffset / dl);
 	
 	invalidateContent();
 	invalidateChildren();
@@ -624,7 +648,7 @@ void Scroll::setBounceExtent(const vec2& e)
 
 void Scroll::scrollToBottom(float delay)
 {
-	setOffset(vec2(_offset.x, etMin(0.0f, size().y - _contentSize.y)), delay);
+	setContentOffset(vec2(_contentOffset.x, etMin(0.0f, size().y - _contentSize.y)), delay);
 }
 
 vec2 Scroll::contentSize()
@@ -641,4 +665,10 @@ void Scroll::setOverlayColor(const vec4& color)
 void Scroll::setMovementTreshold(float t)
 {
 	_movementTreshold = t;
+}
+
+void Scroll::setShouldUseIntegerValuesForScroll(bool v)
+{
+	_floorOffset = v;
+	setOffsetDirectly(_contentOffset);
 }

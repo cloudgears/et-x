@@ -32,8 +32,8 @@ namespace et
 			
 			void setContentSize(const vec2& cs);
 			
-			void setOffset(const vec2& aOffset, float duration = 0.0f);
-			void applyOffset(const vec2& dOffset, float duration = 0.0f);
+			void setContentOffset(const vec2& aOffset, float duration = 0.0f);
+			void applyContentOffset(const vec2& dOffset, float duration = 0.0f);
 			
 			vec2 contentSize();
 			void adjustContentSize(bool includeHiddenItems = false);
@@ -48,7 +48,7 @@ namespace et
 			void setPointerScrollDuration(float);
 
 			const vec2& lastElementIndex() const
-				{ return _offset; }
+				{ return _contentOffset; }
 			
 			void scrollToBottom(float duration = 0.0f);
 						
@@ -57,6 +57,10 @@ namespace et
 
 			float pointerScrollDuration() const
 				{ return _pointerScrollDuration; }
+			
+			void setShouldUseIntegerValuesForScroll(bool);
+			
+			ET_DECLARE_EVENT1(contentOffsetPercentageUpdated, vec2);
 
 		protected:
 			virtual void setOffsetDirectly(const vec2& o);
@@ -89,15 +93,8 @@ namespace et
 			float scrollOutOfContentXSize() const;
 			float scrollOutOfContentYSize() const;
 
-			float scrollUpperLimit() const;
-			float scrollUpperDefaultValue() const;
-			float scrollLowerLimit() const;
-			float scrollLowerDefaultValue() const;
-
-			float scrollLeftLimit() const;
-			float scrollLeftDefaultValue() const;
-			float scrollRightLimit() const;
-			float scrollRightDefaultValue() const;
+			void getLimits(vec4&);
+			void getDefaultValues(vec4&);
 
 			void updateBouncing(float deltaTime);
 			
@@ -125,7 +122,7 @@ namespace et
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _overlayVertices;
 
-			Vector2Animator _offsetAnimator;
+			Vector2Animator _contentOffsetAnimator;
 			
 			PointerInputInfo _currentPointer;
 			PointerInputInfo _previousPointer;
@@ -136,7 +133,7 @@ namespace et
 			vec4 _scrollbarsColor;
 			vec4 _overlayColor;
 			vec2 _contentSize;
-			vec2 _offset;
+			vec2 _contentOffset;
 			vec2 _velocity;
 			vec2 _bounceExtent;
 			vec2 _pointerScrollMultiplier;
@@ -150,6 +147,7 @@ namespace et
 
 			bool _pointerCaptured;
 			bool _manualScrolling;
+			bool _floorOffset = false;
 		};
 
 	}

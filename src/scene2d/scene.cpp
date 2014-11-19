@@ -209,9 +209,12 @@ void Scene::render(RenderContext* rc)
 
 	for (auto& obj : _layouts)
 	{
-		_renderer.setAdditionalOffsetAndAlpha(obj->offsetAlpha);
-		buildLayoutVertices(rc, obj->layout->renderingElement(), obj->layout);
-		_renderer.render(rc);
+		if (obj->layout->visible())
+		{
+			_renderer.setAdditionalOffsetAndAlpha(obj->offsetAlpha);
+			buildLayoutVertices(rc, obj->layout->renderingElement(), obj->layout);
+			_renderer.render(rc);
+		}
 	}
 
 	if (_overlay.texture().valid())
@@ -405,9 +408,11 @@ void Scene::layoutEntryTransitionFinished(LayoutEntry* l)
 {
 	if (l->state == LayoutEntry::State_Disappear)
 	{
-		layoutDidDisappear.invoke(l->layout);
-		l->layout->didDisappear();
-
+		if (l->layout.valid())
+		{
+			layoutDidDisappear.invoke(l->layout);
+			l->layout->didDisappear();
+		}
 		removeLayoutEntryFromList(l);
 	}
 	else 

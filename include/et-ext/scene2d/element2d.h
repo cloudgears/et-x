@@ -235,6 +235,7 @@ namespace et
 		protected:
 			void initAnimators();
 			void buildFinalTransform();
+			mat4 buildFinalTransform(const vec2& aOffset, float aAngle, const vec2& aScale, const vec2& aPosition);
 			
 			virtual SceneProgram initProgram(SceneRenderer&);
 			virtual void setDefaultProgram(const SceneProgram&);

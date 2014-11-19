@@ -144,7 +144,7 @@ namespace et
 				currentPosition(c), initialPosition(i), normalizedPointerPosition(npp) { }
 		};
 
-		enum Action
+		enum Action : size_t
 		{
 			Action_None = 0,
 			Action_Confirm,
@@ -154,7 +154,7 @@ namespace et
 		
 		struct Message
 		{
-			enum Type
+			enum Type : size_t
 			{
 				Type_None,
 				Type_TextInput,
@@ -183,13 +183,13 @@ namespace et
 		{
 			vec2 position;
 			vec2 size;
-			vec2 scale;
+			vec2 scale = vec2(1.0f);
 			vec2 pivotPoint;
-			float angle;
+			float angle = 0.0f;
 			
-			size_t layoutMask;
-			LayoutMode layoutPositionMode;
-			LayoutMode layoutSizeMode;
+			size_t layoutMask = LayoutMask_All;
+			LayoutMode layoutPositionMode = LayoutMode_Absolute;
+			LayoutMode layoutSizeMode = LayoutMode_Absolute;
 
 			ElementLayout() : scale(1.0f), angle(0.0f), layoutMask(LayoutMask_All),
 				layoutPositionMode(LayoutMode_Absolute), layoutSizeMode(LayoutMode_Absolute) { }
