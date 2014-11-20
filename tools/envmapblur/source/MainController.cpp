@@ -214,7 +214,14 @@ void MainController::render(et::RenderContext* rc)
 		cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 1.0f, 100.0f);
 		cubemapCamera.setModelViewMatrix(identityMatrix);
 		auto cm = cubemapMatrixProjectionArray(cubemapCamera.modelViewProjectionMatrix(), vec3(0.0f));
-
+		
+		rc->renderState().bindFramebuffer(_framebuffer);
+		{
+			BinaryDataStorage rgbaData(_framebuffer->size().square() * 4, 0);
+			glReadPixels(0, 0, _framebuffer->size().x, _framebuffer->size().y, GL_RGBA, GL_UNSIGNED_BYTE, rgbaData.binary());
+			ImageWriter::writeImageToFile(_fileToSave + ".png", rgbaData, _framebuffer->size(), 4, 8, ImageFormat_PNG, false);
+		}
+		
 		vec2i textureSize = _framebuffer->renderTarget(0)->size() / 2;
 		textureSize = vec2i(static_cast<int>(roundToHighestPowerOfTwo(etMin(textureSize.x, textureSize.y)) / 2));
 
