@@ -510,6 +510,7 @@ void Scene::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float d
 void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
 {
 	Element2d::Pointer l = obj;
+	l->reloadFromFile(obj->origin());
 	l->autoLayoutFromFile(obj->origin());
 	l->autoLayout(_rc->size(), 0.0f);
 }

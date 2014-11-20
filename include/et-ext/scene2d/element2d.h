@@ -220,6 +220,8 @@ namespace et
 			
 			void invalidateTransform();
 			
+			virtual void reloadFromFile(const std::string&) { }
+			
 			/*
 			 * Events
 			 */
