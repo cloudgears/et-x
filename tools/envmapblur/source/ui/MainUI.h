@@ -39,5 +39,7 @@ namespace emb
 		
 		et::s2d::Slider::Pointer _sliderAngle;
 		et::s2d::Slider::Pointer _sliderExposure;
+		
+		et::NotifyTimer _testTimer;
 	};
 }

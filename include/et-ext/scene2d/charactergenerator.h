@@ -24,19 +24,16 @@ namespace et
 			ET_DECLARE_POINTER(CharacterGenerator)
 
 		public:
-			CharacterGenerator(RenderContext* _rc, const std::string& face,
-				const std::string& boldFace, size_t size, size_t textureSize = 1024);
-			
+			CharacterGenerator(RenderContext* _rc, const std::string& face, const std::string& boldFace);
 			~CharacterGenerator();
 			
 			const Texture& texture() const 
 				{ return _texture; }
 
-			size_t size() const
-				{ return _size; }
-
-			const std::string& face() const
-				{ return _face; }
+			size_t baseSize() const;
+			
+			const std::string& face() const;
+			const std::string& boldFace() const;
 			
 			size_t charactersCount() const
 				{ return _chars.size() + _boldChars.size(); }
@@ -44,13 +41,13 @@ namespace et
 			CharDescriptor charDescription(int c)
 			{
 				auto i = _chars.find(c);
-				return (i != _chars.end()) ? i->second : generateCharacter(c, true);
+				return (i != _chars.end()) ? i->second : generateCharacter(c, CharacterFlag_Default);
 			}
 
 			CharDescriptor boldCharDescription(int c)
 			{
 				auto i = _boldChars.find(c);
-				return (i != _boldChars.end()) ? i->second : generateBoldCharacter(c, true);
+				return (i != _boldChars.end()) ? i->second : generateCharacter(c, CharacterFlag_Bold);
 			}
 			
 			const CharDescriptorMap& characters() const
@@ -58,18 +55,14 @@ namespace et
 
 			const CharDescriptorMap& boldCharacters() const
 				{ return _boldChars; }
-			
-			float lineHeight() const
-				{ return _chars.empty() ? static_cast<float>(_size) : _chars.begin()->second.pixelsSize.y; }
-			
+						
 			void setTexture(Texture);
 			void pushCharacter(const CharDescriptor&);
 			
 			ET_DECLARE_EVENT1(characterGenerated, int)
 
 		private:
-			CharDescriptor generateCharacter(int value, bool updateTexture);
-			CharDescriptor generateBoldCharacter(int value, bool updateTexture);
+			CharDescriptor generateCharacter(int value, CharacterFlags);
 
 		private:
 			ET_DECLARE_PIMPL(CharacterGenerator, 128)
@@ -79,11 +72,6 @@ namespace et
 			Texture _texture;
 			CharDescriptorMap _chars;
 			CharDescriptorMap _boldChars;
-
-			std::string _face;
-			std::string _boldFace;
-
-			size_t _size = 0;
 		};
 
 	}

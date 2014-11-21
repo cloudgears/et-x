@@ -18,7 +18,7 @@ Label::Label(const std::string& text, const Font::Pointer& font, Element2d* pare
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font),
 	_vertices(0), _backgroundColor(0.0f), _shadowOffset(1.0f), _textFade(0.0f), _textFadeDuration(0.0f),
 	_textFadeStartTime(0.0f), _lineInterval(1.0f), _horizontalAlignment(Alignment_Near),
-	_verticalAlignment(Alignment_Near), _animatingText(false), _allowFormatting(false)
+	_verticalAlignment(Alignment_Near), _animatingText(false)
 {
 	setFlag(Flag_TransparentForPointer);
 	
@@ -40,7 +40,7 @@ void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_backgroundVertices, Texture(), r.defaultProgram(), this);
 	
 	if (_vertices.lastElementIndex() > 0)
-		r.addVertices(_vertices, _font->texture(), r.defaultTextProgram(), this);
+		r.addVertices(_vertices, _font->generator()->texture(), r.defaultTextProgram(), this);
 }
 
 void Label::buildVertices(RenderContext*, SceneRenderer&)
@@ -116,7 +116,7 @@ void Label::setText(const std::string& text, float duration)
 		_text.setKey(text);
 		_nextText.setKey(text);
 		
-		_charListText = _font->buildString(_text.cachedText, _allowFormatting);
+		_charListText = _font->buildString(_text.cachedText);
 	}
 	else 
 	{
@@ -125,13 +125,13 @@ void Label::setText(const std::string& text, float duration)
 		if (_animatingText)
 		{
 			_text = _nextText;
-			_charListText = _font->buildString(_text.cachedText, _allowFormatting);
+			_charListText = _font->buildString(_text.cachedText);
 		}
 		
 		_nextText.setKey(text);
 		
-		_charListNextText = _font->buildString(_nextText.cachedText, _allowFormatting);
-		_nextTextSize = _font->measureStringSize(_nextText.cachedText, _allowFormatting);
+		_charListNextText = _font->buildString(_nextText.cachedText);
+		_nextTextSize = _font->measureStringSize(_nextText.cachedText);
 		
 		_textFade = 0.0f;
 		_animatingText = true;
@@ -147,10 +147,10 @@ vec2 Label::textSize()
 {
 	if (!contentValid())
 	{
-		_textSize = _font->measureStringSize(_text.cachedText, _allowFormatting);
+		_textSize = _font->measureStringSize(_text.cachedText);
 
 		if (_animatingText)
-			_nextTextSize = _font->measureStringSize(_nextText.cachedText, _allowFormatting);
+			_nextTextSize = _font->measureStringSize(_nextText.cachedText);
 	}
 
 	return _animatingText ? _nextTextSize : _textSize;
@@ -166,8 +166,8 @@ void Label::update(float t)
 		_animatingText = false;
 		
 		_text = _nextText;
-		_charListText = _font->buildString(_text.cachedText, _allowFormatting);
-		_textSize = _font->measureStringSize(_text.cachedText, _allowFormatting);
+		_charListText = _font->buildString(_text.cachedText);
+		_textSize = _font->measureStringSize(_text.cachedText);
 		
 		_nextText.clear();
 		_charListNextText.clear();
@@ -182,21 +182,13 @@ void Label::update(float t)
 
 void Label::adjustSize()
 {
-	_textSize = _font->measureStringSize(_text.cachedText, _allowFormatting);
+	_textSize = _font->measureStringSize(_text.cachedText);
 	
 	if (_animatingText)
-		_textSize = maxv(_textSize, _font->measureStringSize(_nextText.cachedText, _allowFormatting));
+		_textSize = maxv(_textSize, _font->measureStringSize(_nextText.cachedText));
 	
 	if (_autoAdjustSize)
 		setSize(_textSize);
-}
-
-void Label::setAllowFormatting(bool f)
-{
-	_allowFormatting = f;
-	_charListNextText = _font->buildString(_nextText.cachedText, _allowFormatting);
-	_charListText = _font->buildString(_text.cachedText, _allowFormatting);
-	invalidateContent();
 }
 
 void Label::setHorizontalAlignment(Alignment h)
@@ -237,7 +229,7 @@ void Label::fitToWidth(float w)
 {
 	if (_text.cachedText.empty()) return;
 	
-	setText(fitStringToWidthWithFont(_text.cachedText, _allowFormatting, _font, w));
+	setText(fitStringToWidthWithFont(_text.cachedText, _font, w));
 }
 
 vec2 Label::contentSize()
@@ -267,9 +259,9 @@ void Label::setShouldAutoAdjustSize(bool v)
 /*
  * Service functions
  */
-std::string Label::fitStringToWidthWithFont(std::string oldText, bool formatted, Font::Pointer font, float width)
+std::string Label::fitStringToWidthWithFont(std::string oldText, Font::Pointer font, float width)
 {
-	float minimalWidthToFit = font->measureStringSize("W", formatted).x;
+	float minimalWidthToFit = font->measureStringSize("W").x;
 	
 	if (std::abs(width) < minimalWidthToFit)
 		return oldText;
@@ -286,7 +278,7 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, bool formatted,
 		if (wsPos == std::string::npos)
 		{
 			std::string appended = latestLine + oldText;
-			vec2 measuredSize = font->measureStringSize(appended, formatted);
+			vec2 measuredSize = font->measureStringSize(appended);
 			if (measuredSize.x > width)
 			{
 				while (isWhitespaceChar(newText.back()))
@@ -306,7 +298,7 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, bool formatted,
 		if (!isNewLineChar(nextCharStr[0]))
 			appended.append(nextCharStr);
 		
-		if (font->measureStringSize(appended, formatted).x < width)
+		if (font->measureStringSize(appended).x < width)
 		{
 			newText.append(word);
 			latestLine.append(word);
@@ -325,7 +317,7 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, bool formatted,
 		{
 			std::string wBegin = word.substr(0, word.size() - 1);
 			appended = latestLine + wBegin;
-			while (font->measureStringSize(appended, formatted).x > width)
+			while (font->measureStringSize(appended).x > width)
 			{
 				wBegin.erase(wBegin.size() - 1);
 				appended = latestLine + wBegin;

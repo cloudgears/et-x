@@ -49,7 +49,7 @@ void ListboxPopup::buildVertices(SceneRenderer&)
 
 		float row = 0.0f;
 		float rowSize = _owner->size().y;
-		float y0 = floorf(0.5f * (rowSize - _owner->_font->lineHeight()));
+		float y0 = floorf(0.5f * (rowSize - 10.0f)); // _owner->_font->lineHeight()));
 		float dy = floorf(size().y / static_cast<float>(values.size()));
 
 		vec4 drawColor = finalColor();
@@ -100,7 +100,7 @@ void ListboxPopup::addToRenderQueue(RenderContext*, SceneRenderer& r)
 		r.addVertices(_selectionVertices, _owner->_selection.texture, program(), this);
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _owner->_font->texture(), r.defaultTextProgram(), this);
+		r.addVertices(_textVertices, _owner->_font->generator()->texture(), r.defaultTextProgram(), this);
 }
 
 bool ListboxPopup::pointerPressed(const PointerInputInfo&)
@@ -196,7 +196,7 @@ void Listbox::buildVertices(SceneRenderer&)
 	if (shouldDrawText())
 	{
 		std::string textToDraw = _prefix + _values[_selectedIndex];
-		vec2 textPos = _contentOffset + vec2(0.0f, 0.5f * (size().y - _font->lineHeight()));
+		vec2 textPos = _contentOffset + vec2(0.0f, 0.5f * (size().y - 10.0f)); // line height
 		buildStringVertices(_textVertices, _font->buildString(textToDraw), Alignment_Near, Alignment_Near,
 			textPos, finalColor(), transform);
 	}
@@ -213,7 +213,7 @@ void Listbox::addToRenderQueue(RenderContext*, SceneRenderer& r)
 		r.addVertices(_backgroundVertices, _images[_state].texture, program(), this);
 
 	if (shouldDrawText())
-		r.addVertices(_textVertices, _font->texture(), program(), this);
+		r.addVertices(_textVertices, _font->generator()->texture(), program(), this);
 }
 
 bool Listbox::shouldDrawText()

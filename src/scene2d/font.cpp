@@ -23,8 +23,11 @@ bool textBeginsFrom(const wchar_t* text, const wchar_t* entry);
 const wchar_t* findClosingBracket(const wchar_t* text);
 vec4 colorTagToColor(const std::wstring& colorTag);
 
-Font::Font(const CharacterGenerator::Pointer& generator) :
-	_generator(generator) { }
+Font::Font(const CharacterGenerator::Pointer& generator, size_t sz) :
+	_generator(generator), _size(sz)
+{
+	_scale = static_cast<float>(_size) / static_cast<float>(_generator->baseSize());
+}
 
 void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 {
@@ -37,7 +40,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	
 	serializeInt(fOut, FONT_VERSION_CURRENT);
 	serializeString(fOut, _generator->face());
-	serializeInt(fOut, _generator->size());
+	serializeInt(fOut, _size);
 	
 	std::string textureFile = removeFileExt(getFileName(fileName)) + ".cache.png";
 	std::string layoutFile = removeFileExt(getFileName(fileName)) + ".layout.png";
@@ -62,14 +65,15 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	
 #if (ET_PLATFORM_MAC || ET_PLATFORM_WIN)
 	
-	BinaryDataStorage imageData(texture()->size().square());
+	auto tex = generator()->texture();
+	BinaryDataStorage imageData(tex->size().square());
 	
-	rc->renderState().bindTexture(0, texture());
+	rc->renderState().bindTexture(0, tex);
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE, imageData.data());
 	checkOpenGLError("glGetTexImage");
 	
 	ImageWriter::writeImageToFile(getFilePath(fileName) + textureFile, imageData,
-		texture()->size(), 1, 8, ImageFormat_PNG, true);
+		tex->size(), 1, 8, ImageFormat_PNG, true);
 	
 #elif (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
 	
@@ -153,9 +157,9 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 	vec2 sz;
 	vec2 lineSize;
 
-	for (auto& desc : s)
+	for (const auto& desc : s)
 	{
-		lineSize.y = etMax(lineSize.y, desc.pixelsSize.y + desc.padding.y);
+		lineSize.y = etMax(lineSize.y, desc.originalSize.y);
 		
 		if ((desc.value == ET_RETURN) || (desc.value == ET_NEWLINE))
 		{
@@ -165,7 +169,7 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 		}
 		else 
 		{
-			lineSize.x += desc.padding.x + desc.pixelsSize.x;
+			lineSize.x += desc.originalSize.x;
 		}
 	}
 	
@@ -175,57 +179,22 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 	return sz;
 }
 
-vec2 Font::measureStringSize(const std::string& s, bool formatted)
+vec2 Font::measureStringSize(const std::string& s)
 {
-	if (isUtf8String(s))
-	{
-		std::wstring ws = utf8ToUnicode(s);
-		return measureStringSize(formatted ? parseString(ws) : buildString(ws, formatted));
-	}
-	
-	return measureStringSize(formatted ? parseString(s) : buildString(s, formatted));
+	return measureStringSize(buildString(utf8ToUnicode(s)));
 }
 
-vec2 Font::measureStringSize(const std::wstring& s, bool formatted)
+vec2 Font::measureStringSize(const std::wstring& s)
 {
-	return measureStringSize(formatted ? parseString(s) : buildString(s, formatted));
+	return measureStringSize(buildString(s));
 }
 
-CharDescriptorList Font::buildString(const std::string& s, bool formatted)
+CharDescriptorList Font::buildString(const std::string& s)
 {
-	if (isUtf8String(s))
-		return buildString(utf8ToUnicode(s), formatted);
-
-	if (formatted)
-		return parseString(s);
-
-	CharDescriptorList result;
-	
-	for (const auto& i : s)
-		result.push_back(charDescription(i));
-	
-	return result;
+	return buildString(utf8ToUnicode(s));
 }
 
-CharDescriptorList Font::buildString(const std::wstring& s, bool formatted)
-{
-	if (formatted)
-		return parseString(s);
-
-	CharDescriptorList result;
-	for (const auto& i : s)
-		result.push_back(charDescription(i));
-	return result;
-}
-
-CharDescriptorList Font::parseString(const std::string& s)
-{
-	std::wstring ws;
-	ws.assign(s.begin(), s.end());
-	return parseString(ws);
-}
-
-CharDescriptorList Font::parseString(const std::wstring& s)
+CharDescriptorList Font::buildString(const std::wstring& s)
 {
 	if (s.empty())
 		return CharDescriptorList();
@@ -302,9 +271,19 @@ CharDescriptorList Font::parseString(const std::wstring& s)
 		}
 		else
 		{
-			auto cd = (boldTags > 0) ? boldCharDescription(*b) : charDescription(*b);
+			CharDescriptor cd = (boldTags > 0) ? _generator->boldCharDescription(*b) : _generator->charDescription(*b);
+			
+			float localScale = scaleStack.top();
+			float commonScale = _scale * localScale;
+			
+			cd.contentRect.origin().x *= commonScale;
+			cd.contentRect.origin().y = _scale * (cd.contentRect.origin().y + cd.contentRect.size().y * (0.5f - 0.5f * localScale));
+			cd.contentRect.size() *= commonScale;
+			cd.originalSize *= commonScale;
+			
 			cd.color = colorsStack.top();
-			cd.pixelsSize *= scaleStack.top();
+			cd.parameters = vec4(0.5f, sqr(0.225 / std::pow(commonScale, 1.0f / 3.0f)), 0.0f, 0.0f);
+			
 			result[resultSize++] = cd;
 			++b;
 		}

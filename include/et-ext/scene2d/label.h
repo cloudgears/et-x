@@ -19,8 +19,8 @@ namespace et
 		public:
 			ET_DECLARE_POINTER(Label)
 			
-			static std::string fitStringToWidthWithFont(std::string inputString, bool formatted,
-				Font::Pointer font, float width);
+			static std::string fitStringToWidthWithFont(std::string inputString, Font::Pointer font,
+				float width);
 
 		public:
 			Label(const std::string& text, const Font::Pointer& font, Element2d* parent,
@@ -48,7 +48,6 @@ namespace et
 			
 			void setShouldAutoAdjustSize(bool);
 			
-			void setAllowFormatting(bool);
 			void setBackgroundColor(const vec4&);
 			
 			void setHorizontalAlignment(Alignment);
@@ -91,7 +90,6 @@ namespace et
 			Alignment _horizontalAlignment = Alignment_Near;
 			Alignment _verticalAlignment = Alignment_Near;
 			bool _animatingText = false;
-			bool _allowFormatting = false;
 			bool _autoAdjustSize = true;
 		};
 	}

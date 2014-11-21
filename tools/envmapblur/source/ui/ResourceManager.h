@@ -16,15 +16,19 @@ namespace emb
 	{
 	public:
 		void load(et::RenderContext*);
+		void cacheFonts();
 		
 		et::s2d::Label::Pointer label(const std::string&, et::s2d::Element2d*);
-		
 		et::s2d::Button::Pointer button(const std::string&, et::s2d::Element2d*);
 		
 	private:
 		struct
 		{
-			et::s2d::Font::Pointer mainFont;
+			et::s2d::Font::Pointer buttonsFont;
+			et::s2d::Font::Pointer labelsFont;
 		}fonts;
+		
+	private:
+		et::RenderContext* _rc = nullptr;
 	};
 }

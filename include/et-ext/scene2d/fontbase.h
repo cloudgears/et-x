@@ -17,35 +17,30 @@ namespace et
 {
 	namespace s2d
 	{
-		enum CharParameter
+		enum CharacterFlags
 		{
-			CharParameter_Bold = 0x0001
+			CharacterFlag_Default = 0x0000,
+			CharacterFlag_Bold = 0x0001
 		};
 
 		struct CharDescriptor
 		{
-			int value;
-			int params;
-			vec4 color;
-			vec2 pixelsOrigin;
-			vec2 pixelsSize;
-			vec2 uvOrigin;
-			vec2 uvSize;
-			vec2 padding;
-			vec4i extra;
+			int value = 0;
+			int flags = CharacterFlag_Default;
 			
-			CharDescriptor() :
-				value(0), params(0) { }
+			vec4 color = vec4(1.0f);
+			vec2 originalSize;
+			rect contentRect;
+			rect uvRect;
+			vec4 parameters;
 			
-			CharDescriptor(int c, int p = 0) :
-				value(c), params(p), color(1.0f) { }
+			CharDescriptor()
+				{ }
 			
-			CharDescriptor(int c, int p, const vec2& sz) :
-				value(c), params(p), color(1.0f), pixelsSize(sz) { }
+			CharDescriptor(int v) :
+				value(v) { }
 		};
 
-
-		typedef std::vector<int> CharacterRange;
 		typedef std::vector<CharDescriptor> CharDescriptorList;
 		typedef std::map<int, CharDescriptor> CharDescriptorMap;
 	}

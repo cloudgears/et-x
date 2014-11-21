@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		A53981FD18A3061F0063E8E0 /* hdrloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53981FC18A3061F0063E8E0 /* hdrloader.cpp */; };
-		A5704F4A1922CD9D00B1F2F5 /* charactergenerator.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5704F491922CD9D00B1F2F5 /* charactergenerator.mac.mm */; };
 		A577A7D91A1D49C400A3336E /* et.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A577A7D71A1D49C400A3336E /* et.cpp */; };
 		A577A7DA1A1D49C400A3336E /* memoryallocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A577A7D81A1D49C400A3336E /* memoryallocator.cpp */; };
+		A577A7E91A1E6B2A00A3336E /* charactergenerator.sdf.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A577A7E81A1E6B2A00A3336E /* charactergenerator.sdf.mac.mm */; };
 		A5896BE718A0279A00962607 /* json.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BC518A0279A00962607 /* json.cpp */; };
 		A5896BED18A0279A00962607 /* button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD018A0279A00962607 /* button.cpp */; };
 		A5896BF018A0279A00962607 /* element2d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5896BD318A0279A00962607 /* element2d.cpp */; };
@@ -131,9 +131,9 @@
 /* Begin PBXFileReference section */
 		A53981FB18A306070063E8E0 /* hdrloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdrloader.h; sourceTree = "<group>"; };
 		A53981FC18A3061F0063E8E0 /* hdrloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hdrloader.cpp; sourceTree = "<group>"; };
-		A5704F491922CD9D00B1F2F5 /* charactergenerator.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = charactergenerator.mac.mm; sourceTree = "<group>"; };
 		A577A7D71A1D49C400A3336E /* et.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = et.cpp; sourceTree = "<group>"; };
 		A577A7D81A1D49C400A3336E /* memoryallocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memoryallocator.cpp; sourceTree = "<group>"; };
+		A577A7E81A1E6B2A00A3336E /* charactergenerator.sdf.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = charactergenerator.sdf.mac.mm; sourceTree = "<group>"; };
 		A5896BA318A0279A00962607 /* baseclasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseclasses.h; sourceTree = "<group>"; };
 		A5896BA418A0279A00962607 /* baseconst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseconst.h; sourceTree = "<group>"; };
 		A5896BA518A0279A00962607 /* button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = button.h; sourceTree = "<group>"; };
@@ -141,7 +141,6 @@
 		A5896BA918A0279A00962607 /* element2d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = element2d.h; sourceTree = "<group>"; };
 		A5896BAB18A0279A00962607 /* font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = font.h; sourceTree = "<group>"; };
 		A5896BAC18A0279A00962607 /* fontbase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontbase.h; sourceTree = "<group>"; };
-		A5896BAD18A0279A00962607 /* fontgen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontgen.h; sourceTree = "<group>"; };
 		A5896BAE18A0279A00962607 /* fullscreenelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fullscreenelement.h; sourceTree = "<group>"; };
 		A5896BAF18A0279A00962607 /* imageview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imageview.h; sourceTree = "<group>"; };
 		A5896BB018A0279A00962607 /* label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = label.h; sourceTree = "<group>"; };
@@ -439,7 +438,6 @@
 				A5896BA918A0279A00962607 /* element2d.h */,
 				A5896BAB18A0279A00962607 /* font.h */,
 				A5896BAC18A0279A00962607 /* fontbase.h */,
-				A5896BAD18A0279A00962607 /* fontgen.h */,
 				A5896BAE18A0279A00962607 /* fullscreenelement.h */,
 				A5896BAF18A0279A00962607 /* imageview.h */,
 				A5896BB018A0279A00962607 /* label.h */,
@@ -483,7 +481,7 @@
 		A5896BCB18A0279A00962607 /* platform-mac */ = {
 			isa = PBXGroup;
 			children = (
-				A5704F491922CD9D00B1F2F5 /* charactergenerator.mac.mm */,
+				A577A7E81A1E6B2A00A3336E /* charactergenerator.sdf.mac.mm */,
 			);
 			path = "platform-mac";
 			sourceTree = "<group>";
@@ -1148,7 +1146,6 @@
 				A5F094EC18A00AF70017B239 /* criticalsection.unix.cpp in Sources */,
 				A5896BF018A0279A00962607 /* element2d.cpp in Sources */,
 				A5F094FC18A00AF70017B239 /* vertexarray.cpp in Sources */,
-				A5704F4A1922CD9D00B1F2F5 /* charactergenerator.mac.mm in Sources */,
 				A5896BF418A0279A00962607 /* imageview.cpp in Sources */,
 				A5F094EA18A00AF70017B239 /* sound.openal.mac.mm in Sources */,
 				A5F094E318A00AF70017B239 /* tools.apple.mm in Sources */,
@@ -1193,6 +1190,7 @@
 				A5896BE718A0279A00962607 /* json.cpp in Sources */,
 				A5F094F918A00AF70017B239 /* timedobject.cpp in Sources */,
 				A5F094D918A00AF70017B239 /* imageoperations.cpp in Sources */,
+				A577A7E91A1E6B2A00A3336E /* charactergenerator.sdf.mac.mm in Sources */,
 				A5896BFE18A0279A00962607 /* table.cpp in Sources */,
 				A5896BFF18A0279A00962607 /* textfield.cpp in Sources */,
 				A5A8673F1920F77600A71D37 /* pathresolver.cpp in Sources */,

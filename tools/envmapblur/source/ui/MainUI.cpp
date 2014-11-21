@@ -7,6 +7,7 @@
 //
 
 #include <et/platform/platformtools.h>
+#include <et/app/application.h>
 #include "MainUI.h"
 
 using namespace et;
@@ -54,6 +55,7 @@ MainUI::MainUI(ResourceManager& rm)
 	_sliderAngle->setSliderFillColors(vec4(0.25f, 1.0f, 0.5f, 1.0f), vec4(2.0f / 3.0f));
 	_sliderAngle->setRange(DEG_1, HALF_PI);
 	_sliderAngle->setValue(5.0f * DEG_1);
+	
 	_sliderAngle->changed.connect([this](s2d::Slider* slider)
 	{
 		s2d::Label::Pointer lab = slider->children().front();
@@ -69,10 +71,11 @@ MainUI::MainUI(ResourceManager& rm)
 	_sliderExposure->setSliderFillColors(vec4(0.25f, 1.0f, 0.5f, 1.0f), vec4(2.0f / 3.0f));
 	_sliderExposure->setRange(0.01f, 4.0f);
 	_sliderExposure->setValue(1.0f);
+	
 	_sliderExposure->changed.connect([this](s2d::Slider* slider)
 	{
 		s2d::Label::Pointer lab = slider->children().front();
-		lab->setText(floatToStr(slider->value(), 2));
+		lab->setText(floatToStr(slider->value(), 3));
 	});
 	
 	lab = rm.label("1.00", _sliderExposure.ptr());

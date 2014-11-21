@@ -33,7 +33,6 @@ MessageView::MessageView(const std::string& title, const std::string& text, cons
 
 	_title->setPivotPoint(vec2(0.5f, 0.0f));
 	_title->setHorizontalAlignment(Alignment_Center);
-	_title->setAllowFormatting(true);
 	_title->setShadowColor(vec4(0.0f, 0.0f, 0.0f, 0.75f));
 
 	ET_CONNECT_EVENT(_button2->clicked, MessageView::buttonClicked)

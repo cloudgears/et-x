@@ -45,7 +45,7 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 	
 	for (const CharDescriptor& desc : chars)
 	{
-		line.w = etMax(line.w, desc.padding.y + lineInterval * desc.pixelsSize.y);
+		line.w = etMax(line.w, lineInterval * desc.originalSize.y);
 		
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{
@@ -54,7 +54,7 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 		}
 		else 
 		{
-			line.z += desc.pixelsSize.x + desc.padding.x;
+			line.z += desc.originalSize.x;
 		}
 	}
 	lines.push_back(line);
@@ -74,35 +74,35 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 	size_t lineIndex = 0;
 	line = lines.front();
 	
-	vec2 mask(0.0f, 0.0f);
-	
 	vertices.fitToSize(6 * chars.size());
 	for (const CharDescriptor& desc : chars)
 	{
+		vec2 sdfParameters = desc.parameters.xy();
+		
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{
 			line = lines[++lineIndex];
 		}
 		else 
 		{
-			vec2 topLeft = line.xy() + desc.padding + pos;
-			vec2 bottomLeft = topLeft + vec2(0.0f, desc.pixelsSize.y);
-			vec2 topRight = topLeft + vec2(desc.pixelsSize.x, 0.0f);
-			vec2 bottomRight = bottomLeft + vec2(desc.pixelsSize.x, 0.0f);
+			vec2 topLeft = pos + line.xy() + desc.contentRect.origin();
+			vec2 bottomLeft = topLeft + vec2(0.0f, desc.contentRect.height);
+			vec2 topRight = topLeft + vec2(desc.contentRect.width, 0.0f);
+			vec2 bottomRight = bottomLeft + vec2(desc.contentRect.width, 0.0f);
 			
-			vec2 topLeftUV = desc.uvOrigin;
-			vec2 topRightUV = topLeftUV + vec2(desc.uvSize.x, 0.0f);
-			vec2 bottomLeftUV = desc.uvOrigin - vec2(0.0f, desc.uvSize.y);
-			vec2 bottomRightUV = bottomLeftUV + vec2(desc.uvSize.x, 0.0f);
+			vec2 topLeftUV = desc.uvRect.origin();
+			vec2 topRightUV = topLeftUV + vec2(desc.uvRect.width, 0.0f);
+			vec2 bottomLeftUV = topLeftUV - vec2(0.0f, desc.uvRect.height);
+			vec2 bottomRightUV = bottomLeftUV + vec2(desc.uvRect.width, 0.0f);
 			vec4 charColor = desc.color * color;
 			
 			buildQuad(vertices,
-				SceneVertex(floorv(transform * topLeft), vec4(topLeftUV, mask), charColor),
-				SceneVertex(floorv(transform * topRight), vec4(topRightUV, mask), charColor),
-				SceneVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, mask), charColor),
-				SceneVertex(floorv(transform * bottomRight), vec4(bottomRightUV, mask), charColor));
+				SceneVertex(floorv(transform * topLeft), vec4(topLeftUV, sdfParameters), charColor),
+				SceneVertex(floorv(transform * topRight), vec4(topRightUV, sdfParameters), charColor),
+				SceneVertex(floorv(transform * bottomLeft), vec4(bottomLeftUV, sdfParameters), charColor),
+				SceneVertex(floorv(transform * bottomRight), vec4(bottomRightUV, sdfParameters), charColor));
 			
-			line.x += desc.pixelsSize.x + desc.padding.x;
+			line.x += desc.originalSize.x;
 		}
 	}
 }

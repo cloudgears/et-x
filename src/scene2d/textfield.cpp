@@ -20,7 +20,7 @@ TextField::TextField(const Font::Pointer& font, Element2d* parent, const std::st
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
-	_caretChar.push_back(_font->charDescription(caretChar));
+	_caretChar.push_back(_font->generator()->charDescription(caretChar));
 	
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
@@ -31,7 +31,7 @@ TextField::TextField(const std::string& text, const Font::Pointer& font, Element
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
-	_caretChar.push_back(_font->charDescription(caretChar));
+	_caretChar.push_back(_font->generator()->charDescription(caretChar));
 	
 	setText(text);
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
@@ -44,7 +44,7 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 	_font(font), _background(background), _alignmentH(Alignment_Near), _alignmentV(Alignment_Center),
 	_secured(false), _caretVisible(false)
 {
-	_caretChar.push_back(_font->charDescription(caretChar));
+	_caretChar.push_back(_font->generator()->charDescription(caretChar));
 	
 	setSize(_font->measureStringSize(text));
 	
@@ -68,7 +68,7 @@ void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_imageVertices, _background.texture, program(), this);
 	
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _font->texture(), r.defaultTextProgram(), this);
+		r.addVertices(_textVertices, _font->generator()->texture(), r.defaultTextProgram(), this);
 }
 
 void TextField::buildVertices(RenderContext*, SceneRenderer&)
@@ -139,8 +139,8 @@ void TextField::setText(const std::string& s)
 	_text = s;
 	_actualText = _prefix + _text;
 	
-	_textCharacters = _secured ? CharDescriptorList(_actualText.length(), _font->charDescription(securedChar)) :
-		_font->buildString(_actualText);
+	_textCharacters = _secured ? CharDescriptorList(_actualText.length(),
+		_font->generator()->charDescription(securedChar)) : _font->buildString(_actualText);
 	
 	invalidateContent();
 }
