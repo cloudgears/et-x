@@ -44,7 +44,14 @@ void TextElement::processMessage(const Message& msg)
 void TextElement::loadProperties(const Dictionary& d)
 {
 	if (d.hasKey("font_size"))
-		setFontSize(d.floatForKey("font_size")->content);
+	{
+		auto obj = d.objectForKey("font_size");
+		
+		if (obj->valueClass() == ValueClass_Float)
+			setFontSize(FloatValue(obj)->content);
+		else if (obj->valueClass() == ValueClass_Integer)
+			setFontSize(static_cast<float>(IntegerValue(obj)->content));
+	}
 	
 	if (d.hasKey("font_smoothing"))
 		setFontSmoothing(d.floatForKey("font_smoothing")->content);
