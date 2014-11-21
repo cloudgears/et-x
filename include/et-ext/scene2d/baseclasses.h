@@ -161,13 +161,21 @@ namespace et
 				Type_TextFieldControl,
 				Type_SetText,
 				Type_UpdateText,
-				Type_PerformAction
+				Type_PerformAction,
+				Type_SetFontSmoothing
 			};
 			
 			size_t type = 0;
-			size_t param = 0;
+			
+			union
+			{
+				size_t param = 0;
+				float paramf;
+			};
+			
 			std::string text;
 			float duration = 0.0f;
+
 
 			explicit Message(size_t aType) :
 				type(aType) { }

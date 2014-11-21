@@ -63,6 +63,7 @@ namespace et
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);
 			void buildVertices(RenderContext* rc, SceneRenderer& renderer);
 			void update(float t);
+			void invalidateText();
 			
 		private:
 			LocalizedText _text;

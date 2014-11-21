@@ -66,7 +66,7 @@ void ListboxPopup::buildVertices(SceneRenderer&)
 					rect(vec2(0.0f, row * rowSize), vec2(size().x, rowSize)), drawColor, transform);
 			}
 
-			buildStringVertices(_textVertices, _owner->font()->buildString(*i, _owner->fontSize()), Alignment_Near,
+			buildStringVertices(_textVertices, _owner->font()->buildString(*i, _owner->fontSize(), _owner->fontSmoothing()), Alignment_Near,
 				Alignment_Near, textPos, drawColor, transform);
 			textPos.y += dy;
 		}
@@ -197,7 +197,7 @@ void Listbox::buildVertices(SceneRenderer&)
 	{
 		std::string textToDraw = _prefix + _values[_selectedIndex];
 		vec2 textPos = _contentOffset + vec2(0.0f, 0.5f * (size().y - 10.0f)); // line height
-		buildStringVertices(_textVertices, font()->buildString(textToDraw, fontSize()), Alignment_Near, Alignment_Near,
+		buildStringVertices(_textVertices, font()->buildString(textToDraw, fontSize(), fontSmoothing()), Alignment_Near, Alignment_Near,
 			textPos, finalColor(), transform);
 	}
 

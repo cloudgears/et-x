@@ -46,7 +46,7 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 {
 	_caretChar.push_back(font()->generator()->charDescription(caretChar));
 	
-	setSize(font()->measureStringSize(text, fontSize()));
+	setSize(font()->measureStringSize(text, fontSize(), fontSmoothing()));
 	
 	setText(text);
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
@@ -140,13 +140,15 @@ void TextField::setText(const std::string& s)
 	_actualText = _prefix + _text;
 	
 	_textCharacters = _secured ? CharDescriptorList(_actualText.length(),
-		font()->generator()->charDescription(securedChar)) : font()->buildString(_actualText, fontSize());
+		font()->generator()->charDescription(securedChar)) : font()->buildString(_actualText, fontSize(), fontSmoothing());
 	
 	invalidateContent();
 }
 
 void TextField::processMessage(const Message& msg)
 {
+	TextElement::processMessage(msg);
+	
 	if (msg.type == Message::Type_TextFieldControl)
 	{
 		switch (msg.param)
@@ -298,7 +300,7 @@ void TextField::setBackgroundImage(const Image& img)
 void TextField::setPlaceholder(const std::string& s)
 {
 	_placeholder.setKey(s);
-	_placeholderCharacters = font()->buildString(_placeholder.cachedText, fontSize());
+	_placeholderCharacters = font()->buildString(_placeholder.cachedText, fontSize(), fontSmoothing());
 	
 	invalidateContent();
 }

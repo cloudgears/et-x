@@ -20,11 +20,32 @@ TextElement::TextElement(Element2d* parent, const Font::Pointer& f, float fsz, c
 void TextElement::setFont(const Font::Pointer& f)
 {
 	_font = f;
-	invalidateContent();
+	invalidateText();
 }
 
 void TextElement::setFontSize(float fsz)
 {
 	_fontSize = fsz;
-	invalidateContent();
+	invalidateText();
+}
+
+void TextElement::setFontSmoothing(float fsm)
+{
+	_fontSmoothing = fsm;
+	invalidateText();
+}
+
+void TextElement::processMessage(const Message& msg)
+{
+	if (msg.type == Message::Type_SetFontSmoothing)
+		setFontSmoothing(msg.paramf);
+}
+
+void TextElement::loadProperties(const Dictionary& d)
+{
+	if (d.hasKey("font_size"))
+		setFontSize(d.floatForKey("font_size")->content);
+	
+	if (d.hasKey("font_smoothing"))
+		setFontSmoothing(d.floatForKey("font_smoothing")->content);
 }

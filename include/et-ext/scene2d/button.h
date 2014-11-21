@@ -146,6 +146,8 @@ namespace et
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);
 			
 			void setCurrentState(State s);
+			
+			void invalidateText();
 
 		private:			
 			LocalizedText _currentTitle;
@@ -187,7 +189,6 @@ namespace et
 			
 			float _lastClickTime = 0.0f;
 			float _clickTreshold = 0.0f;
-			float _titleTransition = 0.0f;
 			
 			bool _pressed = false;
 			bool _hovered = false;

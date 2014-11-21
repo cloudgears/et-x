@@ -24,8 +24,7 @@ Label::Label(const std::string& text, const Font::Pointer& f, float fsz, Element
 	_text.setKey(text);
 	_nextText.setKey(text);
 	
-	_charListText = font()->buildString(_text.cachedText, fontSize());
-	_charListNextText = font()->buildString(_nextText.cachedText, fontSize());
+	invalidateText();
 	
 	adjustSize();
 }
@@ -114,42 +113,36 @@ void Label::setText(const std::string& text, float duration)
 		
 		_text.setKey(text);
 		_nextText.setKey(text);
-		
-		_charListText = font()->buildString(_text.cachedText, fontSize());
 	}
 	else 
 	{
 		startUpdates();
 
 		if (_animatingText)
-		{
 			_text = _nextText;
-			_charListText = font()->buildString(_text.cachedText, fontSize());
-		}
 		
 		_nextText.setKey(text);
 		
-		_charListNextText = font()->buildString(_nextText.cachedText, fontSize());
-		_nextTextSize = font()->measureStringSize(_nextText.cachedText, fontSize());
+		_nextTextSize = font()->measureStringSize(_nextText.cachedText, fontSize(), fontSmoothing());
 		
 		_textFade = 0.0f;
 		_animatingText = true;
 		_textFadeStartTime = actualTime();
 		_textFadeDuration = duration;
 	}
-
+	
+	invalidateText();
 	adjustSize();
-	invalidateContent();
 }
 
 vec2 Label::textSize()
 {
 	if (!contentValid())
 	{
-		_textSize = font()->measureStringSize(_text.cachedText, fontSize());
+		_textSize = font()->measureStringSize(_text.cachedText, fontSize(), fontSmoothing());
 
 		if (_animatingText)
-			_nextTextSize = font()->measureStringSize(_nextText.cachedText, fontSize());
+			_nextTextSize = font()->measureStringSize(_nextText.cachedText, fontSize(), fontSmoothing());
 	}
 
 	return _animatingText ? _nextTextSize : _textSize;
@@ -165,8 +158,7 @@ void Label::update(float t)
 		_animatingText = false;
 		
 		_text = _nextText;
-		_charListText = font()->buildString(_text.cachedText, fontSize());
-		_textSize = font()->measureStringSize(_text.cachedText, fontSize());
+		_textSize = font()->measureStringSize(_text.cachedText, fontSize(), fontSmoothing());
 		
 		_nextText.clear();
 		_charListNextText.clear();
@@ -174,6 +166,7 @@ void Label::update(float t)
 		
 		adjustSize();
 		cancelUpdates();
+		invalidateText();
 	}
 
 	invalidateContent();
@@ -181,10 +174,10 @@ void Label::update(float t)
 
 void Label::adjustSize()
 {
-	_textSize = font()->measureStringSize(_text.cachedText, fontSize());
+	_textSize = font()->measureStringSize(_text.cachedText, fontSize(), fontSmoothing());
 	
 	if (_animatingText)
-		_textSize = maxv(_textSize, font()->measureStringSize(_nextText.cachedText, fontSize()));
+		_textSize = maxv(_textSize, font()->measureStringSize(_nextText.cachedText, fontSize(), fontSmoothing()));
 	
 	if (_autoAdjustSize)
 		setSize(_textSize);
@@ -244,6 +237,8 @@ void Label::setLineInterval(float i)
 
 void Label::processMessage(const Message& msg)
 {
+	TextElement::processMessage(msg);
+	
 	if (msg.type == Message::Type_SetText)
 		setText(msg.text, msg.duration);
 	else if (msg.type == Message::Type_UpdateText)
@@ -357,4 +352,11 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, Font::Pointer f
 	}
 	
 	return newText;
+}
+
+void Label::invalidateText()
+{
+	_charListText = font()->buildString(_text.cachedText, fontSize(), fontSmoothing());
+	_charListNextText = font()->buildString(_nextText.cachedText, fontSize(), fontSmoothing());
+	invalidateContent();
 }

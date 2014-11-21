@@ -22,11 +22,11 @@ Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Elem
 	_horizontalAlignment(Alignment_Center), _verticalAlignment(Alignment_Center)
 {
 	_currentTitle.setKey(title);
-	_currentTextSize = font()->measureStringSize(_currentTitle.cachedText, fontSize());
+	_currentTextSize = font()->measureStringSize(_currentTitle.cachedText, fontSize(), fontSmoothing());
 	
 	_nextTitle = _currentTitle;
 	_maxTextSize = _currentTextSize;
-	_currentTitleCharacters = font()->buildString(_currentTitle.cachedText, fontSize());
+	_currentTitleCharacters = font()->buildString(_currentTitle.cachedText, fontSize(), fontSmoothing());
 	
 	setSize(sizeForText(title));
 	
@@ -35,17 +35,14 @@ Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Elem
 	
 	_titleAnimator.updated.connect<Button>(this, &Button::invalidateContent);
 	
-	_titleAnimator.finished.connect([this]()
+	_titleAnimator.finished.connect([this]() mutable
 	{
 		_currentTitle = _nextTitle;
 		_currentTextSize = _nextTextSize;
 		_currentTitleCharacters = _nextTitleCharacters;
-		
 		_maxTextSize = _currentTextSize;
-		_titleTransition = 0.0f;
-		
 		_nextTextSize = vec2(0.0f);
-		_nextTitleCharacters.clear();
+		_titleAnimator.setValue(0.0f);
 	});
 }
 
@@ -170,15 +167,15 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	{
 		vec4 currentAlphaScale = alphaScale;
 		
-		currentAlphaScale.w = alphaScale.w * (1.0f - _titleTransition);
+		currentAlphaScale.w = alphaScale.w * (1.0f - _titleAnimator.value());
 		if (!_currentTitleCharacters.empty())
 		{
 			buildStringVertices(_textVertices, _currentTitleCharacters, Alignment_Center,
 				Alignment_Center, textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
 		}
 		
-		currentAlphaScale.w = alphaScale.w * _titleTransition;
-		if (!_nextTitleCharacters.empty())
+		currentAlphaScale.w = alphaScale.w * _titleAnimator.value();
+		if (_titleAnimator.running())
 		{
 			buildStringVertices(_textVertices, _nextTitleCharacters, Alignment_Center,
 				Alignment_Center, textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
@@ -307,19 +304,13 @@ void Button::performClick()
 void Button::setTitle(const std::string& t, float duration)
 {
 	_nextTitle.setKey(t);
-	_nextTitleCharacters = font()->buildString(_nextTitle.cachedText, fontSize());
 	
-	_nextTextSize = font()->measureStringSize(_nextTitle.cachedText, fontSize());
+	_nextTextSize = font()->measureStringSize(_nextTitle.cachedText, fontSize(), fontSmoothing());
 	_maxTextSize = maxv(_currentTextSize, _nextTextSize);
 	
-	_titleAnimator.cancelUpdates();
-	
-	if (duration == 0.0f)
-		_titleAnimator.finished.invoke();
-	else
-		_titleAnimator.animate(&_titleTransition, 0.0f, 1.0f, duration);
+	_titleAnimator.animate(0.0f, 1.0f, duration);
 		
-	invalidateContent();
+	invalidateText();
 }
 
 void Button::setTextColor(const vec4& color)
@@ -368,7 +359,7 @@ void Button::adjustSizeForText(const std::string& text, float duration, bool ver
 
 vec2 Button::sizeForText(const std::string& text)
 {
-	vec2 textSize = font().valid() ? font()->measureStringSize("AA" + text + "AA", fontSize()) : vec2(0.0f);
+	vec2 textSize = font().valid() ? font()->measureStringSize("AA" + text + "AA", fontSize(), fontSmoothing()) : vec2(0.0f);
 	
 	for (size_t i = 0; i < State_max; ++i)
 		textSize = maxv(textSize, _background[i].descriptor.size);
@@ -515,6 +506,8 @@ const vec4& Button::pressedColor() const
 
 void Button::processMessage(const Message& msg)
 {
+	TextElement::processMessage(msg);
+	
 	if (msg.type == Message::Type_SetText)
 	{
 		setTitle(msg.text, msg.duration);
@@ -543,4 +536,11 @@ void Button::setShouldInvokeClickInRunLoop(bool b)
 bool Button::respondsToMessage(const Message& msg) const
 {
 	return (msg.type == Message::Type_PerformAction) && (msg.param == _action);
+}
+
+void Button::invalidateText()
+{
+	_nextTitleCharacters = font()->buildString(_nextTitle.cachedText, fontSize(), fontSmoothing());
+	_currentTitleCharacters = font()->buildString(_currentTitle.cachedText, fontSize(), fontSmoothing());
+	invalidateContent();
 }

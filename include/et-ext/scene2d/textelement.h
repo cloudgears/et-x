@@ -30,13 +30,24 @@ namespace et
 			
 			float fontSize() const
 				{ return _fontSize; }
+
+			float fontSmoothing() const
+				{ return _fontSmoothing; }
 			
 			void setFont(const Font::Pointer&);
 			void setFontSize(float);
+			void setFontSmoothing(float);
+			
+			void loadProperties(const Dictionary&) override;
+			
+		protected:
+			void processMessage(const Message&) override;
+			virtual void invalidateText() { }
 			
 		private:
 			Font::Pointer _font;;
 			float _fontSize = 12.0f;
+			float _fontSmoothing = 1.0f;
 		};
 	}
 }

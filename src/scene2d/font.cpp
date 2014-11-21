@@ -178,22 +178,22 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 	return sz;
 }
 
-vec2 Font::measureStringSize(const std::string& s, float size)
+vec2 Font::measureStringSize(const std::string& s, float size, float smoothing)
 {
-	return measureStringSize(buildString(utf8ToUnicode(s), size));
+	return measureStringSize(buildString(utf8ToUnicode(s), size, smoothing));
 }
 
-vec2 Font::measureStringSize(const std::wstring& s, float size)
+vec2 Font::measureStringSize(const std::wstring& s, float size, float smoothing)
 {
-	return measureStringSize(buildString(s, size));
+	return measureStringSize(buildString(s, size, smoothing));
 }
 
-CharDescriptorList Font::buildString(const std::string& s, float size)
+CharDescriptorList Font::buildString(const std::string& s, float size, float smoothing)
 {
-	return buildString(utf8ToUnicode(s), size);
+	return buildString(utf8ToUnicode(s), size, smoothing);
 }
 
-CharDescriptorList Font::buildString(const std::wstring& s, float size)
+CharDescriptorList Font::buildString(const std::wstring& s, float size, float smoothing)
 {
 	if (s.empty())
 		return CharDescriptorList();
@@ -283,7 +283,7 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size)
 			cd.originalSize *= finalScale;
 			
 			cd.color = colorsStack.top();
-			cd.parameters = vec4(0.5f, sqr(0.225f / std::pow(finalScale, 1.0f / 3.0f)), 0.0f, 0.0f);
+			cd.parameters = vec4(0.5f, smoothing * sqr(0.1666666f / std::pow(finalScale, 1.0f / 2.5f)), 0.0f, 0.0f);
 			
 			result[resultSize++] = cd;
 			++b;

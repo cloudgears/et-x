@@ -32,11 +32,11 @@ namespace et
 			
 			void saveToFile(RenderContext*, const std::string&);
 			
-			CharDescriptorList buildString(const std::string&, float);
-			CharDescriptorList buildString(const std::wstring&, float);
+			CharDescriptorList buildString(const std::string&, float, float = 1.0f);
+			CharDescriptorList buildString(const std::wstring&, float, float = 1.0f);
 
-			vec2 measureStringSize(const std::string&, float);
-			vec2 measureStringSize(const std::wstring&, float);
+			vec2 measureStringSize(const std::string&, float, float = 1.0f);
+			vec2 measureStringSize(const std::wstring&, float, float = 1.0f);
 			
 			vec2 measureStringSize(const CharDescriptorList&);
 			
