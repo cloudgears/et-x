@@ -465,17 +465,6 @@ bool Scene::animatingTransition()
 	return false;
 }
 
-void Scene::showMessageView(MessageView::Pointer mv, size_t animationFlags, float duration)
-{
-	ET_CONNECT_EVENT(mv->messageViewButtonSelected, Scene::onMessageViewButtonClicked)
-	pushLayout(mv, animationFlags, duration);
-}
-
-void Scene::onMessageViewButtonClicked(MessageView* view, MessageViewButton)
-{
-	removeLayout(Layout::Pointer(view));
-}
-
 void Scene::replaceTopmostLayout(Layout::Pointer newLayout, size_t animationFlags, float duration)
 {
 	ET_INVOKE_THIS_CLASS_METHOD2(Scene, internal_replaceTopmostLayout, newLayout,

@@ -7,30 +7,26 @@
 
 #pragma once
 
-#include <et-ext/scene2d/element2d.h>
+#include <et-ext/scene2d/textelement.h>
 #include <et-ext/scene2d/font.h>
 
 namespace et
 {
 	namespace s2d
 	{
-		class Label : public Element2d
+		class Label : public TextElement
 		{
 		public:
 			ET_DECLARE_POINTER(Label)
 			
 			static std::string fitStringToWidthWithFont(std::string inputString, Font::Pointer font,
-				float width);
+				float fontSize, float width);
 
 		public:
-			Label(const std::string& text, const Font::Pointer& font, Element2d* parent,
-				const std::string& name = emptyString);
+			Label(const std::string&, const Font::Pointer&, float, Element2d*, const std::string& = emptyString);
 
 			vec2 textSize();
-			
-			const Font::Pointer& font() const
-				{ return _font; }
-			
+						
 			const std::string& text() const
 				{ return _text.cachedText; }
 			
@@ -75,7 +71,6 @@ namespace et
 			CharDescriptorList _charListText;
 			CharDescriptorList _charListNextText;
 			
-			Font::Pointer _font;
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _vertices;
 			vec4 _backgroundColor;

@@ -20,7 +20,7 @@ namespace et
 			ET_DECLARE_POINTER(Font)
 			
 		public:
-			Font(const CharacterGenerator::Pointer& generator, size_t);
+			Font(const CharacterGenerator::Pointer& generator);
 			
 			CharacterGenerator::Pointer& generator()
 				{ return _generator; }
@@ -29,19 +29,19 @@ namespace et
 				{ return _generator; }
 
 			void loadFromFile(RenderContext*, const std::string&, ObjectsCache&);
+			
 			void saveToFile(RenderContext*, const std::string&);
 			
-			CharDescriptorList buildString(const std::string&);
-			CharDescriptorList buildString(const std::wstring&);
+			CharDescriptorList buildString(const std::string&, float);
+			CharDescriptorList buildString(const std::wstring&, float);
 
-			vec2 measureStringSize(const std::string&);
-			vec2 measureStringSize(const std::wstring&);
+			vec2 measureStringSize(const std::string&, float);
+			vec2 measureStringSize(const std::wstring&, float);
+			
 			vec2 measureStringSize(const CharDescriptorList&);
 			
 		private:
 			CharacterGenerator::Pointer _generator;
-			size_t _size = 0;
-			float _scale = 1.0f;
 		};
 	}
 }

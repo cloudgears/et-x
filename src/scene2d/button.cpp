@@ -13,8 +13,8 @@ using namespace et::s2d;
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(Button)
 
-Button::Button(const std::string& title, const Font::Pointer& font, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _textColor(vec3(0.0f), 1.0f),
+Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
+	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _textColor(vec3(0.0f), 1.0f),
 	_pressedColor(0.5f, 0.5f, 0.5f, 1.0f), _backgroundTintColor(1.0f), _commonBackgroundTintColor(1.0f),
 	_textPressedColor(vec3(0.0f), 1.0f), _backgroundTintAnimator(timerPool()),
 	_commonBackgroundTintAnimator(timerPool()), _titleAnimator(timerPool()), _type(Button::Type_PushButton),
@@ -22,11 +22,11 @@ Button::Button(const std::string& title, const Font::Pointer& font, Element2d* p
 	_horizontalAlignment(Alignment_Center), _verticalAlignment(Alignment_Center)
 {
 	_currentTitle.setKey(title);
-	_currentTextSize = _font->measureStringSize(_currentTitle.cachedText);
+	_currentTextSize = font()->measureStringSize(_currentTitle.cachedText, fontSize());
 	
 	_nextTitle = _currentTitle;
 	_maxTextSize = _currentTextSize;
-	_currentTitleCharacters = _font->buildString(_currentTitle.cachedText);
+	_currentTitleCharacters = font()->buildString(_currentTitle.cachedText, fontSize());
 	
 	setSize(sizeForText(title));
 	
@@ -60,7 +60,7 @@ void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_bgVertices, _background[_state].texture, program(), this);
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _font->generator()->texture(), r.defaultTextProgram(), this);
+		r.addVertices(_textVertices, font()->generator()->texture(), r.defaultTextProgram(), this);
 
 	if (_imageVertices.lastElementIndex() > 0)
 		r.addVertices(_imageVertices, _image[_state].texture, program(), this);
@@ -307,9 +307,9 @@ void Button::performClick()
 void Button::setTitle(const std::string& t, float duration)
 {
 	_nextTitle.setKey(t);
-	_nextTitleCharacters = _font->buildString(_nextTitle.cachedText);
+	_nextTitleCharacters = font()->buildString(_nextTitle.cachedText, fontSize());
 	
-	_nextTextSize = _font->measureStringSize(_nextTitle.cachedText);
+	_nextTextSize = font()->measureStringSize(_nextTitle.cachedText, fontSize());
 	_maxTextSize = maxv(_currentTextSize, _nextTextSize);
 	
 	_titleAnimator.cancelUpdates();
@@ -368,7 +368,7 @@ void Button::adjustSizeForText(const std::string& text, float duration, bool ver
 
 vec2 Button::sizeForText(const std::string& text)
 {
-	vec2 textSize = _font.valid() ? _font->measureStringSize("AA" + text + "AA") : vec2(0.0f);
+	vec2 textSize = font().valid() ? font()->measureStringSize("AA" + text + "AA", fontSize()) : vec2(0.0f);
 	
 	for (size_t i = 0; i < State_max; ++i)
 		textSize = maxv(textSize, _background[i].descriptor.size);

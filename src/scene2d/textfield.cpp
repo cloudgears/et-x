@@ -16,22 +16,22 @@ const int securedChar = 0x2022;
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(TextField)
 
-TextField::TextField(const Font::Pointer& font, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
+TextField::TextField(const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
+	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
-	_caretChar.push_back(_font->generator()->charDescription(caretChar));
+	_caretChar.push_back(font()->generator()->charDescription(caretChar));
 	
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
-TextField::TextField(const std::string& text, const Font::Pointer& font, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _alignmentH(Alignment_Near),
+TextField::TextField(const std::string& text, const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
+	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
-	_caretChar.push_back(_font->generator()->charDescription(caretChar));
+	_caretChar.push_back(font()->generator()->charDescription(caretChar));
 	
 	setText(text);
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
@@ -39,14 +39,14 @@ TextField::TextField(const std::string& text, const Font::Pointer& font, Element
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
-TextField::TextField(const Image& background, const std::string& text, const Font::Pointer& font,
-	Element2d* parent, const std::string& name) : Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS),
-	_font(font), _background(background), _alignmentH(Alignment_Near), _alignmentV(Alignment_Center),
+TextField::TextField(const Image& background, const std::string& text, const Font::Pointer& f, float fsz,
+	Element2d* parent, const std::string& name) : TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS),
+	_background(background), _alignmentH(Alignment_Near), _alignmentV(Alignment_Center),
 	_secured(false), _caretVisible(false)
 {
-	_caretChar.push_back(_font->generator()->charDescription(caretChar));
+	_caretChar.push_back(font()->generator()->charDescription(caretChar));
 	
-	setSize(_font->measureStringSize(text));
+	setSize(font()->measureStringSize(text, fontSize()));
 	
 	setText(text);
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
@@ -68,7 +68,7 @@ void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_imageVertices, _background.texture, program(), this);
 	
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _font->generator()->texture(), r.defaultTextProgram(), this);
+		r.addVertices(_textVertices, font()->generator()->texture(), r.defaultTextProgram(), this);
 }
 
 void TextField::buildVertices(RenderContext*, SceneRenderer&)
@@ -90,14 +90,14 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 			wholeRect, alphaScale, transform);
 	}
 
-	vec2 textSize = _font->measureStringSize(_textCharacters);
-	vec2 caretSize = _font->measureStringSize(_caretChar);
+	vec2 textSize = font()->measureStringSize(_textCharacters);
+	vec2 caretSize = font()->measureStringSize(_caretChar);
 	
 	auto actualAlignment = _alignmentH;
 	
 	if (!_focused && !_placeholderCharacters.empty() && _textCharacters.empty())
 	{
-		vec2 placeholderSize = _font->measureStringSize(_placeholderCharacters);
+		vec2 placeholderSize = font()->measureStringSize(_placeholderCharacters);
 		
 		vec2 placeholderOrigin = _contentOffset + vec2(alignmentFactor(actualAlignment), alignmentFactor(_alignmentV)) *
 			((wholeRect.size() - 2.0f * _contentOffset) - placeholderSize);
@@ -140,7 +140,7 @@ void TextField::setText(const std::string& s)
 	_actualText = _prefix + _text;
 	
 	_textCharacters = _secured ? CharDescriptorList(_actualText.length(),
-		_font->generator()->charDescription(securedChar)) : _font->buildString(_actualText);
+		font()->generator()->charDescription(securedChar)) : font()->buildString(_actualText, fontSize());
 	
 	invalidateContent();
 }
@@ -298,7 +298,7 @@ void TextField::setBackgroundImage(const Image& img)
 void TextField::setPlaceholder(const std::string& s)
 {
 	_placeholder.setKey(s);
-	_placeholderCharacters = _font->buildString(_placeholder.cachedText);
+	_placeholderCharacters = font()->buildString(_placeholder.cachedText, fontSize());
 	
 	invalidateContent();
 }

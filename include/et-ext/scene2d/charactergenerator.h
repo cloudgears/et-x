@@ -30,7 +30,7 @@ namespace et
 			const Texture& texture() const 
 				{ return _texture; }
 
-			size_t baseSize() const;
+			float baseSize() const;
 			
 			const std::string& face() const;
 			const std::string& boldFace() const;

@@ -14,12 +14,13 @@
 #include <et/app/application.h>
 #include <et/rendering/rendercontext.h>
 #include <et/geometry/rectplacer.h>
-#include <et/imaging/imageoperations.h>
 #include <et-ext/scene2d/charactergenerator.h>
 #include <et/imaging/imagewriter.h>
 
 using namespace et;
 using namespace et::s2d;
+
+#define ET_SAVE_FONT_TO_FILE	0
 
 struct SDFPoint
 {
@@ -68,8 +69,9 @@ public:
 	CGColorSpaceRef colorSpace = nullptr;
 };
 
-const int defaultTextureSize = 2048;
-const int baseFontSize = 256.0f;
+const int defaultTextureSize = 1024;
+
+const float baseFontSize = 256.0f;
 const SDFPoint pointEmpty = { 0, 0, 0 };
 const SDFPoint pointInside = { 0, 0, 255 };
 
@@ -115,7 +117,6 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 		static_cast<int>((value == ET_NEWLINE) || (value == ET_RETURN) ? baseSize() : characterSize.height));
 	
 	CharDescriptor desc(value);
-	
 	if (charSize.square() > 0)
 	{
 		desc.originalSize = vector2ToFloat(charSize);
@@ -150,7 +151,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 		if ((sizeToSave.x > 0) && (sizeToSave.y > 0))
 		{
 			BinaryDataStorage dataToSave(sizeToSave.square(), 0);
-			vec2 targetPixel;
+			vec2i targetPixel;
 			for (pixel.y = topLeftOffset.y; pixel.y < bottomRightOffset.y; ++pixel.y, ++targetPixel.y)
 			{
 				targetPixel.x = 0;
@@ -164,14 +165,14 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 			
 			vec2i downsampledSize = sizeToSave / 2;
 			auto downsampled = _private->downsample(dataToSave, sizeToSave);
+			downsampled = _private->downsample(downsampled, downsampledSize);
+			downsampledSize /= 2;
 			
 			recti textureRect;
 			if (_private->_placer.place(downsampledSize, textureRect))
 			{
 				_private->updateTexture(_rc, textureRect.origin(), downsampledSize, _texture, downsampled);
-				
 				desc.contentRect = rect(vector2ToFloat(topLeftOffset - extent / 2), vector2ToFloat(sizeToSave));
-				
 				desc.uvRect = rect(_texture->getTexCoord(vector2ToFloat(textureRect.origin())),
 					vector2ToFloat(textureRect.size()) / _texture->sizeFloat());
 			}
@@ -180,6 +181,14 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 				log::error("Failed to place character to the texture: %d (%c, %C)", value, static_cast<char>(value),
 					static_cast<wchar_t>(value));
 			}
+			
+#		if (ET_SAVE_FONT_TO_FILE)
+			_rc->renderState().bindTexture(0, _texture);
+			BinaryDataStorage binaryData(4 * _texture->size().square(), 0);
+			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, binaryData.binary());
+			ImageWriter::writeImageToFile(application().environment().applicationDocumentsFolder() +
+				_private->fontFace + ".png", binaryData, _texture->size(), 4, 8, ImageFormat_PNG, true);
+#		endif
 		}
 	}
 	
@@ -190,7 +199,11 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 	
 	characterGenerated.invoke(value);
 	
-	_chars[value] = desc;
+	if (isBold)
+		_boldChars[value] = desc;
+	else
+		_chars[value] = desc;
+	
 	return desc;
 }
 
@@ -199,7 +212,7 @@ void CharacterGenerator::setTexture(Texture tex)
 	_texture = tex;
 }
 
-void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
+void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor&)
 {
 	ET_FAIL("Implement me")
 	
@@ -221,8 +234,8 @@ const std::string& CharacterGenerator::face() const
 const std::string& CharacterGenerator::boldFace() const
 	{ return _private->boldFontFace; }
 
-size_t CharacterGenerator::baseSize() const
-	{ return static_cast<size_t>(baseFontSize); }
+float CharacterGenerator::baseSize() const
+	{ return baseFontSize; }
 
 /*
  * Private
@@ -425,7 +438,7 @@ BinaryDataStorage CharacterGeneratorPrivate::downsample(BinaryDataStorage& input
 /*
  * SDF Service
  */
-void Compare(SDFGrid& g, SDFPoint& p, int x, int y, int offsetx, int offsety)
+inline void Compare(SDFGrid& g, SDFPoint& p, int x, int y, int offsetx, int offsety)
 {
 	int add = 0;
 	

@@ -7,14 +7,14 @@
 
 #pragma once
 
-#include <et-ext/scene2d/element2d.h>
+#include <et-ext/scene2d/textelement.h>
 #include <et-ext/scene2d/font.h>
 
 namespace et
 {
 	namespace s2d
 	{
-		class Button : public Element2d
+		class Button : public TextElement
 		{
 		public:
 			ET_DECLARE_POINTER(Button)
@@ -41,7 +41,7 @@ namespace et
 			};
 
 		public:
-			Button(const std::string& title, const Font::Pointer& font, Element2d* parent,
+			Button(const std::string& title, const Font::Pointer& font, float, Element2d* parent,
 				const std::string& name = emptyString);
 			
 			void setImage(const Image& img);
@@ -57,12 +57,6 @@ namespace et
 			vec2 sizeForText(const std::string&);
 			
 			void setContentMode(ContentMode);
-			
-			const Font::Pointer& font() const
-				{ return _font; }
-
-			Font::Pointer& font()
-				{ return _font; }
 			
 			ET_DECLARE_EVENT1(clicked, Button*)
 			ET_DECLARE_EVENT1(pressed, Button*)
@@ -153,9 +147,7 @@ namespace et
 			
 			void setCurrentState(State s);
 
-		private:
-			Font::Pointer _font;
-			
+		private:			
 			LocalizedText _currentTitle;
 			LocalizedText _nextTitle;
 			

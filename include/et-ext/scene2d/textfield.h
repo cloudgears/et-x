@@ -8,14 +8,14 @@
 #pragma once
 
 #include <et/timers/notifytimer.h>
-#include <et-ext/scene2d/element2d.h>
+#include <et-ext/scene2d/textelement.h>
 #include <et-ext/scene2d/font.h>
 
 namespace et
 {
 	namespace s2d
 	{
-		class TextField : public Element2d
+		class TextField : public TextElement
 		{
 		public:
 			ET_DECLARE_POINTER(TextField)
@@ -27,13 +27,9 @@ namespace et
 			};
 			
 		public:
-			TextField(const Font::Pointer& font, Element2d* parent, const std::string& name = emptyString);
-			
-			TextField(const std::string& text, const Font::Pointer& font, Element2d* parent,
-				const std::string& name = emptyString);
-
-			TextField(const Image& background, const std::string& text, const Font::Pointer& font,
-				Element2d* parent, const std::string& name = emptyString);
+			TextField(const Font::Pointer&, float, Element2d*, const std::string& = emptyString);
+			TextField(const std::string&, const Font::Pointer&, float, Element2d*, const std::string& = emptyString);
+			TextField(const Image&, const std::string&, const Font::Pointer&, float, Element2d*, const std::string& = emptyString);
 
 			const std::string& text() const;
 			
@@ -71,7 +67,6 @@ namespace et
 			void onCreateBlinkTimerExpired(NotifyTimer* t);
 
 		private:
-			Font::Pointer _font;
 			Image _background;
 			
 			std::string _text;

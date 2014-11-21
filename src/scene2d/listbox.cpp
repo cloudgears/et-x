@@ -66,7 +66,7 @@ void ListboxPopup::buildVertices(SceneRenderer&)
 					rect(vec2(0.0f, row * rowSize), vec2(size().x, rowSize)), drawColor, transform);
 			}
 
-			buildStringVertices(_textVertices, _owner->_font->buildString(*i), Alignment_Near,
+			buildStringVertices(_textVertices, _owner->font()->buildString(*i, _owner->fontSize()), Alignment_Near,
 				Alignment_Near, textPos, drawColor, transform);
 			textPos.y += dy;
 		}
@@ -100,7 +100,7 @@ void ListboxPopup::addToRenderQueue(RenderContext*, SceneRenderer& r)
 		r.addVertices(_selectionVertices, _owner->_selection.texture, program(), this);
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _owner->_font->generator()->texture(), r.defaultTextProgram(), this);
+		r.addVertices(_textVertices, _owner->font()->generator()->texture(), r.defaultTextProgram(), this);
 }
 
 bool ListboxPopup::pointerPressed(const PointerInputInfo&)
@@ -146,8 +146,8 @@ void ListboxPopup::pointerLeaved(const PointerInputInfo&)
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(Listbox)
 
-Listbox::Listbox(const Font::Pointer& font, Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(font), _state(ListboxState_Default),
+Listbox::Listbox(const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
+	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _state(ListboxState_Default),
 	_contentOffset(0.0f), _selectedIndex(-1), _direction(ListboxPopupDirection_Bottom),
 	_popupOpened(false), _popupOpening(false), _popupValid(false)
 {
@@ -197,7 +197,7 @@ void Listbox::buildVertices(SceneRenderer&)
 	{
 		std::string textToDraw = _prefix + _values[_selectedIndex];
 		vec2 textPos = _contentOffset + vec2(0.0f, 0.5f * (size().y - 10.0f)); // line height
-		buildStringVertices(_textVertices, _font->buildString(textToDraw), Alignment_Near, Alignment_Near,
+		buildStringVertices(_textVertices, font()->buildString(textToDraw, fontSize()), Alignment_Near, Alignment_Near,
 			textPos, finalColor(), transform);
 	}
 
@@ -213,7 +213,7 @@ void Listbox::addToRenderQueue(RenderContext*, SceneRenderer& r)
 		r.addVertices(_backgroundVertices, _images[_state].texture, program(), this);
 
 	if (shouldDrawText())
-		r.addVertices(_textVertices, _font->generator()->texture(), program(), this);
+		r.addVertices(_textVertices, font()->generator()->texture(), program(), this);
 }
 
 bool Listbox::shouldDrawText()

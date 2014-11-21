@@ -20,7 +20,6 @@
 #include <et-ext/scene2d/listbox.h>
 #include <et-ext/scene2d/textfield.h>
 #include <et-ext/scene2d/scroll.h>
-#include <et-ext/scene2d/messageview.h>
 #include <et-ext/scene2d/slider.h>
 #include <et-ext/scene2d/table.h>
 #include <et-ext/scene2d/line.h>
@@ -83,9 +82,6 @@ namespace et
 			void keyPressed(size_t);
 			void charactersEntered(std::string);
 			
-			void showMessageView(MessageView::Pointer mv,
-				size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
-			
 			void broadcastMessage(const Message&);
 
 			void removeAllLayouts();
@@ -127,8 +123,6 @@ namespace et
 			void animateLayoutAppearing(Layout::Pointer, LayoutEntry* newEntry,
 				size_t animationFlags, float duration);
 			
-			void onMessageViewButtonClicked(MessageView* view, MessageViewButton);
-
 			void internal_replaceTopmostLayout(Layout::Pointer, AnimationDescriptor);
 			void internal_popTopmostLayout(AnimationDescriptor desc);
 			void internal_replaceLayout(LayoutPair, AnimationDescriptor);

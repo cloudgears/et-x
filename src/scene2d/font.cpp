@@ -23,10 +23,9 @@ bool textBeginsFrom(const wchar_t* text, const wchar_t* entry);
 const wchar_t* findClosingBracket(const wchar_t* text);
 vec4 colorTagToColor(const std::wstring& colorTag);
 
-Font::Font(const CharacterGenerator::Pointer& generator, size_t sz) :
-	_generator(generator), _size(sz)
+Font::Font(const CharacterGenerator::Pointer& generator) :
+	_generator(generator)
 {
-	_scale = static_cast<float>(_size) / static_cast<float>(_generator->baseSize());
 }
 
 void Font::saveToFile(RenderContext* rc, const std::string& fileName)
@@ -40,7 +39,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	
 	serializeInt(fOut, FONT_VERSION_CURRENT);
 	serializeString(fOut, _generator->face());
-	serializeInt(fOut, _size);
+	serializeFloat(fOut, 0.0f);
 	
 	std::string textureFile = removeFileExt(getFileName(fileName)) + ".cache.png";
 	std::string layoutFile = removeFileExt(getFileName(fileName)) + ".layout.png";
@@ -124,7 +123,7 @@ void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	ET_ASSERT(version >= FONT_VERSION_2)
 	
 	deserializeString(fontFile.stream());
-	deserializeInt(fontFile.stream());
+	deserializeFloat(fontFile.stream());
 	
 	std::string textureFile = deserializeString(fontFile.stream());
 	std::string layoutFile = deserializeString(fontFile.stream());
@@ -179,25 +178,27 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 	return sz;
 }
 
-vec2 Font::measureStringSize(const std::string& s)
+vec2 Font::measureStringSize(const std::string& s, float size)
 {
-	return measureStringSize(buildString(utf8ToUnicode(s)));
+	return measureStringSize(buildString(utf8ToUnicode(s), size));
 }
 
-vec2 Font::measureStringSize(const std::wstring& s)
+vec2 Font::measureStringSize(const std::wstring& s, float size)
 {
-	return measureStringSize(buildString(s));
+	return measureStringSize(buildString(s, size));
 }
 
-CharDescriptorList Font::buildString(const std::string& s)
+CharDescriptorList Font::buildString(const std::string& s, float size)
 {
-	return buildString(utf8ToUnicode(s));
+	return buildString(utf8ToUnicode(s), size);
 }
 
-CharDescriptorList Font::buildString(const std::wstring& s)
+CharDescriptorList Font::buildString(const std::wstring& s, float size)
 {
 	if (s.empty())
 		return CharDescriptorList();
+	
+	float globalScale = size / _generator->baseSize();
 	
 	CharDescriptorList result(s.size());
 	
@@ -274,15 +275,15 @@ CharDescriptorList Font::buildString(const std::wstring& s)
 			CharDescriptor cd = (boldTags > 0) ? _generator->boldCharDescription(*b) : _generator->charDescription(*b);
 			
 			float localScale = scaleStack.top();
-			float commonScale = _scale * localScale;
+			float finalScale = globalScale * localScale;
 			
-			cd.contentRect.origin().x *= commonScale;
-			cd.contentRect.origin().y = _scale * (cd.contentRect.origin().y + cd.contentRect.size().y * (0.5f - 0.5f * localScale));
-			cd.contentRect.size() *= commonScale;
-			cd.originalSize *= commonScale;
+			cd.contentRect.origin().x *= finalScale;
+			cd.contentRect.origin().y = finalScale * (cd.contentRect.origin().y + cd.contentRect.size().y * (0.5f - 0.5f * localScale));
+			cd.contentRect.size() *= finalScale;
+			cd.originalSize *= finalScale;
 			
 			cd.color = colorsStack.top();
-			cd.parameters = vec4(0.5f, sqr(0.225 / std::pow(commonScale, 1.0f / 3.0f)), 0.0f, 0.0f);
+			cd.parameters = vec4(0.5f, sqr(0.225f / std::pow(finalScale, 1.0f / 3.0f)), 0.0f, 0.0f);
 			
 			result[resultSize++] = cd;
 			++b;

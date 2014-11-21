@@ -1,10 +1,9 @@
-//
-//  ParticlesElement.h
-//  Prime Elements
-//
-//  Created by Sergey Reznik on 3/11/2014.
-//  Copyright (c) 2014 Sergey Reznik. All rights reserved.
-//
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2013 by Sergey Reznik
+ * Please, do not modify content without approval.
+ *
+ */
 
 #pragma once
 

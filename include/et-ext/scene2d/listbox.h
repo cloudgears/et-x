@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et-ext/scene2d/element2d.h>
+#include <et-ext/scene2d/textelement.h>
 #include <et-ext/scene2d/font.h>
 
 namespace et
@@ -55,23 +55,23 @@ namespace et
 			void buildVertices(SceneRenderer& gr);
 
 		private:
-			Listbox* _owner;
+			Listbox* _owner = nullptr;
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _selectionVertices;
 			SceneVertexList _textVertices;
 			FloatAnimator _textAlphaAnimator;
-			int _selectedIndex;
-			float _textAlpha;
-			bool _pressed;
+			int _selectedIndex = 0;
+			float _textAlpha = 1.0f;
+			bool _pressed = false;
 		};
 
-		class Listbox : public Element2d
+		class Listbox : public TextElement
 		{
 		public:
 			ET_DECLARE_POINTER(Listbox)
 
 		public:
-			Listbox(const Font::Pointer& font, Element2d* parent, const std::string& name = emptyString);
+			Listbox(const Font::Pointer& font, float fsz, Element2d* parent, const std::string& name = emptyString);
 
 			void setImage(const Image& img, ListboxState state);
 			void setBackgroundImage(const Image& img);
@@ -128,7 +128,6 @@ namespace et
 		private:
 			friend class ListboxPopup;
 
-			Font::Pointer _font;
 			ListboxPopup::Pointer _popup;
 			Image _images[ListboxState_max];
 			Image _background;
