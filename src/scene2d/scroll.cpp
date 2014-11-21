@@ -25,7 +25,7 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(Scroll)
 Scroll::Scroll(Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _contentOffsetAnimator(timerPool()),
 	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f), _bounceExtent(0.5f),
-	_pointerScrollMultiplier(1.0f), _pointerScrollDuration(0.0f), _movementTreshold(9.0f), _bounce(0),
+	_pointerScrollDuration(0.0f), _movementTreshold(9.0f), _bounce(0),
 	_pointerCaptured(false), _manualScrolling(false)
 {
 	_contentOffsetAnimator.updated.connect([this](){ setOffsetDirectly(_contentOffset); });
@@ -216,8 +216,8 @@ bool Scroll::pointerCancelled(const PointerInputInfo& p)
 bool Scroll::pointerScrolled(const PointerInputInfo& p)
 {
 	vec2 scrollValue;
-	scrollValue.x = p.scroll.x * (std::abs(p.scroll.x) < 1.0f ? size().x : _pointerScrollMultiplier.x);
-	scrollValue.y = p.scroll.y * (std::abs(p.scroll.y) < 1.0f ? size().y : _pointerScrollMultiplier.y);
+	scrollValue.x = p.scroll.x * (std::abs(p.scroll.x) < 1.0f ? size().x : 0.05f * size().x);
+	scrollValue.y = p.scroll.y * (std::abs(p.scroll.y) < 1.0f ? size().y : 0.05f * size().y);
 	applyContentOffset(scrollValue, _pointerScrollDuration);
 	return true;
 }
@@ -624,11 +624,6 @@ void Scroll::setScrollbarsColor(const vec4& c)
 {
 	_scrollbarsColor = c;
 	invalidateContent();
-}
-
-void Scroll::setPointerScrollMultiplier(const vec2& m)
-{
-	_pointerScrollMultiplier = m;
 }
 
 void Scroll::setPointerScrollDuration(float d)

@@ -44,7 +44,6 @@ namespace et
 			
 			void setMovementTreshold(float);
 
-			void setPointerScrollMultiplier(const vec2&);
 			void setPointerScrollDuration(float);
 
 			const vec2& lastElementIndex() const
@@ -52,9 +51,6 @@ namespace et
 			
 			void scrollToBottom(float duration = 0.0f);
 						
-			const vec2& pointerScrollMultiplier() const
-				{ return _pointerScrollMultiplier; }
-
 			float pointerScrollDuration() const
 				{ return _pointerScrollDuration; }
 			
@@ -136,7 +132,6 @@ namespace et
 			vec2 _contentOffset;
 			vec2 _velocity;
 			vec2 _bounceExtent;
-			vec2 _pointerScrollMultiplier;
 			vector2<BounceDirection> _bouncing;
 			size_t _bounce;
 			float _updateTime;
