@@ -15,16 +15,11 @@ using namespace et::s2d;
 extern std::string et_scene2d_default_shader_vs;
 
 extern std::string et_scene2d_default_shader_fs;
-extern std::string et_scene2d_default_text_shader_fs;
-
-extern std::string et_scene2d_default_text_shader_sdf_vs;
-extern std::string et_scene2d_default_text_shader_sdf_fs;
 
 const std::string SceneRenderer::defaultProgramName = "et-scene2d-default-shader";
-const std::string SceneRenderer::defaultTextProgramName = "et-scene2d-default-text-shader";
 
-const std::string textureSamplerName = "inputTexture";
-const std::string additionalOffsetAndAlphaUniform = "additionalOffsetAndAlpha";
+extern const std::string textureSamplerName = "inputTexture";
+extern const std::string additionalOffsetAndAlphaUniform = "additionalOffsetAndAlpha";
 
 SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_rc(rc), _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f)
@@ -33,11 +28,6 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	
 	_defaultProgram = createProgramWithFragmentshader(defaultProgramName, et_scene2d_default_shader_fs);
 	_defaultProgram.program->setUniform(textureSamplerName, 0);
-	
-	_defaultTextProgram = createProgramWithShaders(defaultTextProgramName, et_scene2d_default_text_shader_sdf_vs,
-		et_scene2d_default_text_shader_sdf_fs);
-	
-	_defaultTextProgram.program->setUniform(textureSamplerName, 0);
 	
 	_defaultTexture = rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(1), GL_RGBA,
 		GL_UNSIGNED_BYTE, BinaryDataStorage(4, 0), "scene-default-texture");
@@ -270,38 +260,3 @@ std::string et_scene2d_default_text_shader_fs =
 	"	etFragmentOut = tintColor + additiveColor;"
 	"	etFragmentOut.w *= etTexture2D(inputTexture, texCoord).x;"
 	"}";
-
-/*
- * Signed Distance Field
- */
-
-std::string et_scene2d_default_text_shader_sdf_vs =
-"uniform mat4 mTransform;"
-"uniform vec3 " + additionalOffsetAndAlphaUniform + ";"
-"etVertexIn vec3 Vertex;"
-"etVertexIn vec4 TexCoord0;"
-"etVertexIn vec4 Color;"
-"etVertexOut etHighp vec2 texCoord;"
-"etVertexOut etLowp vec4 tintColor;"
-"etVertexOut etLowp vec2 sdfParams;"
-"void main()"
-"{"
-"	texCoord = TexCoord0.xy;"
-"	tintColor = Color;"
-"	tintColor.w *= additionalOffsetAndAlpha.z;"
-"	sdfParams.x = TexCoord0.z - TexCoord0.w;"
-"	sdfParams.y = TexCoord0.z + TexCoord0.w;"
-"	vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
-"	gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
-"}";
-
-std::string et_scene2d_default_text_shader_sdf_fs =
-"uniform etLowp sampler2D " + textureSamplerName + ";"
-"etFragmentIn etHighp vec2 texCoord;"
-"etFragmentIn etLowp vec4 tintColor;"
-"etFragmentIn etLowp vec2 sdfParams;"
-"void main()"
-"{"
-"	etFragmentOut = tintColor;"
-"	etFragmentOut.w *= smoothstep(sdfParams.x, sdfParams.y, etTexture2D(inputTexture, texCoord).x);"
-"}";

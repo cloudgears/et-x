@@ -100,7 +100,7 @@ void ListboxPopup::addToRenderQueue(RenderContext*, SceneRenderer& r)
 		r.addVertices(_selectionVertices, _owner->_selection.texture, program(), this);
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _owner->font()->generator()->texture(), r.defaultTextProgram(), this);
+		r.addVertices(_textVertices, _owner->font()->generator()->texture(), _owner->textProgram(r), this);
 }
 
 bool ListboxPopup::pointerPressed(const PointerInputInfo&)

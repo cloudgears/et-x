@@ -38,7 +38,7 @@ void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_backgroundVertices, Texture(), r.defaultProgram(), this);
 	
 	if (_vertices.lastElementIndex() > 0)
-		r.addVertices(_vertices, font()->generator()->texture(), r.defaultTextProgram(), this);
+		r.addVertices(_vertices, font()->generator()->texture(), textProgram(r), this);
 }
 
 void Label::buildVertices(RenderContext*, SceneRenderer&)

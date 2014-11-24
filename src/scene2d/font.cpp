@@ -198,7 +198,7 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 	if (s.empty())
 		return CharDescriptorList();
 	
-	float globalScale = size / _generator->baseSize();
+	float globalScale = size / CharacterGenerator::baseFontSize;
 	
 	CharDescriptorList result(s.size());
 	
@@ -277,11 +277,8 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 			float localScale = scaleStack.top();
 			float finalScale = globalScale * localScale;
 			
-			cd.contentRect.origin().x *= finalScale;
-			cd.contentRect.origin().y = finalScale * (cd.contentRect.origin().y + cd.contentRect.size().y * (0.5f - 0.5f * localScale));
-			cd.contentRect.size() *= finalScale;
+			cd.contentRect *= finalScale;
 			cd.originalSize *= finalScale;
-			
 			cd.color = colorsStack.top();
 			cd.parameters = vec4(0.5f, smoothing * sqr(0.1666666f / std::pow(finalScale, 1.0f / 2.5f)), 0.0f, 0.0f);
 			

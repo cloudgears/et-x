@@ -57,7 +57,7 @@ void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_bgVertices, _background[_state].texture, program(), this);
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, font()->generator()->texture(), r.defaultTextProgram(), this);
+		r.addVertices(_textVertices, font()->generator()->texture(), textProgram(r), this);
 
 	if (_imageVertices.lastElementIndex() > 0)
 		r.addVertices(_imageVertices, _image[_state].texture, program(), this);

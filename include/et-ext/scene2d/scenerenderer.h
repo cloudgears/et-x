@@ -45,9 +45,6 @@ namespace et
 						
 			const SceneProgram& defaultProgram() const
 				{ return _defaultProgram; }
-
-			const SceneProgram& defaultTextProgram() const
-				{ return _defaultTextProgram; }
 			
 			const Texture& lastUsedTexture() const
 				{ return _lastTexture; }
