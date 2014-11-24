@@ -25,7 +25,6 @@ const float maxShadowDistance = 1.0f;
 TextElement::TextElement(Element2d* parent, const Font::Pointer& f, float fsz, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(f), _fontSize(fsz)
 {
-	setShadowOffset(vec2(10.0f));
 	setFlag(s2d::Flag_DynamicRendering);
 }
 

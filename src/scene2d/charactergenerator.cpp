@@ -8,7 +8,7 @@
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/charactergenerator.h>
 
-#define ET_SAVE_FONT_TO_FILE	1
+#define ET_SAVE_FONT_TO_FILE	0
 
 #if (ET_SAVE_FONT_TO_FILE)
 #	include <et/app/application.h>
