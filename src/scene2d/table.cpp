@@ -30,7 +30,7 @@ Table::~Table()
 
 void Table::didAutoLayout(float)
 {
-	setOffsetDirectly(lastElementIndex());
+	setOffsetDirectly(contentOffset());
 	layoutChildren(size());
 }
 
@@ -108,7 +108,7 @@ Table::Section* Table::addSection(Element2d::Pointer header, const Element2d::Li
 	_sections.push_back(section);
 	
 	adjustContentSize();
-	setOffsetDirectly(lastElementIndex());
+	setOffsetDirectly(contentOffset());
 	
 	return section;
 }
@@ -119,7 +119,7 @@ void Table::setOffsetDirectly(const vec2& o)
 	
 	float width = size().x;
 	float sectionStart = 0.0f;
-	float off = -lastElementIndex().x;
+	float off = -contentOffset().x;
 	for (auto s : _sections)
 	{
 		s->headerOffset = clamp(off - sectionStart, 0.0f, s->itemsSize);

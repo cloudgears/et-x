@@ -29,6 +29,7 @@ Scroll::Scroll(Element2d* parent, const std::string& name) :
 	_pointerCaptured(false), _manualScrolling(false)
 {
 	_contentOffsetAnimator.updated.connect([this](){ setOffsetDirectly(_contentOffset); });
+	_contentOffsetAnimator.finished.connect([this]() { scrollEnded.invoke(); });
 
 	setFlag(Flag_HandlesChildEvents);
 	setFlag(Flag_ClipToBounds);
@@ -176,6 +177,8 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		_scrollbarsAlphaTarget = 1.0f;
 		_bouncing = vector2<BounceDirection>(BounceDirection_None);
 		broadcastCancelled(p);
+		
+		manualScrollStarted.invoke();
 	}
 	
 	_previousPointer = _currentPointer;
@@ -195,6 +198,8 @@ bool Scroll::pointerReleased(const PointerInputInfo& p)
 		_manualScrolling = false;
 		_currentPointer = PointerInputInfo();
 		_previousPointer = _currentPointer;
+		
+		manualScrollEnded.invoke();
 	}
 	else 
 	{
@@ -210,6 +215,9 @@ bool Scroll::pointerCancelled(const PointerInputInfo& p)
 	_currentPointer = PointerInputInfo();
 	
 	broadcastCancelled(p);
+	
+	manualScrollEnded.invoke();
+	
 	return true;
 }
 
@@ -385,6 +393,8 @@ void Scroll::updateBouncing(float deltaTime)
 	vec4 defaultValues;
 	getDefaultValues(defaultValues);
 	
+	float velocityBefore = _velocity.dotSelf();
+	
 	if (-_contentOffset.x < defaultValues.x)
 		_bouncing.x = BounceDirection_ToNear;
 	
@@ -447,6 +457,12 @@ void Scroll::updateBouncing(float deltaTime)
 				_bouncing.y = BounceDirection_None;
 			}
 		}
+	}
+	
+	if (velocityBefore > 0.0f)
+	{
+		if (_velocity.dotSelf() == 0.0f)
+			scrollEnded.invoke();
 	}
 }
 
@@ -530,6 +546,7 @@ void Scroll::setContentOffset(const vec2& aOffset, float duration)
 	if (duration == 0.0f)
 	{
 		setOffsetDirectly(aOffset);
+		scrollEnded.invoke();
 	}
 	else
 	{

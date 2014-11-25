@@ -46,7 +46,7 @@ namespace et
 
 			void setPointerScrollDuration(float);
 
-			const vec2& lastElementIndex() const
+			const vec2& contentOffset() const
 				{ return _contentOffset; }
 			
 			void scrollToBottom(float duration = 0.0f);
@@ -57,6 +57,9 @@ namespace et
 			void setShouldUseIntegerValuesForScroll(bool);
 			
 			ET_DECLARE_EVENT1(contentOffsetPercentageUpdated, vec2);
+			ET_DECLARE_EVENT0(manualScrollStarted);
+			ET_DECLARE_EVENT0(manualScrollEnded);
+			ET_DECLARE_EVENT0(scrollEnded)
 
 		protected:
 			virtual void setOffsetDirectly(const vec2& o);

@@ -11,7 +11,7 @@
 using namespace et;
 using namespace et::s2d;
 
-const int caretChar = 0x007C;
+const std::string caret = "|";
 const int securedChar = 0x2022;
 
 ET_DECLARE_SCENE_ELEMENT_CLASS(TextField)
@@ -20,8 +20,6 @@ TextField::TextField(const Font::Pointer& f, float fsz, Element2d* parent, const
 	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
-	_caretChar.push_back(font()->generator()->charDescription(caretChar));
-	
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
@@ -31,8 +29,6 @@ TextField::TextField(const std::string& text, const Font::Pointer& f, float fsz,
 	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _alignmentH(Alignment_Near),
 	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
 {
-	_caretChar.push_back(font()->generator()->charDescription(caretChar));
-	
 	setText(text);
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
@@ -44,8 +40,6 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 	_background(background), _alignmentH(Alignment_Near), _alignmentV(Alignment_Center),
 	_secured(false), _caretVisible(false)
 {
-	_caretChar.push_back(font()->generator()->charDescription(caretChar));
-	
 	setSize(font()->measureStringSize(text, fontSize(), fontSmoothing()));
 	
 	setText(text);
@@ -127,8 +121,8 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_caretVisible)
 	{
-		buildColorVertices(_imageVertices, rect(textOrigin.x + textSize.x - widthAdjustment,
-			0.5f * (wholeRect.height - caretSize.y), caretSize.x, caretSize.y), finalColor(), transform);
+		buildStringVertices(_textVertices, _caretChar, s2d::Alignment_Near, Alignment_Near,
+			textOrigin + vec2(textSize.x - widthAdjustment, 0.0f), finalColor(), transform);
 	}
 	
 	setContentValid();
@@ -141,6 +135,8 @@ void TextField::setText(const std::string& s)
 	
 	_textCharacters = _secured ? CharDescriptorList(_actualText.length(),
 		font()->generator()->charDescription(securedChar)) : font()->buildString(_actualText, fontSize(), fontSmoothing());
+	
+	_caretChar = font()->buildString(caret, fontSize(), fontSmoothing());
 	
 	invalidateContent();
 }
