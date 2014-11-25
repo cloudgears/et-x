@@ -6,11 +6,8 @@ using namespace et;
 using namespace emb;
 
 extern const std::string fullscreenVertexShader;
-
 extern const std::string cubemapFragmentShader;
-
 extern const std::string gaussianBlurShader;
-
 extern const std::string previewVertexShader;
 extern const std::string previewFragmentShader;
 
@@ -45,7 +42,7 @@ void MainController::setRenderContextParameters(et::RenderContextParameters& p)
 void MainController::applicationDidLoad(et::RenderContext* rc)
 {
 	_rc = rc;
-	_rc->renderState().setClearColor(vec4(0.5f));
+	_rc->renderState().setClearColor(vec4(0.25f, 0.25f, 0.25f, 1.0f));
 	
 	loadPrograms();
 	loadGeometry();
@@ -203,9 +200,13 @@ void MainController::render(et::RenderContext* rc)
 	else if (_shouldProcessPass2)
 		processImage_Pass2();
 	
+	_rc->renderState().setClearColor(vec4(0.25f, 0.25f, 0.25f, 1.0f));
+	_rc->renderState().setColorMask(ColorMask_RGBA);
+	_rc->renderState().setDepthMask(true);
+	
 	rc->renderState().bindDefaultFramebuffer();
-	rc->renderState().setDepthMask(true);
 	rc->renderer()->clear(true, true);
+	
 	renderPreview();
 
 	if (_shouldSaveToFile && _framebuffer.valid())
