@@ -61,9 +61,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 		log::error("Font %s not found. Using default font (Arial)", boldFace.c_str());
 		boldFont = [[NSFontManager sharedFontManager] fontWithFamily:@"Arial" traits:NSBoldFontMask weight:5 size:CharacterGenerator::baseFontSize];
 	}
-	
-	log::info("A: %f, D: %f, L: %f", font.ascender, font.descender, font.leading);
-	
+		
 	whiteColor = [NSColor whiteColor];
 	
 	ET_OBJC_RETAIN(font);

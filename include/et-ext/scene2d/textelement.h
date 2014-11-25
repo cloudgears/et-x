@@ -23,8 +23,10 @@ namespace et
 			
 			enum TextStyle
 			{
+				TextStyle_SignedDistanceField,
+				TextStyle_SignedDistanceFieldShadow,
+				TextStyle_SignedDistanceFieldBevel,
 				TextStyle_Plain,
-				TextStyle_Shadow,
 				TextStyle_max
 			};
 			
@@ -69,7 +71,7 @@ namespace et
 			vec2 _shadowOffset;
 			float _fontSize = 12.0f;
 			float _fontSmoothing = 1.0f;
-			TextStyle _textStyle = TextStyle_Plain;
+			TextStyle _textStyle = TextStyle_SignedDistanceField;
 		};
 	}
 }
