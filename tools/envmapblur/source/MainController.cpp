@@ -220,10 +220,10 @@ void MainController::render(et::RenderContext* rc)
 		{
 			BinaryDataStorage rgbaData(_framebuffer->size().square() * 4, 0);
 			glReadPixels(0, 0, _framebuffer->size().x, _framebuffer->size().y, GL_RGBA, GL_UNSIGNED_BYTE, rgbaData.binary());
-			ImageWriter::writeImageToFile(_fileToSave + ".png", rgbaData, _framebuffer->size(), 4, 8, ImageFormat_PNG, false);
+			ImageWriter::writeImageToFile(_fileToSave + ".png", rgbaData, _framebuffer->size(), 4, 8, ImageFormat_PNG, true);
 		}
 		
-		vec2i textureSize = _framebuffer->renderTarget(0)->size() / 2;
+		vec2i textureSize = _framebuffer->renderTarget(0)->size();
 		textureSize = vec2i(static_cast<int>(roundToHighestPowerOfTwo(etMin(textureSize.x, textureSize.y)) / 2));
 
 		size_t mipLevel = 0;

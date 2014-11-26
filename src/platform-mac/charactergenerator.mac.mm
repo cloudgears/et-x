@@ -64,9 +64,9 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 		
 	whiteColor = [NSColor whiteColor];
 	
-	ET_OBJC_RETAIN(font);
-	ET_OBJC_RETAIN(boldFont);
-	ET_OBJC_RETAIN(whiteColor);
+	(void)ET_OBJC_RETAIN(font);
+	(void)ET_OBJC_RETAIN(boldFont);
+	(void)ET_OBJC_RETAIN(whiteColor);
 }
 
 CharacterGeneratorImplementationPrivate::~CharacterGeneratorImplementationPrivate()

@@ -8,7 +8,7 @@
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/charactergenerator.h>
 
-#define ET_SAVE_FONT_TO_FILE	0
+#define ET_SAVE_FONT_TO_FILE	1
 
 #if (ET_SAVE_FONT_TO_FILE)
 #	include <et/app/application.h>
@@ -26,7 +26,7 @@ enum GridProperies : int
 };
 
 const float CharacterGenerator::baseFontSize = static_cast<float>(baseFontIntegerSize);
-const vec2i CharacterGenerator::charactersRenderingExtent = vec2i(32);
+const vec2i CharacterGenerator::charactersRenderingExtent = vec2i(64);
 
 void internal_sdf_compare(sdf::Grid& g, sdf::Point& p, int x, int y, int offsetx, int offsety);
 
@@ -37,7 +37,7 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 #if defined(GL_R8)
 	auto internalFormat = GL_R8;
 #else
-	auto internalFormat = GL_RED
+	auto internalFormat = GL_RED;
 #endif
 	
 	_texture = rc->textureFactory().genTexture(GL_TEXTURE_2D, internalFormat, vec2i(defaultTextureSize),

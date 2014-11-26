@@ -149,10 +149,8 @@ void TextElement::setShadowOffset(const vec2& o)
 
 void TextElement::setProgramParameters(et::Program::Pointer& p)
 {
-	if (_textStyle == TextStyle_SignedDistanceFieldShadow)
-	{
+	if ((_textStyle == TextStyle_SignedDistanceFieldShadow) && (p == _textProgram.program))
 		p->setUniform(_shadowUniform, _shadowOffset * _font->generator()->texture()->texel());
-	}
 }
 
 /*

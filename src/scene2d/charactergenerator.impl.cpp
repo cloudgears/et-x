@@ -12,7 +12,7 @@
 #include <freetype/ft2build.h>
 #include FT_FREETYPE_H
 
-#if (ET_PLATFORM_MAC)
+#if (ET_PLATFORM_APPLE)
 #	include <CoreText/CTFontDescriptor.h>
 #	include <CoreFoundation/CFString.h>
 #	include <CoreFoundation/CFURL.h>
@@ -56,14 +56,21 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 	}
 	else
 	{
-#if (ET_PLATFORM_MAC)
+#if (ET_PLATFORM_APPLE)
 		StaticDataStorage<unsigned char, 1024> fontPath(0);
-		CFStringRef faceString = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, face.c_str(), kCFStringEncodingUTF8, nullptr);
+		CFStringRef faceString = CFStringCreateWithCString(kCFAllocatorDefault, face.c_str(), kCFStringEncodingUTF8);
 		CTFontDescriptorRef fontRef = CTFontDescriptorCreateWithNameAndSize(faceString, 10.0f);
-		CFURLRef url = (CFURLRef)CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute);
-		CFRelease(fontRef);
-		CFURLGetFileSystemRepresentation(url, 1, fontPath.data, fontPath.size());
-		CFRelease(url);
+		if (fontRef)
+		{
+			CFURLRef url = (CFURLRef)CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute);
+			if (url)
+			{
+				CFURLGetFileSystemRepresentation(url, 1, fontPath.data, fontPath.size());
+				CFRelease(url);
+			}
+			CFRelease(fontRef);
+		}
+		CFRelease(faceString);
 		FT_New_Face(library, fontPath.binary(), 0, &regularFont);
 #endif
 	}
@@ -77,14 +84,20 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 	}
 	else
 	{
-#if (ET_PLATFORM_MAC)
+#if (ET_PLATFORM_APPLE)
 		StaticDataStorage<unsigned char, 1024> fontPath(0);
-		CFStringRef faceString = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, boldFace.c_str(), kCFStringEncodingUTF8, nullptr);
+		CFStringRef faceString = CFStringCreateWithCString(kCFAllocatorDefault, boldFace.c_str(), kCFStringEncodingUTF8);
 		CTFontDescriptorRef fontRef = CTFontDescriptorCreateWithNameAndSize(faceString, 10.0f);
-		CFURLRef url = (CFURLRef)CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute);
-		CFRelease(fontRef);
-		CFURLGetFileSystemRepresentation(url, 1, fontPath.data, fontPath.size());
-		CFRelease(url);
+		if (fontRef)
+		{
+			CFURLRef url = (CFURLRef)CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute);
+			if (url)
+			{
+				CFURLGetFileSystemRepresentation(url, 1, fontPath.data, fontPath.size());
+				CFRelease(url);
+			}
+			CFRelease(fontRef);
+		}
 		FT_New_Face(library, fontPath.binary(), 0, &regularFont);
 #endif
 	}
@@ -112,8 +125,8 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	
 	vec2i bitmapSize(glyph->bitmap.width, glyph->bitmap.rows);
 	
-	charSize.x = glyph->metrics.horiAdvance >> 6;
-	charSize.y = glyph->metrics.vertAdvance >> 6;
+	charSize.x = static_cast<int>(glyph->metrics.horiAdvance >> 6);
+	charSize.y = static_cast<int>(glyph->metrics.vertAdvance >> 6);
 	
 	if (charSize.dotSelf() <= 0) return false;
 	
@@ -122,10 +135,12 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	charData.resize(canvasSize.square());
 	charData.fill(0);
 	
-	int ascender = font->size->metrics.ascender >> 6;
+	int ascender = static_cast<int>(font->size->metrics.ascender >> 6);
 	
 	int ox = glyph->bitmap_left + CharacterGenerator::charactersRenderingExtent.x / 2;
 	int oy = etMax(0, ascender - glyph->bitmap_top + CharacterGenerator::charactersRenderingExtent.y / 2);
+	
+//	bitmapSize.y = etMin(bitmapSize.y, canvasSize.y - oy - 1);
 
 	size_t k = 0;
 	for (int y = 0; y < bitmapSize.y; ++y)
@@ -133,7 +148,8 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 		for (int x = 0; x < bitmapSize.x; ++x)
 		{
 			int targetPos = (ox + x) + (canvasSize.y - oy - y - 1) * canvasSize.x;
-			charData[targetPos] = glyph->bitmap.buffer[k++];
+			if (targetPos >= 0)
+				charData[targetPos] = glyph->bitmap.buffer[k++];
 		}
 	}
 	

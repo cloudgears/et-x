@@ -76,7 +76,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	
 #elif (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
 	
-	auto fbo = rc->framebufferFactory().createFramebuffer(texture()->size(), "temp-buffer",
+	auto fbo = rc->framebufferFactory().createFramebuffer(_generator->texture()->size(), "temp-buffer",
 		GL_RGBA, GL_BGRA, GL_UNSIGNED_BYTE, 0, 0, 0);
 	
 	bool blendEnabled = rc->renderState().blendEnabled();
@@ -84,9 +84,9 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	
 	rc->renderState().bindFramebuffer(fbo);
 	rc->renderState().setBlend(false, BlendState_Current);
-	rc->renderer()->renderFullscreenTexture(texture());
+	rc->renderer()->renderFullscreenTexture(_generator->texture());
 	
-	BinaryDataStorage imageData(4 * texture()->size().square());
+	BinaryDataStorage imageData(4 * _generator->texture()->size().square());
 	glReadPixels(0, 0, fbo->size().x, fbo->size().y, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data());
 	checkOpenGLError("glReadPixels");
 	
@@ -105,7 +105,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	}
 	
 	ImageWriter::writeImageToFile(getFilePath(fileName) + textureFile, imageData,
-		texture()->size(), 1, 8, ImageFormat_PNG, true);
+		_generator->texture()->size(), 1, 8, ImageFormat_PNG, true);
 	
 #endif
 }

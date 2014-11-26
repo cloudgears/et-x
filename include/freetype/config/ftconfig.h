@@ -382,7 +382,6 @@ FT_BEGIN_HEADER
   {
     register FT_Int32  t, t2;
 
-
     __asm__ __volatile__ (
       "smull  %1, %2, %4, %3\n\t"       /* (lo=%1,hi=%2) = a*b */
       "mov    %0, %2, asr #31\n\t"      /* %0  = (hi >> 31) */
