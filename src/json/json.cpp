@@ -28,11 +28,15 @@ json_t* serializeDictionary(const Dictionary&);
 
 json_t* serializeValue(const ValueBase::Pointer&);
 
-std::string et::json::serialize(const Dictionary& msg, bool readableFormat)
+std::string et::json::serialize(const Dictionary& msg, size_t inFlags)
 {
 	json_t* dictionary = serializeDictionary(msg);
-	size_t flags = readableFormat ? JSON_INDENT(2) : JSON_COMPACT;
-	char* dump = json_dumps(dictionary, flags | JSON_PRESERVE_ORDER | JSON_ENSURE_ASCII);
+	
+	size_t flags = JSON_PRESERVE_ORDER;
+	flags |= (inFlags & SerializationFlag_ReadableFormat) ? JSON_INDENT(2) : JSON_COMPACT;
+	flags |= (inFlags & SerializationFlag_ConvertUnicode) ? JSON_ENSURE_ASCII : 0;
+
+	char* dump = json_dumps(dictionary, flags);
 	
 	std::string serialized(dump);
 	
@@ -42,11 +46,15 @@ std::string et::json::serialize(const Dictionary& msg, bool readableFormat)
 	return serialized;
 }
 
-std::string et::json::serialize(const et::ArrayValue& arr, bool readableFormat)
+std::string et::json::serialize(const et::ArrayValue& arr, size_t inFlags)
 {
 	json_t* dictionary = serializeArray(arr);
-	size_t flags = readableFormat ? JSON_INDENT(2) : JSON_COMPACT;
-	char* dump = json_dumps(dictionary, flags | JSON_PRESERVE_ORDER | JSON_ENSURE_ASCII);
+	
+	size_t flags = JSON_PRESERVE_ORDER;
+	flags |= (inFlags & SerializationFlag_ReadableFormat) ? JSON_INDENT(2) : JSON_COMPACT;
+	flags |= (inFlags & SerializationFlag_ConvertUnicode) ? JSON_ENSURE_ASCII : 0;
+	
+	char* dump = json_dumps(dictionary, flags);
 	
 	std::string serialized(dump);
 	

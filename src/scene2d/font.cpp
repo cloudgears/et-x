@@ -110,12 +110,14 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 #endif
 }
 
-void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
+bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
 {
 	std::string resolvedFileName = application().resolveFileName(fileName);
 	
 	InputStream fontFile(resolvedFileName, StreamMode_Binary);
-	if (fontFile.invalid()) return;
+	
+	if (fontFile.invalid())
+		return false;
 
 	std::string fontFileDir = getFilePath(resolvedFileName);
 
@@ -134,7 +136,7 @@ void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	if (tex.invalid())
 	{
 		log::error("Unable to load texture for font %s. Missing file: %s", fileName.c_str(), textureFile.c_str());
-		return;
+		return false;
 	}
 	
 	_generator->setTexture(tex);
@@ -149,6 +151,8 @@ void Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 			_generator->pushCharacter(desc);
 		}
 	}
+	
+	return true;
 }
 
 vec2 Font::measureStringSize(const CharDescriptorList& s)

@@ -28,7 +28,7 @@ namespace et
 			const CharacterGenerator::Pointer& generator() const
 				{ return _generator; }
 
-			void loadFromFile(RenderContext*, const std::string&, ObjectsCache&);
+			bool loadFromFile(RenderContext*, const std::string&, ObjectsCache&);
 			
 			void saveToFile(RenderContext*, const std::string&);
 			
