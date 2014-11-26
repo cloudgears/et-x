@@ -11,21 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F1F6FBD8-F5F7-41C0-B0EF-AEA2470C2516}</ProjectGuid>
+    <ProjectGuid>{86DC4244-EC30-493C-B0F8-F4ABC6C165A1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>envmapblur</RootNamespace>
+    <RootNamespace>EnvMapBlur</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>CTP_Nov2013</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -40,14 +41,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)\..\..\..\..\engine\include;$(SolutionDir)\..\..\..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\..\..\..\lib\win;$(SolutionDir)\..\..\..\..\engine\lib\win;$(LibraryPath)</LibraryPath>
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(SolutionDir)..\..\..\..\engine\include;$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\..\lib\win;$(SolutionDir)..\..\..\..\engine\lib\win;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)\..\..\..\..\engine\include;$(SolutionDir)\..\..\..\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\..\..\..\lib\win;$(SolutionDir)\..\..\..\..\engine\lib\win;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\..\..\..\engine\include;$(SolutionDir)..\..\..\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\..\..\lib\win;$(SolutionDir)..\..\..\..\engine\lib\win;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -56,13 +57,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>jpeg.lib;opengl32.lib;libpng16.lib;jansson.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vorbisfile.lib;vorbis.lib;openal32.lib;ogg.lib;jansson.lib;libpng16.lib;jpeg.lib;freetype.lib;zlib.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <AdditionalOptions>/VERBOSE:LIB %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,14 +76,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>jpeg.lib;opengl32.lib;libpng16.lib;jansson.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vorbisfile.lib;vorbis.lib;ogg.lib;jansson.lib;libpng16.lib;jpeg.lib;freetype.lib;zlib.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -105,11 +108,12 @@
     <ClCompile Include="..\..\..\..\engine\src\app\runloop.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\camera\camera.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\camera\frustum.cpp" />
-    <ClCompile Include="..\..\..\..\engine\src\collision\collision.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\core\base64.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\conversion.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\dictionary.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\core\et.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\core\memoryallocator.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\objectscache.cpp" />
-    <ClCompile Include="..\..\..\..\engine\src\core\plist.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\stream.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\tools.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\core\transformable.cpp" />
@@ -132,11 +136,12 @@
     <ClCompile Include="..\..\..\..\engine\src\platform-win\application.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\atomiccounter.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\criticalsection.win.cpp" />
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\fontgen.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\input.win.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\kinect.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\locale.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\location.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\log.win.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\memory.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\mutex.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\opengl.win.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\platform-win\orientation.win.cpp" />
@@ -152,6 +157,10 @@
     <ClCompile Include="..\..\..\..\engine\src\rendering\renderer.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\rendering\rendering.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\rendering\renderstate.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\sound\player.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\sound\sound.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\sound\streamingthread.cpp" />
+    <ClCompile Include="..\..\..\..\engine\src\sound\track.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\tasks\taskpool.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\timers\notifytimer.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\timers\sequence.cpp" />
@@ -162,23 +171,25 @@
     <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\vertexdatachunk.cpp" />
     <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\vertexdeclaration.cpp" />
     <ClCompile Include="..\..\..\src\json\json.cpp" />
-    <ClCompile Include="..\..\..\src\platform-win\charactergenerator.win.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\button.cpp" />
-    <ClCompile Include="..\..\..\src\scene2d\element.cpp" />
+    <ClCompile Include="..\..\..\src\scene2d\charactergenerator.cpp" />
+    <ClCompile Include="..\..\..\src\scene2d\charactergenerator.impl.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\element2d.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\font.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\fullscreenelement.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\imageview.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\label.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\layout.cpp" />
+    <ClCompile Include="..\..\..\src\scene2d\line.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\listbox.cpp" />
-    <ClCompile Include="..\..\..\src\scene2d\messageview.cpp" />
+    <ClCompile Include="..\..\..\src\scene2d\particleselement.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\renderingelement.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\scene.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\scenerenderer.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\scroll.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\slider.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\table.cpp" />
+    <ClCompile Include="..\..\..\src\scene2d\textelement.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\textfield.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\textureatlas.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\textureatlaswriter.cpp" />

@@ -5,6 +5,7 @@
  *
  */
 
+#include <fstream>
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/charactergenerator.h>
 #include <et/platform-apple/apple.h>
@@ -32,6 +33,9 @@ public:
 	bool startWithCharacter(const CharDescriptor& desc, vec2i& charSize, vec2i& canvasSize, BinaryDataStorage& charData);
 	
 private:
+	BinaryDataStorage regularFontData;
+	BinaryDataStorage boldFontData;
+
 	FT_Library library = nullptr;
 	FT_Face regularFont = nullptr;
 	FT_Face boldFont = nullptr;
@@ -72,6 +76,25 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 		}
 		CFRelease(faceString);
 		FT_New_Face(library, fontPath.binary(), 0, &regularFont);
+#elif (ET_PLATFORM_WIN)
+		auto commonDC = CreateCompatibleDC(nullptr);
+
+		HFONT font = CreateFont(-12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 
+			OUT_TT_ONLY_PRECIS, CLIP_EMBEDDED, PROOF_QUALITY, FF_DONTCARE, face.c_str());
+
+		SelectObject(commonDC, font);
+		auto fontDataSize = GetFontData(commonDC, 0, 0, nullptr, 0);
+		if ((fontDataSize > 0) && (fontDataSize != GDI_ERROR))
+		{
+			regularFontData.resize(fontDataSize);
+			regularFontData.fill(0);
+
+			if (GetFontData(commonDC, 0, 0, regularFontData.data(), regularFontData.size()) != GDI_ERROR)
+				FT_New_Memory_Face(library, regularFontData.data(), regularFontData.size(), 0, &regularFont);
+		}
+
+		DeleteObject(font);
+		DeleteDC(commonDC);
 #endif
 	}
 	
@@ -99,6 +122,25 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 			CFRelease(fontRef);
 		}
 		FT_New_Face(library, fontPath.binary(), 0, &regularFont);
+#elif (ET_PLATFORM_WIN)
+		auto commonDC = CreateCompatibleDC(nullptr);
+
+		HFONT font = CreateFont(-12, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 
+			OUT_TT_ONLY_PRECIS, CLIP_EMBEDDED, PROOF_QUALITY, FF_DONTCARE, boldFace.c_str());
+
+		SelectObject(commonDC, font);
+		auto fontDataSize = GetFontData(commonDC, 0, 0, nullptr, 0);
+		if ((fontDataSize > 0) && (fontDataSize != GDI_ERROR))
+		{
+			boldFontData.resize(fontDataSize);
+			boldFontData.fill(0);
+
+			if (GetFontData(commonDC, 0, 0, boldFontData.data(), boldFontData.size()) != GDI_ERROR)
+				FT_New_Memory_Face(library, boldFontData.data(), boldFontData.size(), 0, &boldFont);
+		}
+
+		DeleteObject(font);
+		DeleteDC(commonDC);
 #endif
 	}
 
