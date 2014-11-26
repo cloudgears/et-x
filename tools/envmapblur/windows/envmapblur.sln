@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "envmapblur", "envmapblur.vcxproj", "{F1F6FBD8-F5F7-41C0-B0EF-AEA2470C2516}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnvMapBlur", "EnvMapBlur.vcxproj", "{86DC4244-EC30-493C-B0F8-F4ABC6C165A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F1F6FBD8-F5F7-41C0-B0EF-AEA2470C2516}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F1F6FBD8-F5F7-41C0-B0EF-AEA2470C2516}.Debug|Win32.Build.0 = Debug|Win32
-		{F1F6FBD8-F5F7-41C0-B0EF-AEA2470C2516}.Release|Win32.ActiveCfg = Release|Win32
-		{F1F6FBD8-F5F7-41C0-B0EF-AEA2470C2516}.Release|Win32.Build.0 = Release|Win32
+		{86DC4244-EC30-493C-B0F8-F4ABC6C165A1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{86DC4244-EC30-493C-B0F8-F4ABC6C165A1}.Debug|Win32.Build.0 = Debug|Win32
+		{86DC4244-EC30-493C-B0F8-F4ABC6C165A1}.Release|Win32.ActiveCfg = Release|Win32
+		{86DC4244-EC30-493C-B0F8-F4ABC6C165A1}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

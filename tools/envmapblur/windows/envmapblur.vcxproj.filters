@@ -5,329 +5,356 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="engine">
-      <UniqueIdentifier>{53ca6295-a391-46a3-98d9-c0a6d48444b9}</UniqueIdentifier>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{0fa5991a-2e14-4308-9758-62416eab98a8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine-ext">
-      <UniqueIdentifier>{c02bff80-97b2-4fb3-9011-9f957e80f96e}</UniqueIdentifier>
+    <Filter Include="Engine-ext">
+      <UniqueIdentifier>{a8b77439-3988-4e64-9711-bdad49845377}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="test">
+      <UniqueIdentifier>{409217eb-1d91-4eb3-947d-6e93163e8a9a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\ui\MainUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\ui\ResourceManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\MainController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\json\json.cpp">
-      <Filter>engine-ext</Filter>
+    <ClCompile Include="..\source\ui\MainUI.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\platform-win\charactergenerator.win.cpp">
-      <Filter>engine-ext</Filter>
+    <ClCompile Include="..\source\ui\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\button.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\scene2d\element.cpp">
-      <Filter>engine-ext</Filter>
+    <ClCompile Include="..\..\..\src\scene2d\charactergenerator.cpp">
+      <Filter>Engine-ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\charactergenerator.impl.cpp">
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\element2d.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\font.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\fullscreenelement.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\imageview.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\label.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\layout.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\line.cpp">
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\listbox.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\scene2d\messageview.cpp">
-      <Filter>engine-ext</Filter>
+    <ClCompile Include="..\..\..\src\scene2d\particleselement.cpp">
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\renderingelement.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\scene.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\scenerenderer.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\scroll.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\slider.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\table.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\textelement.cpp">
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\textfield.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\textureatlas.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\textureatlaswriter.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\src\scene2d\vertexbuilder.cpp">
-      <Filter>engine-ext</Filter>
+      <Filter>Engine-ext</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\framebuffer.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\framebufferfactory.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\indexbufferdata.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\program.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\programfactory.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\texture.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\texturefactory.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\textureloadingthread.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\vertexarrayobjectdata.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\vertexbufferdata.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\apiobjects\vertexbufferfactory.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\app\appevironment.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\app\application.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\app\backgroundthread.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\app\events.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\app\invocation.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\app\runloop.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\camera\camera.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\camera\frustum.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\collision\collision.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\core\conversion.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\core\dictionary.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\core\objectscache.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\core\plist.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\core\stream.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\core\tools.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\core\transformable.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\geometry\geometry.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\geometry\rectplacer.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\imaging\ddsloader.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\imaging\hdrloader.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\imaging\imageoperations.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\imaging\imagewriter.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\imaging\pngloader.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\imaging\pvrdecompressor.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\imaging\pvrloader.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\imaging\textureloader.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\input\gestures.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\input\input.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\locale\locale.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\opengl\opengl.common.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\opengl\openglcaps.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\application.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\atomiccounter.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\criticalsection.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\fontgen.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\input.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\locale.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\location.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\mutex.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\opengl.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\orientation.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\platformtools.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\rendercontext.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\sound.openal.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\thread.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\threading.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\tools.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\videocapture.win.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\primitives\primitives.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\rendering\rendercontext.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\rendering\renderer.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\rendering\rendering.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\rendering\renderstate.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\tasks\taskpool.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\timers\notifytimer.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\timers\sequence.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\timers\timedobject.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\timers\timerpool.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\indexarray.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\vertexarray.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\vertexdatachunk.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\vertexdeclaration.cpp">
-      <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\engine\src\platform-win\log.win.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\app\pathresolver.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\app\runloop.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\core\base64.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\core\conversion.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\core\dictionary.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\core\et.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\core\memoryallocator.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\core\objectscache.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\core\stream.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\core\tools.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\core\transformable.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\geometry\geometry.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\geometry\rectplacer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\imaging\ddsloader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\imaging\hdrloader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\imaging\imageoperations.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\imaging\imagewriter.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\engine\src\imaging\jpegloader.cpp">
-      <Filter>engine</Filter>
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\imaging\pngloader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\imaging\pvrdecompressor.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\imaging\pvrloader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\imaging\textureloader.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\input\gestures.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\input\input.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\locale\locale.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\opengl\opengl.common.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\opengl\openglcaps.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\application.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\atomiccounter.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\criticalsection.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\input.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\kinect.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\locale.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\location.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\log.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\memory.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\mutex.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\opengl.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\orientation.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\platformtools.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\rendercontext.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\sound.openal.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\thread.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\threading.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\tools.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\platform-win\videocapture.win.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\rendering\rendercontext.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\rendering\renderer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\rendering\rendering.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\rendering\renderstate.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\tasks\taskpool.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\timers\notifytimer.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\timers\sequence.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\timers\timedobject.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\timers\timerpool.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\indexarray.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\vertexarray.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\vertexdatachunk.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\vertexbuffer\vertexdeclaration.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\primitives\primitives.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\camera\camera.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\camera\frustum.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\json\json.cpp">
+      <Filter>Engine-ext</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\sound\player.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\sound\sound.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\sound\streamingthread.cpp">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\engine\src\sound\track.cpp">
+      <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\MainController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\source\ui\MainUI.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\ui\ResourceManager.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\source\MainController.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

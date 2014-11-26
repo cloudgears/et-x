@@ -16,10 +16,13 @@ void ResourceManager::load(et::RenderContext* rc)
 {
 	_rc = rc;
 	
+#if (ET_PLATFORM_WIN)
+	auto commonFont = s2d::CharacterGenerator::Pointer::create(rc, "Tahoma", "Tahoma");
+#else
 	auto commonFont = s2d::CharacterGenerator::Pointer::create(rc, "Helvetica", "Helvetica");
-	auto coolFont = s2d::CharacterGenerator::Pointer::create(rc, "Helvetica", "Helvetica");
-	
-	fonts.buttonsFont = s2d::Font::Pointer::create(coolFont);
+#endif
+
+	fonts.buttonsFont = s2d::Font::Pointer::create(commonFont);
 	fonts.labelsFont = s2d::Font::Pointer::create(commonFont);
 }
 
@@ -38,6 +41,7 @@ et::s2d::Button::Pointer ResourceManager::button(const std::string& text, et::s2
 	result->setTextPressedColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 	result->setBackgroundColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
 	result->setAutolayoutMask(s2d::LayoutMask_NoSize);
+	result->adjustSize();
 	return result;
 }
 

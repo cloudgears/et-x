@@ -5,6 +5,8 @@
  *
  */
 
+#include <et/rendering/rendercontext.h>
+#include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/particleselement.h>
 
 using namespace et;
