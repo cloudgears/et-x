@@ -42,7 +42,7 @@ namespace et
 		class CharacterGeneratorImplementation
 		{
 		public:
-			CharacterGeneratorImplementation(const std::string&, const std::string&);
+			CharacterGeneratorImplementation(const std::string&, const std::string&, size_t, size_t);
 			~CharacterGeneratorImplementation();
 			
 		public:
@@ -61,7 +61,8 @@ namespace et
 			static const vec2i charactersRenderingExtent;
 			
 		public:
-			CharacterGenerator(RenderContext* _rc, const std::string& face, const std::string& boldFace);
+			CharacterGenerator(RenderContext* _rc, const std::string& face, const std::string& boldFace, 
+				size_t faceIndex = 0, size_t boldFaceIndex = 0);
 			
 			const Texture& texture() const
 				{ return _texture; }

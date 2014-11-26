@@ -30,9 +30,9 @@ const vec2i CharacterGenerator::charactersRenderingExtent = vec2i(64);
 
 void internal_sdf_compare(sdf::Grid& g, sdf::Point& p, int x, int y, int offsetx, int offsety);
 
-CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace) :
-	_impl(face, boldFace), _rc(rc), _placer(vec2i(static_cast<int>(defaultTextureSize)), true), _fontFace(face),
-	_fontBoldFace(boldFace)
+CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace,
+	size_t faceIndex, size_t boldFaceIndex) : _impl(face, boldFace, faceIndex, boldFaceIndex), _rc(rc),
+	_placer(vec2i(static_cast<int>(defaultTextureSize)), true), _fontFace(face), _fontBoldFace(boldFace)
 {
 #if defined(GL_R8)
 	auto internalFormat = GL_R8;

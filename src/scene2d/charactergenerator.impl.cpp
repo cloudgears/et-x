@@ -27,7 +27,9 @@ using namespace et::s2d;
 class et::s2d::CharacterGeneratorImplementationPrivate
 {
 public:
-	CharacterGeneratorImplementationPrivate(const std::string& face, const std::string& boldFace);
+	CharacterGeneratorImplementationPrivate(const std::string& face, const std::string& boldFace, 
+		size_t faceIndex, size_t boldFaceIndex);
+
 	~CharacterGeneratorImplementationPrivate();
 	
 	bool startWithCharacter(const CharDescriptor& desc, vec2i& charSize, vec2i& canvasSize, BinaryDataStorage& charData);
@@ -41,8 +43,11 @@ private:
 	FT_Face boldFont = nullptr;
 };
 
-CharacterGeneratorImplementation::CharacterGeneratorImplementation(const std::string& face, const std::string& boldFace)
-	{ ET_PIMPL_INIT(CharacterGeneratorImplementation, face, boldFace) }
+CharacterGeneratorImplementation::CharacterGeneratorImplementation(const std::string& face, const std::string& boldFace, 
+	size_t faceIndex, size_t boldFaceIndex)
+{
+	ET_PIMPL_INIT(CharacterGeneratorImplementation, face, boldFace, faceIndex, boldFaceIndex) 
+}
 
 CharacterGeneratorImplementation::~CharacterGeneratorImplementation()
 	{ ET_PIMPL_FINALIZE(CharacterGeneratorImplementation) }
@@ -50,13 +55,14 @@ CharacterGeneratorImplementation::~CharacterGeneratorImplementation()
 bool CharacterGeneratorImplementation::processCharacter(const CharDescriptor& a, vec2i& b, vec2i& c, BinaryDataStorage& d)
 	{ return _private->startWithCharacter(a, b, c, d); }
 
-CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate(const std::string& face, const std::string& boldFace)
+CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate(const std::string& face, 
+	const std::string& boldFace, size_t faceIndex, size_t boldFaceIndex)
 {
 	FT_Init_FreeType(&library);
 
 	if (fileExists(face))
 	{
-		FT_New_Face(library, face.c_str(), 0, &regularFont);
+		FT_New_Face(library, face.c_str(), faceIndex, &regularFont);
 	}
 	else
 	{
@@ -75,7 +81,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 			CFRelease(fontRef);
 		}
 		CFRelease(faceString);
-		FT_New_Face(library, fontPath.binary(), 0, &regularFont);
+		FT_New_Face(library, fontPath.binary(), faceIndex, &regularFont);
 #elif (ET_PLATFORM_WIN)
 		auto commonDC = CreateCompatibleDC(nullptr);
 
@@ -90,7 +96,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 			regularFontData.fill(0);
 
 			if (GetFontData(commonDC, 0, 0, regularFontData.data(), regularFontData.size()) != GDI_ERROR)
-				FT_New_Memory_Face(library, regularFontData.data(), regularFontData.size(), 0, &regularFont);
+				FT_New_Memory_Face(library, regularFontData.data(), regularFontData.size(), faceIndex, &regularFont);
 		}
 
 		DeleteObject(font);
@@ -103,7 +109,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 	 */
 	if (fileExists(boldFace))
 	{
-		FT_New_Face(library, boldFace.c_str(), 0, &boldFont);
+		FT_New_Face(library, boldFace.c_str(), boldFaceIndex, &boldFont);
 	}
 	else
 	{
@@ -121,7 +127,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 			}
 			CFRelease(fontRef);
 		}
-		FT_New_Face(library, fontPath.binary(), 0, &regularFont);
+		FT_New_Face(library, fontPath.binary(), boldFaceIndex, &regularFont);
 #elif (ET_PLATFORM_WIN)
 		auto commonDC = CreateCompatibleDC(nullptr);
 
@@ -136,7 +142,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 			boldFontData.fill(0);
 
 			if (GetFontData(commonDC, 0, 0, boldFontData.data(), boldFontData.size()) != GDI_ERROR)
-				FT_New_Memory_Face(library, boldFontData.data(), boldFontData.size(), 0, &boldFont);
+				FT_New_Memory_Face(library, boldFontData.data(), boldFontData.size(), boldFaceIndex, &boldFont);
 		}
 
 		DeleteObject(font);
