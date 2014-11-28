@@ -1,6 +1,8 @@
+#include <et/core/tools.h>
 #include <et/camera/camera.h>
 #include <et/geometry/geometry.h>
 #include <et/primitives/primitives.h>
+#include <et/imaging/imagewriter.h>
 #include <et-ext/atmosphere/atmosphere.h>
 
 using namespace et;
@@ -12,9 +14,9 @@ extern const std::string planetPerVertexVS;
 extern const std::string planetPerVertexSimpleVS;
 extern const std::string planetPerVertexFS;
 
-#define DRAW_WIREFRAME	0
+#define ET_ATMOSPHERE_DRAW_WIREFRAME_OVERLAY	0
 
-Atmosphere::Atmosphere(RenderContext* rc, size_t) :
+Atmosphere::Atmosphere(RenderContext* rc) :
 	_rc(rc)
 {
 	setParameters(defaultParameters());
@@ -58,6 +60,8 @@ Dictionary Atmosphere::defaultParameters()
 
 void Atmosphere::setProgramParameters(Program::Pointer prog)
 {
+	if (_skyParametersValid) return;
+	
 	float fRayleighScaleDepth = _parameters.floatForKey(kRayleighScaleDepth)->content;
 	float fESun = _parameters.floatForKey(kSunExponent)->content;
 	float fKr = _parameters.floatForKey(kKr)->content;
@@ -147,42 +151,108 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 		_planetPerVertexProgram->setCameraProperties(adjustedCamera);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
 		
-#if (DRAW_WIREFRAME)
+#	if (ET_ATMOSPHERE_DRAW_WIREFRAME_OVERLAY)
 		rs.setDepthFunc(DepthFunc_LessOrEqual);
 		rs.setBlend(true, BlendState_Additive);
 		rs.setWireframeRendering(true);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
 		rs.setWireframeRendering(false);
 		rs.setDepthFunc(DepthFunc_Less);
-#endif
+#	endif
 	}
 	
 	if (drawSky)
 	{
-		CullState cs = rs.cullState();
+		CullState lastCullState = rs.cullState();
+		BlendState lastBlendState = rs.blendState();
+		bool cullingEnabled = rs.cullEnabled();
+		bool depthMaskEnabled = rs.depthMask();
+		bool blendEnabled = rs.blendEnabled();
+		
+		rs.setDepthMask(false);
 		rs.setBlend(true, BlendState_Additive);
 		rs.setCulling(true, CullState_Front);
 		rs.bindProgram(_atmospherePerVertexProgram);
-		
-		if (!_skyParametersValid)
-		{
-			setProgramParameters(_atmospherePerVertexProgram);
-			_skyParametersValid = true;
-		}
-		
+		setProgramParameters(_atmospherePerVertexProgram);
 		_atmospherePerVertexProgram->setCameraProperties(adjustedCamera);
 		_atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
 		
-#if (DRAW_WIREFRAME)
+#	if (ET_ATMOSPHERE_DRAW_WIREFRAME_OVERLAY)
 		rs.setWireframeRendering(true);
 		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
 		rs.setWireframeRendering(false);
 		rs.setDepthFunc(DepthFunc_Less);
-#endif
+#	endif
 		
-		rs.setCulling(true, cs);
+		rs.setBlend(blendEnabled, lastBlendState);
+		rs.setCulling(cullingEnabled, lastCullState);
+		rs.setDepthMask(depthMaskEnabled);
 	}
+}
+
+void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
+{
+	ET_ASSERT(framebuffer->isCubemap());
+	
+	static const vec3 lookDirections[] =
+	{
+		vec3(+1.0f, 0.0f, 0.0f),
+		vec3(-1.0f, 0.0f, 0.0f),
+		vec3(0.0f, +1.0f, 0.0f),
+		vec3(0.0f, -1.0f, 0.0f),
+		vec3(0.0f, 0.0f, +1.0f),
+		vec3(0.0f, 0.0f, -1.0f),
+	};
+	
+	static const vec3 upVectors[] =
+	{
+		vec3(0.0f, -1.0f, 0.0f),
+		vec3(0.0f, -1.0f, 0.0f),
+		vec3(0.0f, 0.0f, +1.0f),
+		vec3(0.0f, 0.0f, -1.0f),
+		vec3(0.0f, -1.0f, 0.0f),
+		vec3(0.0f, -1.0f, 0.0f),
+	};
+	
+	Camera cubemapCamera;
+	cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 1.0f, _cameraPosition.dotSelf());
+	
+	auto& rs = _rc->renderState();
+	
+	CullState lastCullState = rs.cullState();
+	BlendState lastBlendState = rs.blendState();
+	bool cullingEnabled = rs.cullEnabled();
+	bool depthMaskEnabled = rs.depthMask();
+	bool blendEnabled = rs.blendEnabled();
+	bool depthTestEnabled = rs.depthTestEnabled();
+	
+	rs.setDepthMask(false);
+	rs.setDepthTest(false);
+	rs.setBlend(true, BlendState_Additive);
+	rs.setCulling(true, CullState_Front);
+	
+	rs.bindProgram(_atmospherePerVertexProgram);
+	setProgramParameters(_atmospherePerVertexProgram);
+	_atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
+
+	rs.bindVertexArray(_atmosphereVAO);
+	rs.bindFramebuffer(framebuffer);
+	for (size_t i = 0; i < 6; ++i)
+	{
+		framebuffer->setCurrentCubemapFace(i);
+		cubemapCamera.lookAt(vec3(0.0f), lookDirections[i], upVectors[i]);
+		cubemapCamera.setPosition(_cameraPosition);
+		
+		_rc->renderer()->clear(true, false);
+		_atmospherePerVertexProgram->setCameraProperties(cubemapCamera);
+		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+	}
+	
+	rs.setDepthTest(depthTestEnabled);
+	rs.setBlend(blendEnabled, lastBlendState);
+	rs.setCulling(cullingEnabled, lastCullState);
+	rs.setDepthMask(depthMaskEnabled);
 }
 
 void Atmosphere::setLightDirection(const vec3& l)

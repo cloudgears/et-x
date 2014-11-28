@@ -16,7 +16,8 @@ const float colorPlaceholdersSize = 0.5f;
 
 Slider::Slider(Element2d* parent) :
 	Element2d(parent), _min(0.0f), _max(1.0f), _value(timerPool()), _state(State_Default),
-	_handleFillColor(vec4(1.0f, 0.5f, 0.25f, 1.0f)), _sliderImagesMode(SliderImagesMode_Crop),
+	_handleFillColor(vec4(1.0f, 0.5f, 0.25f, 1.0f)), _sliderLeftColor(0.25f, 0.5f, 1.0f, 1.0f),
+	_sliderRightColor(0.5f, 0.5f, 0.5f, 1.0f), _sliderImagesMode(SliderImagesMode_Crop),
 	_backgroundImageMode(BackgroundImageMode_Center)
 {
 	for (size_t i = 0; i < State_max; ++i)

@@ -36,7 +36,12 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 	if (!fileExists(resolvedFileName)) return;
 	
 	application().pushSearchPath(getFilePath(resolvedFileName));
-	
+
+#if (ET_DISABLE_JSON)
+#
+#	warning ET_DISABLE_JSON is defined, JSON texture atlases is not available
+#
+#else
 	ValueClass vc = ValueClass_Invalid;
 	Dictionary atlas = json::deserialize(loadTextFile(resolvedFileName), vc, false);
 	
@@ -65,6 +70,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 		}
 	}
 	else
+#endif
 	{
 		InputStream descFile(resolvedFileName, StreamMode_Text);
 		if (descFile.valid())

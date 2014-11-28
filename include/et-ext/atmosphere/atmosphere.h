@@ -10,7 +10,7 @@ namespace et
 		ET_DECLARE_POINTER(Atmosphere)
 		
 	public:
-		Atmosphere(RenderContext*, size_t textureSize);
+		Atmosphere(RenderContext*);
 		
 		void setLightDirection(const vec3&);
 		void setParameters(const Dictionary&);
@@ -26,6 +26,8 @@ namespace et
 		
 		const vec3& cameraPosition() const
 			{ return _cameraPosition; }
+		
+		void generateCubemap(et::Framebuffer::Pointer);
 		
 		Program::Pointer planetProgram();
 		

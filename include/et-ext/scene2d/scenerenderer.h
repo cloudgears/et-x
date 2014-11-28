@@ -81,6 +81,12 @@ namespace et
 			
 			vec3 _additionalOffsetAndAlpha;
 			recti _additionalWindowOffset;
+			recti _latestClipRect;
+			bool _depthMaskEnabled = false;
+			bool _blendEnabled = false;
+			bool _depthTestEnabled = false;
+			bool _clipeEnabled = false;
+			BlendState _lastBlendState = BlendState_Default;
 		};
 	}
 }

@@ -6,7 +6,7 @@
  */
 
 #include <libcurl/curl.h>
-#include <et-ext/json/json.h>
+#include <et/json/json.h>
 #include <et-ext/networking/httprequest.h>
 
 using namespace et;
