@@ -43,7 +43,7 @@ namespace et
 			
 			et::s2d::SceneProgram program() const;
 			et::s2d::SceneProgram initProgram(et::s2d::SceneRenderer&);
-			void setProgramParameters(et::Program::Pointer&);
+			void setProgramParameters(et::RenderContext*, et::Program::Pointer&);
 			
 		private:
 			et::Texture _texture;

@@ -124,7 +124,7 @@ et::s2d::SceneProgram ParticlesElement::initProgram(et::s2d::SceneRenderer& r)
 	return _program;
 }
 
-void ParticlesElement::setProgramParameters(et::Program::Pointer& p)
+void ParticlesElement::setProgramParameters(et::RenderContext*, et::Program::Pointer& p)
 {
 	p->setUniform("finalTransform", finalTransform());
 }
