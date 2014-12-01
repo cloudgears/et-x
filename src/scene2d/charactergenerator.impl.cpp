@@ -173,8 +173,11 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	
 	vec2i bitmapSize(glyph->bitmap.width, glyph->bitmap.rows);
 	
+	long ascender = font->size->metrics.ascender >> 6;
+	long descender = (-font->size->metrics.descender) >> 6;
+	
 	charSize.x = static_cast<int>(glyph->metrics.horiAdvance >> 6);
-	charSize.y = static_cast<int>(glyph->metrics.vertAdvance >> 6);
+	charSize.y = static_cast<int>(ascender + descender);
 	
 	if (charSize.dotSelf() <= 0) return false;
 	
@@ -183,10 +186,10 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	charData.resize(canvasSize.square());
 	charData.fill(0);
 	
-	int ascender = static_cast<int>(font->size->metrics.ascender >> 6);
-	
 	int ox = glyph->bitmap_left + CharacterGenerator::charactersRenderingExtent.x / 2;
-	int oy = etMax(0, ascender - glyph->bitmap_top + CharacterGenerator::charactersRenderingExtent.y / 2);
+	
+	int oy = etMax(0, static_cast<int>(ascender) - glyph->bitmap_top +
+		CharacterGenerator::charactersRenderingExtent.y / 2);
 	
 //	bitmapSize.y = etMin(bitmapSize.y, canvasSize.y - oy - 1);
 

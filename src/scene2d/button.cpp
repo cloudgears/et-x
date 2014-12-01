@@ -68,81 +68,81 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	mat4 transform = finalTransform();
 	
 	vec2 frameSize = size();
-	vec2 imageSize = absv(_image[_state].descriptor.size);
+	
+	_imageSize = absv(_image[_state].descriptor.size);
 	
 	size_t sizeMode = _contentMode & 0x0000ffff;
 	if (sizeMode == ContentMode_Fit)
 	{
-		float imageAspect = imageSize.aspect();
-		if (imageSize.x > frameSize.x)
+		float imageAspect = _imageSize.aspect();
+		if (_imageSize.x > frameSize.x)
 		{
-			imageSize.x = frameSize.x;
-			imageSize.y = frameSize.x / imageAspect;
+			_imageSize.x = frameSize.x;
+			_imageSize.y = frameSize.x / imageAspect;
 		}
-		if (imageSize.y > frameSize.y)
+		if (_imageSize.y > frameSize.y)
 		{
-			imageSize.x = frameSize.y * imageAspect;
-			imageSize.y = frameSize.y;
+			_imageSize.x = frameSize.y * imageAspect;
+			_imageSize.y = frameSize.y;
 		}
 	}
 	else if (sizeMode == ContentMode_ScaleMaxToMin)
 	{
-		float maxImageDim = etMax(imageSize.x, imageSize.y);
+		float maxImageDim = etMax(_imageSize.x, _imageSize.y);
 		float minFrameDim = etMin(frameSize.x, frameSize.y);
-		imageSize *= minFrameDim / maxImageDim;
+		_imageSize *= minFrameDim / maxImageDim;
 	}
-	else
+	else if (sizeMode != ContentMode_Center)
 	{
 		ET_FAIL("Uknown content mode");
 	}
 	
-	float contentGap = (imageSize.x > 0.0f) && ((_currentTextSize.x > 0.0f) || (_nextTextSize.x > 0.0f)) ? 5.0f : 0.0f;
-	vec2 contentSize = imageSize + _maxTextSize + vec2(contentGap);
+	float contentGap = (_imageSize.x > 0.0f) && ((_currentTextSize.x > 0.0f) || (_nextTextSize.x > 0.0f)) ? 5.0f : 0.0f;
+	vec2 contentSize = _imageSize + _maxTextSize + vec2(contentGap);
 
-	vec2 imageOrigin;
-	vec2 textOrigin;
-	
 	if (_imageLayout == ImageLayout_Right)
 	{
-		textOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
+		_textOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
 			(frameSize - vec2(contentSize.x, _maxTextSize.y));
 				
-		imageOrigin.x = textOrigin.x + contentGap + _maxTextSize.x;
-		imageOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - imageSize.y);
+		_imageOrigin.x = _textOrigin.x + contentGap + _maxTextSize.x;
+		_imageOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - _imageSize.y);
 	}
 	else if (_imageLayout == ImageLayout_Top)
 	{
-		imageOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
-			(frameSize - vec2(imageSize.x, contentSize.y));
-		textOrigin.x = alignmentFactor(_horizontalAlignment) * (frameSize.x - _maxTextSize.x);
-		textOrigin.y = imageOrigin.y + contentGap + imageSize.y;
+		_imageOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
+			(frameSize - vec2(_imageSize.x, contentSize.y));
+		_textOrigin.x = alignmentFactor(_horizontalAlignment) * (frameSize.x - _maxTextSize.x);
+		_textOrigin.y = _imageOrigin.y + contentGap + _imageSize.y;
 	}
 	else if (_imageLayout == ImageLayout_Bottom)
 	{
-		textOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
+		_textOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
 			(frameSize - vec2(_maxTextSize.x, contentSize.y));
-		imageOrigin.x = alignmentFactor(_horizontalAlignment) * (frameSize.x - imageSize.x);
-		imageOrigin.y = textOrigin.y + contentGap + _maxTextSize.y;
+		_imageOrigin.x = alignmentFactor(_horizontalAlignment) * (frameSize.x - _imageSize.x);
+		_imageOrigin.y = _textOrigin.y + contentGap + _maxTextSize.y;
 	}
 	else
 	{
-		imageOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
-			(frameSize - vec2(contentSize.x, imageSize.y));
+		_imageOrigin = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment)) *
+			(frameSize - vec2(contentSize.x, _imageSize.y));
 		
-		textOrigin.x = imageOrigin.x + contentGap + imageSize.x;
-		textOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - _maxTextSize.y);
+		_textOrigin.x = _imageOrigin.x + contentGap + _imageSize.x;
+		_textOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - _maxTextSize.y);
 	}
 	
 	vec4 alphaScale = vec4(1.0f, finalAlpha());
 	
-	imageOrigin += _contentOffset;
-	textOrigin += _contentOffset;
+	_imageOrigin += _contentOffset;
+	_textOrigin += _contentOffset;
 	
 	_bgVertices.setOffset(0);
 	_textVertices.setOffset(0);
 	_imageVertices.setOffset(0);
 	
 	vec4 finalColorValue = finalColor();
+	
+	bool isPressed = ((_state == State_Pressed) || (_state == State_SelectedPressed));
 	
 	if (_backgroundColor.w > 0.0f)
 		buildColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
@@ -155,14 +155,12 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_background[_state].texture.valid())
 	{
-		vec4 backgroundScale = (_adjustPressedBackground && ((_state == State_Pressed) || (_state == State_SelectedPressed))) ?
-			_pressedColor * alphaScale : alphaScale;
-		
+		vec4 backgroundScale = (_adjustPressedBackground && isPressed) ? _pressedColor * alphaScale : alphaScale;
 		buildImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
 			rect(vec2(0.0f), size()), _backgroundTintColor * backgroundScale * finalColorValue, transform);
 	}
 
-	vec4 currentTextColor = (_state == State_Pressed) ? _textPressedColor : _textColor;
+	vec4 currentTextColor = isPressed ? _textPressedColor : _textColor;
 	if (currentTextColor.w > 0.0f)
 	{
 		vec4 currentAlphaScale = alphaScale;
@@ -171,24 +169,24 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 		if (!_currentTitleCharacters.empty())
 		{
 			buildStringVertices(_textVertices, _currentTitleCharacters, Alignment_Center,
-				Alignment_Center, textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
+				Alignment_Center, _textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
 		}
 		
 		currentAlphaScale.w = alphaScale.w * _titleAnimator.value();
 		if (_titleAnimator.running())
 		{
 			buildStringVertices(_textVertices, _nextTitleCharacters, Alignment_Center,
-				Alignment_Center, textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
+				Alignment_Center, _textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
 		}
 	}
 
 	if (_image[_state].texture.valid())
 	{
-		vec4 aColor = (_state == State_Pressed) ? pressedColor() * alphaScale : finalColorValue;
+		vec4 aColor = isPressed ? pressedColor() * alphaScale : finalColorValue;
 		if (aColor.w > 0.0f)
 		{
 			buildImageVertices(_imageVertices, _image[_state].texture, _image[_state].descriptor,
-				rect(imageOrigin, imageSize), aColor, transform);
+				rect(_imageOrigin, _imageSize), aColor, transform);
 		}
 	}
 }

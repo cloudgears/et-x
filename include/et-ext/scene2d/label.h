@@ -57,7 +57,7 @@ namespace et
 			
 			void setLineInterval(float);
 			
-			void processMessage(const Message&) override;
+			void processMessage(const Message&);
 
 		private:
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);

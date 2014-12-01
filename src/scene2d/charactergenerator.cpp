@@ -34,6 +34,9 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	size_t faceIndex, size_t boldFaceIndex) : _impl(face, boldFace, faceIndex, boldFaceIndex), _rc(rc),
 	_placer(vec2i(static_cast<int>(defaultTextureSize)), true), _fontFace(face), _fontBoldFace(boldFace)
 {
+	_fontFace = fileExists(face) ? getFileName(face) : face;
+	_fontBoldFace = fileExists(boldFace) ? getFileName(boldFace) : boldFace;
+	
 #if defined(GL_R8)
 	auto internalFormat = GL_R8;
 #else
@@ -114,7 +117,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 		
 #	if (ET_SAVE_FONT_TO_FILE) && (ET_PLATFORM_WIN || ET_PLATFORM_MAC)
 		{
-			auto outputFile = application().environment().applicationDocumentsFolder() + 
+			auto outputFile = application().environment().applicationDocumentsFolder() +
 				_fontFace + " - " + intToStr(value) + " - sdf.png";
 			ImageWriter::writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
 		}

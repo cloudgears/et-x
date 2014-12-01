@@ -147,7 +147,7 @@ void TextElement::setShadowOffset(const vec2& o)
 	_shadowOffset.y = -(std::abs(o.y) > maxShadowDistance ? maxShadowDistance : o.y);
 }
 
-void TextElement::setProgramParameters(et::Program::Pointer& p)
+void TextElement::setProgramParameters(et::RenderContext*, et::Program::Pointer& p)
 {
 	if ((_textStyle == TextStyle_SignedDistanceFieldShadow) && (p == _textProgram.program))
 		p->setUniform(_shadowUniform, _shadowOffset * _font->generator()->texture()->texel());
@@ -264,19 +264,19 @@ etFragmentIn etHighp vec2 texCoordDy;
 etFragmentIn etLowp vec4 tintColor;
 etFragmentIn etLowp vec2 sdfParams;
 
-const vec3 lightDirection = vec3(-0.577350269, 0.577350269, 0.577350269);
+const etLowp vec3 lightDirection = vec3(-0.577350269, 0.577350269, 0.577350269);
 
 #define BEVEL_SCALE 0.002
 
 void main()
 {
-	float c0 = etTexture2D(inputTexture, texCoord).x;
-	float c1 = etTexture2D(inputTexture, texCoordDx).x;
-	float c2 = etTexture2D(inputTexture, texCoordDy).x;
-	vec3 v0 = vec3(texCoordDy.x, BEVEL_SCALE * (c2 - c0), texCoordDy.y);
-	vec3 v1 = vec3(texCoordDx.x, BEVEL_SCALE * (c1 - c0), texCoordDx.y);
-	float l = clamp(1.0 - lightDirection.y + dot(normalize(cross(v0, v1)), lightDirection), 0.0, 1.0);
-	float t = smoothstep(sdfParams.x, sdfParams.y, etTexture2D(inputTexture, texCoord).x);
+	etLowp float c0 = etTexture2D(inputTexture, texCoord).x;
+	etLowp float c1 = etTexture2D(inputTexture, texCoordDx).x;
+	etLowp float c2 = etTexture2D(inputTexture, texCoordDy).x;
+	etHighp vec3 v0 = vec3(texCoordDy.x, BEVEL_SCALE * (c2 - c0), texCoordDy.y);
+	etHighp vec3 v1 = vec3(texCoordDx.x, BEVEL_SCALE * (c1 - c0), texCoordDx.y);
+	etLowp float l = clamp(1.0 - lightDirection.y + dot(normalize(cross(v0, v1)), lightDirection), 0.0, 1.0);
+	etLowp float t = smoothstep(sdfParams.x, sdfParams.y, etTexture2D(inputTexture, texCoord).x);
 	etFragmentOut = vec4(l, l, l, t) * tintColor;
 })";
 

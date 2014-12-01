@@ -102,7 +102,7 @@ namespace et
 			virtual void preRender(RenderContext*) { }
 			
 			virtual void setDefaultProgram(et::Program::Pointer&) { }
-			virtual void setProgramParameters(et::Program::Pointer&) { }
+			virtual void setProgramParameters(et::RenderContext*, et::Program::Pointer&) { }
 			
 			virtual bool pointerPressed(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
 			virtual bool pointerMoved(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }

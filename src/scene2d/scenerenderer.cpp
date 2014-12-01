@@ -173,7 +173,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 		}
 		
 		if (i.object != nullptr)
-			i.object->setProgramParameters(lastBoundProgram);
+			i.object->setProgramParameters(rc, lastBoundProgram);
 		
 		rs.bindTexture(0, i.texture);
 		rs.setClip(true, i.clip + _additionalWindowOffset);

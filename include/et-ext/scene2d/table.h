@@ -48,14 +48,16 @@ namespace et
 			Section* addSection(Element2d::Pointer header, const Element2d::List& items,
 				Element2d::Pointer footer);
 			
+			const std::vector<Section*>& sections() const
+				{ return _sections; }
+			
 			void clean();
 
 			void layoutChildren();
 
 		protected:
+			void validateSections();
 			void layoutChildren(const vec2&);
-			
-		private:
 			void didAutoLayout(float);
 			void setOffsetDirectly(const vec2&);
 			

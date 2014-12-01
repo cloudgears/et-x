@@ -38,6 +38,7 @@ namespace et
 			{
 				ContentMode_Fit,
 				ContentMode_ScaleMaxToMin,
+				ContentMode_Center,
 			};
 
 		public:
@@ -129,13 +130,22 @@ namespace et
 			void setHorizontalAlignment(Alignment);
 			void setVerticalAlignment(Alignment);
 			
-			void processMessage(const Message&) override;
+			void processMessage(const Message&);
 			
 			void setClickTreshold(float);
 			void setShouldInvokeClickInRunLoop(bool);
 			
 			void setAction(Action a)
 				{ _action = a; }
+			
+			const vec2& imageOrigin() const
+				{ return _imageOrigin; }
+			
+			const vec2& imageSize() const
+				{ return _imageSize; }
+			
+			const vec2& textOrigin() const
+				{ return _textOrigin; }
 
 		protected:
 			void performClick();
@@ -174,6 +184,9 @@ namespace et
 			vec2 _nextTextSize;
 			vec2 _maxTextSize;
 			vec2 _contentOffset;
+			vec2 _imageOrigin;
+			vec2 _imageSize;
+			vec2 _textOrigin;
 			
 			FloatAnimator _titleAnimator;
 			Vector4Animator _backgroundTintAnimator;

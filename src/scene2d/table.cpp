@@ -31,7 +31,6 @@ Table::~Table()
 void Table::didAutoLayout(float)
 {
 	setOffsetDirectly(contentOffset());
-	layoutChildren(size());
 }
 
 void Table::layoutChildren()
@@ -70,43 +69,46 @@ void Table::layoutChildren(const vec2& ownSize)
 	adjustContentSize();
 }
 
+void Table::validateSections()
+{
+	for (auto section : _sections)
+	{
+		section->headerSize = section->header.valid() ? section->header->size().x : 0.0f;
+		section->footerSize = section->footer.valid() ? section->footer->size().x : 0.0f;
+		
+		section->itemsSize = 0.0f;
+		for (auto i : section->items)
+			section->itemsSize += i->size().x;
+		
+		section->sectionSize = section->headerSize + section->itemsSize + section->footerSize;
+	}
+}
+
 Table::Section* Table::addSection(Element2d::Pointer header, const Element2d::List& items,
 	Element2d::Pointer footer)
 {
 	Section* section = sharedObjectFactory().createObject<Section>();
 	
+	section->items = items;
+	for (auto i : section->items)
+		i->setParent(this);
+	
 	if (header.valid())
 	{
 		section->header = header;
 		section->header->setParent(this);
-		section->headerSize = section->header->size().x;
-		section->sectionSize += section->headerSize;
+		bringToFront(section->header.ptr());
 	}
-	
-	section->items = items;
-	for (auto i : section->items)
-	{
-		i->setParent(this);
-		section->itemsSize += i->size().x;
-	}
-	section->sectionSize += section->itemsSize;
 	
 	if (footer.valid())
 	{
 		section->footer = footer;
 		section->footer->setParent(this);
-		section->footerSize = section->footer->size().x;
-		section->sectionSize += section->footerSize;
+		bringToFront(section->footer.ptr());
 	}
 	
-	if (section->header.valid())
-		bringToFront(section->header.ptr());
-
-	if (section->footer.valid())
-		bringToFront(section->footer.ptr());
-	
 	_sections.push_back(section);
-	
+
 	adjustContentSize();
 	setOffsetDirectly(contentOffset());
 	
@@ -117,13 +119,15 @@ void Table::setOffsetDirectly(const vec2& o)
 {
 	Scroll::setOffsetDirectly(o);
 	
+	validateSections();
+	
 	float width = size().x;
 	float sectionStart = 0.0f;
-	float off = -contentOffset().x;
+	float actualOffset = -contentOffset().x;
 	for (auto s : _sections)
 	{
-		s->headerOffset = clamp(off - sectionStart, 0.0f, s->itemsSize);
-		s->footerOffset = clamp(width - s->sectionSize - sectionStart + off, -s->itemsSize, 0.0f);
+		s->headerOffset = clamp(actualOffset - sectionStart, 0.0f, s->itemsSize);
+		s->footerOffset = clamp(width - s->sectionSize + actualOffset - sectionStart, -s->itemsSize, 0.0f);
 		sectionStart += s->sectionSize;
 	}
 	
@@ -134,7 +138,8 @@ void Table::clean()
 {
 	for (auto s : _sections)
 	{
-		s->header.reset(nullptr);
+		if (s->header.valid())
+			s->header->setParent(nullptr);
 		
 		for (auto& item : s->items)
 		{
@@ -142,8 +147,13 @@ void Table::clean()
 			item.reset(nullptr);
 		}
 		
+		if (s->footer.valid())
+			s->footer->setParent(nullptr);
+		
+		s->header.reset(nullptr);
 		s->items.clear();
 		s->footer.reset(nullptr);
+		
 		sharedObjectFactory().deleteObject(s);
 	}
 	
