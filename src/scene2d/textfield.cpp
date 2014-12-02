@@ -87,6 +87,9 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	vec2 textSize = font()->measureStringSize(_textCharacters);
 	vec2 caretSize = font()->measureStringSize(_caretChar);
 	
+	if (_textCharacters.empty())
+		textSize = caretSize * vec2(0.0f, 1.0f);
+	
 	auto actualAlignment = _alignmentH;
 	
 	if (!_focused && !_placeholderCharacters.empty() && _textCharacters.empty())
