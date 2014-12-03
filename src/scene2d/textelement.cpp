@@ -26,13 +26,13 @@ extern std::string et_scene2d_default_text_shader_sdf_fs_shadow;
 
 extern std::string et_scene2d_default_text_shader_sdf_vs_bevel;
 extern std::string et_scene2d_default_text_shader_sdf_fs_bevel;
+extern std::string et_scene2d_default_text_shader_sdf_fs_inv_bevel;
 
 const float maxShadowDistance = 1.0f;
 
 TextElement::TextElement(Element2d* parent, const Font::Pointer& f, float fsz, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(f), _fontSize(fsz)
 {
-//	_textStyle = TextStyle_SignedDistanceFieldBevel;
 	setFlag(s2d::Flag_DynamicRendering);
 }
 
@@ -118,6 +118,7 @@ void TextElement::initTextProgram(SceneRenderer& r)
 		et_scene2d_default_text_shader_sdf_vs_base,
 		et_scene2d_default_text_shader_sdf_vs_shadow,
 		et_scene2d_default_text_shader_sdf_vs_bevel,
+		et_scene2d_default_text_shader_sdf_vs_bevel,
 		et_scene2d_default_text_shader_vs_plain,
 	};
 	
@@ -126,6 +127,7 @@ void TextElement::initTextProgram(SceneRenderer& r)
 		et_scene2d_default_text_shader_sdf_fs_plain,
 		et_scene2d_default_text_shader_sdf_fs_shadow,
 		et_scene2d_default_text_shader_sdf_fs_bevel,
+		et_scene2d_default_text_shader_sdf_fs_inv_bevel,
 		et_scene2d_default_text_shader_fs_plain,
 	};
 	
@@ -274,9 +276,34 @@ void main()
 	etLowp float c1 = etTexture2D(inputTexture, texCoordDx).x;
 	etLowp float c2 = etTexture2D(inputTexture, texCoordDy).x;
 	etHighp vec3 v0 = vec3(texCoordDy.x, BEVEL_SCALE * (c2 - c0), texCoordDy.y);
-	etHighp vec3 v1 = vec3(texCoordDx.x, BEVEL_SCALE * (c1 - c0), texCoordDx.y);
+	etHighp vec3 v1 = vec3(texCoordDx.x, BEVEL_SCALE * (c2 - c0), texCoordDx.y);
 	etLowp float l = clamp(1.0 - lightDirection.y + dot(normalize(cross(v0, v1)), lightDirection), 0.0, 1.0);
-	etLowp float t = smoothstep(sdfParams.x, sdfParams.y, etTexture2D(inputTexture, texCoord).x);
+	etLowp float t = smoothstep(sdfParams.x, sdfParams.y, c0);
+	etFragmentOut = vec4(l, l, l, t) * tintColor;
+})";
+
+std::string et_scene2d_default_text_shader_sdf_fs_inv_bevel =
+R"(
+uniform etLowp sampler2D inputTexture;
+etFragmentIn etHighp vec2 texCoord;
+etFragmentIn etHighp vec2 texCoordDx;
+etFragmentIn etHighp vec2 texCoordDy;
+etFragmentIn etLowp vec4 tintColor;
+etFragmentIn etLowp vec2 sdfParams;
+
+const etLowp vec3 lightDirection = vec3(-0.577350269, 0.577350269, 0.577350269);
+
+#define BEVEL_SCALE 0.002
+
+void main()
+{
+	etLowp float c0 = etTexture2D(inputTexture, texCoord).x;
+	etLowp float c1 = etTexture2D(inputTexture, texCoordDx).x;
+	etLowp float c2 = etTexture2D(inputTexture, texCoordDy).x;
+	etHighp vec3 v0 = vec3(texCoordDy.x, BEVEL_SCALE * (c0 - c2), texCoordDy.y);
+	etHighp vec3 v1 = vec3(texCoordDx.x, BEVEL_SCALE * (c0 - c1), texCoordDx.y);
+	etLowp float l = clamp(1.0 - lightDirection.y + dot(normalize(cross(v0, v1)), lightDirection), 0.0, 1.0);
+	etLowp float t = smoothstep(sdfParams.x, sdfParams.y, c0);
 	etFragmentOut = vec4(l, l, l, t) * tintColor;
 })";
 

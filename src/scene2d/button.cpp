@@ -355,9 +355,9 @@ void Button::adjustSizeForText(const std::string& text, float duration, bool ver
 	setSize(currentSize, duration);
 }
 
-vec2 Button::sizeForText(const std::string& text)
+vec2 Button::sizeForText(const std::string& text, const std::string& wrapper)
 {
-	vec2 textSize = font().valid() ? font()->measureStringSize("AA" + text + "AA", fontSize(), fontSmoothing()) : vec2(0.0f);
+	vec2 textSize = font().valid() ? font()->measureStringSize(wrapper + text + wrapper, fontSize(), fontSmoothing()) : vec2(0.0f);
 	
 	for (size_t i = 0; i < State_max; ++i)
 		textSize = maxv(textSize, _background[i].descriptor.size);

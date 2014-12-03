@@ -55,7 +55,7 @@ namespace et
 
 			void adjustSize(float duration = 0.0f, bool vertical = true, bool horizontal = true);
 			void adjustSizeForText(const std::string&, float duration = 0.0f, bool vertical = true, bool horizontal = true);
-			vec2 sizeForText(const std::string&);
+			vec2 sizeForText(const std::string&, const std::string& = "AA");
 			
 			void setContentMode(ContentMode);
 			

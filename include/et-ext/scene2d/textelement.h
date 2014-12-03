@@ -26,6 +26,7 @@ namespace et
 				TextStyle_SignedDistanceField,
 				TextStyle_SignedDistanceFieldShadow,
 				TextStyle_SignedDistanceFieldBevel,
+				TextStyle_SignedDistanceFieldInverseBevel,
 				TextStyle_Plain,
 				TextStyle_max
 			};
