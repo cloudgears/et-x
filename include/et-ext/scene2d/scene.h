@@ -64,6 +64,8 @@ namespace et
 			
 			void pushLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None,
 				float duration = 0.3f);
+			
+			void setTopLevelLayout(Layout::Pointer);
 
 			ImageView& backgroundImageView();
 			const ImageView& backgroundImageView() const;
@@ -128,6 +130,8 @@ namespace et
 			void internal_replaceLayout(LayoutPair, AnimationDescriptor);
 			void internal_removeLayout(Layout::Pointer, AnimationDescriptor);
 			void internal_pushLayout(Layout::Pointer, AnimationDescriptor);
+			
+			void validateTopLevelLayout();
 
 			void reloadObject(LoadableObject::Pointer, ObjectsCache&);
 			
@@ -147,6 +151,8 @@ namespace et
 
 			public:
 				LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l);
+				~LayoutEntry();
+				
 				void animateTo(const vec3& oa, float duration, State s);
 				
 			private:
@@ -175,6 +181,7 @@ namespace et
 			Element2d::List _prerenderElements;
 
 			LayoutEntryStack _layouts;
+			Layout::Pointer _topLayout;
 			vec2 _screenSize;
 		};
 

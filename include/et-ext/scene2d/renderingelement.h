@@ -46,6 +46,8 @@ namespace et
 			void startAllocatingVertices();
 			SceneVertex* allocateVertices(size_t);
 			void commitAllocatedVertices();
+			
+			void clear();
 
 			const VertexArrayObject& vertexArrayObject();
 
@@ -61,7 +63,6 @@ namespace et
 				void* mappedData = nullptr;
 			};
 			
-//			SceneVertexList vertexList;
 			size_t allocatedVertices = 0;
 			size_t dataSize = 0;
 			VertexArrayObject vao;

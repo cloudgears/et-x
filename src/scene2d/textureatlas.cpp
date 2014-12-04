@@ -33,7 +33,11 @@ TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, Objec
 void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache, bool async)
 {
 	std::string resolvedFileName = application().resolveFileName(filename);
-	if (!fileExists(resolvedFileName)) return;
+	if (!fileExists(resolvedFileName))
+	{
+		log::error("Unable to load texture atlas from %s", filename.c_str());
+		return;
+	}
 	
 	application().pushSearchPath(getFilePath(resolvedFileName));
 

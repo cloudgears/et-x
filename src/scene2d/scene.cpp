@@ -27,8 +27,9 @@ Scene::Scene(RenderContext* rc) : _rc(rc),
 
 bool Scene::pointerPressed(const et::PointerInputInfo& p)
 {
-	if (animatingTransition()) return true;
-
+	if (animatingTransition())
+		return true;
+	
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerPressed(p))
@@ -40,8 +41,9 @@ bool Scene::pointerPressed(const et::PointerInputInfo& p)
 
 bool Scene::pointerMoved(const et::PointerInputInfo& p)
 {
-	if (animatingTransition()) return true;
-
+	if (animatingTransition())
+		return true;
+	
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerMoved(p))
@@ -53,8 +55,9 @@ bool Scene::pointerMoved(const et::PointerInputInfo& p)
 
 bool Scene::pointerReleased(const et::PointerInputInfo& p)
 {
-	if (animatingTransition()) return true;
-
+	if (animatingTransition())
+		return true;
+	
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerReleased(p))
@@ -66,21 +69,17 @@ bool Scene::pointerReleased(const et::PointerInputInfo& p)
 
 bool Scene::pointerCancelled(const et::PointerInputInfo& p)
 {
-	if (animatingTransition()) return true;
-	
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
-	{
-		if ((*i)->layout->pointerCancelled(p))
-			return true;
-	}
+		(*i)->layout->pointerCancelled(p);
 	
 	return false;
 }
 
 bool Scene::pointerScrolled(const et::PointerInputInfo& p)
 {
-	if (animatingTransition()) return true;
-
+	if (animatingTransition())
+		return true;
+	
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerScrolled(p))
@@ -112,7 +111,6 @@ void Scene::keyPressed(size_t key)
 					break;
 				}
 			}
-			
 		}
 		else
 		{
@@ -130,6 +128,8 @@ void Scene::charactersEntered(std::string p)
 
 void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout)
 {
+	ET_ASSERT(element.valid());
+	
 	_renderer.setRendernigElement(element);
 	
 	if (!layout->valid())
@@ -216,7 +216,7 @@ void Scene::render(RenderContext* rc)
 			_renderer.render(rc);
 		}
 	}
-
+	
 	if (_overlay.texture().valid())
 	{
 		_renderer.setAdditionalOffsetAndAlpha(vec3(0.0f, 0.0f, 1.0f));
@@ -317,6 +317,8 @@ void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 		}
 		
 		_layouts.insert(i, layoutToShow);
+		validateTopLevelLayout();
+		
 		animateLayoutAppearing(l.newLayout, layoutToShow.ptr(), desc.flags, desc.duration);
 	}
 
@@ -360,6 +362,8 @@ void Scene::internal_pushLayout(Layout::Pointer newLayout, AnimationDescriptor d
 		internal_removeLayout(newLayout, AnimationDescriptor());
 
 	_layouts.push_back(LayoutEntry::Pointer::create(this, _rc, newLayout));
+	validateTopLevelLayout();
+	
 	animateLayoutAppearing(newLayout, _layouts.back().ptr(), desc.flags, desc.duration);
 }
 
@@ -399,6 +403,7 @@ void Scene::removeLayoutEntryFromList(LayoutEntry* ptr)
 		if (i->ptr() == ptr)
 		{
 			_layouts.erase(i);
+			validateTopLevelLayout();
 			return;
 		}
 	}
@@ -430,7 +435,7 @@ void Scene::layoutEntryTransitionFinished(LayoutEntry* l)
 bool Scene::hasLayout(Layout::Pointer aLayout)
 {
 	if (aLayout.invalid()) return false;
-
+	
 	for (auto& i : _layouts)
 	{
 		if (i->layout == aLayout)
@@ -518,6 +523,35 @@ void Scene::removeAllLayouts()
 	_layouts.clear();
 }
 
+void Scene::setTopLevelLayout(Layout::Pointer l)
+{
+	_topLayout = l;
+	validateTopLevelLayout();
+}
+
+void Scene::validateTopLevelLayout()
+{
+	if (_layouts.size() < 2) return;
+	
+	auto topLevel = std::find_if(_layouts.begin(), _layouts.end(), [this](const LayoutEntry::Pointer& le)
+		{ return (le->layout == _topLayout); });
+	
+	if (topLevel == _layouts.end()) return;
+	
+	auto entry = *topLevel;
+	
+	auto i = topLevel;
+	auto last = _layouts.end() - 1;
+	while (i < last)
+	{
+		auto next = i + 1;
+		*i = *next;
+		++i;
+	}
+	
+	*last = entry;
+}
+
 /*
  * Layout Entry
  */
@@ -533,6 +567,11 @@ Scene::LayoutEntry::LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l
 		i.invokeInMainRunLoop();
 	});
 	l->initRenderingElement(rc);
+}
+
+Scene::LayoutEntry::~LayoutEntry()
+{
+	layout->renderingElement()->clear();
 }
 
 void Scene::LayoutEntry::animateTo(const vec3& oa, float duration, State s)

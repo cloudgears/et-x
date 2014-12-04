@@ -104,15 +104,15 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 	setContentValid();
 }
 
-void Label::setText(const std::string& text, float duration)
+void Label::setText(const std::string& aText, float duration)
 {
 	if (duration == 0.0f)
 	{
 		_animatingText = false;
 		cancelUpdates();
 		
-		_text.setKey(text);
-		_nextText.setKey(text);
+		_text.setKey(aText);
+		_nextText.setKey(aText);
 	}
 	else 
 	{
@@ -121,7 +121,7 @@ void Label::setText(const std::string& text, float duration)
 		if (_animatingText)
 			_text = _nextText;
 		
-		_nextText.setKey(text);
+		_nextText.setKey(aText);
 		
 		_nextTextSize = font()->measureStringSize(_nextText.cachedText, fontSize(), fontSmoothing());
 		

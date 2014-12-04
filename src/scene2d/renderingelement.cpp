@@ -38,13 +38,18 @@ RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
 		BufferDrawType_Stream, indexArray, BufferDrawType_Static);
 }
 
-void RenderingElement::startAllocatingVertices()
+void RenderingElement::clear()
 {
 	chunks.clear();
+	allocatedVertices = 0;
+}
+
+void RenderingElement::startAllocatingVertices()
+{
+	clear();
 	
 	renderState.bindVertexArray(vao);
 	mappedData = vao->vertexBuffer()->map(0, dataSize, VertexBufferData::MapBufferMode_WriteOnly);
-	allocatedVertices = 0;
 }
 
 SceneVertex* RenderingElement::allocateVertices(size_t n)
