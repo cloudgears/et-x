@@ -86,8 +86,8 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 {
 	ET_ASSERT(_renderingElement.valid());
 	
-//	if (object && !object->hasFlag(Flag_DynamicRendering))
-//		object = nullptr;
+	if (object && !object->hasFlag(Flag_DynamicRendering))
+		object = nullptr;
 
 	const Texture& actualTexture = inTexture.valid() ? inTexture : _defaultTexture;
 	
