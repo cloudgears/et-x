@@ -531,25 +531,14 @@ void Scene::setTopLevelLayout(Layout::Pointer l)
 
 void Scene::validateTopLevelLayout()
 {
-	if (_layouts.size() < 2) return;
-	
-	auto topLevel = std::find_if(_layouts.begin(), _layouts.end(), [this](const LayoutEntry::Pointer& le)
-		{ return (le->layout == _topLayout); });
-	
-	if (topLevel == _layouts.end()) return;
-	
-	auto entry = *topLevel;
-	
-	auto i = topLevel;
-	auto last = _layouts.end() - 1;
-	while (i < last)
+	if (_layouts.size() > 1)
 	{
-		auto next = i + 1;
-		*i = *next;
-		++i;
+		auto topLevel = std::find_if(_layouts.begin(), _layouts.end(), [this](const LayoutEntry::Pointer& le)
+			{ return (le->layout == _topLayout); });
+		
+		if (topLevel != _layouts.end())
+			_layouts.splice(_layouts.end(), _layouts, topLevel);
 	}
-	
-	*last = entry;
 }
 
 /*

@@ -165,7 +165,7 @@ namespace et
 				State state;
 			};
 			
-			typedef std::deque<LayoutEntry::Pointer> LayoutEntryStack;
+			typedef std::list<LayoutEntry::Pointer> LayoutEntryList;
 
 		private:
 			RenderContext* _rc;
@@ -180,7 +180,7 @@ namespace et
 			Element2d::Pointer _keyboardFocusedElement;
 			Element2d::List _prerenderElements;
 
-			LayoutEntryStack _layouts;
+			LayoutEntryList _layouts;
 			Layout::Pointer _topLayout;
 			vec2 _screenSize;
 		};

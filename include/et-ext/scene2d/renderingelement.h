@@ -42,6 +42,7 @@ namespace et
 			
 		public:
 			RenderingElement(RenderContext* rc, size_t capacity);
+			~RenderingElement();
 			
 			void startAllocatingVertices();
 			SceneVertex* allocateVertices(size_t);

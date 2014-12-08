@@ -11,6 +11,8 @@
 using namespace et;
 using namespace et::s2d;
 
+#define ET_RENDER_CHUNK_USE_MAP_BUFFER	1
+
 /*
  * Render chunk
  */
@@ -32,10 +34,20 @@ RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
 	decl.push_back(Usage_Color, Type_Vec4);
 	dataSize = decl.dataSize() * capacity;
 	
+#if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)
+	mappedData = sharedBlockAllocator().alloc(dataSize);
+#endif
+	
 	std::string nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao";
-
 	vao = rc->vertexBufferFactory().createVertexArrayObject(nameId, VertexArray::Pointer::create(decl, capacity),
 		BufferDrawType_Stream, indexArray, BufferDrawType_Static);
+}
+
+RenderingElement::~RenderingElement()
+{
+#if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)
+	sharedBlockAllocator().free(mappedData);
+#endif
 }
 
 void RenderingElement::clear()
@@ -48,8 +60,10 @@ void RenderingElement::startAllocatingVertices()
 {
 	clear();
 	
+#if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	renderState.bindVertexArray(vao);
 	mappedData = vao->vertexBuffer()->map(0, dataSize, VertexBufferData::MapBufferMode_WriteOnly);
+#endif
 }
 
 SceneVertex* RenderingElement::allocateVertices(size_t n)
@@ -62,11 +76,20 @@ SceneVertex* RenderingElement::allocateVertices(size_t n)
 void RenderingElement::commitAllocatedVertices()
 {
 	renderState.bindVertexArray(vao);
+	
+#if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	vao->vertexBuffer()->unmap();
+#else
+	vao->vertexBuffer()->setData(mappedData, sizeof(SceneVertex) * allocatedVertices);
+#endif
 }
 
 const VertexArrayObject& RenderingElement::vertexArrayObject()
 {
+#if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
+	ET_ASSERT(!vao->vertexBuffer()->mapped());
+#endif
+	
 	renderState.bindVertexArray(vao);
 	return vao;
 }
