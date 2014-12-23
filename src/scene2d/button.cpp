@@ -131,8 +131,6 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 		_textOrigin.y = alignmentFactor(_verticalAlignment) * (frameSize.y - _maxTextSize.y);
 	}
 	
-	vec4 alphaScale = vec4(1.0f, finalAlpha());
-	
 	_imageOrigin += _contentOffset;
 	_textOrigin += _contentOffset;
 	
@@ -140,12 +138,16 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	_textVertices.setOffset(0);
 	_imageVertices.setOffset(0);
 	
-	vec4 finalColorValue = finalColor();
-	
 	bool isPressed = ((_state == State_Pressed) || (_state == State_SelectedPressed));
 	
+	vec4 finalColorValue = finalColor();
+	vec4 alphaScale = vec4(1.0f, finalAlpha());
+	vec4 backgroundScale = (_adjustPressedBackground && isPressed) ? _pressedColor * alphaScale : alphaScale;
+	
 	if (_backgroundColor.w > 0.0f)
-		buildColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
+	{
+		buildColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * backgroundScale, transform);
+	}
 	
 	if (_commonBackground.texture.valid())
 	{
@@ -155,7 +157,6 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 
 	if (_background[_state].texture.valid())
 	{
-		vec4 backgroundScale = (_adjustPressedBackground && isPressed) ? _pressedColor * alphaScale : alphaScale;
 		buildImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
 			rect(vec2(0.0f), size()), _backgroundTintColor * backgroundScale * finalColorValue, transform);
 	}
