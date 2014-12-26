@@ -9,6 +9,7 @@
 
 #include <et/core/containers.h>
 #include <et/app/events.h>
+#include <et-ext/networking/httprequestthread.h>
 
 namespace et
 {
@@ -38,7 +39,7 @@ namespace et
 
 		void addFileParameter(const std::string&, const std::string&);
 		
-		void perform();
+		virtual void perform();
 		
 		HTTPRequestResponsePointer response();
 		

@@ -5,7 +5,6 @@
  *
  */
 
-#include <fstream>
 #include <stack>
 #include <et/core/conversion.h>
 #include <et/core/serialization.h>

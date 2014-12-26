@@ -5,7 +5,6 @@
  *
  */
 
-#include <fstream>
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/charactergenerator.h>
 #include <et/platform-apple/apple.h>
