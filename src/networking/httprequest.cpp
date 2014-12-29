@@ -11,6 +11,8 @@
 
 using namespace et;
 
+static AtomicBool shouldInitCurl = true;
+
 class et::HTTPRequestPrivate
 {
 public:
@@ -40,10 +42,10 @@ size_t et::HTTPRequestWriteFunction(const void* data, size_t chunks, size_t chun
 
 int et::HTTPRequestProgressFunction(HTTPRequest* req, double downloadSize, double downloaded, double uploadSize, double uploaded)
 {
-	if (downloadSize > 0)
+	if ((downloaded > 0.0) || (downloadSize > 0.0))
 		req->downloadProgress.invokeInMainRunLoop(static_cast<int64_t>(downloaded), static_cast<int64_t>(downloadSize));
 	
-	if (uploadSize > 0)
+	if ((uploaded > 0.0) || (uploadSize > 0.0))
 		req->uploadProgress.invokeInMainRunLoop(static_cast<int64_t>(uploaded), static_cast<int64_t>(uploadSize));
 	
 	return 0;
@@ -52,6 +54,12 @@ int et::HTTPRequestProgressFunction(HTTPRequest* req, double downloadSize, doubl
 HTTPRequest::HTTPRequest(const std::string& url)
 {
 	ET_PIMPL_INIT(HTTPRequest, url)
+	
+	if (shouldInitCurl)
+	{
+		curl_global_init(CURL_GLOBAL_ALL);
+		shouldInitCurl = false;
+	}
 }
 
 HTTPRequest::~HTTPRequest()
@@ -67,32 +75,44 @@ void HTTPRequest::setCredentials(const std::string& login, const std::string& pa
 
 void HTTPRequest::addParameter(const std::string& name, const Dictionary& d)
 {
+	if (name.empty()) return;
+	
 	addParameter(name, json::serialize(d));
 }
 
 void HTTPRequest::addParameter(const std::string& name, const std::string& str)
 {
+	if (str.empty() || name.empty()) return;
+		
 	addParameter(name, str.c_str(), str.size());
 }
 
 void HTTPRequest::addParameter(const std::string& name, const char* data, size_t dataSize)
 {
+	if (name.empty() || (data == nullptr) || (dataSize == 0)) return;
+	
 	_private->params[name].resize(dataSize);
 	etCopyMemory(_private->params[name].data(), data, dataSize);
 }
 
-void HTTPRequest::addFileParameter(const std::string& param, const std::string& filename)
+void HTTPRequest::addFileParameter(const std::string& name, const std::string& filename)
 {
-	_private->uploadFiles.insert(std::make_pair(param, filename));
+	if (name.empty()) return;
+	
+	_private->uploadFiles.insert(std::make_pair(name, filename));
 }
 
 HTTPRequestResponsePointer HTTPRequest::response()
 {
+	ET_ASSERT(_private);
+	
 	return _private->response;
 }
 
 void HTTPRequest::perform()
 {
+	ET_ASSERT(_private);
+	
 	CURL* curl = curl_easy_init();
 	
 	curl_easy_setopt(curl, CURLOPT_URL, _private->url.c_str());
@@ -110,14 +130,14 @@ void HTTPRequest::perform()
 		
 		for (const auto& kv : _private->params)
 		{
-			curl_formadd(&params, &lastptr, CURLFORM_PTRNAME, kv.first.c_str(), CURLFORM_PTRCONTENTS,
-				kv.second.data(), CURLFORM_CONTENTSLENGTH, kv.second.size(), CURLFORM_END);
+			curl_formadd(&params, &lastptr, CURLFORM_COPYNAME, kv.first.c_str(),
+				CURLFORM_PTRCONTENTS, kv.second.data(), CURLFORM_CONTENTSLENGTH, kv.second.size(), CURLFORM_END);
 		}
 		
 		for (const auto& kv : _private->uploadFiles)
 		{
-			curl_formadd(&params, &lastptr, CURLFORM_PTRNAME, kv.first.c_str(), CURLFORM_FILE,
-				kv.second.c_str(), CURLFORM_END);
+			curl_formadd(&params, &lastptr, CURLFORM_COPYNAME, kv.first.c_str(),
+				CURLFORM_FILE, kv.second.c_str(), CURLFORM_END);
 		}
 		
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, params);

@@ -109,7 +109,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 		{
 			auto outputFile = application().environment().applicationDocumentsFolder() +
 				_fontFace + " - " + intToStr(value) + " - original.png";
-			ImageWriter::writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
+			writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
 		}
 #	endif
 
@@ -119,7 +119,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 		{
 			auto outputFile = application().environment().applicationDocumentsFolder() +
 				_fontFace + " - " + intToStr(value) + " - sdf.png";
-			ImageWriter::writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
+			writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
 		}
 #	endif
 
@@ -133,7 +133,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 			{
 				auto outputFile = application().environment().applicationDocumentsFolder() +
 					_fontFace + " - " + intToStr(value) + " - crop.png";
-				ImageWriter::writeImageToFile(outputFile, dataToSave, sizeToSave, 1, 8, ImageFormat_PNG, true);
+				writeImageToFile(outputFile, dataToSave, sizeToSave, 1, 8, ImageFormat_PNG, true);
 			}
 #		endif
 
@@ -146,7 +146,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 			{
 				auto outputFile = application().environment().applicationDocumentsFolder() +
 					_fontFace + " - " + intToStr(value) + " - downsampled.png";
-				ImageWriter::writeImageToFile(outputFile, downsampled, downsampledSize, 1, 8, ImageFormat_PNG, true);
+				writeImageToFile(outputFile, downsampled, downsampledSize, 1, 8, ImageFormat_PNG, true);
 			}
 #		endif
 
@@ -162,7 +162,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 					glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 					checkOpenGLError("glGetTexImage")
 					auto outputFile = application().environment().applicationDocumentsFolder() + _fontFace + ".png";
-					ImageWriter::writeImageToFile(outputFile, data, _texture->size(), 4, 8, ImageFormat_PNG, true);
+					writeImageToFile(outputFile, data, _texture->size(), 4, 8, ImageFormat_PNG, true);
 				}
 #			endif
 				

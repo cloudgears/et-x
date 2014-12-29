@@ -220,7 +220,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 			}
 		}
 
-		ImageWriter::writeImageToFile(texName, data, i->texture->size, 4, 8, ImageFormat_PNG, true);
+		writeImageToFile(texName, data, i->texture->size, 4, 8, ImageFormat_PNG, true);
 	}
 }
 
