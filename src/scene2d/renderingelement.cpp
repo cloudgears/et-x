@@ -18,7 +18,7 @@ using namespace et::s2d;
  */
 RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
 	const SceneProgram& aProgram, Element2d* aObject, PrimitiveType pt) : first(aFirst), count(aCount), clip(aClip),
-	texture(aTexture), program(aProgram), object(aObject), primitiveType(primitiveTypeValue(pt)) { }
+	texture(aTexture), program(aProgram), object(aObject), primitiveType(pt) { }
 
 /*
  * Rendering element
@@ -26,12 +26,12 @@ RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const
 RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
 	renderState(rc->renderState())
 {
-	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat_16bit, capacity, PrimitiveType_Triangles);
+	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat::Format_16bit, capacity, PrimitiveType::Triangles);
 	indexArray->linearize(capacity);
 	
-	VertexDeclaration decl(true, Usage_Position, Type_Vec3);
-	decl.push_back(Usage_TexCoord0, Type_Vec4);
-	decl.push_back(Usage_Color, Type_Vec4);
+	VertexDeclaration decl(true, VertexAttributeUsage::Position, VertexAttributeType::Vec3);
+	decl.push_back(VertexAttributeUsage::TexCoord0, VertexAttributeType::Vec4);
+	decl.push_back(VertexAttributeUsage::Color, VertexAttributeType::Vec4);
 	dataSize = decl.dataSize() * capacity;
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)
@@ -40,7 +40,7 @@ RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
 	
 	std::string nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao";
 	vao = rc->vertexBufferFactory().createVertexArrayObject(nameId, VertexArray::Pointer::create(decl, capacity),
-		BufferDrawType_Stream, indexArray, BufferDrawType_Static);
+		BufferDrawType::Stream, indexArray, BufferDrawType::Static);
 }
 
 RenderingElement::~RenderingElement()

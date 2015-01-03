@@ -196,31 +196,11 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 				"rect: \"" << iOrigin << ";" << image.size << "\" "
 				"offset: \""  << offset <<  "\" }" << std::endl;
 
-			int components = 0;
-			switch (image.format)
-			{
-			case GL_RGB:
-				{
-					components = 3;
-					break;
-				}
-			case GL_RGBA:
-				{
-					components = 4;
-					break;
-				}
-			default:
-				break;
-			};
-
-			if (components)
-			{
-				ImageOperations::transfer(image.data, image.size, components,
-					data, i->texture->size, 4, iOrigin);
-			}
+			ImageOperations::transfer(image.data, image.size, image.channels,
+				data, i->texture->size, 4, iOrigin);
 		}
 
-		ImageWriter::writeImageToFile(texName, data, i->texture->size, 4, 8, ImageFormat_PNG, true);
+		writeImageToFile(texName, data, i->texture->size, 4, 8, ImageFormat_PNG, true);
 	}
 }
 

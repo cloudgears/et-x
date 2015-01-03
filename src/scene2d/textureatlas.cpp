@@ -58,7 +58,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 			auto textureFile = tex.stringForKey("filename")->content;
 			_textures[textureId] = rc->textureFactory().loadTexture(textureFile, cache, async);
 			if (_textures[textureId].valid())
-				_textures[textureId]->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
+				_textures[textureId]->setWrap(rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
 		}
 		
 		ArrayValue images = atlas.arrayForKey("images");
@@ -99,7 +99,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 					_textures[textureId] = rc->textureFactory().loadTexture(textureName, cache, async);
 					
 					if (_textures[textureId].valid())
-						_textures[textureId]->setWrap(rc, TextureWrap_ClampToEdge, TextureWrap_ClampToEdge);
+						_textures[textureId]->setWrap(rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
 				}
 				else if (token == "image:")
 				{

@@ -33,8 +33,11 @@ namespace et
 		typedef std::vector<TextureAtlasItem> TextureAtlasItemList;
 
 	public:
-		TextureAtlasWriter(bool addSpace = true) : _addSpace(addSpace) { }
+		TextureAtlasWriter(bool addSpace = true) :
+			_addSpace(addSpace) { }
+		
 		TextureAtlasItem& addItem(const vec2i& textureSize);
+		
 		bool placeImage(TextureDescription::Pointer image, TextureAtlasItem& item);
 
 		const TextureAtlasItemList& items() const 
@@ -44,7 +47,7 @@ namespace et
 
 	private:
 		TextureAtlasItemList _items;
-		bool _addSpace;
+		bool _addSpace = true;
 	};
 
 }

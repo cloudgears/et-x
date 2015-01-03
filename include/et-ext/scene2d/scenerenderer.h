@@ -39,7 +39,7 @@ namespace et
 			void setRendernigElement(const RenderingElement::Pointer& r);
 
 			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element2d*,
-				PrimitiveType = PrimitiveType_Triangles);
+				PrimitiveType = PrimitiveType::Triangles);
 			
 			void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 						
@@ -86,7 +86,7 @@ namespace et
 			bool _blendEnabled = false;
 			bool _depthTestEnabled = false;
 			bool _clipeEnabled = false;
-			BlendState _lastBlendState = BlendState_Default;
+			BlendState _lastBlendState = BlendState::Default;
 		};
 	}
 }

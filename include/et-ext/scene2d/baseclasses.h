@@ -215,7 +215,7 @@ namespace et
 		struct SceneProgram
 		{
 			Program::Pointer program;
-			ProgramUniform additionalOffsetAndAlpha;
+			Program::Uniform additionalOffsetAndAlpha;
 			
 			bool valid() const
 				{ return program.valid(); }

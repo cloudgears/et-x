@@ -37,14 +37,9 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	_fontFace = fileExists(face) ? getFileName(face) : face;
 	_fontBoldFace = fileExists(boldFace) ? getFileName(boldFace) : boldFace;
 	
-#if defined(GL_R8)
-	auto internalFormat = GL_R8;
-#else
-	auto internalFormat = GL_RED;
-#endif
-	
-	_texture = rc->textureFactory().genTexture(GL_TEXTURE_2D, internalFormat, vec2i(defaultTextureSize),
-		GL_RED, GL_UNSIGNED_BYTE, BinaryDataStorage(defaultTextureSize * defaultTextureSize, 0), face + "font");
+	_texture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::R,
+		vec2i(defaultTextureSize), TextureFormat::R, DataType::UnsignedChar,
+		BinaryDataStorage(defaultTextureSize * defaultTextureSize, 0), face + "font");
 	
 	_grid0.grid.resize(initialGridDimensions);
 	_grid1.grid.resize(initialGridDimensions);
@@ -109,7 +104,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 		{
 			auto outputFile = application().environment().applicationDocumentsFolder() +
 				_fontFace + " - " + intToStr(value) + " - original.png";
-			ImageWriter::writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
+			writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
 		}
 #	endif
 
@@ -119,7 +114,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 		{
 			auto outputFile = application().environment().applicationDocumentsFolder() +
 				_fontFace + " - " + intToStr(value) + " - sdf.png";
-			ImageWriter::writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
+			writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
 		}
 #	endif
 
@@ -133,7 +128,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 			{
 				auto outputFile = application().environment().applicationDocumentsFolder() +
 					_fontFace + " - " + intToStr(value) + " - crop.png";
-				ImageWriter::writeImageToFile(outputFile, dataToSave, sizeToSave, 1, 8, ImageFormat_PNG, true);
+				writeImageToFile(outputFile, dataToSave, sizeToSave, 1, 8, ImageFormat_PNG, true);
 			}
 #		endif
 
@@ -146,7 +141,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 			{
 				auto outputFile = application().environment().applicationDocumentsFolder() +
 					_fontFace + " - " + intToStr(value) + " - downsampled.png";
-				ImageWriter::writeImageToFile(outputFile, downsampled, downsampledSize, 1, 8, ImageFormat_PNG, true);
+				writeImageToFile(outputFile, downsampled, downsampledSize, 1, 8, ImageFormat_PNG, true);
 			}
 #		endif
 
@@ -162,7 +157,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 					glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 					checkOpenGLError("glGetTexImage")
 					auto outputFile = application().environment().applicationDocumentsFolder() + _fontFace + ".png";
-					ImageWriter::writeImageToFile(outputFile, data, _texture->size(), 4, 8, ImageFormat_PNG, true);
+					writeImageToFile(outputFile, data, _texture->size(), 4, 8, ImageFormat_PNG, true);
 				}
 #			endif
 				

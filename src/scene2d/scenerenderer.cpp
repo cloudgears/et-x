@@ -29,9 +29,9 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_defaultProgram = createProgramWithFragmentshader(defaultProgramName, et_scene2d_default_shader_fs);
 	_defaultProgram.program->setUniform(textureSamplerName, 0);
 	
-	_defaultTexture = rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(1), GL_RGBA,
-		GL_UNSIGNED_BYTE, BinaryDataStorage(4, 0), "scene-default-texture");
-	_defaultTexture->setFiltration(rc, TextureFiltration_Nearest, TextureFiltration_Nearest);
+	_defaultTexture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
+		vec2i(1), TextureFormat::RGBA, DataType::UnsignedChar, BinaryDataStorage(4, 0), "scene-default-texture");
+	_defaultTexture->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
 	
 	setProjectionMatrices(rc->size());
 }
@@ -150,7 +150,7 @@ void s2d::SceneRenderer::beginRender(RenderContext* rc)
 	}
 	
 	rc->renderState().setDepthTest(false);
-	rc->renderState().setBlend(true, BlendState_Default);
+	rc->renderState().setBlend(true, BlendState::Default);
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)

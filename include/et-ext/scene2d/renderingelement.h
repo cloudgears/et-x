@@ -18,7 +18,7 @@ namespace et
 		{
 			size_t first = 0;
 			size_t count = 0;
-			uint32_t primitiveType = 0;
+			PrimitiveType primitiveType = PrimitiveType::Triangles;
 			
 			recti clip;
 			

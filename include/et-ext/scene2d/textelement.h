@@ -68,7 +68,7 @@ namespace et
 		private:
 			Font::Pointer _font;
 			SceneProgram _textProgram;
-			ProgramUniform _shadowUniform;
+			Program::Uniform _shadowUniform;
 			vec2 _shadowOffset;
 			float _fontSize = 12.0f;
 			float _fontSmoothing = 1.0f;
