@@ -13,6 +13,10 @@
 #include <et/imaging/imagewriter.h>
 #include <et-ext/scene2d/font.h>
 
+#if (ET_PLATFORM_MAC || ET_PLATFORM_WIN)
+#	include <et/opengl/opengl.h>
+#endif
+
 using namespace et;
 using namespace et::s2d;
 
@@ -70,8 +74,8 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE, imageData.data());
 	checkOpenGLError("glGetTexImage");
 	
-	writeImageToFile(getFilePath(fileName) + textureFile, imageData,
-		tex->size(), 1, 8, ImageFormat_PNG, true);
+	setCompressionLevelForImageFormat(ImageFormat_PNG, 1.0f / 9.0f);
+	writeImageToFile(getFilePath(fileName) + textureFile, imageData, tex->size(), 1, 8, ImageFormat_PNG, true);
 	
 #elif (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
 	
@@ -104,8 +108,9 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 		off += 4;
 	}
 	
-	writeImageToFile(getFilePath(fileName) + textureFile, imageData,
-		_generator->texture()->size(), 1, 8, ImageFormat_PNG, true);
+	setCompressionLevelForImageFormat(ImageFormat_PNG, 1.0f / 9.0f);
+	writeImageToFile(getFilePath(fileName) + textureFile, imageData, _generator->texture()->size(),
+		1, 8, ImageFormat_PNG, true);
 	
 #endif
 }

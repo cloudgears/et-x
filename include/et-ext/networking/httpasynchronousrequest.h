@@ -23,10 +23,12 @@ namespace et
 		template <typename F>
 		void perform(F callback)
 		{
-			Invocation([this, callback]()
+			HTTPAsynchronousRequest::Pointer holder(this);
+			Invocation([this, callback, holder]() mutable
 			{
 				perform();
 				callback(response());
+				holder.reset(nullptr);
 			}).invokeInRunLoop(sharedHTTPRequestsThread().runLoop());
 		}
 		
