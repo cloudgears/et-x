@@ -73,10 +73,10 @@ namespace et
 			ImageDescriptor() : 
 				origin(0.0f), size(0.0f) { } 
 
-			ImageDescriptor(const Texture& tex) :
+			ImageDescriptor(const Texture::Pointer& tex) :
 				origin(0.0f), size(tex.valid() ? tex->sizeFloat() : vec2(0.0f)) { }
 
-			ImageDescriptor(const Texture& tex, const ContentOffset& offset) : 
+			ImageDescriptor(const Texture::Pointer& tex, const ContentOffset& offset) : 
 				origin(0.0f), size(tex.valid() ? tex->sizeFloat() : vec2(0.0f)), contentOffset(offset) { }
 
 			ImageDescriptor(const vec2& aOrigin, const vec2& aSize, const ContentOffset& offset = ContentOffset()) :
@@ -100,16 +100,16 @@ namespace et
 
 		struct Image
 		{
-			Texture texture;
+			Texture::Pointer texture;
 			ImageDescriptor descriptor;
 
 			Image()
 				{ }
 
-			Image(const Texture& t) :
+			Image(const Texture::Pointer& t) :
 				texture(t), descriptor(ImageDescriptor(t)) { }
 
-			Image(const Texture& t, const ImageDescriptor& d) :
+			Image(const Texture::Pointer& t, const ImageDescriptor& d) :
 				texture(t), descriptor(d) { }
 		};
 

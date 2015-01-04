@@ -22,11 +22,11 @@ namespace et
 			
 			recti clip;
 			
-			Texture texture;
+			Texture::Pointer texture;
 			SceneProgram program;
 			Element2d* object = nullptr;
 			
-			RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
+			RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture::Pointer& aTexture,
 				const SceneProgram& aProgram, Element2d* aObject, PrimitiveType pt);
 		};
 		

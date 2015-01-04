@@ -64,7 +64,7 @@ namespace et
 			CharacterGenerator(RenderContext* _rc, const std::string& face, const std::string& boldFace, 
 				size_t faceIndex = 0, size_t boldFaceIndex = 0);
 			
-			const Texture& texture() const
+			const Texture::Pointer& texture() const
 				{ return _texture; }
 
 			const std::string& face() const
@@ -94,7 +94,7 @@ namespace et
 			const CharDescriptorMap& boldCharacters() const
 				{ return _boldChars; }
 						
-			void setTexture(Texture);
+			void setTexture(Texture::Pointer);
 			void pushCharacter(const CharDescriptor&);
 			
 			ET_DECLARE_EVENT1(characterGenerated, int)
@@ -116,7 +116,7 @@ namespace et
 			
 			RenderContext* _rc = nullptr;
 			
-			et::Texture _texture;
+			et::Texture::Pointer _texture;
 			std::string _fontFace;
 			std::string _fontBoldFace;
 			RectPlacer _placer;

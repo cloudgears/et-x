@@ -125,7 +125,7 @@ size_t et::s2d::measuseVertexCountForImageDescriptor(const ImageDescriptor& desc
 	return 6 * (1 + numCorners + numBorders);
 }
 
-void et::s2d::buildImageVertices(SceneVertexList& vertices, const Texture& tex, const ImageDescriptor& desc,
+void et::s2d::buildImageVertices(SceneVertexList& vertices, const Texture::Pointer& tex, const ImageDescriptor& desc,
 	const rect& p, const vec4& color, const mat4& transform)
 {
 	if (!tex.valid()) return;

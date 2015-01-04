@@ -51,7 +51,7 @@ void Line::addToRenderQueue(RenderContext*, SceneRenderer& r)
 	if (!contentValid())
 		buildVertices(r);
 	
-	r.addVertices(_vertices, Texture(), program(), this);
+	r.addVertices(_vertices, Texture::Pointer(), program(), this);
 }
 
 void Line::buildLine(const vec2& p1, const vec2& p2, const vec4& tc, const vec4& clr1, const vec4& clr2, const mat4& t)

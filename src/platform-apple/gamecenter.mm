@@ -5,7 +5,6 @@
  *
  */
 
-#include <fstream>
 #include <GameKit/GameKit.h>
 #include <et/app/application.h>
 #include <et/app/applicationnotifier.h>

@@ -82,8 +82,8 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 	
 	if (_defaultTexture.invalid())
 	{
-		_defaultTexture = rc->textureFactory().genTexture(GL_TEXTURE_2D, GL_RGBA, vec2i(1), GL_RGBA,
-			GL_UNSIGNED_BYTE, BinaryDataStorage(4, 255),  "particles-default-texture");
+		_defaultTexture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
+			vec2i(1), TextureFormat::RGBA, DataType::UnsignedChar, BinaryDataStorage(4, 255),  "__et_particles_default_texture__");
 		
 		if (_texture.invalid())
 			_texture = _defaultTexture;
@@ -105,7 +105,7 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 			setContentValid();
 		}
 		
-		gr.addVertices(_vertices, _texture, program(), this, PrimitiveType_Points);
+		gr.addVertices(_vertices, _texture, program(), this, PrimitiveType::Points);
 	}
 }
 
@@ -129,7 +129,7 @@ void ParticlesElement::setProgramParameters(et::RenderContext*, et::Program::Poi
 	p->setUniform("finalTransform", finalTransform());
 }
 
-void ParticlesElement::setTexture(const et::Texture& t)
+void ParticlesElement::setTexture(const et::Texture::Pointer& t)
 {
 	_texture = t.invalid() ? _defaultTexture : t;
 }

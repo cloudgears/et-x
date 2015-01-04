@@ -102,8 +102,8 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 
 void Atmosphere::generateGeometry(RenderContext* rc)
 {
-	auto va = VertexArray::Pointer::create(VertexDeclaration(true, Usage_Position, Type_Vec3), 0);
-	auto ia = IndexArray::Pointer::create(IndexArrayFormat_32bit, 0, PrimitiveType_Triangles);
+	auto va = VertexArray::Pointer::create(VertexDeclaration(true, VertexAttributeUsage::Position, VertexAttributeType::Vec3), 0);
+	auto ia = IndexArray::Pointer::create(IndexArrayFormat::Format_32bit, 0, PrimitiveType::Triangles);
 	primitives::createIcosahedron(va, 1.0f, true, false, false);
 	for (size_t i = 0; i < 7; ++i)
 	{
@@ -113,12 +113,12 @@ void Atmosphere::generateGeometry(RenderContext* rc)
 		va = primitives::buildLinearIndexArray(va, ia);
 	}
 	
-	RawDataAcessor<vec3> pos = va->chunk(Usage_Position).accessData<vec3>(0);
+	RawDataAcessor<vec3> pos = va->chunk(VertexAttributeUsage::Position).accessData<vec3>(0);
 	for (size_t i = 0, e = va->size(); i < e; ++i)
 		pos[i] = normalize(pos[i]);
 	
 	_atmosphereVAO = rc->vertexBufferFactory().createVertexArrayObject("et~sky-sphere", va,
-		BufferDrawType_Static, ia, BufferDrawType_Static);
+		BufferDrawType::Static, ia, BufferDrawType::Static);
 }
 
 void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool drawSky, bool drawPlanet)
@@ -133,12 +133,12 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 	rs.bindVertexArray(_atmosphereVAO);
 	
 	bool shouldDrawPlanet = drawPlanet &&
-		adjustedCamera.frustum().containSphere(Sphere(vec3(0.0f), _parameters.floatForKey(kPlanetRadius)->content));
+		adjustedCamera.frustum().containsSphere(Sphere(vec3(0.0f), _parameters.floatForKey(kPlanetRadius)->content));
 
 	if (shouldDrawPlanet)
 	{
 		rs.setBlend(false);
-		rs.setCulling(true, CullState_Back);
+		rs.setCulling(true, CullState::Back);
 		rs.bindProgram(_planetPerVertexProgram);
 		
 		if (!_groundParametersValid)
@@ -170,8 +170,8 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 		bool blendEnabled = rs.blendEnabled();
 		
 		rs.setDepthMask(false);
-		rs.setBlend(true, BlendState_Additive);
-		rs.setCulling(true, CullState_Front);
+		rs.setBlend(true, BlendState::Additive);
+		rs.setCulling(true, CullState::Front);
 		rs.bindProgram(_atmospherePerVertexProgram);
 		setProgramParameters(_atmospherePerVertexProgram);
 		_atmospherePerVertexProgram->setCameraProperties(adjustedCamera);
@@ -229,8 +229,8 @@ void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
 	
 	rs.setDepthMask(false);
 	rs.setDepthTest(false);
-	rs.setBlend(true, BlendState_Additive);
-	rs.setCulling(true, CullState_Front);
+	rs.setBlend(true, BlendState::Additive);
+	rs.setCulling(true, CullState::Front);
 	
 	rs.bindProgram(_atmospherePerVertexProgram);
 	setProgramParameters(_atmospherePerVertexProgram);
@@ -238,7 +238,7 @@ void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
 
 	rs.bindVertexArray(_atmosphereVAO);
 	rs.bindFramebuffer(framebuffer);
-	for (size_t i = 0; i < 6; ++i)
+	for (uint32_t i = 0; i < 6; ++i)
 	{
 		framebuffer->setCurrentCubemapFace(i);
 		cubemapCamera.lookAt(vec3(0.0f), lookDirections[i], upVectors[i]);

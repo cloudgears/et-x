@@ -5,7 +5,8 @@
  *
  */
 
-#include <libcurl/curl.h>
+#include <external/libcurl/curl.h>
+
 #include <et/json/json.h>
 #include <et-ext/networking/httprequest.h>
 

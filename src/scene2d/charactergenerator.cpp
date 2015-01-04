@@ -8,13 +8,6 @@
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/charactergenerator.h>
 
-#define ET_SAVE_FONT_TO_FILE	0
-
-#if (ET_SAVE_FONT_TO_FILE)
-#	include <et/app/application.h>
-#	include <et/imaging/imagewriter.h>
-#endif
-
 using namespace et;
 using namespace et::s2d;
 
@@ -99,67 +92,22 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 	
 	if (_impl.processCharacter(result, charSize, canvasSize, renderedCharacterData))
 	{
-
-#	if (ET_SAVE_FONT_TO_FILE) && (ET_PLATFORM_WIN || ET_PLATFORM_MAC)
-		{
-			auto outputFile = application().environment().applicationDocumentsFolder() +
-				_fontFace + " - " + intToStr(value) + " - original.png";
-			writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
-		}
-#	endif
-
 		generateSignedDistanceField(renderedCharacterData, canvasSize.x, canvasSize.y);
-		
-#	if (ET_SAVE_FONT_TO_FILE) && (ET_PLATFORM_WIN || ET_PLATFORM_MAC)
-		{
-			auto outputFile = application().environment().applicationDocumentsFolder() +
-				_fontFace + " - " + intToStr(value) + " - sdf.png";
-			writeImageToFile(outputFile, renderedCharacterData, canvasSize, 1, 8, ImageFormat_PNG, true);
-		}
-#	endif
 
 		vec2i sizeToSave;
 		BinaryDataStorage dataToSave;
 		
 		if (performCropping(renderedCharacterData, canvasSize, dataToSave, sizeToSave, topLeftOffset))
 		{
-
-#		if (ET_SAVE_FONT_TO_FILE) && (ET_PLATFORM_WIN || ET_PLATFORM_MAC)
-			{
-				auto outputFile = application().environment().applicationDocumentsFolder() +
-					_fontFace + " - " + intToStr(value) + " - crop.png";
-				writeImageToFile(outputFile, dataToSave, sizeToSave, 1, 8, ImageFormat_PNG, true);
-			}
-#		endif
-
 			vec2i downsampledSize = sizeToSave / 2;
 			auto downsampled = downsample(dataToSave, sizeToSave);
 			downsampled = downsample(downsampled, downsampledSize);
 			downsampledSize /= 2;
-			
-#		if (ET_SAVE_FONT_TO_FILE) && (ET_PLATFORM_WIN || ET_PLATFORM_MAC)
-			{
-				auto outputFile = application().environment().applicationDocumentsFolder() +
-					_fontFace + " - " + intToStr(value) + " - downsampled.png";
-				writeImageToFile(outputFile, downsampled, downsampledSize, 1, 8, ImageFormat_PNG, true);
-			}
-#		endif
 
 			recti textureRect;
 			if (_placer.place(downsampledSize, textureRect))
 			{
 				updateTexture(textureRect.origin(), downsampledSize, downsampled);
-				
-#			if (ET_SAVE_FONT_TO_FILE) && (ET_PLATFORM_WIN || ET_PLATFORM_MAC)
-				{
-					_rc->renderState().bindTexture(0, _texture);
-					BinaryDataStorage data(4 * _texture->size().square(), 0);
-					glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
-					checkOpenGLError("glGetTexImage")
-					auto outputFile = application().environment().applicationDocumentsFolder() + _fontFace + ".png";
-					writeImageToFile(outputFile, data, _texture->size(), 4, 8, ImageFormat_PNG, true);
-				}
-#			endif
 				
 				result.contentRect = rect(vector2ToFloat(topLeftOffset - charactersRenderingExtent / 2), vector2ToFloat(sizeToSave));
 				result.uvRect = rect(_texture->getTexCoord(vector2ToFloat(textureRect.origin())),
@@ -189,7 +137,7 @@ void CharacterGenerator::updateTexture(const vec2i& position, const vec2i& size,
 	_texture->updatePartialDataDirectly(_rc, dest, size, data.binary(), data.dataSize());
 }
 
-void CharacterGenerator::setTexture(Texture tex)
+void CharacterGenerator::setTexture(Texture::Pointer tex)
 {
 	_texture = tex;
 }

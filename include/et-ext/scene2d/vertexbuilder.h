@@ -25,7 +25,7 @@ namespace et
 		void buildStringVertices(SceneVertexList& vertices, const CharDescriptorList& chars,  Alignment hAlign,
 			Alignment vAlign, const vec2& pos, const vec4& color, const mat4& transform, float lineInterval = 1.0f);
 
-		void buildImageVertices(SceneVertexList& vertices, const Texture& tex, const ImageDescriptor& desc,
+		void buildImageVertices(SceneVertexList& vertices, const Texture::Pointer& tex, const ImageDescriptor& desc,
 			const rect& p, const vec4& color, const mat4& transform);
 
 		void buildColorVertices(SceneVertexList& vertices, const rect& p, const vec4& color,

@@ -47,21 +47,21 @@ namespace et
 			ImageView(Element2d* parent,
 				const std::string& name = emptyString);
 			
-			ImageView(const Texture& texture, Element2d* parent,
+			ImageView(const Texture::Pointer& texture, Element2d* parent,
 				const std::string& name = emptyString);
 
-			ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent,
+			ImageView(const Texture::Pointer& texture, const ImageDescriptor& i, Element2d* parent,
 				const std::string& name = emptyString);
 			
 			ImageView(const Image&, Element2d* parent,
 				const std::string& name = emptyString);
 
-			const Texture& texture() const
+			const Texture::Pointer& texture() const
 				{ return _texture; }
 
-			Texture& texture() 
+			Texture::Pointer& texture()
 				{ return _texture; }
-
+			
 			const ImageDescriptor& imageDescriptor() const
 				{ return _descriptor.value(); }
 
@@ -70,7 +70,7 @@ namespace et
 			
 			void setImageDescriptor(const ImageDescriptor& d, float duration = 0.0f);
 			void setContentMode(ImageView::ContentMode cm);
-			void setTexture(const Texture& t, bool updateDescriptor);
+			void setTexture(const Texture::Pointer& t, bool updateDescriptor);
 			void setImage(const Image& img);
 			void setBackgroundColor(const vec4& color, float duration = 0.0f);
 			
@@ -92,7 +92,7 @@ namespace et
 			void buildVertices(RenderContext*, SceneRenderer&);
 
 		private:
-			Texture _texture;
+			Texture::Pointer _texture;
 			SceneVertexList _vertices;
 			Animator<ImageDescriptor> _descriptor;
 			Vector4Animator _backgroundColorAnimator;

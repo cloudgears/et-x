@@ -29,12 +29,12 @@ namespace et
 			
 			const s2d::Image& image(const std::string& key) const;
 			
-			std::vector<Image> imagesForTexture(Texture t) const;
+			std::vector<Image> imagesForTexture(const Texture::Pointer& t) const;
 			
-			Texture firstTexture() const;
+			const Texture::Pointer& firstTexture() const;
 			
 		private:
-			typedef std::map<std::string, Texture> TextureMap;
+			typedef std::map<std::string, Texture::Pointer> TextureMap;
 			typedef std::map<std::string, Image> ImageMap;
 
 			TextureMap _textures;

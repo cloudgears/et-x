@@ -38,7 +38,7 @@ namespace et
 			void setProjectionMatrices(const vec2& contextSize);
 			void setRendernigElement(const RenderingElement::Pointer& r);
 
-			void addVertices(const SceneVertexList&, const Texture&, const SceneProgram&, Element2d*,
+			void addVertices(const SceneVertexList&, const Texture::Pointer&, const SceneProgram&, Element2d*,
 				PrimitiveType = PrimitiveType::Triangles);
 			
 			void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
@@ -46,10 +46,10 @@ namespace et
 			const SceneProgram& defaultProgram() const
 				{ return _defaultProgram; }
 			
-			const Texture& lastUsedTexture() const
+			const Texture::Pointer& lastUsedTexture() const
 				{ return _lastTexture; }
 
-			const Texture& defaultTexture() const
+			const Texture::Pointer& defaultTexture() const
 				{ return _defaultTexture; }
 			
 			SceneProgram createProgramWithFragmentshader(const std::string& name, const std::string& fs);
@@ -58,7 +58,7 @@ namespace et
 		private:
 			void init(RenderContext* rc);
 			
-			SceneVertex* allocateVertices(size_t, const Texture&, const SceneProgram&, Element2d*, PrimitiveType);
+			SceneVertex* allocateVertices(size_t, const Texture::Pointer&, const SceneProgram&, Element2d*, PrimitiveType);
 
 			ET_DENY_COPY(SceneRenderer)
 			
@@ -66,8 +66,8 @@ namespace et
 			RenderContext* _rc;
 			RenderingElement::Pointer _renderingElement;
 			
-			Texture _lastTexture;
-			Texture _defaultTexture;
+			Texture::Pointer _lastTexture;
+			Texture::Pointer _defaultTexture;
 			
 			ObjectsCache _programsCache;
 			

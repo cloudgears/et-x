@@ -193,15 +193,9 @@ const s2d::Image& TextureAtlas::image(const std::string& key) const
 		return _emptyImage;
 	
 	return _images.at(key);
-/*
-	auto i = _images.find(key);
-	if (i == _images.end())
-		return _emptyImage;
-	return i->second;
-*/
 }
 
-std::vector<Image> TextureAtlas::imagesForTexture(Texture t) const
+std::vector<Image> TextureAtlas::imagesForTexture(const Texture::Pointer& t) const
 {
 	std::vector<Image> result;
 	
@@ -221,9 +215,10 @@ void TextureAtlas::unload()
 	_loaded = false;
 }
 
-Texture TextureAtlas::firstTexture() const
+const Texture::Pointer& TextureAtlas::firstTexture() const
 {
-	return _textures.size() ? _textures.begin()->second : Texture();
+	static const Texture::Pointer emptyTexture;
+	return _textures.empty() ? emptyTexture : _textures.begin()->second;
 }
 
 /*

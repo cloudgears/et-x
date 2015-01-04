@@ -493,7 +493,7 @@ Element2d::Pointer Layout::findFirstResponderStartingFrom(Element2d::Pointer bas
 ModalLayout::ModalLayout(const std::string& name) :
 	Layout(ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
-	_backgroundFade = ImageView::Pointer::create(Texture(), this, "img_background_fade");
+	_backgroundFade = ImageView::Pointer::create(Texture::Pointer(), this, "img_background_fade");
 	_backgroundFade->setBackgroundColor(vec4(0.0f, 0.5f));
 	_backgroundFade->fillParent();
 }

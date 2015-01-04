@@ -16,7 +16,7 @@ using namespace et::s2d;
 /*
  * Render chunk
  */
-RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture& aTexture,
+RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture::Pointer& aTexture,
 	const SceneProgram& aProgram, Element2d* aObject, PrimitiveType pt) : first(aFirst), count(aCount), clip(aClip),
 	texture(aTexture), program(aProgram), object(aObject), primitiveType(pt) { }
 
@@ -62,7 +62,7 @@ void RenderingElement::startAllocatingVertices()
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	renderState.bindVertexArray(vao);
-	mappedData = vao->vertexBuffer()->map(0, dataSize, VertexBufferData::MapBufferMode_WriteOnly);
+	mappedData = vao->vertexBuffer()->map(0, dataSize, MapBufferMode::WriteOnly);
 #endif
 }
 

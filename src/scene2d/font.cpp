@@ -13,10 +13,6 @@
 #include <et/imaging/imagewriter.h>
 #include <et-ext/scene2d/font.h>
 
-#if (ET_PLATFORM_MAC || ET_PLATFORM_WIN)
-#	include <et/opengl/opengl.h>
-#endif
-
 using namespace et;
 using namespace et::s2d;
 
@@ -65,38 +61,18 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	fOut.flush();
 	fOut.close();
 	
-#if (ET_PLATFORM_MAC || ET_PLATFORM_WIN)
-	
-	auto tex = generator()->texture();
-	BinaryDataStorage imageData(tex->size().square());
-	
-	rc->renderState().bindTexture(0, tex);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RED, GL_UNSIGNED_BYTE, imageData.data());
-	checkOpenGLError("glGetTexImage");
-	
-	setCompressionLevelForImageFormat(ImageFormat_PNG, 1.0f / 9.0f);
-	writeImageToFile(getFilePath(fileName) + textureFile, imageData, tex->size(), 1, 8, ImageFormat_PNG, true);
-	
-#elif (ET_PLATFORM_IOS || ET_PLATFORM_ANDROID)
-	
 	auto fbo = rc->framebufferFactory().createFramebuffer(_generator->texture()->size(),
 		"rgba-buffer", TextureFormat::RGBA, TextureFormat::RGBA, DataType::UnsignedChar, TextureFormat::Invalid);
 	
 	bool blendEnabled = rc->renderState().blendEnabled();
-	
 	auto currentBuffer = rc->renderState().boundFramebuffer();
-	
 	rc->renderState().bindFramebuffer(fbo);
 	rc->renderState().setBlend(false, BlendState::Current);
 	rc->renderer()->renderFullscreenTexture(_generator->texture());
-	
-	BinaryDataStorage imageData(4 * _generator->texture()->size().square());
-	glReadPixels(0, 0, fbo->size().x, fbo->size().y, GL_RGBA, GL_UNSIGNED_BYTE, imageData.data());
-	checkOpenGLError("glReadPixels");
-	
+	auto imageData = rc->renderer()->readFramebufferData(fbo->size(), TextureFormat::RGBA, DataType::UnsignedChar);
+
 	rc->renderState().bindFramebuffer(currentBuffer);
 	rc->renderState().setBlend(blendEnabled, BlendState::Current);
-	
 	fbo.reset(nullptr);
 	
 	auto ptr = imageData.begin();
@@ -109,10 +85,9 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	}
 	
 	setCompressionLevelForImageFormat(ImageFormat_PNG, 1.0f / 9.0f);
+	
 	writeImageToFile(getFilePath(fileName) + textureFile, imageData, _generator->texture()->size(),
 		1, 8, ImageFormat_PNG, true);
-	
-#endif
 }
 
 bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
@@ -137,7 +112,7 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	Texture tex = rc->textureFactory().loadTexture(actualName, cache);
+	Texture::Pointer tex = rc->textureFactory().loadTexture(actualName, cache);
 	if (tex.invalid())
 	{
 		log::error("Unable to load texture for font %s. Missing file: %s", fileName.c_str(), textureFile.c_str());

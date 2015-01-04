@@ -19,7 +19,7 @@ ImageView::ImageView(Element2d* parent, const std::string& name) :
 	connectEvents();
 }
 
-ImageView::ImageView(const Texture& texture, Element2d* parent, const std::string& name) :
+ImageView::ImageView(const Texture::Pointer& texture, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(texture),
 	_descriptor(ImageDescriptor(texture), timerPool()), _backgroundColorAnimator(timerPool()),
 	_contentMode(ImageView::ContentMode_Stretch)
@@ -28,7 +28,7 @@ ImageView::ImageView(const Texture& texture, Element2d* parent, const std::strin
 	setSize(_descriptor.value().size);
 }
 
-ImageView::ImageView(const Texture& texture, const ImageDescriptor& i, Element2d* parent,
+ImageView::ImageView(const Texture::Pointer& texture, const ImageDescriptor& i, Element2d* parent,
 	const std::string& name) : Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(texture),
 	_descriptor(i, timerPool()), _backgroundColorAnimator(timerPool()), _contentMode(ImageView::ContentMode_Stretch)
 {
@@ -121,7 +121,7 @@ void ImageView::setContentMode(ImageView::ContentMode cm)
 	}
 }
 
-void ImageView::setTexture(const Texture& t, bool updateDescriptor)
+void ImageView::setTexture(const Texture::Pointer& t, bool updateDescriptor)
 {
 	_texture = t;
 	

@@ -7,7 +7,6 @@
 
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/scenerenderer.h>
-#include <et/opengl/openglcaps.h>
 
 using namespace et;
 using namespace et::s2d;
@@ -81,7 +80,7 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 	_defaultTransform[3][3] = 1.0f;
 }
 
-SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& inTexture,
+SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture::Pointer& inTexture,
 	const SceneProgram& inProgram, Element2d* object, PrimitiveType pt)
 {
 	ET_ASSERT(_renderingElement.valid());
@@ -89,7 +88,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 	if (object && !object->hasFlag(Flag_DynamicRendering))
 		object = nullptr;
 
-	const Texture& actualTexture = inTexture.valid() ? inTexture : _defaultTexture;
+	const Texture::Pointer& actualTexture = inTexture.valid() ? inTexture : _defaultTexture;
 	
 	bool isDynamicObject = (object != nullptr) && (object->hasFlag(Flag_DynamicRendering));
 	bool shouldAdd = isDynamicObject || _renderingElement->chunks.empty();
@@ -118,7 +117,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture& i
 	return _renderingElement->allocateVertices(count);
 }
 
-void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture& texture,
+void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture::Pointer& texture,
 	const SceneProgram& program, Element2d* owner, PrimitiveType pt)
 {
 	size_t count = vertices.lastElementIndex();

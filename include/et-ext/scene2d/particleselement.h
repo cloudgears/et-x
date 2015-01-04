@@ -31,7 +31,7 @@ namespace et
 			const particles::PointSpriteEmitter& emitter() const
 				{ return _particles; }
 			
-			void setTexture(const et::Texture&);
+			void setTexture(const et::Texture::Pointer&);
 			void setBaseAndVariationParticles(const particles::PointSprite&, const particles::PointSprite&);
 			
 			void start();
@@ -46,8 +46,8 @@ namespace et
 			void setProgramParameters(et::RenderContext*, et::Program::Pointer&);
 			
 		private:
-			et::Texture _texture;
-			et::Texture _defaultTexture;
+			et::Texture::Pointer _texture;
+			et::Texture::Pointer _defaultTexture;
 			et::s2d::SceneProgram _program;
 			SceneVertexList _vertices;
 			
