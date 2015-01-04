@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/apiobjects/vertexarrayobject.h>
+#include <et/rendering/vertexarrayobject.h>
 #include <et-ext/scene2d/element2d.h>
 
 namespace et

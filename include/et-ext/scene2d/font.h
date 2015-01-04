@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/apiobjects/texture.h>
+#include <et/rendering/texture.h>
 #include <et-ext/scene2d/charactergenerator.h>
 
 namespace et

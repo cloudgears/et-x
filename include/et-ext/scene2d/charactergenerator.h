@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/apiobjects/texture.h>
+#include <et/rendering/texture.h>
 #include <et/app/events.h>
 #include <et/geometry/rectplacer.h>
 #include <et-ext/scene2d/fontbase.h>

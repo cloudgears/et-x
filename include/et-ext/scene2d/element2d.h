@@ -8,7 +8,7 @@
 #pragma once
 
 #include <et/input/input.h>
-#include <et/apiobjects/program.h>
+#include <et/rendering/program.h>
 #include <et-ext/scene2d/baseclasses.h>
 
 namespace et
