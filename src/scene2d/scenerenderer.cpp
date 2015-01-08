@@ -137,7 +137,8 @@ void s2d::SceneRenderer::beginRender(RenderContext* rc)
 {
 	_depthMaskEnabled = rc->renderState().depthMask();
 	_blendEnabled = rc->renderState().blendEnabled();
-	_lastBlendState = rc->renderState().blendState();
+	_lastColorBlendState = rc->renderState().blendStateForColor();
+	_lastAlphaBlendState = rc->renderState().blendStateForAlpha();
 	_depthTestEnabled = rc->renderState().depthTestEnabled();
 	_clipeEnabled = rc->renderState().clipEnabled();
 	_latestClipRect = rc->renderState().clipRect();
@@ -187,7 +188,7 @@ void SceneRenderer::endRender(RenderContext* rc)
 	rs.setClip(_clipeEnabled, _latestClipRect);
 	rs.setDepthMask(_depthMaskEnabled);
 	rs.setDepthTest(_depthTestEnabled);
-	rs.setBlend(_blendEnabled, _lastBlendState);
+	rs.setSeparateBlend(_blendEnabled, _lastColorBlendState, _lastAlphaBlendState);
 }
 
 void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)

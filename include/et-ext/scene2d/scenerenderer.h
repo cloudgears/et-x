@@ -86,7 +86,8 @@ namespace et
 			bool _blendEnabled = false;
 			bool _depthTestEnabled = false;
 			bool _clipeEnabled = false;
-			BlendState _lastBlendState = BlendState::Default;
+			BlendState _lastColorBlendState = BlendState::Default;
+			BlendState _lastAlphaBlendState = BlendState::Default;
 		};
 	}
 }

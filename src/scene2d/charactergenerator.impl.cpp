@@ -84,7 +84,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 #elif (ET_PLATFORM_WIN)
 		auto commonDC = CreateCompatibleDC(nullptr);
 
-		HFONT font = CreateFont(-12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 
+		HFONT font = CreateFontA(-12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 
 			OUT_TT_ONLY_PRECIS, CLIP_EMBEDDED, PROOF_QUALITY, FF_DONTCARE, face.c_str());
 
 		SelectObject(commonDC, font);
@@ -127,10 +127,12 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 			CFRelease(fontRef);
 		}
 		FT_New_Face(library, fontPath.binary(), boldFaceIndex, &regularFont);
+
 #elif (ET_PLATFORM_WIN)
+
 		auto commonDC = CreateCompatibleDC(nullptr);
 
-		HFONT font = CreateFont(-12, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 
+		HFONT font = CreateFontA(-12, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 
 			OUT_TT_ONLY_PRECIS, CLIP_EMBEDDED, PROOF_QUALITY, FF_DONTCARE, boldFace.c_str());
 
 		SelectObject(commonDC, font);
