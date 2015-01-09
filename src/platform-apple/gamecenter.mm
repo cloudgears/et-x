@@ -87,17 +87,17 @@ GameCenter::AuthorizationStatus GameCenter::status() const
 
 void GameCenter::authenticate()
 {
-	[[GKLocalPlayer localPlayer] setAuthenticateHandler:^(ViewControllerClass* viewController, NSError*)
+	[[GKLocalPlayer localPlayer] setAuthenticateHandler:^(ViewControllerClass* viewController, NSError* error)
 	{
 		if (viewController != nil)
 		{
 			_private->status = AuthorizationStatus_Authorizing;
 			
-#if (TARGET_OS_IPHONE)
+#	if (TARGET_OS_IPHONE)
 			UIViewController* mainViewController = (__bridge UIViewController*)
 				reinterpret_cast<void*>(application().renderingContextHandle());
 			[mainViewController presentViewController:viewController animated:YES completion:nil];
-#endif
+#	endif
 		}
 		else
 		{
@@ -113,7 +113,7 @@ void GameCenter::authenticate()
 			else
 			{
 				_private->status = AuthorizationStatus_NotAuthorized;
-				// NSLog(@"Unable to authenticate to Game Center\n%@", error);
+				NSLog(@"Unable to authenticate to Game Center\n%@", [error localizedDescription]);
 			}
 		}
 		
@@ -199,11 +199,11 @@ void GameCenter::unlockAchievement(const std::string& achId)
 		
 		std::string localId = achId;
 		
-#if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
+#	if (__IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
 		[GKAchievement reportAchievements:@[ach] withCompletionHandler:^(NSError *error)
-#else
+#	else
 		[ach reportAchievementWithCompletionHandler:^(NSError *error)
-#endif
+#	endif
 		{
 			if (error == nil)
 			{
