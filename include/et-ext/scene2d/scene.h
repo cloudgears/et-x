@@ -36,7 +36,7 @@ namespace et
 		public:
 			Scene(RenderContext* rc);
 			
-			void layout(const vec2& size);
+			void layout(const vec2& size, float duration = 0.0);
 			void render(RenderContext* rc);
 
 			SceneRenderer& renderer() 

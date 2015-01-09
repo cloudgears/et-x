@@ -164,7 +164,7 @@ void Scene::buildOverlayVertices(RenderContext* rc)
 	}
 }
 
-void Scene::layout(const vec2& size)
+void Scene::layout(const vec2& size, float duration)
 {
 	_screenSize = size;
 	_renderer.setProjectionMatrices(size);
@@ -176,7 +176,7 @@ void Scene::layout(const vec2& size)
 	_overlay.setSize(size);
 	
 	for (auto& i : _layouts)
-		i->layout->autoLayout(size, 0.0f);
+		i->layout->autoLayout(size, duration);
 }
 
 void Scene::render(RenderContext* rc)

@@ -554,12 +554,6 @@ void Element2d::autoLayoutFromFile(const std::string& fileName)
 {
 	setOrigin(fileName);
 	
-#if (ET_DISABLE_JSON)
-#
-#	warning ET_DISABLE_JSON is defined, autoLayoutFromFile is not available
-#
-#else
-	
 	ValueClass c = ValueClass_Invalid;
 	ValueBase::Pointer base = json::deserialize(loadTextFile(fileName), c);
 	
@@ -568,8 +562,6 @@ void Element2d::autoLayoutFromFile(const std::string& fileName)
 		setAutolayout(base);
 	}
 	else
-	
-#endif
 	{
 		log::error("Unable to load layout from file %s", fileName.c_str());
 	}
