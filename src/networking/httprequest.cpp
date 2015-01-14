@@ -38,7 +38,7 @@ size_t et::HTTPRequestWriteFunction(const void* data, size_t chunks, size_t chun
 {
 	size_t dataSize = chunks * chunkSize;
 	req->response->_data.appendData(data, dataSize);
-	return dataSize;
+	return shouldTerminateHTTPRequests() ? 0 : dataSize;
 }
 
 int et::HTTPRequestProgressFunction(HTTPRequest* req, double downloadSize, double downloaded, double uploadSize, double uploaded)

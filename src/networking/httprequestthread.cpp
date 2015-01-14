@@ -10,11 +10,22 @@
 
 using namespace et;
 
+static bool _shouldTerminateRequests = false;
+
 HTTPRequestsThread& et::sharedHTTPRequestsThread()
 {
 	static HTTPRequestsThread _thread;
-
 	return _thread;
+}
+
+bool et::shouldTerminateHTTPRequests()
+{
+	return _shouldTerminateRequests;
+}
+
+void et::terminateHTTPRequests()
+{
+	_shouldTerminateRequests = true;
 }
 
 HTTPRequestsRunLoop::HTTPRequestsRunLoop() :
@@ -34,6 +45,15 @@ HTTPRequestsThread::HTTPRequestsThread() :
 	Thread(true)
 {
 	_runLoop.setOwner(this);
+}
+
+HTTPRequestsThread::~HTTPRequestsThread()
+{
+	terminateHTTPRequests();
+	
+	stop();
+	
+	waitForTermination();
 }
 
 ThreadResult HTTPRequestsThread::main()

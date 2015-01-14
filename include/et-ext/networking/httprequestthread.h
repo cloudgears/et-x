@@ -32,6 +32,7 @@ namespace et
 	{
 	public:
 		HTTPRequestsThread();
+		~HTTPRequestsThread();
 		
 		RunLoop& runLoop()
 			{ return _runLoop; }
@@ -44,4 +45,7 @@ namespace et
 	};
 	
 	HTTPRequestsThread& sharedHTTPRequestsThread();
+	
+	bool shouldTerminateHTTPRequests();
+	void terminateHTTPRequests();
 }
