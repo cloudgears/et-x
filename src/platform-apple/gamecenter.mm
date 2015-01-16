@@ -113,7 +113,7 @@ void GameCenter::authenticate()
 			else
 			{
 				_private->status = AuthorizationStatus_NotAuthorized;
-				NSLog(@"Unable to authenticate to Game Center\n%@", [error localizedDescription]);
+				NSLog(@"Unable to authenticate to Game Center: %@", [error localizedDescription]);
 			}
 		}
 		

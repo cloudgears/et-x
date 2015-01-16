@@ -144,6 +144,7 @@ void HTTPRequest::perform()
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, params);
 	}
 	
+	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10000);
 	curl_easy_setopt(curl, CURLOPT_FILE, _private);
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
