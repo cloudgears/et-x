@@ -1,0 +1,924 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="et">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="et-ext">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="et\include">
+      <UniqueIdentifier>{4679dc60-817d-49ac-8154-22579ac006e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="et\source">
+      <UniqueIdentifier>{8639210c-10e4-4b43-9bd5-c45d10423366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="et-ext\include">
+      <UniqueIdentifier>{99976126-58e3-4dc0-937a-76e81cc5ecbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="et-ext\source">
+      <UniqueIdentifier>{5d60c849-6b54-49dc-885f-db9b10ee1f91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{28771e8c-926c-465a-8049-abb9887f672d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\renderer\DemoCameraController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\renderer\DemoSceneLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\renderer\DemoSceneRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\MainController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\button.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\charactergenerator.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\charactergenerator.impl.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\element2d.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\font.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\fullscreenelement.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\imageview.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\label.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\layout.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\line.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\listbox.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\particleselement.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\renderingelement.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\scene.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\scenerenderer.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\scroll.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\slider.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\table.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\textelement.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\textfield.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\textureatlas.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\textureatlaswriter.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\scene2d\vertexbuilder.cpp">
+      <Filter>et-ext\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\app\appevironment.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\app\application.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\app\backgroundthread.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\app\events.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\app\invocation.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\app\pathresolver.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\app\runloop.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\camera\camera.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\camera\frustum.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\collision\collision.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\base64.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\conversion.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\dictionary.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\et.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\memoryallocator.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\objectscache.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\stream.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\tools.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\transformable.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\geometry\geometry.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\geometry\rectplacer.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\ddsloader.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\hdrloader.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\imageoperations.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\imagewriter.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\jpegloader.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\pngloader.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\pvrdecompressor.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\pvrloader.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\textureloader.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\tgaloader.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\input\gestures.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\input\input.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\json\json.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\locale\locale.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\models\objLoader.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\capabilities.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\framebuffer.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\indexbuffer.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\opengl.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\program.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\programfactory.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\renderer.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\renderstate.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\texture.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\vertexarrayobject.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\opengl\vertexbuffer.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\application.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\atomiccounter.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\criticalsection.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\input.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\locale.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\location.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\log.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\memory.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\mutex.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\opengl.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\orientation.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\platformtools.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\rendercontext.win-directx.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\rendercontext.win-opengl.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\thread.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\threading.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\tools.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\platform-win\videocapture.win.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\primitives\primitives.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\rendering\framebufferfactory.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\rendering\rendercontext.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\rendering\rendering.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\rendering\texturefactory.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\rendering\textureloadingthread.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\rendering\vertexbufferfactory.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\animation.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\baseelement.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\cameraelement.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\lightelement.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\material.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\mesh.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\particlesystem.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\scene3d.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\serialization.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\storage.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\supportmesh.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\tasks\taskpool.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\timers\notifytimer.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\timers\sequence.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\timers\timedobject.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\timers\timerpool.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\vertexbuffer\indexarray.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\vertexbuffer\vertexarray.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\vertexbuffer\vertexdatachunk.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\vertexbuffer\vertexdeclaration.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\ui\MainUI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\renderer\DemoCameraController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\renderer\DemoSceneLoader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\renderer\DemoSceneRenderer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\MainController.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\baseclasses.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\baseconst.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\button.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\charactergenerator.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\element2d.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\font.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\fontbase.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\fullscreenelement.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\imageview.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\label.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\layout.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\line.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\listbox.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\particleselement.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\renderingelement.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\scene.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\scenerenderer.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\scroll.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\slider.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\table.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\textelement.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\textfield.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\textureatlas.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\textureatlaswriter.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\et-ext\scene2d\vertexbuilder.h">
+      <Filter>et-ext\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\appevironment.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\application.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\applicationdelegate.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\applicationnotifier.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\backgroundthread.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\events.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\events.inl.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\invocation.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\pathresolver.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\app\runloop.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\camera\camera.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\camera\frustum.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\camera\light.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\collision\aabb.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\collision\collision.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\collision\obb.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\collision\sphere.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\atomiccounter.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\autoptr.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\autovalue.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\base64.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\constants.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\containers.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\containersbase.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\conversion.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\conversionbase.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\cout.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\datastorage.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\debug.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\dictionary.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\et.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\filesystem.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\flags.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\hardware.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\hierarchy.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\intrusiveptr.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\log.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\memory.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\memoryallocator.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\object.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\objectscache.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\plist.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\properties.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\rawdataaccessor.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\serialization.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\sharedptr.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\singleton.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\staticdatastorage.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\stream.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\strings.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\tools.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\transformable.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\core\types.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\equations.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\geometry.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\line2d.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\matrix3.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\matrix4.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\parallelepiped.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\plane.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\quaternion.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\ray.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\rect.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\rectplacer.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\segment2d.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\segment3d.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\splines.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\splines.inl.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\triangle.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\vector2.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\vector3.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\geometry\vector4.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\ddsloader.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\hdrloader.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\imageoperations.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\imagewriter.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\jpegloader.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\pngloader.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\pvrloader.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\texturedescription.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\textureloader.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\textureloaderthread.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\imaging\tgaloader.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\input\gestures.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\input\input.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\json\json.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\locale\locale.ext.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\locale\locale.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\models\objloader.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\opengl\opengl.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\opengl\openglcaps.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\platform\compileoptions.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\platform\platform.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\platform\platformtools.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\platform-win\glee.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\platform-win\kinect.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\primitives\primitives.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\apiobject.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\apiobjectfactory.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\framebuffer.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\framebufferfactory.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\indexbuffer.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\program.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\programfactory.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\rendercontext.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\rendercontextparams.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\renderer.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\rendering.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\renderingcaps.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\renderstate.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\texture.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\texturefactory.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\vertexarrayobject.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\vertexbuffer.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\rendering\vertexbufferfactory.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\animation.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\baseelement.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\cameraelement.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\lightelement.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\material.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\material.parameters.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\mesh.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\particlesystem.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\scene3d.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\serialization.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\storage.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\scene3d\supportmesh.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\tasks\taskpool.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\tasks\tasks.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\threading\criticalsection.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\threading\mutex.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\threading\thread.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\threading\threading.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\timers\animator.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\timers\inertialvalue.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\timers\interpolationvalue.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\timers\intervaltimer.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\timers\notifytimer.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\timers\sequence.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\timers\timedobject.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\timers\timerpool.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\vertexbuffer\indexarray.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\vertexbuffer\vertexarray.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\vertexbuffer\vertexdatachunk.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\vertexbuffer\vertexdeclaration.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\ui\MainUI.h">
+      <Filter>Source Files\UI</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
