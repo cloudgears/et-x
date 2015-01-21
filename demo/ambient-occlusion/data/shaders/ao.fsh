@@ -41,9 +41,8 @@ void main()
 	for (int i = 0; i < numSamples; ++i)
 	{
 		environment += performRaytracingInViewSpace(viewSpacePosition, normalSample, noiseSample, sampleScale.x, sampleScale.y);
-		
-		noiseSample = etTexture2D(texture_noise, NoiseTexCoord + noiseSample.yz);
+		noiseSample = etTexture2D(texture_noise, noiseSample.xw * NoiseTexCoord + noiseSample.yz);
 	}
 	
-	etFragmentOut =  environment / float(numSamples);
+	etFragmentOut = environment / float(numSamples);
 }

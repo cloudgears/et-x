@@ -35,14 +35,14 @@ void SceneRenderer::init(et::RenderContext* rc)
 	_geometryBuffer = rc->framebufferFactory().createFramebuffer(rc->sizei(), "geometry-buffer");
 	_geometryBuffer->addSameRendertarget();
 	
-	_aoBuffer = rc->framebufferFactory().createFramebuffer(rc->sizei(), "ao-buffer",
+	_aoBuffer = rc->framebufferFactory().createFramebuffer(rc->sizei() / 2, "ao-buffer",
 		TextureFormat::RGBA, TextureFormat::RGBA, DataType::UnsignedChar, TextureFormat::Invalid);
 	_aoBuffer->addSameRendertarget();
 	
 	_defaultTexture = _rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
 		vec2i(1), TextureFormat::RGBA, DataType::UnsignedChar, BinaryDataStorage(4, 255), "white-texture");
 	
-	_noiseTexture = _rc->textureFactory().genNoiseTexture(vec2i(64), true, "noise-texture");
+	_noiseTexture = _rc->textureFactory().genNoiseTexture(vec2i(4), false, "noise-texture");
 	
 	BinaryDataStorage normalData(4, 128);
 	normalData[2] = 255;
@@ -185,12 +185,12 @@ void SceneRenderer::computeAmbientOcclusion(const et::Camera& cam, const AOParam
 
 		_aoBuffer->setCurrentRenderTarget(1);
 		rs.bindTexture(diffuseTextureUnit, _aoBuffer->renderTarget(0));
-		programs.ambientOcclusionBlur->setUniform("direction", _aoBuffer->renderTarget(0)->texel() * vec2(1.0, 0.0));
+		programs.ambientOcclusionBlur->setUniform("direction", _geometryBuffer->renderTarget(0)->texel() * vec2(1.0f, 0.0f));
 		rn->fullscreenPass();
 
 		_aoBuffer->setCurrentRenderTarget(0);
 		rs.bindTexture(diffuseTextureUnit, _aoBuffer->renderTarget(1));
-		programs.ambientOcclusionBlur->setUniform("direction", _aoBuffer->renderTarget(1)->texel() * vec2(0.0, 1.0));
+		programs.ambientOcclusionBlur->setUniform("direction", _geometryBuffer->renderTarget(1)->texel() * vec2(0.0f, 1.0f));
 		rn->fullscreenPass();
 	}
 }
