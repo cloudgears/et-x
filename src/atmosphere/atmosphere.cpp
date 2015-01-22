@@ -164,7 +164,8 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 	if (drawSky)
 	{
 		CullState lastCullState = rs.cullState();
-		BlendState lastBlendState = rs.blendState();
+		BlendState lastColorBlendState = rs.blendStateForColor();
+		BlendState lastAlphaBlendState = rs.blendStateForAlpha();
 		bool cullingEnabled = rs.cullEnabled();
 		bool depthMaskEnabled = rs.depthMask();
 		bool blendEnabled = rs.blendEnabled();
@@ -185,7 +186,7 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 		rs.setDepthFunc(DepthFunc_Less);
 #	endif
 		
-		rs.setBlend(blendEnabled, lastBlendState);
+		rs.setSeparateBlend(blendEnabled, lastColorBlendState, lastAlphaBlendState);
 		rs.setCulling(cullingEnabled, lastCullState);
 		rs.setDepthMask(depthMaskEnabled);
 	}
@@ -221,7 +222,8 @@ void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
 	auto& rs = _rc->renderState();
 	
 	CullState lastCullState = rs.cullState();
-	BlendState lastBlendState = rs.blendState();
+	BlendState lastColorBlendState = rs.blendStateForColor();
+	BlendState lastAlphaBlendState = rs.blendStateForAlpha();
 	bool cullingEnabled = rs.cullEnabled();
 	bool depthMaskEnabled = rs.depthMask();
 	bool blendEnabled = rs.blendEnabled();
@@ -250,7 +252,7 @@ void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
 	}
 	
 	rs.setDepthTest(depthTestEnabled);
-	rs.setBlend(blendEnabled, lastBlendState);
+	rs.setSeparateBlend(blendEnabled, lastColorBlendState, lastAlphaBlendState);
 	rs.setCulling(cullingEnabled, lastCullState);
 	rs.setDepthMask(depthMaskEnabled);
 }
