@@ -145,11 +145,7 @@ void HTTPRequest::perform()
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, params);
 	}
 	
-	if (_private->body.size() == 0)
-	{
-		curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
-	}
-	else
+	if (_private->body.size() > 0)
 	{
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, _private->body.data());
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE_LARGE, curl_off_t(_private->body.size()));
