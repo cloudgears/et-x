@@ -39,6 +39,8 @@ namespace et
 
 		void addFileParameter(const std::string&, const std::string&);
 		
+		void setBody(const BinaryDataStorage&);
+		
 		virtual void perform();
 		
 		HTTPRequestResponsePointer response();

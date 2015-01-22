@@ -22,6 +22,7 @@ public:
 	std::string password;
 	std::map<std::string, BinaryDataStorage> params;
 	std::map<std::string, std::string> uploadFiles;
+	BinaryDataStorage body;
 	
 	HTTPRequestResponse::Pointer response;
 	
@@ -144,6 +145,16 @@ void HTTPRequest::perform()
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, params);
 	}
 	
+	if (_private->body.size() == 0)
+	{
+		curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
+	}
+	else
+	{
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, _private->body.data());
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE_LARGE, curl_off_t(_private->body.size()));
+	}
+	
 	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10000);
 	curl_easy_setopt(curl, CURLOPT_FILE, _private);
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
@@ -169,6 +180,11 @@ void HTTPRequest::perform()
 		curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &_private->response->_responseCode);
 	
 	curl_easy_cleanup(curl);
+}
+
+void HTTPRequest::setBody(const BinaryDataStorage& data)
+{
+	_private->body = data;
 }
 
 bool HTTPRequest::succeeded() const
