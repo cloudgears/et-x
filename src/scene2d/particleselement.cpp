@@ -49,6 +49,8 @@ ParticlesElement::ParticlesElement(size_t amount, Element2d* parent, const std::
 		_particles.update(timer->actualTime());
 		invalidateContent();
 	});
+	
+	start();
 }
 
 void ParticlesElement::setBaseAndVariationParticles(const particles::PointSprite& b, const particles::PointSprite& v)
@@ -79,6 +81,8 @@ void ParticlesElement::pause()
 void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 {
 	initProgram(gr);
+	
+	rc->renderState().setPointSizeControlInVertexShader(true);
 	
 	if (_defaultTexture.invalid())
 	{

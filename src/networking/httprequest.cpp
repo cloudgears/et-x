@@ -180,7 +180,8 @@ void HTTPRequest::perform()
 
 void HTTPRequest::setBody(const BinaryDataStorage& data)
 {
-	_private->body = data;
+	_private->body.resize(data.size());
+	etCopyMemory(_private->body.binary(), data.binary(), data.size());
 }
 
 bool HTTPRequest::succeeded() const
