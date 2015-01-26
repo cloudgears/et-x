@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/button.h>
 
@@ -63,7 +64,7 @@ void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_imageVertices, _image[_state].texture, program(), this);
 }
 
-void Button::buildVertices(RenderContext*, SceneRenderer&)
+void Button::buildVertices(RenderContext* rc, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	
@@ -71,33 +72,37 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	
 	_imageSize = absv(_image[_state].descriptor.size);
 	
-	size_t sizeMode = _contentMode & 0x0000ffff;
-	if (sizeMode == ContentMode_Fit)
-	{
-		float imageAspect = _imageSize.aspect();
-		if (_imageSize.x > frameSize.x)
-		{
-			_imageSize.x = frameSize.x;
-			_imageSize.y = frameSize.x / imageAspect;
-		}
-		if (_imageSize.y > frameSize.y)
-		{
-			_imageSize.x = frameSize.y * imageAspect;
-			_imageSize.y = frameSize.y;
-		}
-	}
-	else if (sizeMode == ContentMode_ScaleMaxToMin)
-	{
-		float maxImageDim = etMax(_imageSize.x, _imageSize.y);
-		float minFrameDim = etMin(frameSize.x, frameSize.y);
-		_imageSize *= minFrameDim / maxImageDim;
-	}
-	else if (sizeMode != ContentMode_Center)
-	{
-		ET_FAIL("Uknown content mode");
-	}
+	float contentGap = (_imageSize.x > 0.0f) && ((_currentTextSize.x > 0.0f) || (_nextTextSize.x > 0.0f)) ?
+		(5.0f * static_cast<float>(rc->screenScaleFactor())) : 0.0f;
 	
-	float contentGap = (_imageSize.x > 0.0f) && ((_currentTextSize.x > 0.0f) || (_nextTextSize.x > 0.0f)) ? 5.0f : 0.0f;
+	if (_imageSize.dotSelf() > 0.0f)
+	{
+		size_t sizeMode = _contentMode & 0x0000ffff;
+		if (sizeMode == ContentMode_Fit)
+		{
+			vec2 containerSize;
+			
+			if (_maxTextSize.dotSelf() > 0.0f)
+				containerSize = frameSize - _maxTextSize - vec2(3.0f * contentGap);
+			else
+				containerSize = frameSize - vec2(2.0f * contentGap);
+			
+			if ((_imageLayout == ImageLayout_Right) || (_imageLayout == ImageLayout_Left))
+				_imageSize *= etMin(1.0f, containerSize.x / _imageSize.x);
+			else
+				_imageSize *= etMin(1.0f, containerSize.y / _imageSize.y);
+		}
+		else if (sizeMode == ContentMode_ScaleMaxToMin)
+		{
+			float maxImageDim = etMax(_imageSize.x, _imageSize.y);
+			float minFrameDim = etMin(frameSize.x, frameSize.y);
+			_imageSize *= minFrameDim / maxImageDim;
+		}
+		else if (sizeMode != ContentMode_Center)
+		{
+			ET_FAIL("Uknown content mode");
+		}
+	}
 	vec2 contentSize = _imageSize + _maxTextSize + vec2(contentGap);
 
 	if (_imageLayout == ImageLayout_Right)
