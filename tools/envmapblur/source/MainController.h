@@ -42,7 +42,7 @@ namespace emb
 		et::RenderContext* _rc = nullptr;
 		et::GesturesRecognizer _gestures;
 		et::s2d::Scene::Pointer _ui;
-		et::Texture _loadedTexture;
+		et::Texture::Pointer _loadedTexture;
 		et::Framebuffer::Pointer _framebuffer;
 		et::Framebuffer::Pointer _cubemapFramebuffer;
 		et::VertexArrayObject _vaoSphere;

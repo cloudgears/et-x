@@ -28,6 +28,9 @@ namespace emb
 		float exposureValue() const
 			{ return _sliderExposure->value(); }
 		
+		float expoCorrection() const
+			{ return _sliderExposure->value() > 0.0f ? 1.0f : 0.0f; }
+		
 	public:
 		ET_DECLARE_EVENT1(fileSelected, std::string)
 		ET_DECLARE_EVENT0(processSelected)

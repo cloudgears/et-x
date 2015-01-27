@@ -29,7 +29,7 @@ MainUI::MainUI(ResourceManager& rm)
 	b->setLocationInParent(s2d::Location_TopLeft);
 	b->clicked.connect([this](s2d::Button*)
 	{
-		auto fileName = selectFile(StringList(), SelectFileMode_Open, std::string());
+		auto fileName = selectFile(StringList(), SelectFileMode::Open, std::string());
 		if (!fileName.empty() && fileExists(fileName))
 			fileSelected.invokeInMainRunLoop(fileName);
 	});
@@ -45,7 +45,7 @@ MainUI::MainUI(ResourceManager& rm)
 	b->setLocationInParent(s2d::Location_Center);
 	b->clicked.connect([this](s2d::Button*)
 	{
-		auto fileName = selectFile(StringList(), SelectFileMode_Save, std::string());
+		auto fileName = selectFile(StringList(), SelectFileMode::Save, std::string());
 		if (!fileName.empty())
 			saveSelected.invokeInMainRunLoop(fileName);
 	});
@@ -69,7 +69,7 @@ MainUI::MainUI(ResourceManager& rm)
 	_sliderExposure = s2d::Slider::Pointer::create(this);
 	_sliderExposure->setAutolayoutRelativeToParent(vec2(0.75f, 1.0f), vec2(0.5f, 0.05f), vec2(0.5f, 1.0f));
 	_sliderExposure->setSliderFillColors(vec4(0.25f, 1.0f, 0.5f, 1.0f), vec4(2.0f / 3.0f));
-	_sliderExposure->setRange(0.01f, 4.0f);
+	_sliderExposure->setRange(0.0f, 4.0f);
 	_sliderExposure->setValue(1.0f);
 	
 	_sliderExposure->changed.connect([this](s2d::Slider* slider)
