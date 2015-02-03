@@ -36,7 +36,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 		return;
 	}
 	
-	serializeInt(fOut, FONT_VERSION_CURRENT);
+	serializeUInt32(fOut, FONT_VERSION_CURRENT);
 	serializeString(fOut, _generator->face());
 	serializeFloat(fOut, 0.0f);
 	
@@ -46,8 +46,8 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	serializeString(fOut, textureFile);
 	serializeString(fOut, layoutFile);
 	
-	int charCount = static_cast<int>(_generator->charactersCount());
-	serializeInt(fOut, charCount);
+	uint32_t charCount = static_cast<uint32_t>(_generator->charactersCount());
+	serializeUInt32(fOut, charCount);
 	
 	const auto& chars = _generator->characters();
 	const auto& boldChars = _generator->boldCharacters();
@@ -101,7 +101,7 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 
 	std::string fontFileDir = getFilePath(resolvedFileName);
 
-	int version = deserializeInt(fontFile.stream());
+	uint32_t version = deserializeUInt32(fontFile.stream());
 	ET_ASSERT(version >= FONT_VERSION_2)
 	
 	deserializeString(fontFile.stream());
@@ -121,10 +121,10 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	
 	_generator->setTexture(tex);
 	
-	int charCount = deserializeInt(fontFile.stream());
+	uint32_t charCount = deserializeUInt32(fontFile.stream());
 	if (version == FONT_VERSION_2)
 	{
-		for (int i = 0; i < charCount; ++i)
+		for (uint32_t i = 0; i < charCount; ++i)
 		{
 			CharDescriptor desc;
 			fontFile.stream().read(reinterpret_cast<char*>(&desc), sizeof(desc));
