@@ -250,16 +250,14 @@ void Converter::performLoading(std::string path)
 	size_t value = path.find_last_of(".etm");
 	size_t len = path.length();
 
-	if (value == len-1)
+	if (value == len - 1)
 	{
-		_scene.deserialize(path, _rc, _texCache, 0);
+		_scene.deserialize(path, _rc, _texCache);
 	}
 	else
 	{
 		FBXLoader loader(path);
-
 		s3d::ElementContainer::Pointer loadedScene = loader.load(_rc, _texCache);
-		
 		if (loadedScene.valid())
 			loadedScene->setParent(&_scene);
 	}
@@ -277,7 +275,7 @@ void Converter::performBinarySaving(std::string path)
 	if (path.find_last_of(".etm") != path.length() - 1)
 		path += ".etm";
 
-	_scene.serialize(path, s3d::StorageFormat_Binary);
+	_scene.serialize(path);
 	_labStatus->setText("Completed.");
 }
 
@@ -286,7 +284,7 @@ void Converter::performBinaryWithReadableMaterialsSaving(std::string path)
 	if (path.find_last_of(".etm") != path.length() - 1)
 		path += ".etm";
 
-	_scene.serialize(path, s3d::StorageFormat_HumanReadableMaterials);
+	_scene.serialize(path);
 	_labStatus->setText("Completed.");
 }
 

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A53B4F351681220500C6B8EC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53B4F341681220500C6B8EC /* main.cpp */; };
 		A53B4F441681256B00C6B8EC /* data in Resources */ = {isa = PBXBuildFile; fileRef = A53B4F431681256B00C6B8EC /* data */; };
+		A56C231A1A818781002FFDDD /* vertexstorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56C23191A818781002FFDDD /* vertexstorage.cpp */; };
 		A5A23E2F16811838001B3E98 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A23E2E16811838001B3E98 /* Cocoa.framework */; };
 		A5A23E5616811900001B3E98 /* converter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5A23E5416811900001B3E98 /* converter.cpp */; };
 		A5A23F3416811EBF001B3E98 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5A23F3316811EBF001B3E98 /* QuartzCore.framework */; };
@@ -144,6 +145,8 @@
 /* Begin PBXFileReference section */
 		A53B4F341681220500C6B8EC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A53B4F431681256B00C6B8EC /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = data; sourceTree = "<group>"; };
+		A56C23191A818781002FFDDD /* vertexstorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vertexstorage.cpp; sourceTree = "<group>"; };
+		A56C231B1A81878F002FFDDD /* vertexstorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vertexstorage.h; sourceTree = "<group>"; };
 		A5A23E2A16811838001B3E98 /* FBXConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FBXConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A23E2E16811838001B3E98 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		A5A23E3116811838001B3E98 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -439,7 +442,7 @@
 		A5B2C2711A703F090022A1CA /* vertexarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexarray.h; sourceTree = "<group>"; };
 		A5B2C2721A703F090022A1CA /* vertexdatachunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexdatachunk.h; sourceTree = "<group>"; };
 		A5B2C2731A703F090022A1CA /* vertexdeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexdeclaration.h; sourceTree = "<group>"; };
-		A5B2C2741A70408B0022A1CA /* libfbxsdk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfbxsdk.dylib; path = ../../../../../SDK/FBX/lib/clang/ub/release/libfbxsdk.dylib; sourceTree = "<group>"; };
+		A5B2C2741A70408B0022A1CA /* libfbxsdk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfbxsdk.dylib; path = /Volumes/Development/SDK/FBX/lib/clang/ub/release/libfbxsdk.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -676,7 +679,7 @@
 				A5B2C1061A703EF30022A1CA /* runloop.cpp */,
 			);
 			name = app;
-			path = ../../../engine/src/app;
+			path = ../../../et/src/app;
 			sourceTree = "<group>";
 		};
 		A5B2C1071A703EF30022A1CA /* camera */ = {
@@ -686,7 +689,7 @@
 				A5B2C1091A703EF30022A1CA /* frustum.cpp */,
 			);
 			name = camera;
-			path = ../../../engine/src/camera;
+			path = ../../../et/src/camera;
 			sourceTree = "<group>";
 		};
 		A5B2C10A1A703EF30022A1CA /* collision */ = {
@@ -695,7 +698,7 @@
 				A5B2C10B1A703EF30022A1CA /* collision.cpp */,
 			);
 			name = collision;
-			path = ../../../engine/src/collision;
+			path = ../../../et/src/collision;
 			sourceTree = "<group>";
 		};
 		A5B2C10C1A703EF30022A1CA /* core */ = {
@@ -712,7 +715,7 @@
 				A5B2C1151A703EF30022A1CA /* transformable.cpp */,
 			);
 			name = core;
-			path = ../../../engine/src/core;
+			path = ../../../et/src/core;
 			sourceTree = "<group>";
 		};
 		A5B2C1161A703EF30022A1CA /* geometry */ = {
@@ -722,7 +725,7 @@
 				A5B2C1181A703EF30022A1CA /* rectplacer.cpp */,
 			);
 			name = geometry;
-			path = ../../../engine/src/geometry;
+			path = ../../../et/src/geometry;
 			sourceTree = "<group>";
 		};
 		A5B2C1191A703EF30022A1CA /* imaging */ = {
@@ -740,7 +743,7 @@
 				A5B2C1231A703EF30022A1CA /* tgaloader.cpp */,
 			);
 			name = imaging;
-			path = ../../../engine/src/imaging;
+			path = ../../../et/src/imaging;
 			sourceTree = "<group>";
 		};
 		A5B2C1241A703EF30022A1CA /* input */ = {
@@ -750,7 +753,7 @@
 				A5B2C1261A703EF30022A1CA /* input.cpp */,
 			);
 			name = input;
-			path = ../../../engine/src/input;
+			path = ../../../et/src/input;
 			sourceTree = "<group>";
 		};
 		A5B2C1271A703EF30022A1CA /* json */ = {
@@ -759,7 +762,7 @@
 				A5B2C1281A703EF30022A1CA /* json.cpp */,
 			);
 			name = json;
-			path = ../../../engine/src/json;
+			path = ../../../et/src/json;
 			sourceTree = "<group>";
 		};
 		A5B2C1291A703EF30022A1CA /* locale */ = {
@@ -768,7 +771,7 @@
 				A5B2C12A1A703EF30022A1CA /* locale.cpp */,
 			);
 			name = locale;
-			path = ../../../engine/src/locale;
+			path = ../../../et/src/locale;
 			sourceTree = "<group>";
 		};
 		A5B2C12B1A703EF30022A1CA /* models */ = {
@@ -778,7 +781,7 @@
 				A5B2C12D1A703EF30022A1CA /* objLoader.cpp */,
 			);
 			name = models;
-			path = ../../../engine/src/models;
+			path = ../../../et/src/models;
 			sourceTree = "<group>";
 		};
 		A5B2C12E1A703EF30022A1CA /* opengl */ = {
@@ -797,7 +800,7 @@
 				A5B2C1391A703EF30022A1CA /* vertexbuffer.cpp */,
 			);
 			name = opengl;
-			path = ../../../engine/src/opengl;
+			path = ../../../et/src/opengl;
 			sourceTree = "<group>";
 		};
 		A5B2C13A1A703EF30022A1CA /* platform-apple */ = {
@@ -809,7 +812,7 @@
 				A5B2C13F1A703EF30022A1CA /* tools.apple.mm */,
 			);
 			name = "platform-apple";
-			path = "../../../engine/src/platform-apple";
+			path = "../../../et/src/platform-apple";
 			sourceTree = "<group>";
 		};
 		A5B2C1401A703EF30022A1CA /* platform-mac */ = {
@@ -822,7 +825,7 @@
 				A5B2C1451A703EF30022A1CA /* rendercontext.mac.mm */,
 			);
 			name = "platform-mac";
-			path = "../../../engine/src/platform-mac";
+			path = "../../../et/src/platform-mac";
 			sourceTree = "<group>";
 		};
 		A5B2C1471A703EF30022A1CA /* platform-unix */ = {
@@ -835,7 +838,7 @@
 				A5B2C14C1A703EF30022A1CA /* threading.unix.cpp */,
 			);
 			name = "platform-unix";
-			path = "../../../engine/src/platform-unix";
+			path = "../../../et/src/platform-unix";
 			sourceTree = "<group>";
 		};
 		A5B2C14D1A703EF30022A1CA /* primitives */ = {
@@ -844,7 +847,7 @@
 				A5B2C14E1A703EF30022A1CA /* primitives.cpp */,
 			);
 			name = primitives;
-			path = ../../../engine/src/primitives;
+			path = ../../../et/src/primitives;
 			sourceTree = "<group>";
 		};
 		A5B2C14F1A703EF30022A1CA /* rendering */ = {
@@ -858,7 +861,7 @@
 				A5B2C1551A703EF30022A1CA /* vertexbufferfactory.cpp */,
 			);
 			name = rendering;
-			path = ../../../engine/src/rendering;
+			path = ../../../et/src/rendering;
 			sourceTree = "<group>";
 		};
 		A5B2C1561A703EF30022A1CA /* scene3d */ = {
@@ -877,7 +880,7 @@
 				A5B2C1611A703EF30022A1CA /* supportmesh.cpp */,
 			);
 			name = scene3d;
-			path = ../../../engine/src/scene3d;
+			path = ../../../et/src/scene3d;
 			sourceTree = "<group>";
 		};
 		A5B2C1621A703EF30022A1CA /* tasks */ = {
@@ -886,7 +889,7 @@
 				A5B2C1631A703EF30022A1CA /* taskpool.cpp */,
 			);
 			name = tasks;
-			path = ../../../engine/src/tasks;
+			path = ../../../et/src/tasks;
 			sourceTree = "<group>";
 		};
 		A5B2C1641A703EF30022A1CA /* timers */ = {
@@ -898,19 +901,20 @@
 				A5B2C1681A703EF30022A1CA /* timerpool.cpp */,
 			);
 			name = timers;
-			path = ../../../engine/src/timers;
+			path = ../../../et/src/timers;
 			sourceTree = "<group>";
 		};
 		A5B2C1691A703EF30022A1CA /* vertexbuffer */ = {
 			isa = PBXGroup;
 			children = (
+				A56C23191A818781002FFDDD /* vertexstorage.cpp */,
 				A5B2C16A1A703EF30022A1CA /* indexarray.cpp */,
 				A5B2C16B1A703EF30022A1CA /* vertexarray.cpp */,
 				A5B2C16C1A703EF30022A1CA /* vertexdatachunk.cpp */,
 				A5B2C16D1A703EF30022A1CA /* vertexdeclaration.cpp */,
 			);
 			name = vertexbuffer;
-			path = ../../../engine/src/vertexbuffer;
+			path = ../../../et/src/vertexbuffer;
 			sourceTree = "<group>";
 		};
 		A5B2C1C91A703F090022A1CA /* app */ = {
@@ -928,7 +932,7 @@
 				A5B2C1D31A703F090022A1CA /* runloop.h */,
 			);
 			name = app;
-			path = ../../../engine/include/et/app;
+			path = ../../../et/include/et/app;
 			sourceTree = "<group>";
 		};
 		A5B2C1D41A703F090022A1CA /* camera */ = {
@@ -939,7 +943,7 @@
 				A5B2C1D71A703F090022A1CA /* light.h */,
 			);
 			name = camera;
-			path = ../../../engine/include/et/camera;
+			path = ../../../et/include/et/camera;
 			sourceTree = "<group>";
 		};
 		A5B2C1D81A703F090022A1CA /* collision */ = {
@@ -951,7 +955,7 @@
 				A5B2C1DC1A703F090022A1CA /* sphere.h */,
 			);
 			name = collision;
-			path = ../../../engine/include/et/collision;
+			path = ../../../et/include/et/collision;
 			sourceTree = "<group>";
 		};
 		A5B2C1DD1A703F090022A1CA /* core */ = {
@@ -995,7 +999,7 @@
 				A5B2C2011A703F090022A1CA /* types.h */,
 			);
 			name = core;
-			path = ../../../engine/include/et/core;
+			path = ../../../et/include/et/core;
 			sourceTree = "<group>";
 		};
 		A5B2C2021A703F090022A1CA /* geometry */ = {
@@ -1022,7 +1026,7 @@
 				A5B2C2151A703F090022A1CA /* vector4.h */,
 			);
 			name = geometry;
-			path = ../../../engine/include/et/geometry;
+			path = ../../../et/include/et/geometry;
 			sourceTree = "<group>";
 		};
 		A5B2C2161A703F090022A1CA /* imaging */ = {
@@ -1041,7 +1045,7 @@
 				A5B2C2211A703F090022A1CA /* tgaloader.h */,
 			);
 			name = imaging;
-			path = ../../../engine/include/et/imaging;
+			path = ../../../et/include/et/imaging;
 			sourceTree = "<group>";
 		};
 		A5B2C2221A703F090022A1CA /* input */ = {
@@ -1051,7 +1055,7 @@
 				A5B2C2241A703F090022A1CA /* input.h */,
 			);
 			name = input;
-			path = ../../../engine/include/et/input;
+			path = ../../../et/include/et/input;
 			sourceTree = "<group>";
 		};
 		A5B2C2251A703F090022A1CA /* json */ = {
@@ -1060,7 +1064,7 @@
 				A5B2C2261A703F090022A1CA /* json.h */,
 			);
 			name = json;
-			path = ../../../engine/include/et/json;
+			path = ../../../et/include/et/json;
 			sourceTree = "<group>";
 		};
 		A5B2C2271A703F090022A1CA /* locale */ = {
@@ -1070,7 +1074,7 @@
 				A5B2C2291A703F090022A1CA /* locale.h */,
 			);
 			name = locale;
-			path = ../../../engine/include/et/locale;
+			path = ../../../et/include/et/locale;
 			sourceTree = "<group>";
 		};
 		A5B2C22A1A703F090022A1CA /* models */ = {
@@ -1080,7 +1084,7 @@
 				A5B2C22C1A703F090022A1CA /* objloader.h */,
 			);
 			name = models;
-			path = ../../../engine/include/et/models;
+			path = ../../../et/include/et/models;
 			sourceTree = "<group>";
 		};
 		A5B2C22D1A703F090022A1CA /* opengl */ = {
@@ -1090,7 +1094,7 @@
 				A5B2C22F1A703F090022A1CA /* openglcaps.h */,
 			);
 			name = opengl;
-			path = ../../../engine/include/et/opengl;
+			path = ../../../et/include/et/opengl;
 			sourceTree = "<group>";
 		};
 		A5B2C2301A703F090022A1CA /* platform */ = {
@@ -1101,7 +1105,7 @@
 				A5B2C2331A703F090022A1CA /* platformtools.h */,
 			);
 			name = platform;
-			path = ../../../engine/include/et/platform;
+			path = ../../../et/include/et/platform;
 			sourceTree = "<group>";
 		};
 		A5B2C2341A703F090022A1CA /* platform-apple */ = {
@@ -1111,7 +1115,7 @@
 				A5B2C2371A703F090022A1CA /* objc.h */,
 			);
 			name = "platform-apple";
-			path = "../../../engine/include/et/platform-apple";
+			path = "../../../et/include/et/platform-apple";
 			sourceTree = "<group>";
 		};
 		A5B2C2381A703F090022A1CA /* platform-cocos */ = {
@@ -1120,7 +1124,7 @@
 				A5B2C2391A703F090022A1CA /* etnode.h */,
 			);
 			name = "platform-cocos";
-			path = "../../../engine/include/et/platform-cocos";
+			path = "../../../et/include/et/platform-cocos";
 			sourceTree = "<group>";
 		};
 		A5B2C23A1A703F090022A1CA /* platform-mac */ = {
@@ -1129,7 +1133,7 @@
 				A5B2C23B1A703F090022A1CA /* mac.h */,
 			);
 			name = "platform-mac";
-			path = "../../../engine/include/et/platform-mac";
+			path = "../../../et/include/et/platform-mac";
 			sourceTree = "<group>";
 		};
 		A5B2C23C1A703F090022A1CA /* primitives */ = {
@@ -1138,7 +1142,7 @@
 				A5B2C23D1A703F090022A1CA /* primitives.h */,
 			);
 			name = primitives;
-			path = ../../../engine/include/et/primitives;
+			path = ../../../et/include/et/primitives;
 			sourceTree = "<group>";
 		};
 		A5B2C23E1A703F090022A1CA /* rendering */ = {
@@ -1164,7 +1168,7 @@
 				A5B2C2501A703F090022A1CA /* vertexbufferfactory.h */,
 			);
 			name = rendering;
-			path = ../../../engine/include/et/rendering;
+			path = ../../../et/include/et/rendering;
 			sourceTree = "<group>";
 		};
 		A5B2C2511A703F090022A1CA /* scene3d */ = {
@@ -1184,7 +1188,7 @@
 				A5B2C25D1A703F090022A1CA /* supportmesh.h */,
 			);
 			name = scene3d;
-			path = ../../../engine/include/et/scene3d;
+			path = ../../../et/include/et/scene3d;
 			sourceTree = "<group>";
 		};
 		A5B2C25E1A703F090022A1CA /* tasks */ = {
@@ -1194,7 +1198,7 @@
 				A5B2C2601A703F090022A1CA /* tasks.h */,
 			);
 			name = tasks;
-			path = ../../../engine/include/et/tasks;
+			path = ../../../et/include/et/tasks;
 			sourceTree = "<group>";
 		};
 		A5B2C2611A703F090022A1CA /* threading */ = {
@@ -1206,7 +1210,7 @@
 				A5B2C2651A703F090022A1CA /* threading.h */,
 			);
 			name = threading;
-			path = ../../../engine/include/et/threading;
+			path = ../../../et/include/et/threading;
 			sourceTree = "<group>";
 		};
 		A5B2C2661A703F090022A1CA /* timers */ = {
@@ -1222,19 +1226,20 @@
 				A5B2C26E1A703F090022A1CA /* timerpool.h */,
 			);
 			name = timers;
-			path = ../../../engine/include/et/timers;
+			path = ../../../et/include/et/timers;
 			sourceTree = "<group>";
 		};
 		A5B2C26F1A703F090022A1CA /* vertexbuffer */ = {
 			isa = PBXGroup;
 			children = (
+				A56C231B1A81878F002FFDDD /* vertexstorage.h */,
 				A5B2C2701A703F090022A1CA /* indexarray.h */,
 				A5B2C2711A703F090022A1CA /* vertexarray.h */,
 				A5B2C2721A703F090022A1CA /* vertexdatachunk.h */,
 				A5B2C2731A703F090022A1CA /* vertexdeclaration.h */,
 			);
 			name = vertexbuffer;
-			path = ../../../engine/include/et/vertexbuffer;
+			path = ../../../et/include/et/vertexbuffer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1431,6 +1436,7 @@
 				A5B2C1921A703EF30022A1CA /* objLoader.cpp in Sources */,
 				A5B2C1831A703EF30022A1CA /* ddsloader.cpp in Sources */,
 				A5B2C19D1A703EF30022A1CA /* vertexbuffer.cpp in Sources */,
+				A56C231A1A818781002FFDDD /* vertexstorage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1497,7 +1503,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"\"$PROJECT_DIR/../../include\"",
-					"\"$PROJECT_DIR/../../../engine/include\"",
+					"\"$PROJECT_DIR/../../../et/include\"",
 					"\"/Volumes/Development/SDK/FBX/include\"",
 				);
 				INFOPLIST_FILE = "$PROJECT_DIR/FBXConverter-Info.plist";
@@ -1505,14 +1511,13 @@
 					"$(inherited)",
 					"\"/Volumes/Development/SDK/FBX/lib/clang/ub/release\"",
 					"\"$PROJECT_DIR/../../lib/osx\"",
-					"\"$PROJECT_DIR/../../../engine/lib/osx\"",
+					"\"$PROJECT_DIR/../../../et/lib/osx\"",
 				);
 				OTHER_LDFLAGS = (
 					"-lpng",
 					"-ljpeg",
 					"-lz",
 					"-ljansson",
-					"-lxml2",
 					"-lfbxsdk",
 					"-lfreetype",
 				);
@@ -1532,7 +1537,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"\"$PROJECT_DIR/../../include\"",
-					"\"$PROJECT_DIR/../../../engine/include\"",
+					"\"$PROJECT_DIR/../../../et/include\"",
 					"\"/Volumes/Development/SDK/FBX/include\"",
 				);
 				INFOPLIST_FILE = "$PROJECT_DIR/FBXConverter-Info.plist";
@@ -1540,14 +1545,13 @@
 					"$(inherited)",
 					"\"/Volumes/Development/SDK/FBX/lib/clang/ub/release\"",
 					"\"$PROJECT_DIR/../../lib/osx\"",
-					"\"$PROJECT_DIR/../../../engine/lib/osx\"",
+					"\"$PROJECT_DIR/../../../et/lib/osx\"",
 				);
 				OTHER_LDFLAGS = (
 					"-lpng",
 					"-ljpeg",
 					"-lz",
 					"-ljansson",
-					"-lxml2",
 					"-lfbxsdk",
 					"-lfreetype",
 				);
