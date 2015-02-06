@@ -195,13 +195,18 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 	static const wchar_t* scaleTagStart = L"<scale=";
 	static const wchar_t* scaleTagEnd = L"</scale>";
 	
+	static const wchar_t* offsetTagStart = L"<offset=";
+	static const wchar_t* offsetTagEnd = L"</offset>";
+	
 	size_t resultSize = 0;
 	
 	size_t boldTags = 0;
 	std::stack<vec4> colorsStack;
 	std::stack<float> scaleStack;
+	std::stack<float> offsetStack;
 	colorsStack.push(vec4(1.0f));
 	scaleStack.push(1.0f);
+	offsetStack.push(0.0f);
 	
 	auto* b = s.data();
 	auto* e = b + s.size();
@@ -254,17 +259,36 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 			if (b >= e)
 				break;
 		}
+		else if (textBeginsFrom(b, offsetTagStart))
+		{
+			auto closingBracket = findClosingBracket(b);
+			offsetStack.push(std::wcstof(b + textLength(offsetTagStart), nullptr));
+			b = closingBracket + 1;
+			if (b >= e)
+				break;
+		}
+		else if (textBeginsFrom(b, offsetTagEnd))
+		{
+			if (offsetStack.size() > 1)
+				offsetStack.pop();
+			b += textLength(offsetTagEnd);
+			if (b >= e)
+				break;
+		}
 		else
 		{
 			CharDescriptor cd = (boldTags > 0) ? _generator->boldCharDescription(*b) : _generator->charDescription(*b);
 			
 			float localScale = scaleStack.top();
+			float localOffset = offsetStack.top();
 			float finalScale = globalScale * localScale;
 			
 			cd.contentRect *= finalScale;
 			cd.originalSize *= finalScale;
 			cd.color = colorsStack.top();
 			cd.parameters = vec4(0.5f, smoothing * sqr(0.1666666f / std::pow(finalScale, 1.0f / 2.5f)), 0.0f, 0.0f);
+			
+			cd.contentRect.top += localOffset;
 			
 			result[resultSize++] = cd;
 			++b;
