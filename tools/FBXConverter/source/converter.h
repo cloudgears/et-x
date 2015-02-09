@@ -41,7 +41,7 @@ namespace fbxc
 		void performBinarySaving(std::string);
 		void performBinaryWithReadableMaterialsSaving(std::string);
 
-		void renderMeshList(et::RenderContext* rc, const et::s3d::Element::List& meshes);
+		void renderMeshList(et::RenderContext* rc, const et::s3d::BaseElement::List& meshes);
 		void performSceneRendering();
 
 	private:
@@ -49,7 +49,7 @@ namespace fbxc
 		et::ObjectsCache _texCache;
 		et::GesturesRecognizer _gestures;
 		et::s2d::Scene::Pointer _gui;
-		et::s3d::Scene _scene;
+		et::s3d::Scene::Pointer _scene;
 		et::Program::Pointer _defaultProgram;
 		et::Camera _camera;
 

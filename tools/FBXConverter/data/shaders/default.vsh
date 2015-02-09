@@ -12,11 +12,14 @@ etVertexOut vec2 TexCoord;
 etVertexOut vec3 vViewWS;
 etVertexOut vec3 vLightWS;
 etVertexOut vec3 vNormalWS;
+etVertexOut vec4 vColor;
 
 void main()
 {
 	mat3 mTransform3 = mat3(mTransform);
 	vec4 transVertex = mTransform * Vertex;
+
+	vColor = dot(Color, Color) > 0.0 ? Color : vec4(1.0);
 
 	vNormalWS = mTransform3 * Normal;
 	vLightWS = vCamera - transVertex.xyz;

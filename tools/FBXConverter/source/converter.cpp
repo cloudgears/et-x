@@ -1,5 +1,7 @@
+#include <et/json/json.h>
 #include <et/platform/platformtools.h>
 #include <et/models/fbxloader.h>
+#include <et/models/objloader.h>
 #include "converter.h"
 
 using namespace fbxc;
@@ -20,6 +22,8 @@ void Converter::setRenderContextParameters(RenderContextParameters& p)
 
 void Converter::applicationDidLoad(RenderContext* rc)
 {
+	ObjectsCache localCache;
+
 	_rc = rc;
 	_rc->renderState().setDepthTest(true);
 
@@ -34,8 +38,15 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_mainLayout = MainLayout::Pointer::create();
 	_gui->pushLayout(_mainLayout);
 	
+#if (ET_PLATFORM_WIN)
+	s2d::CharacterGenerator::Pointer defaultCharacters = s2d::CharacterGenerator::Pointer::create(rc, "Tahoma", "Tahoma");
+	_mainFont = s2d::Font::Pointer::create(defaultCharacters);
+	_mainFont->loadFromFile(rc, application().resolveFileName("data/tahoma.font"), localCache);
+#else
 	s2d::CharacterGenerator::Pointer defaultCharacters = s2d::CharacterGenerator::Pointer::create(rc, "Helvetica", "Helvetica");
 	_mainFont = s2d::Font::Pointer::create(defaultCharacters);
+	_mainFont->loadFromFile(rc, application().resolveFileName("data/helvetica.font"), localCache);
+#endif
 	
 	vec4 defaultBackgroundColor = vec4(1.0f, 0.5f, 0.25f, 1.0f);
 	float defaultFontSize = 16.0f;
@@ -46,26 +57,21 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	s2d::Button::Pointer btnOpen = s2d::Button::Pointer::create("Open", _mainFont, defaultFontSize, _mainLayout.ptr());
 	btnOpen->setAutolayoutRelativeToParent(vec2(defaultButtonGap), vec2(defaultButtonSize, 0.05f), vec2(0.0f));
 	btnOpen->setBackgroundColor(defaultBackgroundColor);
+	btnOpen->setTextPressedColor(vec4(1.0f));
 	btnOpen->clicked.connect(this, &Converter::onBtnOpenClick);
 
-	s2d::Button::Pointer btnSaveBin = s2d::Button::Pointer::create("Save (etm)", _mainFont, defaultFontSize, _mainLayout.ptr());
-	btnSaveBin->setAutolayoutRelativeToParent(vec2(1.0f - defaultButtonGap, defaultButtonGap),
+	s2d::Button::Pointer btnExport = s2d::Button::Pointer::create("Export", _mainFont, defaultFontSize, _mainLayout.ptr());
+	btnExport->setAutolayoutRelativeToParent(vec2(1.0f - defaultButtonGap, defaultButtonGap),
 		vec2(defaultButtonSize, 0.05f), vec2(1.0f, 0.0f));
-	btnSaveBin->tag = 1;
-	btnSaveBin->setBackgroundColor(defaultBackgroundColor);
-	btnSaveBin->clicked.connect(this, &Converter::onBtnSaveClick);
-
-	s2d::Button::Pointer btnSaveHRM = s2d::Button::Pointer::create("Save (etm+xml)", _mainFont, defaultFontSize, _mainLayout.ptr());
-	btnSaveHRM->setAutolayoutRelativeToParent(vec2(1.0f - defaultButtonOffset - defaultButtonGap, defaultButtonGap),
-		vec2(defaultButtonSize, 0.05f), vec2(1.0f, 0.0f));
-	btnSaveHRM->tag = 2;
-	btnSaveHRM->setBackgroundColor(defaultBackgroundColor);
-	btnSaveHRM->clicked.connect(this, &Converter::onBtnSaveClick);
+	btnExport->setBackgroundColor(defaultBackgroundColor);
+	btnExport->setTextPressedColor(vec4(1.0f));
+	btnExport->clicked.connect(this, &Converter::onBtnSaveClick);
 
 	_btnDrawNormalMeshes = s2d::Button::Pointer::create("Normal", _mainFont, defaultFontSize, _mainLayout.ptr());
 	_btnDrawNormalMeshes->setAutolayoutRelativeToParent(vec2(defaultButtonGap, 1.0f - defaultButtonGap),
 		vec2(defaultButtonSize, 0.05f), vec2(0.0f, 1.0f));
 	_btnDrawNormalMeshes->setBackgroundColor(defaultBackgroundColor);
+	_btnDrawNormalMeshes->setTextPressedColor(vec4(1.0f));
 	_btnDrawNormalMeshes->setType(s2d::Button::Type_CheckButton);
 	_btnDrawNormalMeshes->setSelected(true);
 
@@ -73,6 +79,7 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_btnDrawSupportMeshes->setAutolayoutRelativeToParent(vec2(defaultButtonOffset, 1.0f - defaultButtonGap),
 		vec2(defaultButtonSize, 0.05f), vec2(0.0f, 1.0f));
 	_btnDrawSupportMeshes->setBackgroundColor(defaultBackgroundColor);
+	_btnDrawSupportMeshes->setTextPressedColor(vec4(1.0f));
 	_btnDrawSupportMeshes->setType(s2d::Button::Type_CheckButton);
 	_btnDrawSupportMeshes->setSelected(true);
 
@@ -80,6 +87,7 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_btnWireframe->setAutolayoutRelativeToParent(vec2(2.0f * defaultButtonOffset, 1.0f - defaultButtonGap),
 		vec2(defaultButtonSize, 0.05f), vec2(0.0f, 1.0f));
 	_btnWireframe->setBackgroundColor(defaultBackgroundColor);
+	_btnWireframe->setTextPressedColor(vec4(1.0f));
 	_btnWireframe->setType(s2d::Button::Type_CheckButton);
 	_btnWireframe->setSelected(false);
 	
@@ -101,13 +109,13 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_camera.perspectiveProjection(QUARTER_PI, rc->size().aspect(), 1.0f, 2048.0f);
 	_camera.lookAt(fromSpherical(_vAngle.value().x, _vAngle.value().y) * _vDistance.value());
 
-	ObjectsCache localCache;
-	
 	_defaultProgram = rc->programFactory().loadProgram("data/shaders/default.program", localCache);
 	_defaultProgram->setPrimaryLightPosition(500.0f * vec3(0.0f, 1.0f, 0.0f));
 	_defaultProgram->setUniform("diffuseMap", 0);
 	_defaultProgram->setUniform("specularMap", 1);
 	_defaultProgram->setUniform("normalMap", 2);
+
+	_scene = s3d::Scene::Pointer::create();
 
 	rc->renderState().setClearColor(vec4(0.25f));
 	rc->renderState().setDepthTest(true);
@@ -123,28 +131,25 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	}
 }
 
-void Converter::renderMeshList(RenderContext* rc, const s3d::Element::List& meshes)
+void Converter::renderMeshList(RenderContext* rc, const s3d::BaseElement::List& meshes)
 {
 	for (auto i = meshes.begin(), e = meshes.end(); i != e; ++i)
 	{
 		s3d::Mesh::Pointer mesh = *i;
-		if (mesh->active())
-		{
-			const s3d::Material::Pointer& m = mesh->material();
+		const s3d::Material::Pointer& m = mesh->material();
 			
-			_defaultProgram->setUniform("ambientColor", m->getVector(MaterialParameter_AmbientColor));
-			_defaultProgram->setUniform("diffuseColor", m->getVector(MaterialParameter_DiffuseColor));
-			_defaultProgram->setUniform("specularColor", m->getVector(MaterialParameter_SpecularColor));
-			_defaultProgram->setUniform("roughness", m->getFloat(MaterialParameter_Roughness));
-			_defaultProgram->setUniform("mTransform", mesh->finalTransform());
+		_defaultProgram->setUniform("ambientColor", m->getVector(MaterialParameter_AmbientColor));
+		_defaultProgram->setUniform("diffuseColor", m->getVector(MaterialParameter_DiffuseColor));
+		_defaultProgram->setUniform("specularColor", m->getVector(MaterialParameter_SpecularColor));
+		_defaultProgram->setUniform("roughness", m->getFloat(MaterialParameter_Roughness));
+		_defaultProgram->setUniform("mTransform", mesh->finalTransform());
 			
-			rc->renderState().bindTexture(0, mesh->material()->getTexture(MaterialParameter_DiffuseMap));
-			rc->renderState().bindTexture(1, mesh->material()->getTexture(MaterialParameter_SpecularMap));
-			rc->renderState().bindTexture(2, mesh->material()->getTexture(MaterialParameter_NormalMap));
+		rc->renderState().bindTexture(0, mesh->material()->getTexture(MaterialParameter_DiffuseMap));
+		rc->renderState().bindTexture(1, mesh->material()->getTexture(MaterialParameter_SpecularMap));
+		rc->renderState().bindTexture(2, mesh->material()->getTexture(MaterialParameter_NormalMap));
 			
-			rc->renderState().bindVertexArray(mesh->vertexArrayObject());
-			rc->renderer()->drawElements(mesh->indexBuffer(), mesh->startIndex(), mesh->numIndexes());
-		}
+		rc->renderState().bindVertexArray(mesh->vertexArrayObject());
+		rc->renderer()->drawElements(mesh->indexBuffer(), mesh->startIndex(), mesh->numIndexes());
 	}
 }
 
@@ -155,10 +160,10 @@ void Converter::performSceneRendering()
 	_defaultProgram->setCameraProperties(_camera);
 
 	if (_btnDrawNormalMeshes->selected())
-		renderMeshList(_rc, _scene.childrenOfType(s3d::ElementType_Mesh));
+		renderMeshList(_rc, _scene->childrenOfType(s3d::ElementType_Mesh));
 
 	if (_btnDrawSupportMeshes->selected())
-		renderMeshList(_rc, _scene.childrenOfType(s3d::ElementType_SupportMesh));
+		renderMeshList(_rc, _scene->childrenOfType(s3d::ElementType_SupportMesh));
 	
 	_rc->renderState().setSampleAlphaToCoverage(false);
 }
@@ -216,7 +221,7 @@ void Converter::onBtnOpenClick(et::s2d::Button*)
 	
 	if (fileExists(fileName))
 	{
-		_scene.clear();
+		_scene->clear();
 		
 		Invocation1 i;
 		i.setTarget(this, &Converter::performLoading, fileName);
@@ -232,39 +237,76 @@ void Converter::onBtnOpenClick(et::s2d::Button*)
 
 void Converter::onBtnSaveClick(et::s2d::Button* b)
 {
-	std::string fileName = selectFile(StringList(), SelectFileMode::Save, _scene.name());
-	
-	Invocation1 i;
-
-	i.setTarget(this, (b->tag == 1 ? &Converter::performBinarySaving :
-		&Converter::performBinaryWithReadableMaterialsSaving), fileName);
-	
-	i.invokeInMainRunLoop(invocationDelayTime);
-	
 	_labStatus->setText("Saving...");
+
+	Invocation([this]()
+	{
+		std::string fileName = selectFile(StringList(), SelectFileMode::Save, _scene->name());
+
+		fileName = replaceFileExt(fileName, ".json");
+		{
+			Dictionary serialized = _scene->serialize(fileName);
+			auto serializedString = json::serialize(serialized, json::SerializationFlag_ReadableFormat);
+			StringDataStorage data(serializedString.size() + 1, 0);
+			memcpy(data.binary(), serializedString.data(), serializedString.length());
+			data.writeToFile(fileName);
+		}
+
+		fileName = replaceFileExt(fileName, ".etmx");
+		{
+			Dictionary serialized = _scene->serialize(fileName);
+			auto serializedString = json::serialize(serialized);
+			StringDataStorage data(serializedString.size() + 1, 0);
+			memcpy(data.binary(), serializedString.data(), serializedString.length());
+			data.writeToFile(fileName);
+		}
+
+		_labStatus->setText("Saving completed.");
+
+	}).invokeInMainRunLoop();
 }
 
 void Converter::performLoading(std::string path)
 {
 	lowercase(path);
-	size_t value = path.find_last_of(".etm");
-	size_t len = path.length();
 
-	if (value == len - 1)
+	auto extension = getFileExt(path);
+	if (extension == "etmx")
 	{
-		_scene.deserialize(path, _rc, _texCache);
+		// TODO : deserialize
 	}
-	else
+	else if (extension == "fbx")
 	{
 		FBXLoader loader(path);
 		s3d::ElementContainer::Pointer loadedScene = loader.load(_rc, _texCache);
 		if (loadedScene.valid())
-			loadedScene->setParent(&_scene);
+		{
+			auto loadedObjects = loadedScene->children();
+			for (auto obj : loadedObjects)
+				obj->setParent(_scene.ptr());
+		}
 	}
-	
-	auto nodesWithAnimation = _scene.childrenHavingFlag(s3d::Flag_HasAnimations);
-	
-	for (auto& i : nodesWithAnimation)
+	else if (extension == "obj")
+	{
+		OBJLoader loader(_rc, path);
+		s3d::ElementContainer::Pointer loadedScene = loader.load(_texCache, 0);
+		if (loadedScene.valid())
+		{
+			auto loadedObjects = loadedScene->children();
+			for (auto obj : loadedObjects)
+				obj->setParent(_scene.ptr());
+		}
+	}
+
+	auto storages = _scene->childrenOfType(s3d::ElementType_Storage);
+	for (s3d::Storage::Pointer storage : storages)
+		storage->flush();
+
+	size_t value = path.find_last_of(".etm");
+	size_t len = path.length();
+
+	auto nodesWithAnimation = _scene->childrenHavingFlag(s3d::Flag_HasAnimations);
+	for (auto i : nodesWithAnimation)
 		i->animate();
 	
 	_labStatus->setText("Completed.");
@@ -275,7 +317,7 @@ void Converter::performBinarySaving(std::string path)
 	if (path.find_last_of(".etm") != path.length() - 1)
 		path += ".etm";
 
-	_scene.serialize(path);
+	_scene->serialize(path);
 	_labStatus->setText("Completed.");
 }
 
@@ -284,7 +326,7 @@ void Converter::performBinaryWithReadableMaterialsSaving(std::string path)
 	if (path.find_last_of(".etm") != path.length() - 1)
 		path += ".etm";
 
-	_scene.serialize(path);
+	_scene->serialize(path);
 	_labStatus->setText("Completed.");
 }
 

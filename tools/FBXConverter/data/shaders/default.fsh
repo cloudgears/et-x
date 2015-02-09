@@ -13,6 +13,7 @@ etFragmentIn vec3 vViewWS;
 etFragmentIn vec3 vLightWS;
 etFragmentIn vec3 vViewTS;
 etFragmentIn vec3 vLightTS;
+etFragmentIn vec4 vColor;
 etFragmentIn vec2 TexCoord;
 
 void main()
@@ -35,12 +36,12 @@ void main()
 		specularSample = vec4(1.0);
 	
 	float diffuseTerm = 0.5 + 0.5 * max(0.0, dot(vNormal, vLight));
+	diffuseTerm *= diffuseTerm;
+
 	float specularTerm = pow(max(0.0, dot(reflect(-vLight, vNormal), vView)), roughness);
 	
-	etFragmentOut =
-		(ambientColor * ambientSample) +
-		(diffuseColor * diffuseSample) * (diffuseTerm * diffuseTerm) +
-		(specularColor * specularSample) * (diffuseSample.w * specularTerm);
+	etFragmentOut = vColor * (diffuseSample * (ambientColor * ambientSample + diffuseColor * diffuseTerm) +
+		(specularSample * specularColor) * (diffuseSample.w * specularTerm));
 		
 	etFragmentOut.w = diffuseSample.w;
 }

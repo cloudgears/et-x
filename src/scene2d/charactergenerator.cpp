@@ -64,6 +64,7 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 		return false;
 	
 	dataToSave.resize(sizeToSave.square());
+	dataToSave.fill(0);
 	
 	vec2i targetPixel;
 	for (int py = topLeftOffset.y; py < bottomRightOffset.y; ++py, ++targetPixel.y)
@@ -182,29 +183,23 @@ BinaryDataStorage CharacterGenerator::downsample(BinaryDataStorage& input, const
 #define sdf_get(g, x, y)		g.grid[(y) * (2 + g.w) + (x)]
 #define sdf_put(g, x, y, p)		g.grid[(y) * (2 + g.w) + (x)] = p;
 
-inline void internal_sdf_compare(sdf::Grid& g, sdf::Point& p, int x, int y, int offsetx, int offsety)
+inline void internal_sdf_compare(sdf::Point* points, int gridWidth, sdf::Point& p, int x, int y, int offsetx, int offsety)
 {
+	sdf::Point& other = *(points + x + offsetx + (y + offsety) * gridWidth);
+	
 	int add = 0;
-	
-	sdf::Point other = sdf_get(g, x + offsetx, y + offsety);
-	
+
 	if (offsety == 0)
-	{
 		add = 2 * other.dx + 1;
-	}
 	else if (offsetx == 0)
-	{
 		add = 2 * other.dy + 1;
-	}
 	else
-	{
 		add = 2 * (other.dy + other.dx + 1);
-	}
 	
 	other.f += add;
 	
 	if (other.f < p.f)
-	{
+	{	
 		p.f = other.f;
 		
 		if (offsety == 0)
@@ -227,16 +222,18 @@ inline void internal_sdf_compare(sdf::Grid& g, sdf::Point& p, int x, int y, int 
 
 void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 {
+	auto points = g.grid.data();
+	int gridWidth = g.w + 2;
+
 	for (int y = 1; y <= g.h; y++)
 	{
 		for (int x = 1; x <= g.w; x++)
 		{
-			sdf::Point p = sdf_get(g, x, y);
-			internal_sdf_compare(g, p, x, y, -1,  0);
-			internal_sdf_compare(g, p, x, y, 0, -1);
-			internal_sdf_compare(g, p, x, y,  -1, -1);
-			internal_sdf_compare(g, p, x, y,   1, -1);
-			sdf_put(g, x, y, p);
+			sdf::Point& p = *(points + x + gridWidth * y);
+			internal_sdf_compare(points, gridWidth, p, x, y, -1,  0);
+			internal_sdf_compare(points, gridWidth, p, x, y,  0, -1);
+			internal_sdf_compare(points, gridWidth, p, x, y, -1, -1);
+			internal_sdf_compare(points, gridWidth, p, x, y,  1, -1);
 		}
 	}
 	
@@ -244,12 +241,11 @@ void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 	{
 		for(int x = g.w; x > 0; x--)
 		{
-			sdf::Point p = sdf_get(g, x, y);
-			internal_sdf_compare(g, p, x, y,   1, 0);
-			internal_sdf_compare(g, p, x, y,   0, 1);
-			internal_sdf_compare(g, p, x, y,  -1, 1);
-			internal_sdf_compare(g, p, x, y,   1, 1);
-			sdf_put(g, x, y, p);
+			sdf::Point& p = *(points + x + gridWidth * y);
+			internal_sdf_compare(points, gridWidth, p, x, y,  1, 0);
+			internal_sdf_compare(points, gridWidth, p, x, y,  0, 1);
+			internal_sdf_compare(points, gridWidth, p, x, y, -1, 1);
+			internal_sdf_compare(points, gridWidth, p, x, y,  1, 1);
 		}
 	}
 }
@@ -313,12 +309,13 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 		{
 			float dist1 = std::sqrt(static_cast<float>(sdf_get(_grid0, x, y).f + 1));
 			float dist2 = std::sqrt(static_cast<float>(sdf_get(_grid1, x, y).f + 1));
-			distances[k++] = 127.0f + 8.4666666666666668f * (dist1 - dist2);
+			distances[k++] = 127.0f + 9.9489595774f * (dist1 - dist2);
 		}
 	}
-	
+
+	const int blurTimes = 2;
 	DataStorage<float> smooth(w * h, 0);
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < blurTimes; ++i)
 	{
 		int row = 0;
 		
