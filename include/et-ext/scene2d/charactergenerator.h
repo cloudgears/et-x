@@ -61,7 +61,7 @@ namespace et
 			static const vec2i charactersRenderingExtent;
 			
 		public:
-			CharacterGenerator(RenderContext* _rc, const std::string& face, const std::string& boldFace, 
+			CharacterGenerator(RenderContext*, const std::string& face, const std::string& boldFace, 
 				size_t faceIndex = 0, size_t boldFaceIndex = 0);
 			
 			const Texture::Pointer& texture() const
