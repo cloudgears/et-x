@@ -315,7 +315,11 @@ namespace et
 		template <int bounce>
 		inline float sinBounceScaledInterpolation(float t)
 			{ float v = t + 0.1f * static_cast<float>(bounce) * std::sin(t * PI); return v * v; }
-		
+
+		template <int bounce>
+		inline float sinBounceScaledInterpolationWithBackMoving(float t)
+			{ return t - 0.1f * static_cast<float>(bounce) * std::sin(t * DOUBLE_PI); }
+
 		inline float sinBounceInterpolation(float t)
 			{ return sinBounceScaledInterpolation<4>(t); }
 
