@@ -167,6 +167,7 @@
     <ClCompile Include="..\..\..\..\et\src\vertexbuffer\vertexarray.cpp" />
     <ClCompile Include="..\..\..\..\et\src\vertexbuffer\vertexdatachunk.cpp" />
     <ClCompile Include="..\..\..\..\et\src\vertexbuffer\vertexdeclaration.cpp" />
+    <ClCompile Include="..\..\..\..\et\src\vertexbuffer\vertexstorage.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\button.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\charactergenerator.cpp" />
     <ClCompile Include="..\..\..\src\scene2d\charactergenerator.impl.cpp" />
@@ -343,6 +344,7 @@
     <ClInclude Include="..\..\..\..\et\include\et\vertexbuffer\vertexarray.h" />
     <ClInclude Include="..\..\..\..\et\include\et\vertexbuffer\vertexdatachunk.h" />
     <ClInclude Include="..\..\..\..\et\include\et\vertexbuffer\vertexdeclaration.h" />
+    <ClInclude Include="..\..\..\..\et\include\et\vertexbuffer\vertexstorage.h" />
     <ClInclude Include="..\..\..\include\et-ext\scene2d\baseclasses.h" />
     <ClInclude Include="..\..\..\include\et-ext\scene2d\baseconst.h" />
     <ClInclude Include="..\..\..\include\et-ext\scene2d\button.h" />
@@ -373,6 +375,31 @@
     <ClInclude Include="..\source\renderer\DemoSceneLoader.h" />
     <ClInclude Include="..\source\renderer\DemoSceneRenderer.h" />
     <ClInclude Include="..\source\ui\MainUI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\shaders\ao-fixed.fsh" />
+    <None Include="..\data\shaders\ao-fixed.program" />
+    <None Include="..\data\shaders\ao-fixed.vsh" />
+    <None Include="..\data\shaders\ao.fsh" />
+    <None Include="..\data\shaders\ao.program" />
+    <None Include="..\data\shaders\ao.vsh" />
+    <None Include="..\data\shaders\blur.fsh" />
+    <None Include="..\data\shaders\blur.program" />
+    <None Include="..\data\shaders\blur.vsh" />
+    <None Include="..\data\shaders\deinterleave.fsh" />
+    <None Include="..\data\shaders\deinterleave.program" />
+    <None Include="..\data\shaders\deinterleave.vsh" />
+    <None Include="..\data\shaders\final.fsh" />
+    <None Include="..\data\shaders\final.program" />
+    <None Include="..\data\shaders\final.vsh" />
+    <None Include="..\data\shaders\include\normals.fsh" />
+    <None Include="..\data\shaders\include\viewspace.fsh" />
+    <None Include="..\data\shaders\interleave.fsh" />
+    <None Include="..\data\shaders\interleave.program" />
+    <None Include="..\data\shaders\interleave.vsh" />
+    <None Include="..\data\shaders\prepass.fsh" />
+    <None Include="..\data\shaders\prepass.program" />
+    <None Include="..\data\shaders\prepass.vsh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

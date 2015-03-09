@@ -33,8 +33,7 @@ et::s3d::Scene::Pointer SceneLoader::loadFromFile(const std::string& fileName)
 	}
 	else if (ext == "etm")
 	{
-		ObjectsCache localCache;
-		result->deserialize(fileName, _rc, localCache, nullptr);
+		ET_FAIL("Not implemented")
 	}
 	else
 	{
@@ -54,8 +53,5 @@ void SceneLoader::loadObjFile(const std::string& fileName, et::s3d::Scene::Point
 	
 	for (auto c : allObjects)
 		c->setParent(scene.ptr());
-	
-	scene->serialize(application().environment().applicationDocumentsFolder() +
-		 replaceFileExt(getFileName(fileName), ".etm"), s3d::StorageFormat_HumanReadableMaterials);
 }
 

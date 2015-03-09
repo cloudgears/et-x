@@ -8,6 +8,8 @@ etFragmentIn vec2 TexCoord;
 
 void main()
 {
+	vec2 originalTextureSize = vec2(textureSize(texture_diffuse, 0));
+
 	etFragmentOut = etTexture2D(texture_diffuse, TexCoord);
-	etFragmentOut1 = vec4(encodeNormal(vNormalWS), 0.0, 0.0);
+	etFragmentOut1 = vec4(0.5 + 0.5 * vNormalWS, 0.0);
 }

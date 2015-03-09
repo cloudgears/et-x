@@ -7,7 +7,9 @@
 //
 
 #include <et/input/input.h>
+#include <et/core/conversion.h>
 #include <et/rendering/rendercontext.h>
+#include <et/json/json.h>
 #include "MainController.h"
 
 using namespace et;
@@ -15,14 +17,37 @@ using namespace demo;
 
 void MainController::setApplicationParameters(et::ApplicationParameters& params)
 {
-//	params.windowSize = WindowSize::Fullscreen;
+//	params.windowSize = WindowSize::FillWorkarea;
 }
 
 void MainController::setRenderContextParameters(et::RenderContextParameters& params)
 {
-	params.contextSize = vec2i(1024, 768);
+	vec2i contextSize(1024, 768);
+
+	auto optionsFileName = "data/options.json";
+	if (!fileExists(optionsFileName))
+		optionsFileName = "../data/options.json";
+	if (!fileExists(optionsFileName))
+		optionsFileName = "../../data/options.json";
+
+	if (fileExists(optionsFileName))
+	{
+		ValueClass vc = ValueClass_Invalid;
+		auto obj = json::deserialize(loadTextFile(optionsFileName), vc);
+		if (vc == ValueClass_Dictionary)
+		{
+			Dictionary options = obj;
+			if (options.hasKey("context-size"))
+			{
+				contextSize = arrayToVec2i(options.arrayForKey("context-size"));
+			}
+		}
+	}
+
+	params.contextSize = contextSize;
 	params.contextBaseSize = params.contextSize;
-	params.multisamplingQuality = MultisamplingQuality_Best;
+	params.multisamplingQuality = MultisamplingQuality_None;
+	params.swapInterval = 0;
 }
 
 void MainController::applicationDidLoad(et::RenderContext* rc)
@@ -33,6 +58,7 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 	application().pushRelativeSearchPath("..\\..\\..");
 	application().pushSearchPath("Q:\\SDK\\Models\\");
 	application().pushSearchPath("Q:\\SDK\\");
+	application().setFrameRateLimit(0);
 #elif (ET_PLATFORM_MAC)
 	application().pushSearchPath("/Volumes/Development/SDK/");
 	application().pushSearchPath("/Volumes/Development/SDK/Models/");
@@ -50,7 +76,7 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 	_renderer.init(rc);
 	_cameraController.init(rc);
 	
-	auto loadedScene = _loader.loadFromFile(application().resolveFileName("models/sibenik/sibenik-updated.etm"));
+	auto loadedScene = _loader.loadFromFile(application().resolveFileName("models/sibenik/sibenik-updated.obj"));
 	_renderer.setScene(loadedScene);
 
 	_mainUI = MainUI::Pointer::create(rc);
@@ -107,6 +133,7 @@ void MainController::connectInputEvents()
  void MainController::applicationWillResizeContext(const et::vec2i& sz)
 {
 	_cameraController.adjustCameraToNextContextSize(vector2ToFloat(sz));
+	_ui->layout(vector2ToFloat(sz));
 }
 
 void MainController::render(et::RenderContext* rc)

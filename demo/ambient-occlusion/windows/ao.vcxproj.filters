@@ -28,6 +28,9 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{28771e8c-926c-465a-8049-abb9887f672d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="programs">
+      <UniqueIdentifier>{2ae034a7-b7df-4c5b-baed-98985f9f3847}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\renderer\DemoCameraController.cpp">
@@ -392,6 +395,9 @@
     </ClCompile>
     <ClCompile Include="..\source\ui\MainUI.cpp">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\vertexbuffer\vertexstorage.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -920,5 +926,79 @@
     <ClInclude Include="..\source\ui\MainUI.h">
       <Filter>Source Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\et\include\et\vertexbuffer\vertexstorage.h">
+      <Filter>et\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\shaders\ao.fsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\ao.program">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\ao.vsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\blur.fsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\blur.program">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\blur.vsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\final.fsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\final.program">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\final.vsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\prepass.fsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\prepass.program">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\prepass.vsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\deinterleave.fsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\deinterleave.program">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\deinterleave.vsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\interleave.fsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\interleave.program">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\interleave.vsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\ao-fixed.vsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\ao-fixed.program">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\ao-fixed.fsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\include\normals.fsh">
+      <Filter>programs</Filter>
+    </None>
+    <None Include="..\data\shaders\include\viewspace.fsh">
+      <Filter>programs</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Cheetek. All rights reserved.
 //
 
+#include <et/app/application.h>
 #include "MainUI.h"
 
 using namespace et;
@@ -34,8 +35,10 @@ s2d::Label::Pointer label(const std::string& title, s2d::Font::Pointer font, s2d
 
 MainUI::MainUI(et::RenderContext* rc)
 {
+	ObjectsCache localCache;
 	auto generator = s2d::CharacterGenerator::Pointer::create(rc, "Tahoma", "Tahoma");
 	auto mainFont = s2d::Font::Pointer::create(generator);
+	mainFont->loadFromFile(rc, application().resolveFileName("data/caches/tahoma.font"), localCache);
 
 	auto slidePower = s2d::Slider::Pointer::create(this);
 	slidePower->setRange(0.01f, 12.0f);

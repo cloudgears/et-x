@@ -1,56 +1,50 @@
-uniform sampler2D texture_color;
-uniform sampler2D texture_normal;
-uniform sampler2D texture_depth;
+layout (binding = 0) uniform sampler2DRect texture_input;
+layout (binding = 1) uniform sampler2DRect texture_normals;
+layout (binding = 2) uniform sampler2DRect texture_depth;
 
 uniform float depthDifferenceScale = 5.0;
-
-#define NUM_SAMPLES 8
+uniform vec2 direction;
+uniform int radius = 8;
 
 #include "include/normals.fsh"
 #include "include/viewspace.fsh"
 
-etFragmentIn vec2 CenterTexCoord;
-etFragmentIn vec2 NextTexCoords[NUM_SAMPLES];
-etFragmentIn vec2 PreviousTexCoords[NUM_SAMPLES];
-
-float depthWeight(in float base, in float compared)
+float depthWeight(in float base, in float compared, in int distanceFromCenter)
 {
-	float a0 = restoreViewSpaceDistance(base);
-	float a1 = restoreViewSpaceDistance(compared);
-	return 1.0 / (1.0 + pow(abs(a0 - a1), depthDifferenceScale));
+	float falloff = float(radius * radius - distanceFromCenter * distanceFromCenter + 1);
+	float depthDifference = 10.0 * depthDifferenceScale * (compared - base);
+	return falloff / (1.0 + depthDifference * depthDifference);
 }
 
 float normalWeight(in vec3 base, in vec3 compared)
 {
-	return abs(dot(base, compared));
+	float d = abs(dot(base, compared));
+	return 1.0 / (1.0 - 0.5 * d);
 }
 
 void main()
 {
-	float totalWeight = 1.0;
-	vec4 result = etTexture2D(texture_color, CenterTexCoord);
-	
-	vec3 centerNormalSample = decodeNormal(etTexture2D(texture_normal, CenterTexCoord).xy);
-	float centerDepthSample = etTexture2D(texture_depth, CenterTexCoord).x;
-	
-	for (int i = 0; i < NUM_SAMPLES; ++i)
+	vec3 centerNormal = 2.0 * texture(texture_normals, gl_FragCoord.xy).xyz - 1.0;
+	float centerDepth = inversesqrt(1.0 - texture(texture_depth, gl_FragCoord.xy).x);
+
+	vec2 sampleCoord = gl_FragCoord.xy - float(radius) * direction;
+
+	float result = 0.0;
+	float totalWeight = 0.0;
+	for (int i = -radius; i <= radius; ++i)
 	{
-		vec4 nextColor = etTexture2D(texture_color, NextTexCoords[i]);
-		vec4 prevColor = etTexture2D(texture_color, PreviousTexCoords[i]);
-		
-		float nextDepthWeight = depthWeight(centerDepthSample, etTexture2D(texture_depth, NextTexCoords[i]).x);
-		float prevDepthWeight = depthWeight(centerDepthSample, etTexture2D(texture_depth, PreviousTexCoords[i]).x);
-		
-		float nextNormalWeight = normalWeight(centerNormalSample, decodeNormal(etTexture2D(texture_normal, NextTexCoords[i]).xy));
-		float prevNormalWeight = normalWeight(centerNormalSample, decodeNormal(etTexture2D(texture_normal, PreviousTexCoords[i]).xy));
-		
-		float nextWeight = nextNormalWeight * nextDepthWeight;
-		float prevWeight = prevNormalWeight * prevDepthWeight;
-		
-		result += nextColor * nextWeight + prevColor * prevWeight;
-		
-		totalWeight += nextWeight + prevWeight;
+		float sampledValue = texture(texture_input, sampleCoord).x;
+		float depth = inversesqrt(1.0 - texture(texture_depth, sampleCoord).x);
+		vec3 normal = 2.0 * texture(texture_normals, sampleCoord).xyz - 1.0;
+
+		float sampleWeight = depthWeight(centerDepth, depth, i) * normalWeight(centerNormal, normal);
+
+		result += sampleWeight * sampledValue;
+
+		totalWeight += sampleWeight;
+		sampleCoord += direction;
 	}
-	
+
+
 	etFragmentOut = vec4(result / totalWeight);
 }

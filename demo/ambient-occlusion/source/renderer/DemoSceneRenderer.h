@@ -19,7 +19,7 @@ namespace demo
 		float depthDifference = 5.0f;
 		et::vec2 sampleScale = et::vec2(0.001f, 1.0f);
 
-		bool showDiffuse = false;
+		bool showDiffuse = true;
 		bool performBlur = false;
 	};
 
@@ -34,28 +34,38 @@ namespace demo
 		void handlePressedKey(size_t);
 		
 	private:
+		void renderToInterleavedBuffer(const et::Camera&);
 		void renderToGeometryBuffer(const et::Camera&, const AOParameters&);
 		void computeAmbientOcclusion(const et::Camera&, const AOParameters&);
+		void interleaveAmbientOcclusion();
+		void blurAmbientOcclusion(const et::Camera&, const AOParameters&);
 		
 	private:
 		struct
 		{
 			et::Program::Pointer prepass;
 			et::Program::Pointer ambientOcclusion;
+			et::Program::Pointer ambientOcclusionFixed;
 			et::Program::Pointer ambientOcclusionBlur;
 			et::Program::Pointer final;
+			et::Program::Pointer interleave;
+			et::Program::Pointer deinterleave;
 		} programs;
 		
 	private:
 		et::RenderContext* _rc = nullptr;
 		et::Framebuffer::Pointer _geometryBuffer;
-		et::Framebuffer::Pointer _aoBuffer;
-		
+		et::Framebuffer::Pointer _aoFramebuffer;
+		et::Framebuffer::Pointer _interleavedFramebuffer;
+		et::Framebuffer::Pointer _finalFramebuffer;
+
 		et::s3d::Scene::Pointer _scene;
 		std::vector<et::s3d::SupportMesh::Pointer> _allObjects;
 		
 		et::Texture::Pointer _noiseTexture;
 		et::Texture::Pointer _defaultTexture;
 		et::Texture::Pointer _defaultNormalTexture;
+
+		std::vector<std::vector<et::vec3>> _jitterSamples;
 	};
 }
