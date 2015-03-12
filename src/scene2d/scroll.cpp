@@ -167,8 +167,10 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 			float diff = std::abs(-_contentOffset.y - defaultValues.w);
 			offsetScale.y *= etMax(0.0f, 1.0f - diff / scrollOutOfContentYSize());
 		}
-		
-		applyContentOffset(sqr(offsetScale) * aOffset);
+		offsetScale *= offsetScale;
+
+		applyContentOffset(offsetScale * aOffset);
+		manualScroll.invoke(aOffset, offsetScale);
 	}
 	else if (!_pointerCaptured && (p.type == PointerType_General))
 	{

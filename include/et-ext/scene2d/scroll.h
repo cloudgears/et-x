@@ -58,6 +58,7 @@ namespace et
 			
 			ET_DECLARE_EVENT1(contentOffsetPercentageUpdated, vec2);
 			ET_DECLARE_EVENT0(manualScrollStarted);
+			ET_DECLARE_EVENT2(manualScroll, vec2, vec2);
 			ET_DECLARE_EVENT0(manualScrollEnded);
 			ET_DECLARE_EVENT0(scrollEnded)
 
@@ -66,7 +67,13 @@ namespace et
 			
 		protected:
 			void update(float t);
-			
+
+			bool pointerPressed(const PointerInputInfo&);
+			bool pointerMoved(const PointerInputInfo&);
+			bool pointerReleased(const PointerInputInfo&);
+			bool pointerCancelled(const PointerInputInfo&);
+			bool pointerScrolled(const PointerInputInfo&);
+
 		private:
 			void buildVertices(RenderContext* rc, SceneRenderer& r);
 			
@@ -76,11 +83,6 @@ namespace et
 			const mat4& finalTransform();
 			const mat4& finalInverseTransform();
 			
-			bool pointerPressed(const PointerInputInfo&);
-			bool pointerMoved(const PointerInputInfo&);
-			bool pointerReleased(const PointerInputInfo&);
-			bool pointerCancelled(const PointerInputInfo&);
-			bool pointerScrolled(const PointerInputInfo&);
 			bool containsPoint(const vec2& p, const vec2& np);
 			
 			void invalidateChildren();
