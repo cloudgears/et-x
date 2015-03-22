@@ -61,7 +61,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
 	if (fileExists(face))
 	{
-		FT_New_Face(library, face.c_str(), faceIndex, &regularFont);
+		FT_New_Face(library, face.c_str(), FT_Long(faceIndex), &regularFont);
 	}
 	else
 	{
@@ -94,8 +94,11 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 			regularFontData.resize(fontDataSize);
 			regularFontData.fill(0);
 
-			if (GetFontData(commonDC, 0, 0, regularFontData.data(), regularFontData.size()) != GDI_ERROR)
-				FT_New_Memory_Face(library, regularFontData.data(), regularFontData.size(), faceIndex, &regularFont);
+			if (GetFontData(commonDC, 0, 0, regularFontData.data(), DWORD(regularFontData.size())) != GDI_ERROR)
+			{
+				FT_New_Memory_Face(library, regularFontData.data(), 
+					FT_Long(regularFontData.size()), FT_Long(faceIndex), &regularFont);
+			}
 		}
 
 		DeleteObject(font);
@@ -108,7 +111,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 	 */
 	if (fileExists(boldFace))
 	{
-		FT_New_Face(library, boldFace.c_str(), boldFaceIndex, &boldFont);
+		FT_New_Face(library, boldFace.c_str(), FT_Long(boldFaceIndex), &boldFont);
 	}
 	else
 	{
@@ -142,8 +145,11 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 			boldFontData.resize(fontDataSize);
 			boldFontData.fill(0);
 
-			if (GetFontData(commonDC, 0, 0, boldFontData.data(), boldFontData.size()) != GDI_ERROR)
-				FT_New_Memory_Face(library, boldFontData.data(), boldFontData.size(), boldFaceIndex, &boldFont);
+			if (GetFontData(commonDC, 0, 0, boldFontData.data(), DWORD(boldFontData.size())) != GDI_ERROR)
+			{
+				FT_New_Memory_Face(library, boldFontData.data(), FT_Long(boldFontData.size()), 
+					FT_Long(boldFaceIndex), &boldFont);
+			}
 		}
 
 		DeleteObject(font);
