@@ -29,7 +29,7 @@
 #define __FTMAC_H__
 
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 
 
 FT_BEGIN_HEADER

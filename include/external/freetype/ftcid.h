@@ -18,7 +18,7 @@
 #ifndef __FTCID_H__
 #define __FTCID_H__
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #ifdef FREETYPE_H
@@ -156,7 +156,8 @@ FT_BEGIN_HEADER
                                FT_UInt   glyph_index,
                                FT_UInt  *cid );
 
- /* */
+  /* */
+
 
 FT_END_HEADER
 

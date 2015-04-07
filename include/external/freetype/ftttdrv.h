@@ -20,7 +20,7 @@
 #ifndef __FTTTDRV_H__
 #define __FTTTDRV_H__
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #ifdef FREETYPE_H
@@ -158,8 +158,8 @@ FT_BEGIN_HEADER
 #define TT_INTERPRETER_VERSION_35  35
 #define TT_INTERPRETER_VERSION_38  38
 
-
  /* */
+
 
 FT_END_HEADER
 

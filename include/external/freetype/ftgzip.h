@@ -19,7 +19,7 @@
 #ifndef __FTGZIP_H__
 #define __FTGZIP_H__
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #ifdef FREETYPE_H
@@ -137,8 +137,7 @@ FT_BEGIN_HEADER
                       const FT_Byte*  input,
                       FT_ULong        input_len );
 
-
- /* */
+  /* */
 
 
 FT_END_HEADER

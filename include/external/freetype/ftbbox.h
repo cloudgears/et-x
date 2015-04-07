@@ -31,7 +31,7 @@
 #define __FTBBOX_H__
 
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #ifdef FREETYPE_H
@@ -84,7 +84,6 @@ FT_BEGIN_HEADER
   FT_EXPORT( FT_Error )
   FT_Outline_Get_BBox( FT_Outline*  outline,
                        FT_BBox     *abbox );
-
 
   /* */
 

@@ -19,7 +19,7 @@
 #ifndef __FTLZW_H__
 #define __FTLZW_H__
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #ifdef FREETYPE_H
@@ -88,7 +88,7 @@ FT_BEGIN_HEADER
   FT_Stream_OpenLZW( FT_Stream  stream,
                      FT_Stream  source );
 
- /* */
+  /* */
 
 
 FT_END_HEADER

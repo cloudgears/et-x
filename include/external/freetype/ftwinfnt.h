@@ -19,7 +19,7 @@
 #ifndef __FTWINFNT_H__
 #define __FTWINFNT_H__
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #ifdef FREETYPE_H
@@ -259,8 +259,8 @@ FT_BEGIN_HEADER
   FT_Get_WinFNT_Header( FT_Face               face,
                         FT_WinFNT_HeaderRec  *aheader );
 
-
   /* */
+
 
 FT_END_HEADER
 

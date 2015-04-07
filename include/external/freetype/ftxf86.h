@@ -19,7 +19,7 @@
 #ifndef __FTXF86_H__
 #define __FTXF86_H__
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #ifdef FREETYPE_H
@@ -76,7 +76,8 @@ FT_BEGIN_HEADER
   FT_EXPORT( const char* )
   FT_Get_X11_Font_Format( FT_Face  face );
 
- /* */
+  /* */
+
 
 FT_END_HEADER
 

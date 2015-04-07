@@ -19,7 +19,7 @@
 #ifndef __FTBDF_H__
 #define __FTBDF_H__
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #ifdef FREETYPE_H
@@ -53,7 +53,7 @@ FT_BEGIN_HEADER
   /**********************************************************************
    *
    * @enum:
-   *    FT_PropertyType
+   *    BDF_PropertyType
    *
    * @description:
    *    A list of BDF property types.
@@ -200,7 +200,7 @@ FT_BEGIN_HEADER
                        const char*       prop_name,
                        BDF_PropertyRec  *aproperty );
 
- /* */
+  /* */
 
 FT_END_HEADER
 

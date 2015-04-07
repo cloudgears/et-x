@@ -20,7 +20,7 @@
 #define __FTMM_H__
 
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_TYPE1_TABLES_H
 
 
@@ -218,9 +218,6 @@ FT_BEGIN_HEADER
   } FT_MM_Var;
 
 
-  /* */
-
-
   /*************************************************************************/
   /*                                                                       */
   /* <Function>                                                            */
@@ -364,7 +361,6 @@ FT_BEGIN_HEADER
   FT_Set_Var_Blend_Coordinates( FT_Face    face,
                                 FT_UInt    num_coords,
                                 FT_Fixed*  coords );
-
 
   /* */
 

@@ -20,7 +20,7 @@
 #define __FTRENDER_H__
 
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_MODULE_H
 #include FT_GLYPH_H
 
@@ -225,7 +225,6 @@ FT_BEGIN_HEADER
                    FT_Renderer    renderer,
                    FT_UInt        num_params,
                    FT_Parameter*  parameters );
-
 
   /* */
 
