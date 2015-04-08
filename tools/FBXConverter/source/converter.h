@@ -13,7 +13,7 @@ namespace fbxc
 		ET_DECLARE_POINTER(MainLayout)
 	};
 
-	class Converter : public et::IApplicationDelegate
+	class Converter : public et::IApplicationDelegate, public et::EventReceiver
 	{
 	public:
 		Converter();
