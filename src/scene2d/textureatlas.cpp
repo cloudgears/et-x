@@ -74,7 +74,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 		if (descFile.valid())
 		{
 			int lineNumber = 1;
-			while (!descFile.stream().eof())
+			while (!(descFile.stream().eof() || descFile.stream().fail()))
 			{
 				std::string token;
 				std::string line;
