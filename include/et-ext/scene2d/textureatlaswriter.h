@@ -1,13 +1,12 @@
 /*
- * This file is part of `et engine`
- * Copyright 2009-2013 by Sergey Reznik
- * Please, do not modify content without approval.
- *
- */
-
+* This file is part of `et engine`
+* Copyright 2009-2015 by Sergey Reznik
+* Please, modify content only if you know what are you doing.
+*
+*/
 #pragma once
 
-#include <et-ext/scene2d/element2d.h>
+#include <et-ext/scene2d/baseclasses.h>
 
 namespace et
 {
@@ -22,14 +21,17 @@ namespace et
 			ImageItem(TextureDescription::Pointer t, const s2d::ImageDescriptor& p) : 
 				image(t), place(p) { }
 		};
+
 		typedef std::vector<ImageItem> ImageItemList;
 
 		struct TextureAtlasItem
 		{
 			TextureDescription::Pointer texture;
 			ImageItemList images;
-			vec2i dimensions;
+			int maxWidth = 0;
+			int maxHeight = 0;
 		};
+
 		typedef std::vector<TextureAtlasItem> TextureAtlasItemList;
 
 	public:
@@ -37,7 +39,6 @@ namespace et
 			_addSpace(addSpace) { }
 		
 		TextureAtlasItem& addItem(const vec2i& textureSize);
-		
 		bool placeImage(TextureDescription::Pointer image, TextureAtlasItem& item);
 
 		const TextureAtlasItemList& items() const 
@@ -47,7 +48,6 @@ namespace et
 
 	private:
 		TextureAtlasItemList _items;
-		bool _addSpace = true;
+		bool _addSpace;
 	};
-
 }

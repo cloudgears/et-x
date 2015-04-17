@@ -1,6 +1,7 @@
 #pragma once
 
 #include <et/rendering/texture.h>
+#include <et/rendering/program.h>
 #include <et/locale/locale.h>
 #include <et/timers/animator.h>
 #include <et-ext/scene2d/baseconst.h>
