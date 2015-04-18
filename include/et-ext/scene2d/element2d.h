@@ -312,6 +312,12 @@ namespace et
 		inline float linearInerpolation(float t)
 			{ return t; }
 
+		inline float easeOutInerpolation(float t)
+			{ return std::sqrt(t); }
+
+		inline float easeInInerpolation(float t)
+			{ return t * t; }
+
 		template <int bounce>
 		inline float sinBounceScaledInterpolation(float t)
 			{ float v = t + 0.1f * static_cast<float>(bounce) * std::sin(t * PI); return v * v; }
