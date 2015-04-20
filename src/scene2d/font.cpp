@@ -108,7 +108,7 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	deserializeFloat(fontFile.stream());
 	
 	std::string textureFile = deserializeString(fontFile.stream());
-	std::string layoutFile = deserializeString(fontFile.stream());
+	deserializeString(fontFile.stream()); // read layout file name, deprecated and not used anymore
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 

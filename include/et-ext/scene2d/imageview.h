@@ -78,8 +78,6 @@ namespace et
 
 			ImageDescriptor calculateImageFrame();
 
-			ET_DECLARE_EVENT1(onPointerReleased, const PointerInputInfo&)
-			
 			ET_DECLARE_PROPERTY_GET_REF(vec2, actualImageOrigin)
 			ET_DECLARE_PROPERTY_GET_REF(vec2, actualImageSize)
 			

@@ -104,10 +104,18 @@ namespace et
 			virtual void setDefaultProgram(et::Program::Pointer&) { }
 			virtual void setProgramParameters(et::RenderContext*, et::Program::Pointer&) { }
 			
-			virtual bool pointerPressed(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
-			virtual bool pointerMoved(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
-			virtual bool pointerReleased(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
-			virtual bool pointerCancelled(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
+			virtual bool pointerPressed(const PointerInputInfo& info) 
+				{ onPointerPressed.invoke(info); return !hasFlag(Flag_TransparentForPointer); }
+
+			virtual bool pointerMoved(const PointerInputInfo& info) 
+				{ onPointerMoved.invoke(info); return !hasFlag(Flag_TransparentForPointer); }
+
+			virtual bool pointerReleased(const PointerInputInfo& info)
+				{ onPointerReleased.invoke(info);  return !hasFlag(Flag_TransparentForPointer); }
+
+			virtual bool pointerCancelled(const PointerInputInfo& info) 
+				{ onPointerCancelled.invoke(info); return !hasFlag(Flag_TransparentForPointer); }
+
 			virtual bool pointerScrolled(const PointerInputInfo&) { return !hasFlag(Flag_TransparentForPointer); }
 			
 			virtual void pointerEntered(const PointerInputInfo&) { }
@@ -233,6 +241,11 @@ namespace et
 			ET_DECLARE_EVENT1(hoverEnded, Element2d*)
 			
 			ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, AnimatedPropery)
+
+			ET_DECLARE_EVENT1(onPointerPressed, const PointerInputInfo&);
+			ET_DECLARE_EVENT1(onPointerMoved, const PointerInputInfo&);
+			ET_DECLARE_EVENT1(onPointerReleased, const PointerInputInfo&);
+			ET_DECLARE_EVENT1(onPointerCancelled, const PointerInputInfo&);
 
 		protected:
 			void initAnimators();
