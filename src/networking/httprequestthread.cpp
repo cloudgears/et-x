@@ -50,10 +50,7 @@ HTTPRequestsThread::HTTPRequestsThread() :
 HTTPRequestsThread::~HTTPRequestsThread()
 {
 	terminateHTTPRequests();
-	
-	stop();
-	
-	waitForTermination();
+	stopAndWaitForTermination();
 }
 
 ThreadResult HTTPRequestsThread::main()

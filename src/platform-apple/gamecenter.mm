@@ -24,7 +24,7 @@ namespace et
 	const std::string kUnlockedAchievements = "unlocked-achievements";
 	const std::string kLeaderboardId = "leaderboard-id";
 	const std::string kAchievementId = "archievement-id";
-	const std::string kValue = kValue;
+	const std::string kValue = "value";
 	const std::string kValueLow = "value-low";
 	const std::string kValueHigh = "value-high";
 	const std::string kCompleted = "completed";
