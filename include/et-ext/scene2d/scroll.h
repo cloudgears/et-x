@@ -128,25 +128,25 @@ namespace et
 			PointerInputInfo _currentPointer;
 			PointerInputInfo _previousPointer;
 			
-			mat4 _localFinalTransform;
-			mat4 _localInverseTransform;
-			vec4 _backgroundColor;
-			vec4 _scrollbarsColor;
-			vec4 _overlayColor;
-			vec2 _contentSize;
-			vec2 _contentOffset;
-			vec2 _velocity;
-			vec2 _bounceExtent;
-			vector2<BounceDirection> _bouncing;
-			size_t _bounce;
-			float _updateTime;
-			float _scrollbarsAlpha;
-			float _scrollbarsAlphaTarget;
-			float _pointerScrollDuration;
-			float _movementTreshold;
+			mat4 _localFinalTransform = mat4(1.0f);
+			mat4 _localInverseTransform = mat4(1.0f);
+			vec4 _backgroundColor = vec4(0.0f);
+			vec4 _scrollbarsColor = vec4(0.0f);
+			vec4 _overlayColor = vec4(0.0f);
+			vec2 _contentSize = vec2(0.0f);
+			vec2 _contentOffset = vec2(0.0f);
+			vec2 _velocity = vec2(0.0f);
+			vec2 _bounceExtent = vec2(0.0f);
+			vector2<BounceDirection> _bouncing = vector2<BounceDirection>(BounceDirection_None);
+			size_t _bounce = 0;
+			float _updateTime = 0.0f;
+			float _scrollbarsAlpha = 0.0f;
+			float _scrollbarsAlphaTarget = 0.0f;
+			float _pointerScrollDuration = 0.0f;
+			float _movementTreshold = 0.0f;
 
-			bool _pointerCaptured;
-			bool _manualScrolling;
+			bool _pointerCaptured = false;
+			bool _manualScrolling = false;
 			bool _floorOffset = false;
 		};
 

@@ -40,7 +40,7 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 {
 	if (chars.empty()) return;
 	
-	vec4 line;
+	vec4 line(0.0f);
 	std::vector<vec4> lines;
 	
 	for (const CharDescriptor& desc : chars)

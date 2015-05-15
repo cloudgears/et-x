@@ -74,15 +74,15 @@ namespace et
 			
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _vertices;
-			vec4 _backgroundColor;
-			vec4 _shadowColor;
-			vec2 _textSize;
-			vec2 _nextTextSize;
-			vec2 _shadowOffset;
+			vec4 _backgroundColor = vec4(0.0f);
+			vec4 _shadowColor = vec4(0.0f);
+			vec2 _textSize = vec2(0.0f);
+			vec2 _nextTextSize = vec2(0.0f);
+			vec2 _shadowOffset = vec2(1.0f);
 			float _lineInterval = 1.0f;
-			float _textFade;
-			float _textFadeDuration;
-			float _textFadeStartTime;
+			float _textFade = 0.0f;
+			float _textFadeDuration = 0.0f;
+			float _textFadeStartTime = 0.0f;
 			Alignment _horizontalAlignment = Alignment_Near;
 			Alignment _verticalAlignment = Alignment_Near;
 			bool _animatingText = false;

@@ -86,16 +86,16 @@ namespace et
 			Image _sliderRight;
 			Image _handle[State_max];
 
-			vec4 _sliderLeftColor;
-			vec4 _sliderRightColor;
-			vec4 _handleFillColor;
+			vec4 _sliderLeftColor = vec4(0.0f);
+			vec4 _sliderRightColor = vec4(0.0f);
+			vec4 _handleFillColor = vec4(0.0f);
 			
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _sliderLeftVertices;
 			SceneVertexList _sliderRightVertices;
 			SceneVertexList _handleVertices;
 			
-			vec4 _backgroundColor;
+			vec4 _backgroundColor = vec4(0.0f);
 			
 			float _handleScale[State_max];
 			

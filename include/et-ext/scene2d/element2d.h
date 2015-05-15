@@ -296,9 +296,9 @@ namespace et
 			
 			SceneProgram _defaultProgram;
 			
-			mat4 _transform;
-			mat4 _finalTransform;
-			mat4 _finalInverseTransform;
+			mat4 _transform = identityMatrix;
+			mat4 _finalTransform = identityMatrix;
+			mat4 _finalInverseTransform = identityMatrix;
 			
 			ElementLayout _layout;
 			ElementLayout _autoLayout;

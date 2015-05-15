@@ -46,10 +46,10 @@ namespace et
 		struct ContentOffset
 		{
 		public:
-			float left;
-			float top;
-			float right;
-			float bottom;
+			float left = 0.0f;
+			float top = 0.0f;
+			float right = 0.0f;
+			float bottom = 0.0f;
 
 		public:
 			ContentOffset(float value = 0.0f) :
@@ -127,16 +127,16 @@ namespace et
 				position(pos), texCoord(tc), color(c) { }
 
 		public:
-			vec3 position;
-			vec4 texCoord;
-			vec4 color; 
+			vec3 position = vec3(0.0f);
+			vec4 texCoord = vec4(0.0f);;
+			vec4 color = vec4(0.0f);
 		};
 
 		struct ElementDragInfo
 		{
-			vec2 currentPosition;
-			vec2 initialPosition;
-			vec2 normalizedPointerPosition;
+			vec2 currentPosition = vec2(0.0f);
+			vec2 initialPosition = vec2(0.0f);
+			vec2 normalizedPointerPosition = vec2(0.0f);
 			
 			ElementDragInfo()
 				{ }
@@ -177,7 +177,6 @@ namespace et
 			std::string text;
 			float duration = 0.0f;
 
-
 			explicit Message(size_t aType) :
 				type(aType) { }
 			
@@ -190,10 +189,10 @@ namespace et
 
 		struct ElementLayout
 		{
-			vec2 position;
-			vec2 size;
+			vec2 position = vec2(0.0f);
+			vec2 size = vec2(0.0f);
 			vec2 scale = vec2(1.0f);
-			vec2 pivotPoint;
+			vec2 pivotPoint = vec2(0.0f);
 			float angle = 0.0f;
 			
 			size_t layoutMask = LayoutMask_All;
