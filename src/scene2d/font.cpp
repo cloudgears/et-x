@@ -9,6 +9,7 @@
 #include <et/core/conversion.h>
 #include <et/core/serialization.h>
 #include <et/app/application.h>
+#include <et/json/json.h>
 #include <et/rendering/rendercontext.h>
 #include <et/imaging/imagewriter.h>
 #include <et-ext/scene2d/font.h>
@@ -29,35 +30,52 @@ Font::Font(const CharacterGenerator::Pointer& generator) :
 
 void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 {
-	std::ofstream fOut(fileName, std::ios::out | std::ios::binary);
+	std::ofstream fOut(fileName, std::ios::out);
 	if (fOut.fail())
 	{
 		log::error("Unable save font to file %s", fileName.c_str());
 		return;
 	}
-	
-	serializeUInt32(fOut, FONT_VERSION_CURRENT);
-	serializeString(fOut, _generator->face());
-	serializeFloat(fOut, 0.0f);
-	
-	std::string textureFile = removeFileExt(getFileName(fileName)) + ".cache.png";
-	std::string layoutFile = removeFileExt(getFileName(fileName)) + ".layout.png";
-	
-	serializeString(fOut, textureFile);
-	serializeString(fOut, layoutFile);
-	
-	uint32_t charCount = static_cast<uint32_t>(_generator->charactersCount());
-	serializeUInt32(fOut, charCount);
-	
-	const auto& chars = _generator->characters();
-	const auto& boldChars = _generator->boldCharacters();
-	
-	for (const auto& c : chars)
-		fOut.write(reinterpret_cast<const char*>(&c.second), sizeof(c.second));
 
+	auto textureFile = removeFileExt(getFileName(fileName)) + ".cache.png";
+
+	Dictionary values;
+	values.setStringForKey("face", _generator->face());
+	values.setStringForKey("texture-file", textureFile);
+
+	ArrayValue characters;
+
+	const auto& chars = _generator->characters();
+	for (const auto& c : chars)
+	{
+		Dictionary character;
+		character.setIntegerForKey("value", c.second.value);
+		character.setIntegerForKey("flags", c.second.flags);
+		character.setArrayForKey("color", vec4ToArray(c.second.color));
+		character.setArrayForKey("original-size", vec2ToArray(c.second.originalSize));
+		character.setArrayForKey("parameters", vec4ToArray(c.second.parameters));
+		character.setArrayForKey("content-rect", rectToArray(c.second.contentRect));
+		character.setArrayForKey("uv-rect", rectToArray(c.second.uvRect));
+		characters->content.push_back(character);
+	}
+
+	const auto& boldChars = _generator->boldCharacters();
 	for (const auto& c : boldChars)
-		fOut.write(reinterpret_cast<const char*>(&c.second), sizeof(c.second));
-	
+	{
+		Dictionary character;
+		character.setIntegerForKey("value", c.second.value);
+		character.setIntegerForKey("flags", c.second.flags);
+		character.setArrayForKey("color", vec4ToArray(c.second.color));
+		character.setArrayForKey("original-size", vec2ToArray(c.second.originalSize));
+		character.setArrayForKey("parameters", vec4ToArray(c.second.parameters));
+		character.setArrayForKey("content-rect", rectToArray(c.second.contentRect));
+		character.setArrayForKey("uv-rect", rectToArray(c.second.uvRect));
+		characters->content.push_back(character);
+	}
+
+	values.setArrayForKey("characters", characters);
+
+	fOut << json::serialize(values, json::SerializationFlag_ReadableFormat);
 	fOut.flush();
 	fOut.close();
 	
@@ -90,9 +108,53 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 		1, 8, ImageFormat_PNG, true);
 }
 
+bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, ObjectsCache& cache, 
+	const std::string& baseFileName)
+{
+	std::string fontFileDir = getFilePath(baseFileName);
+	std::string textureFile = object.stringForKey("texture-file")->content;
+	std::string textureFileName = fontFileDir + textureFile;
+	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
+
+	Texture::Pointer tex = rc->textureFactory().loadTexture(actualName, cache);
+	if (tex.invalid())
+	{
+		log::error("Unable to load texture for font %s. Missing file: %s", 
+			baseFileName.c_str(), textureFile.c_str());
+		return false;
+	}
+
+	_generator->setTexture(tex);
+
+	ArrayValue characters = object.arrayForKey("characters");
+	for (Dictionary character : characters->content)
+	{
+		CharDescriptor desc;
+		desc.value = character.integerForKey("value")->content & 0xffffffff;
+		desc.flags = character.integerForKey("flags")->content & 0xffffffff;
+		desc.color = arrayToVec4(character.arrayForKey("color"));
+		desc.originalSize = arrayToVec2(character.arrayForKey("original-size"));
+		desc.contentRect = arrayToRect(character.arrayForKey("content-rect"));
+		desc.uvRect = arrayToRect(character.arrayForKey("uv-rect"));
+		desc.parameters = arrayToVec4(character.arrayForKey("parameters"));
+		_generator->pushCharacter(desc);
+	}
+
+	return true;
+}
+
 bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
 {
 	std::string resolvedFileName = application().resolveFileName(fileName);
+
+	auto loadedFile = loadTextFile(resolvedFileName);
+	if (!loadedFile.empty())
+	{
+		ValueClass vc = ValueClass_Invalid;
+		auto info = json::deserialize(loadedFile, vc, false);
+		if (vc == ValueClass_Dictionary)
+			return loadFromDictionary(rc, info, cache, resolvedFileName);
+	}
 	
 	InputStream fontFile(resolvedFileName, StreamMode_Binary);
 	
@@ -127,7 +189,13 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 		for (uint32_t i = 0; i < charCount; ++i)
 		{
 			CharDescriptor desc;
-			fontFile.stream().read(reinterpret_cast<char*>(&desc), sizeof(desc));
+			desc.value = deserializeInt32(fontFile.stream());
+			desc.flags = deserializeInt32(fontFile.stream());
+			desc.color = deserializeVector<vec4>(fontFile.stream());
+			desc.originalSize = deserializeVector<vec2>(fontFile.stream());
+			desc.contentRect = deserializeVector<rect>(fontFile.stream());
+			desc.uvRect = deserializeVector<rect>(fontFile.stream());
+			desc.parameters = deserializeVector<vec4>(fontFile.stream());
 			_generator->pushCharacter(desc);
 		}
 	}
