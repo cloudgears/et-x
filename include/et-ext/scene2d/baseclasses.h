@@ -127,9 +127,9 @@ namespace et
 				position(pos), texCoord(tc), color(c) { }
 
 		public:
-			vec3 position = vec3(0.0f);
 			vec4 texCoord = vec4(0.0f);;
 			vec4 color = vec4(0.0f);
+			vec3 position = vec3(0.0f);
 		};
 
 		struct ElementDragInfo

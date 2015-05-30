@@ -124,7 +124,8 @@ void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture::
 	ET_ASSERT((count > 0) && _renderingElement.valid() && program.valid());
 	
 	auto target = allocateVertices(count, texture, program, owner, pt);
-	etCopyMemory(target, vertices.data(), count * vertices.typeSize());
+	for (const auto& v : vertices)
+		*target++ = v;
 }
 
 void s2d::SceneRenderer::setRendernigElement(const RenderingElement::Pointer& r)
