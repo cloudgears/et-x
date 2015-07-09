@@ -174,19 +174,19 @@ namespace et
 			StaticDataStorage<Image, State_max> _background;
 			StaticDataStorage<Image, State_max> _image;
 			
-			vec4 _textColor;
-			vec4 _textPressedColor;
-			vec4 _pressedColor;
-			vec4 _backgroundColor;
-			vec4 _backgroundTintColor;
-			vec4 _commonBackgroundTintColor;
-			vec2 _currentTextSize;
-			vec2 _nextTextSize;
-			vec2 _maxTextSize;
-			vec2 _contentOffset;
-			vec2 _imageOrigin;
-			vec2 _imageSize;
-			vec2 _textOrigin;
+			vec4 _textColor = vec4(0.0f, 1.0f);
+			vec4 _textPressedColor = vec4(0.0f, 1.0f);
+			vec4 _pressedColor = vec4(1.0f);
+			vec4 _backgroundColor = vec4(0.0f);
+			vec4 _backgroundTintColor = vec4(1.0f);
+			vec4 _commonBackgroundTintColor = vec4(1.0f);
+			vec2 _currentTextSize = vec2(0.0f);
+			vec2 _nextTextSize = vec2(0.0f);
+			vec2 _maxTextSize = vec2(0.0f);
+			vec2 _contentOffset = vec2(0.0f);
+			vec2 _imageOrigin = vec2(0.0f);
+			vec2 _imageSize = vec2(0.0f);
+			vec2 _textOrigin = vec2(0.0f);
 			
 			FloatAnimator _titleAnimator;
 			Vector4Animator _backgroundTintAnimator;
