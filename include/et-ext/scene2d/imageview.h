@@ -94,8 +94,8 @@ namespace et
 			SceneVertexList _vertices;
 			Animator<ImageDescriptor> _descriptor;
 			Vector4Animator _backgroundColorAnimator;
-			vec4 _backgroundColor;
-			ContentMode _contentMode;
+			vec4 _backgroundColor = vec4(0.0f);
+			ContentMode _contentMode = ContentMode_Stretch;
 		};
 
 		typedef std::vector<ImageView::Pointer> ImageViewList;

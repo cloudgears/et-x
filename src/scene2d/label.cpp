@@ -82,11 +82,17 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 				_verticalAlignment, shadowOffset, shadowColor, transform, _lineInterval);
 		}
 
-		buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
-			textOffset, finalColorValue * vec4(1.0, fadeOut), transform, _lineInterval);
+		if (fadeOut > 0.0f)
+		{
+			buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
+				textOffset, finalColorValue * vec4(1.0, fadeOut), transform, _lineInterval);
+		}
 		
-		buildStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment,
-			textOffset, finalColorValue * vec4(1.0, fadeIn), transform, _lineInterval);
+		if (fadeIn > 0.0f)
+		{
+			buildStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment,
+				textOffset, finalColorValue * vec4(1.0, fadeIn), transform, _lineInterval);
+		}
 	}
 	else 
 	{
@@ -110,7 +116,7 @@ void Label::setText(const std::string& aText, float duration)
 	{
 		_animatingText = false;
 		cancelUpdates();
-		
+	
 		_text.setKey(aText);
 		_nextText.setKey(aText);
 	}
@@ -119,10 +125,12 @@ void Label::setText(const std::string& aText, float duration)
 		startUpdates();
 
 		if (_animatingText)
+		{
 			_text = _nextText;
+			_charListText = _charListNextText;
+		}
 		
 		_nextText.setKey(aText);
-		
 		_nextTextSize = font()->measureStringSize(_nextText.cachedText, fontSize(), fontSmoothing());
 		
 		_textFade = 0.0f;
@@ -158,11 +166,8 @@ void Label::update(float t)
 		_animatingText = false;
 		
 		_text = _nextText;
-		_textSize = font()->measureStringSize(_text.cachedText, fontSize(), fontSmoothing());
-		
-		_nextText.clear();
-		_charListNextText.clear();
-		_nextTextSize = vec2(0.0f);
+		_textSize = _nextTextSize;
+		_charListText = _charListNextText;
 		
 		adjustSize();
 		cancelUpdates();
@@ -358,5 +363,6 @@ void Label::invalidateText()
 {
 	_charListText = font()->buildString(_text.cachedText, fontSize(), fontSmoothing());
 	_charListNextText = font()->buildString(_nextText.cachedText, fontSize(), fontSmoothing());
+
 	invalidateContent();
 }
