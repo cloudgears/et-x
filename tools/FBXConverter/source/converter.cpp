@@ -160,10 +160,10 @@ void Converter::performSceneRendering()
 	_defaultProgram->setCameraProperties(_camera);
 
 	if (_btnDrawNormalMeshes->selected())
-		renderMeshList(_rc, _scene->childrenOfType(s3d::ElementType_Mesh));
+		renderMeshList(_rc, _scene->childrenOfType(s3d::ElementType::Mesh));
 
 	if (_btnDrawSupportMeshes->selected())
-		renderMeshList(_rc, _scene->childrenOfType(s3d::ElementType_SupportMesh));
+		renderMeshList(_rc, _scene->childrenOfType(s3d::ElementType::SupportMesh));
 	
 	_rc->renderState().setSampleAlphaToCoverage(false);
 }
@@ -217,7 +217,7 @@ void Converter::onScroll(et::vec2 s, et::PointerOrigin o)
 
 void Converter::onBtnOpenClick(et::s2d::Button*)
 {
-	std::string fileName = selectFile({"fbx", "etm"}, SelectFileMode::Open, std::string());
+	std::string fileName = selectFile({"fbx", "json", "etmx"}, SelectFileMode::Open, std::string());
 	
 	if (fileExists(fileName))
 	{
@@ -270,15 +270,27 @@ void Converter::performLoading(std::string path)
 {
 	lowercase(path);
 
+	_scene->clearRecursively();
+
 	auto extension = getFileExt(path);
-	if (extension == "etmx")
+	if ((extension == "etmx") || (extension == "json"))
 	{
-		// TODO : deserialize
+		ValueClass vc = ValueClass_Invalid;
+		et::Dictionary info = json::deserialize(loadTextFile(path), vc);
+		if (vc == ValueClass_Dictionary)
+		{
+			_scene->deserialize(_rc, info, getFilePath(path), _texCache);
+		}
+		else 
+		{
+			_labStatus->setText("Failed to parse file " + getFileName(path));
+			return;
+		}
 	}
 	else if (extension == "fbx")
 	{
 		FBXLoader loader(path);
-		s3d::ElementContainer::Pointer loadedScene = loader.load(_rc, _texCache);
+		s3d::ElementContainer::Pointer loadedScene = loader.load(_rc, _scene->storage(), _texCache);
 		if (loadedScene.valid())
 		{
 			auto loadedObjects = loadedScene->children();
@@ -288,8 +300,8 @@ void Converter::performLoading(std::string path)
 	}
 	else if (extension == "obj")
 	{
-		OBJLoader loader(_rc, path);
-		s3d::ElementContainer::Pointer loadedScene = loader.load(_texCache, 0);
+		OBJLoader loader(path, OBJLoader::Option_JustLoad);
+		s3d::ElementContainer::Pointer loadedScene = loader.load(_rc, _scene->storage(), _texCache);
 		if (loadedScene.valid())
 		{
 			auto loadedObjects = loadedScene->children();
@@ -298,9 +310,7 @@ void Converter::performLoading(std::string path)
 		}
 	}
 
-	auto storages = _scene->childrenOfType(s3d::ElementType_Storage);
-	for (s3d::Storage::Pointer storage : storages)
-		storage->flush();
+	_scene->storage().flush();
 
 	size_t value = path.find_last_of(".etm");
 	size_t len = path.length();

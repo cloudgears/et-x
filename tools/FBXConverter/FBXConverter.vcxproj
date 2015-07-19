@@ -32,6 +32,7 @@
     <ClCompile Include="..\..\..\et\src\core\transformable.cpp" />
     <ClCompile Include="..\..\..\et\src\geometry\geometry.cpp" />
     <ClCompile Include="..\..\..\et\src\geometry\rectplacer.cpp" />
+    <ClCompile Include="..\..\..\et\src\imaging\bmploader.cpp" />
     <ClCompile Include="..\..\..\et\src\imaging\ddsloader.cpp" />
     <ClCompile Include="..\..\..\et\src\imaging\hdrloader.cpp" />
     <ClCompile Include="..\..\..\et\src\imaging\imageoperations.cpp" />
@@ -68,7 +69,6 @@
     <ClCompile Include="..\..\..\et\src\platform-win\memory.win.cpp" />
     <ClCompile Include="..\..\..\et\src\platform-win\mutex.win.cpp" />
     <ClCompile Include="..\..\..\et\src\platform-win\opengl.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\platformtools.win.cpp" />
     <ClCompile Include="..\..\..\et\src\platform-win\rendercontext.win-directx.cpp" />
     <ClCompile Include="..\..\..\et\src\platform-win\rendercontext.win-opengl.cpp" />
     <ClCompile Include="..\..\..\et\src\platform-win\sound.openal.win.cpp" />
@@ -90,6 +90,7 @@
     <ClCompile Include="..\..\..\et\src\scene3d\material.cpp" />
     <ClCompile Include="..\..\..\et\src\scene3d\mesh.cpp" />
     <ClCompile Include="..\..\..\et\src\scene3d\particlesystem.cpp" />
+    <ClCompile Include="..\..\..\et\src\scene3d\renderableelement.cpp" />
     <ClCompile Include="..\..\..\et\src\scene3d\scene3d.cpp" />
     <ClCompile Include="..\..\..\et\src\scene3d\serialization.cpp" />
     <ClCompile Include="..\..\..\et\src\scene3d\storage.cpp" />
@@ -131,152 +132,26 @@
     <ClCompile Include="source\converter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\et\include\et\app\appevironment.h" />
-    <ClInclude Include="..\..\..\et\include\et\app\application.h" />
-    <ClInclude Include="..\..\..\et\include\et\app\applicationdelegate.h" />
-    <ClInclude Include="..\..\..\et\include\et\app\applicationnotifier.h" />
-    <ClInclude Include="..\..\..\et\include\et\app\backgroundthread.h" />
-    <ClInclude Include="..\..\..\et\include\et\app\events.h" />
-    <ClInclude Include="..\..\..\et\include\et\app\events.inl.h" />
-    <ClInclude Include="..\..\..\et\include\et\app\invocation.h" />
-    <ClInclude Include="..\..\..\et\include\et\app\pathresolver.h" />
-    <ClInclude Include="..\..\..\et\include\et\app\runloop.h" />
-    <ClInclude Include="..\..\..\et\include\et\camera\camera.h" />
-    <ClInclude Include="..\..\..\et\include\et\camera\frustum.h" />
-    <ClInclude Include="..\..\..\et\include\et\collision\aabb.h" />
-    <ClInclude Include="..\..\..\et\include\et\collision\collision.h" />
-    <ClInclude Include="..\..\..\et\include\et\collision\obb.h" />
-    <ClInclude Include="..\..\..\et\include\et\collision\sphere.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\atomiccounter.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\autoptr.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\autovalue.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\base64.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\constants.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\containers.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\containersbase.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\conversion.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\conversionbase.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\cout.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\datastorage.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\debug.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\dictionary.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\et.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\filesystem.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\flags.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\hardware.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\hierarchy.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\intrusiveptr.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\log.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\memory.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\memoryallocator.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\object.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\objectscache.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\plist.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\properties.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\rawdataaccessor.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\serialization.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\sharedptr.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\singleton.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\staticdatastorage.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\stream.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\strings.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\tools.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\transformable.h" />
-    <ClInclude Include="..\..\..\et\include\et\core\types.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\equations.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\geometry.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\line2d.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\matrix3.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\matrix4.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\parallelepiped.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\plane.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\quaternion.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\ray.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\rect.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\rectplacer.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\segment2d.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\segment3d.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\splines.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\splines.inl.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\triangle.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\triangleex.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\vector2.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\vector3.h" />
-    <ClInclude Include="..\..\..\et\include\et\geometry\vector4.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\ddsloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\hdrloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\imageoperations.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\imagewriter.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\jpegloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\pngloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\pvrloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\texturedescription.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\textureloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\textureloaderthread.h" />
-    <ClInclude Include="..\..\..\et\include\et\imaging\tgaloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\input\gestures.h" />
-    <ClInclude Include="..\..\..\et\include\et\input\input.h" />
-    <ClInclude Include="..\..\..\et\include\et\json\json.h" />
-    <ClInclude Include="..\..\..\et\include\et\locale\locale.ext.h" />
-    <ClInclude Include="..\..\..\et\include\et\locale\locale.h" />
     <ClInclude Include="..\..\..\et\include\et\models\fbxloader.h" />
+    <ClInclude Include="..\..\..\et\include\et\models\modelloader.h" />
     <ClInclude Include="..\..\..\et\include\et\models\objloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\opengl\opengl.h" />
-    <ClInclude Include="..\..\..\et\include\et\opengl\openglcaps.h" />
-    <ClInclude Include="..\..\..\et\include\et\platform-win\glee.h" />
-    <ClInclude Include="..\..\..\et\include\et\platform\compileoptions.h" />
-    <ClInclude Include="..\..\..\et\include\et\platform\platform.h" />
-    <ClInclude Include="..\..\..\et\include\et\platform\platformtools.h" />
-    <ClInclude Include="..\..\..\et\include\et\primitives\primitives.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\apiobject.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\apiobjectfactory.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\framebuffer.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\framebufferfactory.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\indexbuffer.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\program.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\programfactory.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\rendercontext.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\rendercontextparams.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\renderer.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\rendering.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\renderingcaps.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\renderstate.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\texture.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\texturefactory.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\vertexarrayobject.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\vertexbuffer.h" />
-    <ClInclude Include="..\..\..\et\include\et\rendering\vertexbufferfactory.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\animation.h" />
+    <ClInclude Include="..\..\..\et\include\et\scene3d\elementcontainer.h" />
+    <ClInclude Include="..\..\..\et\include\et\scene3d\renderableelement.h" />
+    <ClInclude Include="..\..\..\et\include\et\scene3d\base.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\baseelement.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\cameraelement.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\lightelement.h" />
+    <ClInclude Include="..\..\..\et\include\et\scene3d\material.deprecated.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\material.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\material.parameters.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\mesh.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\particlesystem.h" />
+    <ClInclude Include="..\..\..\et\include\et\scene3d\scene3d.deprecated.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\scene3d.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\serialization.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\storage.h" />
     <ClInclude Include="..\..\..\et\include\et\scene3d\supportmesh.h" />
-    <ClInclude Include="..\..\..\et\include\et\tasks\taskpool.h" />
-    <ClInclude Include="..\..\..\et\include\et\tasks\tasks.h" />
-    <ClInclude Include="..\..\..\et\include\et\threading\criticalsection.h" />
-    <ClInclude Include="..\..\..\et\include\et\threading\mutex.h" />
-    <ClInclude Include="..\..\..\et\include\et\threading\thread.h" />
-    <ClInclude Include="..\..\..\et\include\et\threading\threading.h" />
-    <ClInclude Include="..\..\..\et\include\et\timers\animator.h" />
-    <ClInclude Include="..\..\..\et\include\et\timers\inertialvalue.h" />
-    <ClInclude Include="..\..\..\et\include\et\timers\interpolationvalue.h" />
-    <ClInclude Include="..\..\..\et\include\et\timers\intervaltimer.h" />
-    <ClInclude Include="..\..\..\et\include\et\timers\notifytimer.h" />
-    <ClInclude Include="..\..\..\et\include\et\timers\sequence.h" />
-    <ClInclude Include="..\..\..\et\include\et\timers\timedobject.h" />
-    <ClInclude Include="..\..\..\et\include\et\timers\timerpool.h" />
-    <ClInclude Include="..\..\..\et\include\et\vertexbuffer\indexarray.h" />
-    <ClInclude Include="..\..\..\et\include\et\vertexbuffer\vertexarray.h" />
-    <ClInclude Include="..\..\..\et\include\et\vertexbuffer\vertexdatachunk.h" />
-    <ClInclude Include="..\..\..\et\include\et\vertexbuffer\vertexdeclaration.h" />
-    <ClInclude Include="..\..\..\et\include\et\vertexbuffer\vertexstorage.h" />
     <ClInclude Include="source\converter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals" />
@@ -316,8 +191,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>..\..\..\et\include;..\..\include;Q:\SDK\FBX\include;$(IncludePath)</IncludePath>
-    <LibraryPath>Q:\SDK\FBX\lib\vs2013\x64\release;..\..\..\et\lib\win;..\..\lib\win;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\..\..\et\include;..\..\include\external\freetype;..\..\include;Q:\SDK\FBX\include;$(IncludePath)</IncludePath>
+    <LibraryPath>Q:\SDK\FBX\lib\vs2013\x64\release;..\..\..\et\lib\win\x64;..\..\lib\win\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -334,7 +209,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;libfbxsdk-mt.lib;wininet.lib;psapi.lib;libpng16.lib;zlib.lib;jansson.lib;jpeg.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;libfbxsdk-mt.lib;wininet.lib;psapi.lib;png.lib;z.lib;jansson.lib;jpeg.lib;freetype.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
@@ -357,7 +232,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;libfbxsdk-mt.lib;wininet.lib;psapi.lib;libpng16.lib;zlib.lib;jansson.lib;jpeg.lib;freetype.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;libfbxsdk-mt.lib;wininet.lib;psapi.lib;png.lib;z.lib;jansson.lib;jpeg.lib;freetype.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>

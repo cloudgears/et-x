@@ -1,2 +1,6 @@
 demo/ambient-occlusion/windows/Release/
 demo/ambient-occlusion/windows/Debug/
+tools/FBXConverter/x64/
+*.opensdf
+*.sdf
+*.suo
