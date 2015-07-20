@@ -160,7 +160,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 
 	RenderState& rs = rc->renderState();
 	Renderer* renderer = rc->renderer();
-	const IndexBuffer& indexBuffer = _renderingElement->vertexArrayObject()->indexBuffer();
+	const IndexBuffer::Pointer& indexBuffer = _renderingElement->vertexArrayObject()->indexBuffer();
 	
 	Program::Pointer lastBoundProgram;
 	for (auto& i : _renderingElement->chunks)
