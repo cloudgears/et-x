@@ -47,6 +47,9 @@ namespace et
 		
 		bool succeeded() const;
 		
+		void setTimeoutInSeconds(uint64_t);
+		void setConnectionTimeoutInSeconds(uint64_t);
+		
 		ET_DECLARE_EVENT2(downloadProgress, int64_t, int64_t)
 		ET_DECLARE_EVENT2(uploadProgress, int64_t, int64_t)
 		

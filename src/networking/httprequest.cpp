@@ -22,6 +22,8 @@ public:
 	std::string password;
 	std::map<std::string, BinaryDataStorage> params;
 	std::map<std::string, std::string> uploadFiles;
+	uint64_t connectionTimeout = 5;
+	uint64_t timeout = 5;
 	BinaryDataStorage body;
 	
 	HTTPRequestResponse::Pointer response;
@@ -151,7 +153,6 @@ void HTTPRequest::perform()
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE_LARGE, curl_off_t(_private->body.size()));
 	}
 	
-	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10000);
 	curl_easy_setopt(curl, CURLOPT_FILE, _private);
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
@@ -160,6 +161,8 @@ void HTTPRequest::perform()
 	curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, HTTPRequestProgressFunction);
 	curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
     curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, (long)(_private->timeout));
+	curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, (long)(_private->connectionTimeout));
 	
 	if (_private->response.invalid())
 		_private->response = HTTPRequestResponsePointer::create();
@@ -187,4 +190,14 @@ void HTTPRequest::setBody(const BinaryDataStorage& data)
 bool HTTPRequest::succeeded() const
 {
 	return _private->_succeeded;
+}
+
+void HTTPRequest::setConnectionTimeoutInSeconds(uint64_t t)
+{
+	_private->connectionTimeout = t;
+}
+
+void HTTPRequest::setTimeoutInSeconds(uint64_t t)
+{
+	_private->timeout = t;
 }

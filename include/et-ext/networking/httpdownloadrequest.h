@@ -29,7 +29,7 @@ namespace et
 			
 			auto requestResponse = response();
 			
-			if (requestResponse->responseCode() == ResponseSuccessful)
+			if (succeeded() && (requestResponse->responseCode() == ResponseSuccessful))
 				requestResponse->data().writeToFile(_targetFile, true);
 		}
 		
