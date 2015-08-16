@@ -12,6 +12,7 @@ using namespace et;
 using namespace et::s2d;
 
 extern std::string et_scene2d_default_shader_vs;
+extern std::string et_scene2d_default_shader_vs_with_screen_pos;
 
 extern std::string et_scene2d_default_shader_fs;
 
@@ -25,7 +26,7 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 {
 	pushClipRect(recti(vec2i(0), rc->sizei()));
 	
-	_defaultProgram = createProgramWithFragmentshader(defaultProgramName, et_scene2d_default_shader_fs);
+	_defaultProgram = createProgramWithFragmentshader(defaultProgramName, et_scene2d_default_shader_fs, false);
 	_defaultProgram.program->setUniform(textureSamplerName, 0);
 	
 	_defaultTexture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
@@ -223,24 +224,44 @@ SceneProgram SceneRenderer::createProgramWithShaders(const std::string& name, co
 	return program;
 }
 
-SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& name, const std::string& fs)
+SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& name, const std::string& fs,
+	bool includeScreenSpacePosVarying)
 {
-	return createProgramWithShaders(name, et_scene2d_default_shader_vs, fs);
+	auto vs = includeScreenSpacePosVarying ?
+		et_scene2d_default_shader_vs_with_screen_pos : et_scene2d_default_shader_vs;
+	
+	return createProgramWithShaders(name, vs, fs);
 }
 
 std::string et_scene2d_default_shader_vs =
 	"uniform mat4 mTransform;"
 	"uniform vec3 " + additionalOffsetAndAlphaUniform + ";"
-
 	"etVertexIn vec3 Vertex;"
 	"etVertexIn vec4 TexCoord0;"
 	"etVertexIn vec4 Color;"
+	"etVertexOut etHighp vec2 texCoord;"
+	"etVertexOut etLowp vec4 tintColor;"
+	"etVertexOut etLowp vec4 additiveColor;"
+	"void main()"
+	"{"
+		"texCoord = TexCoord0.xy;"
+		"vec4 alphaScaledColor = Color * vec4(1.0, 1.0, 1.0, additionalOffsetAndAlpha.z);"
+		"additiveColor = alphaScaledColor * TexCoord0.w;"
+		"tintColor = alphaScaledColor * (1.0 - TexCoord0.w);"
+		"vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
+		"gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
+	"}";
 
+std::string et_scene2d_default_shader_vs_with_screen_pos =
+	"uniform mat4 mTransform;"
+	"uniform vec3 " + additionalOffsetAndAlphaUniform + ";"
+	"etVertexIn vec3 Vertex;"
+	"etVertexIn vec4 TexCoord0;"
+	"etVertexIn vec4 Color;"
 	"etVertexOut etHighp vec2 texCoord;"
 	"etVertexOut etHighp vec2 screenSpaceTexCoord;"
 	"etVertexOut etLowp vec4 tintColor;"
 	"etVertexOut etLowp vec4 additiveColor;"
-
 	"void main()"
 	"{"
 		"texCoord = TexCoord0.xy;"

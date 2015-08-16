@@ -40,8 +40,9 @@ void main()
 
 	float specularTerm = pow(max(0.0, dot(reflect(-vLight, vNormal), vView)), roughness);
 	
-	etFragmentOut = vColor * (diffuseSample * (ambientColor * ambientSample + diffuseColor * diffuseTerm) +
-		(specularSample * specularColor) * (diffuseSample.w * specularTerm));
+	etFragmentOut = vec4(diffuseTerm);
+ //* (diffuseSample * (ambientColor * ambientSample + diffuseColor * diffuseTerm) +
+//		(specularSample * specularColor) * (diffuseSample.w * specularTerm));
 		
 	etFragmentOut.w = diffuseSample.w;
 }

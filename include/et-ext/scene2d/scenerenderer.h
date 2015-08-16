@@ -52,8 +52,11 @@ namespace et
 			const Texture::Pointer& defaultTexture() const
 				{ return _defaultTexture; }
 			
-			SceneProgram createProgramWithFragmentshader(const std::string& name, const std::string& fs);
-			SceneProgram createProgramWithShaders(const std::string& name, const std::string& vs, const std::string& fs);
+			SceneProgram createProgramWithFragmentshader(const std::string& name, const std::string& fs,
+				bool includeScreenSpacePosVarying);
+			
+			SceneProgram createProgramWithShaders(const std::string& name, const std::string& vs,
+				const std::string& fs);
 
 		private:
 			void init(RenderContext* rc);

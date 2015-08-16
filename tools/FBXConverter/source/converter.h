@@ -2,7 +2,7 @@
 #include <et/scene3d/scene3d.h>
 #include <et/timers/interpolationvalue.h>
 #include <et/input/gestures.h>
-
+#include <et/camera/cameramovingcontroller.h>
 #include <et-ext/scene2d/scene.h>
 
 namespace fbxc
@@ -26,6 +26,7 @@ namespace fbxc
 		void render(et::RenderContext*);
 
 	private:
+		void buildSupportMeshes(et::RenderContext*);
 
 		void onPointerPressed(et::PointerInputInfo);
 		void onPointerMoved(et::PointerInputInfo);
@@ -42,7 +43,10 @@ namespace fbxc
 		void performBinaryWithReadableMaterialsSaving(std::string);
 
 		void renderMeshList(et::RenderContext* rc, const et::s3d::BaseElement::List& meshes);
+		void renderSkeleton(et::RenderContext* rc, const et::s3d::BaseElement::List& bones);
 		void performSceneRendering();
+		
+		void printStructureRecursive(et::s3d::BaseElement::Pointer, const std::string&);
 
 	private:
 		et::RenderContext* _rc;
@@ -50,8 +54,11 @@ namespace fbxc
 		et::GesturesRecognizer _gestures;
 		et::s2d::Scene::Pointer _gui;
 		et::s3d::Scene::Pointer _scene;
-		et::Program::Pointer _defaultProgram;
+		et::Program::Pointer _skinnedProgram;
+		et::Program::Pointer _transformedProgram;
+		
 		et::Camera _camera;
+		et::CameraMovingController _cameraController;
 
 		MainLayout::Pointer _mainLayout;
 
@@ -63,5 +70,9 @@ namespace fbxc
 
 		et::InterpolationValue<float> _vDistance;
 		et::InterpolationValue<et::vec2> _vAngle;
+		
+		et::VertexArrayObject _sphereVao;
+		et::VertexArrayObject _lineVao;
+		et::VertexArrayObject _testVao;
 	};
 }

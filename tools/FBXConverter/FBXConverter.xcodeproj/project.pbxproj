@@ -7,6 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A51198331B7DF7E400CEA306 /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51198261B7DF7E400CEA306 /* animation.cpp */; };
+		A51198341B7DF7E400CEA306 /* baseelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51198271B7DF7E400CEA306 /* baseelement.cpp */; };
+		A51198351B7DF7E400CEA306 /* cameraelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51198281B7DF7E400CEA306 /* cameraelement.cpp */; };
+		A51198361B7DF7E400CEA306 /* lightelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51198291B7DF7E400CEA306 /* lightelement.cpp */; };
+		A51198371B7DF7E400CEA306 /* lineelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A511982A1B7DF7E400CEA306 /* lineelement.cpp */; };
+		A51198381B7DF7E400CEA306 /* material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A511982B1B7DF7E400CEA306 /* material.cpp */; };
+		A51198391B7DF7E400CEA306 /* mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A511982C1B7DF7E400CEA306 /* mesh.cpp */; };
+		A511983A1B7DF7E400CEA306 /* particlesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A511982D1B7DF7E400CEA306 /* particlesystem.cpp */; };
+		A511983B1B7DF7E400CEA306 /* renderableelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A511982E1B7DF7E400CEA306 /* renderableelement.cpp */; };
+		A511983C1B7DF7E400CEA306 /* scene3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A511982F1B7DF7E400CEA306 /* scene3d.cpp */; };
+		A511983D1B7DF7E400CEA306 /* serialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51198301B7DF7E400CEA306 /* serialization.cpp */; };
+		A511983E1B7DF7E400CEA306 /* storage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51198311B7DF7E400CEA306 /* storage.cpp */; };
+		A511983F1B7DF7E400CEA306 /* supportmesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51198321B7DF7E400CEA306 /* supportmesh.cpp */; };
+		A51198411B7DF7F100CEA306 /* bmploader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A51198401B7DF7F100CEA306 /* bmploader.cpp */; };
+		A51198431B7DF82D00CEA306 /* libfbxsdk.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = A51198421B7DF82D00CEA306 /* libfbxsdk.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		A52328F71B80AD1900D00DD6 /* meshdeformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52328F61B80AD1900D00DD6 /* meshdeformer.cpp */; };
+		A52328F91B80AE5E00D00DD6 /* skeletonelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A52328F81B80AE5E00D00DD6 /* skeletonelement.cpp */; };
 		A53B4F351681220500C6B8EC /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A53B4F341681220500C6B8EC /* main.cpp */; };
 		A53B4F441681256B00C6B8EC /* data in Resources */ = {isa = PBXBuildFile; fileRef = A53B4F431681256B00C6B8EC /* data */; };
 		A56C231A1A818781002FFDDD /* vertexstorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A56C23191A818781002FFDDD /* vertexstorage.cpp */; };
@@ -106,17 +123,6 @@
 		A5B2C1B21A703EF30022A1CA /* texturefactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1531A703EF30022A1CA /* texturefactory.cpp */; };
 		A5B2C1B31A703EF30022A1CA /* textureloadingthread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1541A703EF30022A1CA /* textureloadingthread.cpp */; };
 		A5B2C1B41A703EF30022A1CA /* vertexbufferfactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1551A703EF30022A1CA /* vertexbufferfactory.cpp */; };
-		A5B2C1B51A703EF30022A1CA /* animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1571A703EF30022A1CA /* animation.cpp */; };
-		A5B2C1B61A703EF30022A1CA /* baseelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1581A703EF30022A1CA /* baseelement.cpp */; };
-		A5B2C1B71A703EF30022A1CA /* cameraelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1591A703EF30022A1CA /* cameraelement.cpp */; };
-		A5B2C1B81A703EF30022A1CA /* lightelement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C15A1A703EF30022A1CA /* lightelement.cpp */; };
-		A5B2C1B91A703EF30022A1CA /* material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C15B1A703EF30022A1CA /* material.cpp */; };
-		A5B2C1BA1A703EF30022A1CA /* mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C15C1A703EF30022A1CA /* mesh.cpp */; };
-		A5B2C1BB1A703EF30022A1CA /* particlesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C15D1A703EF30022A1CA /* particlesystem.cpp */; };
-		A5B2C1BC1A703EF30022A1CA /* scene3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C15E1A703EF30022A1CA /* scene3d.cpp */; };
-		A5B2C1BD1A703EF30022A1CA /* serialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C15F1A703EF30022A1CA /* serialization.cpp */; };
-		A5B2C1BE1A703EF30022A1CA /* storage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1601A703EF30022A1CA /* storage.cpp */; };
-		A5B2C1BF1A703EF30022A1CA /* supportmesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1611A703EF30022A1CA /* supportmesh.cpp */; };
 		A5B2C1C01A703EF30022A1CA /* taskpool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1631A703EF30022A1CA /* taskpool.cpp */; };
 		A5B2C1C11A703EF30022A1CA /* notifytimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1651A703EF30022A1CA /* notifytimer.cpp */; };
 		A5B2C1C21A703EF30022A1CA /* sequence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C1661A703EF30022A1CA /* sequence.cpp */; };
@@ -126,7 +132,8 @@
 		A5B2C1C61A703EF30022A1CA /* vertexarray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C16B1A703EF30022A1CA /* vertexarray.cpp */; };
 		A5B2C1C71A703EF30022A1CA /* vertexdatachunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C16C1A703EF30022A1CA /* vertexdatachunk.cpp */; };
 		A5B2C1C81A703EF30022A1CA /* vertexdeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B2C16D1A703EF30022A1CA /* vertexdeclaration.cpp */; };
-		A5B2C2751A70408B0022A1CA /* libfbxsdk.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = A5B2C2741A70408B0022A1CA /* libfbxsdk.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		A5C1E0F51B7E8417001C1030 /* cameramovingcontroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1E0F41B7E8417001C1030 /* cameramovingcontroller.cpp */; };
+		A5C1E0F71B7E844B001C1030 /* cameracontroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5C1E0F61B7E844B001C1030 /* cameracontroller.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -136,17 +143,54 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				A5B2C2751A70408B0022A1CA /* libfbxsdk.dylib in CopyFiles */,
+				A51198431B7DF82D00CEA306 /* libfbxsdk.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A51198131B7DF7D900CEA306 /* animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animation.h; sourceTree = "<group>"; };
+		A51198141B7DF7D900CEA306 /* base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base.h; sourceTree = "<group>"; };
+		A51198151B7DF7D900CEA306 /* baseelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseelement.h; sourceTree = "<group>"; };
+		A51198161B7DF7D900CEA306 /* cameraelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cameraelement.h; sourceTree = "<group>"; };
+		A51198171B7DF7D900CEA306 /* elementcontainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = elementcontainer.h; sourceTree = "<group>"; };
+		A51198181B7DF7D900CEA306 /* lightelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lightelement.h; sourceTree = "<group>"; };
+		A51198191B7DF7D900CEA306 /* lineelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lineelement.h; sourceTree = "<group>"; };
+		A511981A1B7DF7D900CEA306 /* material.deprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = material.deprecated.h; sourceTree = "<group>"; };
+		A511981B1B7DF7D900CEA306 /* material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = material.h; sourceTree = "<group>"; };
+		A511981C1B7DF7D900CEA306 /* material.parameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = material.parameters.h; sourceTree = "<group>"; };
+		A511981D1B7DF7D900CEA306 /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
+		A511981E1B7DF7D900CEA306 /* particlesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = particlesystem.h; sourceTree = "<group>"; };
+		A511981F1B7DF7D900CEA306 /* renderableelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = renderableelement.h; sourceTree = "<group>"; };
+		A51198201B7DF7D900CEA306 /* scene3d.deprecated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene3d.deprecated.h; sourceTree = "<group>"; };
+		A51198211B7DF7D900CEA306 /* scene3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene3d.h; sourceTree = "<group>"; };
+		A51198221B7DF7D900CEA306 /* serialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = serialization.h; sourceTree = "<group>"; };
+		A51198231B7DF7D900CEA306 /* storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = storage.h; sourceTree = "<group>"; };
+		A51198241B7DF7D900CEA306 /* supportmesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = supportmesh.h; sourceTree = "<group>"; };
+		A51198261B7DF7E400CEA306 /* animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = animation.cpp; sourceTree = "<group>"; };
+		A51198271B7DF7E400CEA306 /* baseelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = baseelement.cpp; sourceTree = "<group>"; };
+		A51198281B7DF7E400CEA306 /* cameraelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cameraelement.cpp; sourceTree = "<group>"; };
+		A51198291B7DF7E400CEA306 /* lightelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lightelement.cpp; sourceTree = "<group>"; };
+		A511982A1B7DF7E400CEA306 /* lineelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lineelement.cpp; sourceTree = "<group>"; };
+		A511982B1B7DF7E400CEA306 /* material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = material.cpp; sourceTree = "<group>"; };
+		A511982C1B7DF7E400CEA306 /* mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mesh.cpp; sourceTree = "<group>"; };
+		A511982D1B7DF7E400CEA306 /* particlesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = particlesystem.cpp; sourceTree = "<group>"; };
+		A511982E1B7DF7E400CEA306 /* renderableelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = renderableelement.cpp; sourceTree = "<group>"; };
+		A511982F1B7DF7E400CEA306 /* scene3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene3d.cpp; sourceTree = "<group>"; };
+		A51198301B7DF7E400CEA306 /* serialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = serialization.cpp; sourceTree = "<group>"; };
+		A51198311B7DF7E400CEA306 /* storage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = storage.cpp; sourceTree = "<group>"; };
+		A51198321B7DF7E400CEA306 /* supportmesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = supportmesh.cpp; sourceTree = "<group>"; };
+		A51198401B7DF7F100CEA306 /* bmploader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bmploader.cpp; sourceTree = "<group>"; };
+		A51198421B7DF82D00CEA306 /* libfbxsdk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfbxsdk.dylib; path = ../../../../../../../SDK/FBX/lib/clang/release/libfbxsdk.dylib; sourceTree = "<group>"; };
+		A51198441B7E0A0800CEA306 /* skeletonelement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = skeletonelement.h; sourceTree = "<group>"; };
+		A52328F61B80AD1900D00DD6 /* meshdeformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = meshdeformer.cpp; sourceTree = "<group>"; };
+		A52328F81B80AE5E00D00DD6 /* skeletonelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = skeletonelement.cpp; sourceTree = "<group>"; };
 		A53B4F341681220500C6B8EC /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A53B4F431681256B00C6B8EC /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = data; sourceTree = "<group>"; };
 		A56C23191A818781002FFDDD /* vertexstorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vertexstorage.cpp; sourceTree = "<group>"; };
 		A56C231B1A81878F002FFDDD /* vertexstorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vertexstorage.h; sourceTree = "<group>"; };
+		A57B289D1B7F538A0011901B /* meshdeformer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = meshdeformer.h; sourceTree = "<group>"; };
 		A5A23E2A16811838001B3E98 /* FBXConverter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FBXConverter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5A23E2E16811838001B3E98 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		A5A23E3116811838001B3E98 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -274,17 +318,6 @@
 		A5B2C1531A703EF30022A1CA /* texturefactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = texturefactory.cpp; sourceTree = "<group>"; };
 		A5B2C1541A703EF30022A1CA /* textureloadingthread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = textureloadingthread.cpp; sourceTree = "<group>"; };
 		A5B2C1551A703EF30022A1CA /* vertexbufferfactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vertexbufferfactory.cpp; sourceTree = "<group>"; };
-		A5B2C1571A703EF30022A1CA /* animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = animation.cpp; sourceTree = "<group>"; };
-		A5B2C1581A703EF30022A1CA /* baseelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = baseelement.cpp; sourceTree = "<group>"; };
-		A5B2C1591A703EF30022A1CA /* cameraelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cameraelement.cpp; sourceTree = "<group>"; };
-		A5B2C15A1A703EF30022A1CA /* lightelement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = lightelement.cpp; sourceTree = "<group>"; };
-		A5B2C15B1A703EF30022A1CA /* material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = material.cpp; sourceTree = "<group>"; };
-		A5B2C15C1A703EF30022A1CA /* mesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mesh.cpp; sourceTree = "<group>"; };
-		A5B2C15D1A703EF30022A1CA /* particlesystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = particlesystem.cpp; sourceTree = "<group>"; };
-		A5B2C15E1A703EF30022A1CA /* scene3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scene3d.cpp; sourceTree = "<group>"; };
-		A5B2C15F1A703EF30022A1CA /* serialization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = serialization.cpp; sourceTree = "<group>"; };
-		A5B2C1601A703EF30022A1CA /* storage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = storage.cpp; sourceTree = "<group>"; };
-		A5B2C1611A703EF30022A1CA /* supportmesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = supportmesh.cpp; sourceTree = "<group>"; };
 		A5B2C1631A703EF30022A1CA /* taskpool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = taskpool.cpp; sourceTree = "<group>"; };
 		A5B2C1651A703EF30022A1CA /* notifytimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = notifytimer.cpp; sourceTree = "<group>"; };
 		A5B2C1661A703EF30022A1CA /* sequence.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sequence.cpp; sourceTree = "<group>"; };
@@ -304,9 +337,8 @@
 		A5B2C1D11A703F090022A1CA /* invocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = invocation.h; sourceTree = "<group>"; };
 		A5B2C1D21A703F090022A1CA /* pathresolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pathresolver.h; sourceTree = "<group>"; };
 		A5B2C1D31A703F090022A1CA /* runloop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = runloop.h; sourceTree = "<group>"; };
-		A5B2C1D51A703F090022A1CA /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
+		A5B2C1D51A703F090022A1CA /* cameracontroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cameracontroller.h; sourceTree = "<group>"; };
 		A5B2C1D61A703F090022A1CA /* frustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = frustum.h; sourceTree = "<group>"; };
-		A5B2C1D71A703F090022A1CA /* light.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = light.h; sourceTree = "<group>"; };
 		A5B2C1D91A703F090022A1CA /* aabb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aabb.h; sourceTree = "<group>"; };
 		A5B2C1DA1A703F090022A1CA /* collision.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = collision.h; sourceTree = "<group>"; };
 		A5B2C1DB1A703F090022A1CA /* obb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = obb.h; sourceTree = "<group>"; };
@@ -412,18 +444,6 @@
 		A5B2C24E1A703F090022A1CA /* vertexarrayobject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexarrayobject.h; sourceTree = "<group>"; };
 		A5B2C24F1A703F090022A1CA /* vertexbuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexbuffer.h; sourceTree = "<group>"; };
 		A5B2C2501A703F090022A1CA /* vertexbufferfactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexbufferfactory.h; sourceTree = "<group>"; };
-		A5B2C2521A703F090022A1CA /* animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animation.h; sourceTree = "<group>"; };
-		A5B2C2531A703F090022A1CA /* baseelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseelement.h; sourceTree = "<group>"; };
-		A5B2C2541A703F090022A1CA /* cameraelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cameraelement.h; sourceTree = "<group>"; };
-		A5B2C2551A703F090022A1CA /* lightelement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lightelement.h; sourceTree = "<group>"; };
-		A5B2C2561A703F090022A1CA /* material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = material.h; sourceTree = "<group>"; };
-		A5B2C2571A703F090022A1CA /* material.parameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = material.parameters.h; sourceTree = "<group>"; };
-		A5B2C2581A703F090022A1CA /* mesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
-		A5B2C2591A703F090022A1CA /* particlesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = particlesystem.h; sourceTree = "<group>"; };
-		A5B2C25A1A703F090022A1CA /* scene3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene3d.h; sourceTree = "<group>"; };
-		A5B2C25B1A703F090022A1CA /* serialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = serialization.h; sourceTree = "<group>"; };
-		A5B2C25C1A703F090022A1CA /* storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = storage.h; sourceTree = "<group>"; };
-		A5B2C25D1A703F090022A1CA /* supportmesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = supportmesh.h; sourceTree = "<group>"; };
 		A5B2C25F1A703F090022A1CA /* taskpool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = taskpool.h; sourceTree = "<group>"; };
 		A5B2C2601A703F090022A1CA /* tasks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tasks.h; sourceTree = "<group>"; };
 		A5B2C2621A703F090022A1CA /* criticalsection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = criticalsection.h; sourceTree = "<group>"; };
@@ -442,7 +462,10 @@
 		A5B2C2711A703F090022A1CA /* vertexarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexarray.h; sourceTree = "<group>"; };
 		A5B2C2721A703F090022A1CA /* vertexdatachunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexdatachunk.h; sourceTree = "<group>"; };
 		A5B2C2731A703F090022A1CA /* vertexdeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vertexdeclaration.h; sourceTree = "<group>"; };
-		A5B2C2741A70408B0022A1CA /* libfbxsdk.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfbxsdk.dylib; path = /Volumes/Development/SDK/FBX/lib/clang/ub/release/libfbxsdk.dylib; sourceTree = "<group>"; };
+		A5C1E0F21B7E7FF6001C1030 /* camera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
+		A5C1E0F31B7E7FF6001C1030 /* cameramovingcontroller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cameramovingcontroller.h; sourceTree = "<group>"; };
+		A5C1E0F41B7E8417001C1030 /* cameramovingcontroller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cameramovingcontroller.cpp; sourceTree = "<group>"; };
+		A5C1E0F61B7E844B001C1030 /* cameracontroller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cameracontroller.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -459,6 +482,57 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A51198121B7DF7D900CEA306 /* scene3d */ = {
+			isa = PBXGroup;
+			children = (
+				A51198441B7E0A0800CEA306 /* skeletonelement.h */,
+				A51198131B7DF7D900CEA306 /* animation.h */,
+				A51198141B7DF7D900CEA306 /* base.h */,
+				A51198151B7DF7D900CEA306 /* baseelement.h */,
+				A51198161B7DF7D900CEA306 /* cameraelement.h */,
+				A51198171B7DF7D900CEA306 /* elementcontainer.h */,
+				A51198181B7DF7D900CEA306 /* lightelement.h */,
+				A51198191B7DF7D900CEA306 /* lineelement.h */,
+				A511981A1B7DF7D900CEA306 /* material.deprecated.h */,
+				A511981B1B7DF7D900CEA306 /* material.h */,
+				A511981C1B7DF7D900CEA306 /* material.parameters.h */,
+				A511981D1B7DF7D900CEA306 /* mesh.h */,
+				A57B289D1B7F538A0011901B /* meshdeformer.h */,
+				A511981E1B7DF7D900CEA306 /* particlesystem.h */,
+				A511981F1B7DF7D900CEA306 /* renderableelement.h */,
+				A51198201B7DF7D900CEA306 /* scene3d.deprecated.h */,
+				A51198211B7DF7D900CEA306 /* scene3d.h */,
+				A51198221B7DF7D900CEA306 /* serialization.h */,
+				A51198231B7DF7D900CEA306 /* storage.h */,
+				A51198241B7DF7D900CEA306 /* supportmesh.h */,
+			);
+			name = scene3d;
+			path = ../../../et/include/et/scene3d;
+			sourceTree = "<group>";
+		};
+		A51198251B7DF7E400CEA306 /* scene3d */ = {
+			isa = PBXGroup;
+			children = (
+				A51198261B7DF7E400CEA306 /* animation.cpp */,
+				A51198271B7DF7E400CEA306 /* baseelement.cpp */,
+				A51198281B7DF7E400CEA306 /* cameraelement.cpp */,
+				A51198291B7DF7E400CEA306 /* lightelement.cpp */,
+				A511982A1B7DF7E400CEA306 /* lineelement.cpp */,
+				A511982B1B7DF7E400CEA306 /* material.cpp */,
+				A511982C1B7DF7E400CEA306 /* mesh.cpp */,
+				A52328F61B80AD1900D00DD6 /* meshdeformer.cpp */,
+				A511982D1B7DF7E400CEA306 /* particlesystem.cpp */,
+				A511982E1B7DF7E400CEA306 /* renderableelement.cpp */,
+				A511982F1B7DF7E400CEA306 /* scene3d.cpp */,
+				A51198301B7DF7E400CEA306 /* serialization.cpp */,
+				A52328F81B80AE5E00D00DD6 /* skeletonelement.cpp */,
+				A51198311B7DF7E400CEA306 /* storage.cpp */,
+				A51198321B7DF7E400CEA306 /* supportmesh.cpp */,
+			);
+			name = scene3d;
+			path = ../../../et/src/scene3d;
+			sourceTree = "<group>";
+		};
 		A5A23E1F16811838001B3E98 = {
 			isa = PBXGroup;
 			children = (
@@ -483,7 +557,6 @@
 		A5A23E2D16811838001B3E98 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A5B2C2741A70408B0022A1CA /* libfbxsdk.dylib */,
 				A5A23E3116811838001B3E98 /* AppKit.framework */,
 				A5A23E3216811838001B3E98 /* CoreData.framework */,
 				A5A23E3316811838001B3E98 /* Foundation.framework */,
@@ -497,6 +570,7 @@
 		A5A23E3516811838001B3E98 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A51198421B7DF82D00CEA306 /* libfbxsdk.dylib */,
 				A5A23E51168118A4001B3E98 /* FBXConverter-Info.plist */,
 			);
 			name = "Supporting Files";
@@ -541,7 +615,7 @@
 				A5B2C1471A703EF30022A1CA /* platform-unix */,
 				A5B2C14D1A703EF30022A1CA /* primitives */,
 				A5B2C14F1A703EF30022A1CA /* rendering */,
-				A5B2C1561A703EF30022A1CA /* scene3d */,
+				A51198251B7DF7E400CEA306 /* scene3d */,
 				A5B2C1621A703EF30022A1CA /* tasks */,
 				A5B2C1641A703EF30022A1CA /* timers */,
 				A5B2C1691A703EF30022A1CA /* vertexbuffer */,
@@ -569,7 +643,7 @@
 				A5B2C23A1A703F090022A1CA /* platform-mac */,
 				A5B2C23C1A703F090022A1CA /* primitives */,
 				A5B2C23E1A703F090022A1CA /* rendering */,
-				A5B2C2511A703F090022A1CA /* scene3d */,
+				A51198121B7DF7D900CEA306 /* scene3d */,
 				A5B2C25E1A703F090022A1CA /* tasks */,
 				A5B2C2611A703F090022A1CA /* threading */,
 				A5B2C2661A703F090022A1CA /* timers */,
@@ -686,6 +760,8 @@
 			isa = PBXGroup;
 			children = (
 				A5B2C1081A703EF30022A1CA /* camera.cpp */,
+				A5C1E0F61B7E844B001C1030 /* cameracontroller.cpp */,
+				A5C1E0F41B7E8417001C1030 /* cameramovingcontroller.cpp */,
 				A5B2C1091A703EF30022A1CA /* frustum.cpp */,
 			);
 			name = camera;
@@ -731,6 +807,7 @@
 		A5B2C1191A703EF30022A1CA /* imaging */ = {
 			isa = PBXGroup;
 			children = (
+				A51198401B7DF7F100CEA306 /* bmploader.cpp */,
 				A5B2C11A1A703EF30022A1CA /* ddsloader.cpp */,
 				A5B2C11B1A703EF30022A1CA /* hdrloader.cpp */,
 				A5B2C11C1A703EF30022A1CA /* imageoperations.cpp */,
@@ -864,25 +941,6 @@
 			path = ../../../et/src/rendering;
 			sourceTree = "<group>";
 		};
-		A5B2C1561A703EF30022A1CA /* scene3d */ = {
-			isa = PBXGroup;
-			children = (
-				A5B2C1571A703EF30022A1CA /* animation.cpp */,
-				A5B2C1581A703EF30022A1CA /* baseelement.cpp */,
-				A5B2C1591A703EF30022A1CA /* cameraelement.cpp */,
-				A5B2C15A1A703EF30022A1CA /* lightelement.cpp */,
-				A5B2C15B1A703EF30022A1CA /* material.cpp */,
-				A5B2C15C1A703EF30022A1CA /* mesh.cpp */,
-				A5B2C15D1A703EF30022A1CA /* particlesystem.cpp */,
-				A5B2C15E1A703EF30022A1CA /* scene3d.cpp */,
-				A5B2C15F1A703EF30022A1CA /* serialization.cpp */,
-				A5B2C1601A703EF30022A1CA /* storage.cpp */,
-				A5B2C1611A703EF30022A1CA /* supportmesh.cpp */,
-			);
-			name = scene3d;
-			path = ../../../et/src/scene3d;
-			sourceTree = "<group>";
-		};
 		A5B2C1621A703EF30022A1CA /* tasks */ = {
 			isa = PBXGroup;
 			children = (
@@ -938,9 +996,10 @@
 		A5B2C1D41A703F090022A1CA /* camera */ = {
 			isa = PBXGroup;
 			children = (
-				A5B2C1D51A703F090022A1CA /* camera.h */,
+				A5C1E0F21B7E7FF6001C1030 /* camera.h */,
+				A5B2C1D51A703F090022A1CA /* cameracontroller.h */,
+				A5C1E0F31B7E7FF6001C1030 /* cameramovingcontroller.h */,
 				A5B2C1D61A703F090022A1CA /* frustum.h */,
-				A5B2C1D71A703F090022A1CA /* light.h */,
 			);
 			name = camera;
 			path = ../../../et/include/et/camera;
@@ -1171,26 +1230,6 @@
 			path = ../../../et/include/et/rendering;
 			sourceTree = "<group>";
 		};
-		A5B2C2511A703F090022A1CA /* scene3d */ = {
-			isa = PBXGroup;
-			children = (
-				A5B2C2521A703F090022A1CA /* animation.h */,
-				A5B2C2531A703F090022A1CA /* baseelement.h */,
-				A5B2C2541A703F090022A1CA /* cameraelement.h */,
-				A5B2C2551A703F090022A1CA /* lightelement.h */,
-				A5B2C2561A703F090022A1CA /* material.h */,
-				A5B2C2571A703F090022A1CA /* material.parameters.h */,
-				A5B2C2581A703F090022A1CA /* mesh.h */,
-				A5B2C2591A703F090022A1CA /* particlesystem.h */,
-				A5B2C25A1A703F090022A1CA /* scene3d.h */,
-				A5B2C25B1A703F090022A1CA /* serialization.h */,
-				A5B2C25C1A703F090022A1CA /* storage.h */,
-				A5B2C25D1A703F090022A1CA /* supportmesh.h */,
-			);
-			name = scene3d;
-			path = ../../../et/include/et/scene3d;
-			sourceTree = "<group>";
-		};
 		A5B2C25E1A703F090022A1CA /* tasks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1270,7 +1309,7 @@
 		A5A23E2116811838001B3E98 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Cheetek;
 			};
 			buildConfigurationList = A5A23E2416811838001B3E98 /* Build configuration list for PBXProject "FBXConverter" */;
@@ -1327,6 +1366,7 @@
 				A5B2C1C81A703EF30022A1CA /* vertexdeclaration.cpp in Sources */,
 				A5B2C1721A703EF30022A1CA /* invocation.cpp in Sources */,
 				A5B2C1B01A703EF30022A1CA /* rendercontext.cpp in Sources */,
+				A51198371B7DF7E400CEA306 /* lineelement.cpp in Sources */,
 				A5B2C1901A703EF30022A1CA /* locale.cpp in Sources */,
 				A5B2C1891A703EF30022A1CA /* pvrdecompressor.cpp in Sources */,
 				A5B2C1C51A703EF30022A1CA /* indexarray.cpp in Sources */,
@@ -1335,20 +1375,21 @@
 				A5B2C0E11A703ED00022A1CA /* textfield.cpp in Sources */,
 				A5B2C1731A703EF30022A1CA /* pathresolver.cpp in Sources */,
 				A5B2C1C61A703EF30022A1CA /* vertexarray.cpp in Sources */,
-				A5B2C1B61A703EF30022A1CA /* baseelement.cpp in Sources */,
+				A51198381B7DF7E400CEA306 /* material.cpp in Sources */,
 				A5B2C17D1A703EF30022A1CA /* objectscache.cpp in Sources */,
 				A5B2C0D81A703ED00022A1CA /* listbox.cpp in Sources */,
 				A5B2C1AC1A703EF30022A1CA /* thread.unix.cpp in Sources */,
 				A5B2C0DF1A703ED00022A1CA /* table.cpp in Sources */,
 				A5B2C0E41A703ED00022A1CA /* vertexbuilder.cpp in Sources */,
 				A5B2C0D01A703ED00022A1CA /* charactergenerator.impl.cpp in Sources */,
+				A51198341B7DF7E400CEA306 /* baseelement.cpp in Sources */,
 				A5B2C1801A703EF30022A1CA /* transformable.cpp in Sources */,
 				A5B2C1A01A703EF30022A1CA /* log.apple.mm in Sources */,
+				A511983B1B7DF7E400CEA306 /* renderableelement.cpp in Sources */,
 				A5B2C0DA1A703ED00022A1CA /* renderingelement.cpp in Sources */,
 				A5B2C1B11A703EF30022A1CA /* rendering.cpp in Sources */,
 				A5B2C1AE1A703EF30022A1CA /* primitives.cpp in Sources */,
 				A5B2C0DD1A703ED00022A1CA /* scroll.cpp in Sources */,
-				A5B2C1BD1A703EF30022A1CA /* serialization.cpp in Sources */,
 				A5A23E5616811900001B3E98 /* converter.cpp in Sources */,
 				A5B2C1881A703EF30022A1CA /* pngloader.cpp in Sources */,
 				A5B2C18F1A703EF30022A1CA /* json.cpp in Sources */,
@@ -1359,19 +1400,19 @@
 				A5B2C1821A703EF30022A1CA /* rectplacer.cpp in Sources */,
 				A5B2C1741A703EF30022A1CA /* runloop.cpp in Sources */,
 				A5B2C19A1A703EF30022A1CA /* renderstate.cpp in Sources */,
-				A5B2C1BC1A703EF30022A1CA /* scene3d.cpp in Sources */,
 				A5B2C0DC1A703ED00022A1CA /* scenerenderer.cpp in Sources */,
 				A5B2C17A1A703EF30022A1CA /* dictionary.cpp in Sources */,
 				A5B2C1AD1A703EF30022A1CA /* threading.unix.cpp in Sources */,
 				A5B2C1861A703EF30022A1CA /* imagewriter.cpp in Sources */,
 				A5B2C1931A703EF30022A1CA /* capabilities.cpp in Sources */,
-				A5B2C1BA1A703EF30022A1CA /* mesh.cpp in Sources */,
 				A5B2C0E01A703ED00022A1CA /* textelement.cpp in Sources */,
 				A5B2C1B21A703EF30022A1CA /* texturefactory.cpp in Sources */,
 				A5B2C0E31A703ED00022A1CA /* textureatlaswriter.cpp in Sources */,
+				A52328F71B80AD1900D00DD6 /* meshdeformer.cpp in Sources */,
 				A5B2C18C1A703EF30022A1CA /* tgaloader.cpp in Sources */,
 				A5B2C0D21A703ED00022A1CA /* font.cpp in Sources */,
 				A5B2C1851A703EF30022A1CA /* imageoperations.cpp in Sources */,
+				A51198331B7DF7E400CEA306 /* animation.cpp in Sources */,
 				A5B2C0D31A703ED00022A1CA /* fullscreenelement.cpp in Sources */,
 				A5B2C16F1A703EF30022A1CA /* application.cpp in Sources */,
 				A5B2C1A31A703EF30022A1CA /* application.mac.mm in Sources */,
@@ -1379,31 +1420,31 @@
 				A5B2C1981A703EF30022A1CA /* programfactory.cpp in Sources */,
 				A5B2C0DB1A703ED00022A1CA /* scene.cpp in Sources */,
 				A5B2C1AA1A703EF30022A1CA /* criticalsection.unix.cpp in Sources */,
-				A5B2C1BF1A703EF30022A1CA /* supportmesh.cpp in Sources */,
 				A5B2C1961A703EF30022A1CA /* opengl.cpp in Sources */,
 				A5B2C0D71A703ED00022A1CA /* line.cpp in Sources */,
 				A5B2C0CE1A703ED00022A1CA /* button.cpp in Sources */,
+				A5C1E0F51B7E8417001C1030 /* cameramovingcontroller.cpp in Sources */,
+				A52328F91B80AE5E00D00DD6 /* skeletonelement.cpp in Sources */,
+				A511983A1B7DF7E400CEA306 /* particlesystem.cpp in Sources */,
 				A5B2C1991A703EF30022A1CA /* renderer.cpp in Sources */,
 				A5B2C0E21A703ED00022A1CA /* textureatlas.cpp in Sources */,
 				A5B2C1C31A703EF30022A1CA /* timedobject.cpp in Sources */,
 				A53B4F351681220500C6B8EC /* main.cpp in Sources */,
 				A5B2C1B41A703EF30022A1CA /* vertexbufferfactory.cpp in Sources */,
+				A511983D1B7DF7E400CEA306 /* serialization.cpp in Sources */,
 				A5B2C1AF1A703EF30022A1CA /* framebufferfactory.cpp in Sources */,
 				A5B2C1A21A703EF30022A1CA /* tools.apple.mm in Sources */,
 				A5B2C1701A703EF30022A1CA /* backgroundthread.cpp in Sources */,
+				A51198391B7DF7E400CEA306 /* mesh.cpp in Sources */,
 				A5B2C1A51A703EF30022A1CA /* mac.mm in Sources */,
 				A5B2C1751A703EF30022A1CA /* camera.cpp in Sources */,
-				A5B2C1B51A703EF30022A1CA /* animation.cpp in Sources */,
 				A5B2C1761A703EF30022A1CA /* frustum.cpp in Sources */,
 				A5B2C1971A703EF30022A1CA /* program.cpp in Sources */,
-				A5B2C1B91A703EF30022A1CA /* material.cpp in Sources */,
 				A5B2C1711A703EF30022A1CA /* events.cpp in Sources */,
-				A5B2C1B81A703EF30022A1CA /* lightelement.cpp in Sources */,
 				A5B2C1841A703EF30022A1CA /* hdrloader.cpp in Sources */,
 				A5B2C1C01A703EF30022A1CA /* taskpool.cpp in Sources */,
 				A5B2C0D11A703ED00022A1CA /* element2d.cpp in Sources */,
 				A5B2C19F1A703EF30022A1CA /* locale.apple.mm in Sources */,
-				A5B2C1B71A703EF30022A1CA /* cameraelement.cpp in Sources */,
 				A5B2C0D61A703ED00022A1CA /* layout.cpp in Sources */,
 				A5B2C1A11A703EF30022A1CA /* memory.apple.mm in Sources */,
 				A5B2C18D1A703EF30022A1CA /* gestures.cpp in Sources */,
@@ -1413,12 +1454,13 @@
 				A5B2C1AB1A703EF30022A1CA /* mutex.unix.cpp in Sources */,
 				A5B2C1781A703EF30022A1CA /* base64.cpp in Sources */,
 				A5B2C18E1A703EF30022A1CA /* input.cpp in Sources */,
+				A511983C1B7DF7E400CEA306 /* scene3d.cpp in Sources */,
+				A511983F1B7DF7E400CEA306 /* supportmesh.cpp in Sources */,
 				A5B2C1C41A703EF30022A1CA /* timerpool.cpp in Sources */,
 				A5B2C1C21A703EF30022A1CA /* sequence.cpp in Sources */,
 				A5B2C1811A703EF30022A1CA /* geometry.cpp in Sources */,
 				A5B2C18A1A703EF30022A1CA /* pvrloader.cpp in Sources */,
 				A5B2C1C71A703EF30022A1CA /* vertexdatachunk.cpp in Sources */,
-				A5B2C1BB1A703EF30022A1CA /* particlesystem.cpp in Sources */,
 				A5B2C1A41A703EF30022A1CA /* input.mac.mm in Sources */,
 				A5B2C0CF1A703ED00022A1CA /* charactergenerator.cpp in Sources */,
 				A5B2C1871A703EF30022A1CA /* jpegloader.cpp in Sources */,
@@ -1427,16 +1469,20 @@
 				A5B2C1A61A703EF30022A1CA /* platformtools.mac.mm in Sources */,
 				A5B2C17F1A703EF30022A1CA /* tools.cpp in Sources */,
 				A5B2C18B1A703EF30022A1CA /* textureloader.cpp in Sources */,
-				A5B2C1BE1A703EF30022A1CA /* storage.cpp in Sources */,
+				A5C1E0F71B7E844B001C1030 /* cameracontroller.cpp in Sources */,
 				A5B2C0DE1A703ED00022A1CA /* slider.cpp in Sources */,
+				A51198411B7DF7F100CEA306 /* bmploader.cpp in Sources */,
 				A5B2C19C1A703EF30022A1CA /* vertexarrayobject.cpp in Sources */,
 				A5B2C17C1A703EF30022A1CA /* memoryallocator.cpp in Sources */,
 				A5B2C0D41A703ED00022A1CA /* imageview.cpp in Sources */,
 				A5B2C17E1A703EF30022A1CA /* stream.cpp in Sources */,
+				A511983E1B7DF7E400CEA306 /* storage.cpp in Sources */,
 				A5B2C1921A703EF30022A1CA /* objLoader.cpp in Sources */,
 				A5B2C1831A703EF30022A1CA /* ddsloader.cpp in Sources */,
+				A51198351B7DF7E400CEA306 /* cameraelement.cpp in Sources */,
 				A5B2C19D1A703EF30022A1CA /* vertexbuffer.cpp in Sources */,
 				A56C231A1A818781002FFDDD /* vertexstorage.cpp in Sources */,
+				A51198361B7DF7E400CEA306 /* lightelement.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1452,6 +1498,7 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -1505,11 +1552,12 @@
 					"\"$PROJECT_DIR/../../include\"",
 					"\"$PROJECT_DIR/../../../et/include\"",
 					"\"/Volumes/Development/SDK/FBX/include\"",
+					"\"$PROJECT_DIR/../../include/external/freetype\"",
 				);
 				INFOPLIST_FILE = "$PROJECT_DIR/FBXConverter-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"/Volumes/Development/SDK/FBX/lib/clang/ub/release\"",
+					"\"/Volumes/Development/SDK/FBX/lib/clang/release\"",
 					"\"$PROJECT_DIR/../../lib/osx\"",
 					"\"$PROJECT_DIR/../../../et/lib/osx\"",
 				);
@@ -1521,6 +1569,7 @@
 					"-lfbxsdk",
 					"-lfreetype",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cheetek.fbxconverter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1539,11 +1588,12 @@
 					"\"$PROJECT_DIR/../../include\"",
 					"\"$PROJECT_DIR/../../../et/include\"",
 					"\"/Volumes/Development/SDK/FBX/include\"",
+					"\"$PROJECT_DIR/../../include/external/freetype\"",
 				);
 				INFOPLIST_FILE = "$PROJECT_DIR/FBXConverter-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"/Volumes/Development/SDK/FBX/lib/clang/ub/release\"",
+					"\"/Volumes/Development/SDK/FBX/lib/clang/release\"",
 					"\"$PROJECT_DIR/../../lib/osx\"",
 					"\"$PROJECT_DIR/../../../et/lib/osx\"",
 				);
@@ -1555,6 +1605,7 @@
 					"-lfbxsdk",
 					"-lfreetype",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cheetek.fbxconverter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
