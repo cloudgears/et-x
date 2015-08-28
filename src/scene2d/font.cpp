@@ -164,7 +164,7 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	std::string fontFileDir = getFilePath(resolvedFileName);
 
 	uint32_t version = deserializeUInt32(fontFile.stream());
-	ET_ASSERT(version >= FONT_VERSION_2)
+	ET_ASSERT(version >= FONT_VERSION_2);
 	
 	deserializeString(fontFile.stream());
 	deserializeFloat(fontFile.stream());

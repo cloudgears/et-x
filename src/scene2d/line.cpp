@@ -33,7 +33,7 @@ void Line::setType(Type t)
 
 void Line::setControlPoint(size_t index, const vec2& p)
 {
-	ET_ASSERT(index < _controlPoints.size())
+	ET_ASSERT(index < _controlPoints.size());
 	_controlPoints[index] = p;
 	invalidateContent();
 }
