@@ -63,6 +63,24 @@ namespace et
 
 			const vec2 origin() const
 				{ return vec2(left, top); }
+
+			ContentOffset& operator *= (float t)
+			{
+				left *= t;
+				top *= t;
+				right *= t;
+				bottom *= t;
+				return *this;
+			}
+
+			ContentOffset& operator += (const ContentOffset& r)
+			{
+				left += r.left;
+				top += r.top;
+				right += r.right;
+				bottom += r.bottom;
+				return *this;
+			}
 		};
 
 		struct ImageDescriptor
@@ -97,6 +115,25 @@ namespace et
 
 			rect rectangle() const
 				{ return rect(origin, size); }
+
+			ImageDescriptor operator * (float t) const
+			{
+				ImageDescriptor result(*this);
+				result.origin *= t;
+				result.size *= t;
+				result.contentOffset *= t;
+				return result;
+			}
+
+			ImageDescriptor operator + (const ImageDescriptor& r) const
+			{
+				ImageDescriptor result(*this);
+				result.origin += r.origin;
+				result.size += r.size;
+				result.contentOffset += r.contentOffset;
+				return result;
+			}
+
 		};
 
 		struct Image

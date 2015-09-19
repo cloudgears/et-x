@@ -11,19 +11,7 @@
 #include <et-ext/scene2d/scenerenderer.h>
 
 namespace et
-{
-	template <>
-	inline s2d::ImageDescriptor linearInterpolationFunction(const s2d::ImageDescriptor& v1,
-		const s2d::ImageDescriptor& v2, float t)
-	{
-		float invT = 1.0f - t;
-		s2d::ContentOffset co(v1.contentOffset.left * invT + v2.contentOffset.left * t,
-			v1.contentOffset.top * invT + v2.contentOffset.top * t,
-			v1.contentOffset.right * invT + v2.contentOffset.right * t,
-			v1.contentOffset.bottom * invT + v2.contentOffset.bottom * t);
-		return s2d::ImageDescriptor(mix(v1.origin, v2.origin, t), mix(v1.size, v2.size, t), co);
-	}
-	
+{	
 	namespace s2d
 	{
 		class ImageView : public Element2d
