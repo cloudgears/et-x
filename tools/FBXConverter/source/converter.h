@@ -32,7 +32,7 @@ namespace fbxc
 		void onPointerMoved(et::PointerInputInfo);
 		void onPointerReleased(et::PointerInputInfo);
 		void onZoom(float);
-		void onDrag(et::vec2, et::PointerType);
+		void onDrag(const et::GesturesRecognizer::DragGesture& gest);
 		void onScroll(et::vec2, et::PointerOrigin);
 		void onCameraUpdated();
 
