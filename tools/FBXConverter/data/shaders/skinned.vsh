@@ -5,17 +5,18 @@ uniform mat4 mTransform;
 uniform mat4 bones[32];
 
 etVertexIn vec3 Vertex;
+etVertexIn vec3 Tangent;
 etVertexIn vec3 Normal;
 etVertexIn vec2 TexCoord0;
 etVertexIn vec4 Color;
 etVertexIn vec4 BlendWeights;
 etVertexIn ivec4 BlendIndices;
 
-etVertexOut vec2 TexCoord;
+etVertexOut vec3 vNormalWS;
 etVertexOut vec3 vViewWS;
 etVertexOut vec3 vLightWS;
-etVertexOut vec3 vNormalWS;
 etVertexOut vec4 vColor;
+etVertexOut vec2 TexCoord;
 
 void main()
 {
@@ -35,11 +36,11 @@ void main()
 		BlendWeights.y * (mat3(bones[BlendIndices.y]) * Normal) +
 		BlendWeights.z * (mat3(bones[BlendIndices.z]) * Normal) +
 		BlendWeights.w * (mat3(bones[BlendIndices.w]) * Normal)
-	 );
+	);
 	
-	vLightWS = vCamera - transformedVertex.xyz;
+	vLightWS = vPrimaryLight - transformedVertex.xyz;
 	vViewWS = vCamera - transformedVertex.xyz;
-	vColor = vColor;
+	vColor = Color;
 	
 	TexCoord  = TexCoord0;
 	gl_Position = mModelViewProjection * transformedVertex;

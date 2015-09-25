@@ -164,14 +164,17 @@ void Converter::renderMeshList(RenderContext* rc, const s3d::BaseElement::List& 
 	for (auto i = meshes.begin(), e = meshes.end(); i != e; ++i)
 	{
 		s3d::Mesh::Pointer mesh = *i;
-		s3d::Material::Pointer m = mesh->material();
+		if (mesh->vertexBuffer().invalid()) continue;
 		
 		Program::Pointer programToUse = _transformedProgram;
 		if (mesh->vertexBuffer()->declaration().has(et::VertexAttributeUsage::BlendIndices))
 			programToUse = _skinnedProgram;
 		
 		rc->renderState().bindProgram(programToUse);
+		
+		s3d::Material::Pointer m = mesh->material();
 		const auto& bones = mesh->deformationMatrices();
+		
 		programToUse->setUniform<mat4>("bones[0]", bones.data(), bones.size());
 		programToUse->setUniform("ambientColor", m->getVector(MaterialParameter_AmbientColor));
 		programToUse->setUniform("diffuseColor", m->getVector(MaterialParameter_DiffuseColor));
@@ -393,7 +396,7 @@ void Converter::performLoading(std::string path)
 		}
 	}
 	
-	printStructureRecursive(_scene, "|");
+	// printStructureRecursive(_scene, "|");
 	
 	_scene->storage().flush();
 	_scene->animateRecursive();
