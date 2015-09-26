@@ -365,7 +365,8 @@ void Converter::performLoading(std::string path)
 		et::Dictionary info = json::deserialize(loadTextFile(path), vc);
 		if (vc == ValueClass_Dictionary)
 		{
-			_scene->deserialize(_rc, info, getFilePath(path), _texCache);
+			_scene->deserializeWithOptions(_rc, info, getFilePath(path), _texCache,
+				s3d::DeserializeOption_KeepAndCreateEverything);
 		}
 		else 
 		{
