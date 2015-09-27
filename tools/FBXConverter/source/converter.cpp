@@ -290,7 +290,7 @@ void Converter::onZoom(float z)
 
 void Converter::onDrag(const GesturesRecognizer::DragGesture& gest)
 {
-	_vAngle.addTargetValue(0.25f * vec2(-gest.offset.y, gest.offset.x));
+	_vAngle.addTargetValue(0.25f * vec2(-gest.delta.y, gest.delta.x));
 }
 
 void Converter::onScroll(et::vec2 s, et::PointerOrigin o)
