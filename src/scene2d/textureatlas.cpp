@@ -211,7 +211,7 @@ void TextureAtlas::unload()
 
 const Texture::Pointer& TextureAtlas::firstTexture() const
 {
-	static const Texture::Pointer emptyTexture;
+	static const Texture::Pointer emptyTexture = Texture::Pointer();
 	return _textures.empty() ? emptyTexture : _textures.begin()->second;
 }
 

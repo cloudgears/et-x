@@ -9,7 +9,7 @@
 #include <et-ext/scene2d/charactergenerator.h>
 #include <et/platform-apple/apple.h>
 
-#include <external/freetype/ft2build.h>
+#include <ft2build.h>
 #include FT_FREETYPE_H
 
 #if (ET_PLATFORM_APPLE)
