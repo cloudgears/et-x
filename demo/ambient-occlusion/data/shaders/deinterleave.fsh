@@ -19,8 +19,8 @@ void main()
 		{
 			ivec2 offset = ivec2(x, y) + start_position;
 
-			vec3 n0 = 2.0 * textureOffset(texture_normal, baseTexCoord, offset).xyz - 1.0;
-			float d0 = restoreViewSpaceDistance(textureOffset(texture_depth, baseTexCoord, offset).x);
+			vec3 n0 = 2.0 * texture(texture_normal, baseTexCoord + offset).xyz - 1.0;
+			float d0 = restoreViewSpaceDistance(texture(texture_depth, baseTexCoord + offset).x);
 
 			frames[k++] = vec4(n0, d0);
 		}

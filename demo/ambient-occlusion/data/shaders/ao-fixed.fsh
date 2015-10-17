@@ -1,6 +1,6 @@
 #define NUM_SAMPLES	64
 
-layout (binding = 0) uniform sampler2DArray texture_input;
+uniform sampler2DArray texture_input;
 
 uniform vec3 randomSamples[NUM_SAMPLES];
 uniform float sampleLayer;

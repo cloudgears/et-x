@@ -20,7 +20,7 @@ void SceneLoader::init(et::RenderContext* rc)
 
 et::s3d::Scene::Pointer SceneLoader::loadFromFile(const std::string& fileName)
 {
-	ET_ASSERT(_rc)
+	ET_ASSERT(_rc);
 	
 	et::s3d::Scene::Pointer result = et::s3d::Scene::Pointer::create();
 	
@@ -45,10 +45,10 @@ et::s3d::Scene::Pointer SceneLoader::loadFromFile(const std::string& fileName)
 
 void SceneLoader::loadObjFile(const std::string& fileName, et::s3d::Scene::Pointer scene)
 {
-	ObjectsCache localCache;
-	OBJLoader loader(_rc, fileName);
+	OBJLoader loader(fileName, OBJLoader::Option_SupportMeshes);
 	
-	auto container = loader.load(localCache, OBJLoader::Option_SupportMeshes);
+	ObjectsCache localCache;
+	auto container = loader.load(_rc, scene->storage(), localCache);
 	auto allObjects = container->children();
 	
 	for (auto c : allObjects)

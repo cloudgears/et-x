@@ -472,33 +472,43 @@ bool Scene::animatingTransition()
 
 void Scene::replaceTopmostLayout(Layout::Pointer newLayout, size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Scene, internal_replaceTopmostLayout, newLayout,
-		AnimationDescriptor(animationFlags, duration))
+	Invocation2 inv;
+	inv.setTarget(this, &Scene::internal_replaceTopmostLayout, newLayout,
+		AnimationDescriptor(animationFlags, duration));
+	inv.invokeInCurrentRunLoop();
 }
 
 void Scene::popTopmostLayout(size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Scene, internal_removeLayout, topmostLayout(),
-		AnimationDescriptor(animationFlags, duration))
+	Invocation2 inv;
+	inv.setTarget(this, &Scene::internal_removeLayout, topmostLayout(),
+		AnimationDescriptor(animationFlags, duration));
+	inv.invokeInCurrentRunLoop();
 }
 
 void Scene::replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout,
 	size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Scene, internal_replaceLayout, LayoutPair(oldLayout, newLayout),
-		AnimationDescriptor(animationFlags, duration))
+	Invocation2 inv;
+	inv.setTarget(this, &Scene::internal_replaceLayout, LayoutPair(oldLayout, newLayout),
+		AnimationDescriptor(animationFlags, duration));
+	inv.invokeInCurrentRunLoop();
 }
 
 void Scene::removeLayout(Layout::Pointer oldLayout, size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Scene, internal_removeLayout, oldLayout,
-		AnimationDescriptor(animationFlags, duration))
+	Invocation2 inv;
+	inv.setTarget(this, &Scene::internal_removeLayout, oldLayout,
+		AnimationDescriptor(animationFlags, duration));
+	inv.invokeInCurrentRunLoop();
 }
 
 void Scene::pushLayout(Layout::Pointer newLayout, size_t animationFlags, float duration)
 {
-	ET_INVOKE_THIS_CLASS_METHOD2(Scene, internal_pushLayout, newLayout,
-		AnimationDescriptor(animationFlags, duration))
+	Invocation2 inv;
+	inv.setTarget(this, &Scene::internal_pushLayout, newLayout,
+		AnimationDescriptor(animationFlags, duration));
+	inv.invokeInCurrentRunLoop();
 }
 
 void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)

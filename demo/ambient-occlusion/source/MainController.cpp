@@ -46,7 +46,7 @@ void MainController::setRenderContextParameters(et::RenderContextParameters& par
 
 	params.contextSize = contextSize;
 	params.contextBaseSize = params.contextSize;
-	params.multisamplingQuality = MultisamplingQuality_None;
+	params.multisamplingQuality = MultisamplingQuality::None;
 	params.swapInterval = 0;
 }
 
@@ -95,10 +95,10 @@ void MainController::connectInputEvents()
 		_renderer.handlePressedKey(key);
 	});
 	
-	_gestures.drag.connect([this](et::vec2 d, size_t)
+	_gestures.drag.connect([this](const GesturesRecognizer::DragGesture& gesture)
 	{
 		if (!_uiCaptured)
-			_cameraController.handlePointerDrag(d);
+			_cameraController.handlePointerDrag(gesture.delta);
 	});
 
 	input().keyReleased.connect([this](size_t key)

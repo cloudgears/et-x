@@ -94,6 +94,7 @@ void SceneRenderer::init(et::RenderContext* rc)
 	programs.ambientOcclusion->setUniform("texel", vec2(1.0f) / vector2ToFloat(_geometryBuffer->size()));
 
 	programs.ambientOcclusionFixed = _rc->programFactory().loadProgram("data/shaders/ao-fixed.program", localCache);
+	programs.ambientOcclusionFixed->setUniform("texture_input", 0);
 	programs.ambientOcclusionFixed->setUniform("texture_depth", depthTextureUnit);
 	programs.ambientOcclusionFixed->setUniform("texture_diffuse", diffuseTextureUnit);
 	programs.ambientOcclusionFixed->setUniform("texture_normal", normalTextureUnit);
@@ -102,6 +103,9 @@ void SceneRenderer::init(et::RenderContext* rc)
 	programs.ambientOcclusionFixed->setUniform("texel", vec2(1.0f) / vector2ToFloat(_geometryBuffer->size()));
 
 	programs.ambientOcclusionBlur = _rc->programFactory().loadProgram("data/shaders/blur.program", localCache);
+	programs.ambientOcclusionBlur->setUniform("texture_input", 0);
+	programs.ambientOcclusionBlur->setUniform("texture_normals", 1);
+	programs.ambientOcclusionBlur->setUniform("texture_depth", 2);
 	
 	programs.final = _rc->programFactory().loadProgram("data/shaders/final.program", localCache);
 	programs.final->setUniform("texture_diffuse", diffuseTextureUnit);
@@ -112,6 +116,8 @@ void SceneRenderer::init(et::RenderContext* rc)
 	programs.final->setUniform("noiseTextureScale", vector2ToFloat(_aoFramebuffer->size()) / _noiseTexture->sizeFloat());
 
 	programs.interleave = _rc->programFactory().loadProgram("data/shaders/interleave.program", localCache);
+	programs.interleave->setUniform("texture_interleaved", 0);
+	programs.interleave->setUniform("texture_original", 1);
 	programs.interleave->setUniform("interleave_x", INTERLEAVE_X);
 	programs.interleave->setUniform("interleave_y", INTERLEAVE_Y);
 
@@ -141,14 +147,14 @@ void SceneRenderer::setScene(et::s3d::Scene::Pointer aScene)
 	
 	_scene = aScene;
 	
-	auto meshes = _scene->childrenOfType(s3d::ElementType_SupportMesh);
+	auto meshes = _scene->childrenOfType(s3d::ElementType::SupportMesh);
 	for (auto e : meshes)
 		_allObjects.push_back(e);
 	
 	for (s3d::SupportMesh::Pointer& e : _allObjects)
 	{
 		auto mat = e->material();
-		for (size_t i = MaterialParameter_AmbientMap; i < MaterialParameter_AmbientFactor; ++i)
+		for (uint32_t i = MaterialParameter_AmbientMap; i < MaterialParameter_AmbientFactor; ++i)
 		{
 			Texture::Pointer tex = mat->getTexture(i);
 			if (tex.valid())
@@ -244,7 +250,7 @@ void SceneRenderer::renderToInterleavedBuffer(const et::Camera& cam)
 	auto& rs = _rc->renderState();
 	auto rn = _rc->renderer();
 
-	auto arrayTextureId = _interleavedFramebuffer->renderTarget(0)->apiHandle();
+	uint32_t arrayTextureId = uint32_t(_interleavedFramebuffer->renderTarget(0)->apiHandle());
 	rs.bindTexture(normalTextureUnit, _geometryBuffer->renderTarget(1));
 	rs.bindTexture(depthTextureUnit, _geometryBuffer->depthBuffer());
 	rs.bindFramebuffer(_interleavedFramebuffer);

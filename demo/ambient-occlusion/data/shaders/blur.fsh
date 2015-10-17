@@ -1,6 +1,6 @@
-layout (binding = 0) uniform sampler2DRect texture_input;
-layout (binding = 1) uniform sampler2DRect texture_normals;
-layout (binding = 2) uniform sampler2DRect texture_depth;
+uniform sampler2DRect texture_input;
+uniform sampler2DRect texture_normals;
+uniform sampler2DRect texture_depth;
 
 uniform float depthDifferenceScale = 5.0;
 uniform vec2 direction;

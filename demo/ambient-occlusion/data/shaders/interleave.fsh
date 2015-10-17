@@ -1,8 +1,8 @@
 uniform int interleave_x;
 uniform int interleave_y;
 
-layout (binding = 0) uniform sampler2DArray texture_interleaved;
-layout (binding = 1) uniform sampler2DRect texture_original;
+uniform sampler2DArray texture_interleaved;
+uniform sampler2DRect texture_original;
 
 etFragmentIn vec2 TexCoord;
 
