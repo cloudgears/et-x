@@ -4,3 +4,4 @@ tools/FBXConverter/x64/
 *.opensdf
 *.sdf
 *.suo
+demo/ambient-occlusion/windows/x64/

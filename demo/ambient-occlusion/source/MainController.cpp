@@ -56,6 +56,9 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 	application().pushRelativeSearchPath("..");
 	application().pushRelativeSearchPath("..\\..");
 	application().pushRelativeSearchPath("..\\..\\..");
+	application().pushRelativeSearchPath("..\\data");
+	application().pushRelativeSearchPath("..\\..\\data");
+	application().pushRelativeSearchPath("..\\..\\..\\data");
 	application().pushSearchPath("Q:\\SDK\\Models\\");
 	application().pushSearchPath("Q:\\SDK\\");
 	application().setFrameRateLimit(0);

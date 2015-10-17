@@ -291,19 +291,10 @@
     <ClCompile Include="..\..\..\..\et\src\platform-win\orientation.win.cpp">
       <Filter>et\source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\et\src\platform-win\platformtools.win.cpp">
-      <Filter>et\source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\et\src\platform-win\rendercontext.win-directx.cpp">
-      <Filter>et\source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\et\src\platform-win\rendercontext.win-opengl.cpp">
       <Filter>et\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\et\src\platform-win\thread.win.cpp">
-      <Filter>et\source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\et\src\platform-win\threading.win.cpp">
       <Filter>et\source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\et\src\platform-win\tools.win.cpp">
@@ -398,6 +389,24 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\et\src\vertexbuffer\vertexstorage.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\core\threading.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\imaging\bmploader.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\renderableelement.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\skeletonelement.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\lineelement.cpp">
+      <Filter>et\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\et\src\scene3d\meshdeformer.cpp">
+      <Filter>et\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
