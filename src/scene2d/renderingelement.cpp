@@ -35,18 +35,32 @@ RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
 	dataSize = decl.dataSize() * capacity;
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)
-	mappedData = sharedBlockAllocator().alloc(dataSize);
+	vertexData = sharedBlockAllocator().alloc(dataSize);
 #endif
 	
-	std::string nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao";
-	vao = rc->vertexBufferFactory().createVertexArrayObject(nameId, VertexArray::Pointer::create(decl, capacity),
-		BufferDrawType::Stream, indexArray, BufferDrawType::Static);
+	IndexBuffer::Pointer sharedIndexBuffer;
+	VertexArray::Pointer sharedVertexArray = VertexArray::Pointer::create(decl, capacity);
+	
+	auto nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao-1";
+	vertices[0] = rc->vertexBufferFactory().createVertexArrayObject(nameId,
+		sharedVertexArray, BufferDrawType::Stream, indexArray, BufferDrawType::Static);
+	sharedIndexBuffer = vertices[0]->indexBuffer();
+	
+	for (size_t i = 1; i < VertexBuffersCount; ++i)
+	{
+		nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao-" + intToStr(i + 1);
+		vertices[i] = rc->vertexBufferFactory().createVertexArrayObject(nameId);
+		auto vb = rc->vertexBufferFactory().createVertexBuffer(nameId + "-vb",
+			sharedVertexArray, BufferDrawType::Stream);
+		vertices[i]->setBuffers(vb, sharedIndexBuffer);
+	}
+	currentBufferIndex = 0;
 }
 
 RenderingElement::~RenderingElement()
 {
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)
-	sharedBlockAllocator().free(mappedData);
+	sharedBlockAllocator().free(vertexData);
 #endif
 }
 
@@ -58,11 +72,13 @@ void RenderingElement::clear()
 
 void RenderingElement::startAllocatingVertices()
 {
+	currentBufferIndex = (currentBufferIndex + 1) % VertexBuffersCount;
 	clear();
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
-	renderState.bindVertexArray(vao);
-	mappedData = vao->vertexBuffer()->map(0, dataSize, MapBufferMode::WriteOnly);
+	renderState.bindVertexArray(vertices[currentBufferIndex]);
+	vertexData = vertices[currentBufferIndex]->vertexBuffer()->map(0, dataSize,
+		MapBufferOptions::Write | MapBufferOptions::InvalidateRange);
 #endif
 }
 
@@ -75,12 +91,13 @@ SceneVertex* RenderingElement::allocateVertices(size_t n)
 
 void RenderingElement::commitAllocatedVertices()
 {
+	auto vao = vertices[currentBufferIndex];
 	renderState.bindVertexArray(vao);
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	vao->vertexBuffer()->unmap();
 #else
-	vao->vertexBuffer()->setData(mappedData, sizeof(SceneVertex) * allocatedVertices);
+	vao->vertexBuffer()->setData(vertexData, sizeof(SceneVertex) * allocatedVertices);
 #endif
 }
 
@@ -90,6 +107,6 @@ const VertexArrayObject& RenderingElement::vertexArrayObject()
 	ET_ASSERT(!vao->vertexBuffer()->mapped());
 #endif
 	
-	renderState.bindVertexArray(vao);
-	return vao;
+	renderState.bindVertexArray(vertices[currentBufferIndex]);
+	return vertices[currentBufferIndex];
 }

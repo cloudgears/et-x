@@ -35,9 +35,9 @@ namespace et
 		public:
 			ET_DECLARE_POINTER(RenderingElement)
 			
-			enum
+			enum : uint32_t
 			{
-				MaxCapacity = 65536
+				MaxCapacity = 65536,
 			};
 			
 		public:
@@ -54,19 +54,20 @@ namespace et
 
 		private:
 			friend class SceneRenderer;
-			
-			RenderState& renderState;
-			std::vector<RenderChunk, SharedBlockAllocatorSTDProxy<RenderChunk>> chunks;
+			enum : uint32_t { VertexBuffersCount = 3 };
 			
 			union
 			{
+				void* vertexData = nullptr;
 				SceneVertex* mappedVertices;
-				void* mappedData = nullptr;
 			};
 			
+			RenderState& renderState;
+			std::vector<RenderChunk, SharedBlockAllocatorSTDProxy<RenderChunk>> chunks;
+			VertexArrayObject vertices[VertexBuffersCount];
 			size_t allocatedVertices = 0;
 			size_t dataSize = 0;
-			VertexArrayObject vao;
+			size_t currentBufferIndex = 0;
 		};
 	}
 }
