@@ -103,10 +103,12 @@ void RenderingElement::commitAllocatedVertices()
 
 const VertexArrayObject& RenderingElement::vertexArrayObject()
 {
+	const auto& vao = vertices[currentBufferIndex];
+	renderState.bindVertexArray(vao);
+	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	ET_ASSERT(!vao->vertexBuffer()->mapped());
 #endif
 	
-	renderState.bindVertexArray(vertices[currentBufferIndex]);
-	return vertices[currentBufferIndex];
+	return vao;
 }
