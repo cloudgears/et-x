@@ -145,12 +145,7 @@ void s2d::SceneRenderer::beginRender(RenderContext* rc)
 	_clipeEnabled = rc->renderState().clipEnabled();
 	_latestClipRect = rc->renderState().clipRect();
 	
-	if (rc->renderState().depthMask())
-	{
-		rc->renderer()->clear(false, true);
-		rc->renderState().setDepthMask(false);
-	}
-	
+	rc->renderState().setDepthMask(false);
 	rc->renderState().setDepthTest(false);
 	rc->renderState().setBlend(true, BlendState::Default);
 }
