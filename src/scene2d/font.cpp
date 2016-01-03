@@ -80,7 +80,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	fOut.close();
 	
 	auto fbo = rc->framebufferFactory().createFramebuffer(_generator->texture()->size(),
-		"rgba-buffer", TextureFormat::RGBA, TextureFormat::RGBA, DataType::UnsignedChar, TextureFormat::Invalid);
+		"rgba-buffer", TextureFormat::RGBA, TextureFormat::RGBA, DataFormat::UnsignedChar, TextureFormat::Invalid);
 	
 	BinaryDataStorage imageData;
 	auto blendState = rc->renderState().blendState();
@@ -89,7 +89,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 		rc->renderState().bindFramebuffer(fbo);
 		rc->renderState().setBlendConfiguration(BlendConfiguration::Disabled);
 		rc->renderer()->renderFullscreenTexture(_generator->texture());
-		rc->renderer()->readFramebufferData(fbo->size(), TextureFormat::RGBA, DataType::UnsignedChar, imageData);
+		rc->renderer()->readFramebufferData(fbo->size(), TextureFormat::RGBA, DataFormat::UnsignedChar, imageData);
 	}
 	rc->renderState().bindFramebuffer(currentBuffer);
 	rc->renderState().setBlendState(blendState);

@@ -159,7 +159,7 @@ void TextElement::setProgramParameters(et::RenderContext*, et::Program::Pointer&
  * SDF - plain
  */
 std::string et_scene2d_default_text_shader_sdf_vs_base =
-"uniform mat4 mTransform;"
+"uniform mat4 matWorld;"
 "uniform vec3 additionalOffsetAndAlpha;"
 "etVertexIn vec3 Vertex;"
 "etVertexIn vec4 TexCoord0;"
@@ -174,7 +174,7 @@ std::string et_scene2d_default_text_shader_sdf_vs_base =
 "	tintColor.w *= additionalOffsetAndAlpha.z;"
 "	sdfParams.x = TexCoord0.z - TexCoord0.w;"
 "	sdfParams.y = TexCoord0.z + TexCoord0.w;"
-"	vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
+"	vec4 vTransformed = matWorld * vec4(Vertex, 1.0);"
 "	gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
 "}";
 
@@ -193,7 +193,7 @@ std::string et_scene2d_default_text_shader_sdf_fs_plain =
  * Shadow
  */
 std::string et_scene2d_default_text_shader_sdf_vs_shadow =
-"uniform mat4 mTransform;"
+"uniform mat4 matWorld;"
 "uniform vec3 additionalOffsetAndAlpha;"
 "uniform vec2 shadowOffset;"
 "etVertexIn vec3 Vertex;"
@@ -211,7 +211,7 @@ std::string et_scene2d_default_text_shader_sdf_vs_shadow =
 "	tintColor.w *= additionalOffsetAndAlpha.z;"
 "	sdfParams.x = TexCoord0.z - TexCoord0.w;"
 "	sdfParams.y = TexCoord0.z + TexCoord0.w;"
-"	vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
+"	vec4 vTransformed = matWorld * vec4(Vertex, 1.0);"
 "	gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
 "}";
 
@@ -234,7 +234,7 @@ std::string et_scene2d_default_text_shader_sdf_fs_shadow =
  * Bevel
  */
 std::string et_scene2d_default_text_shader_sdf_vs_bevel =
-"uniform mat4 mTransform;"
+"uniform mat4 matWorld;"
 "uniform vec3 additionalOffsetAndAlpha;"
 "etVertexIn vec3 Vertex;"
 "etVertexIn vec4 TexCoord0;"
@@ -253,7 +253,7 @@ std::string et_scene2d_default_text_shader_sdf_vs_bevel =
 "	tintColor.w *= additionalOffsetAndAlpha.z;"
 "	sdfParams.x = TexCoord0.z - TexCoord0.w;"
 "	sdfParams.y = TexCoord0.z + TexCoord0.w;"
-"	vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
+"	vec4 vTransformed = matWorld * vec4(Vertex, 1.0);"
 "	gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
 "}";
 
@@ -311,7 +311,7 @@ void main()
  * Plain
  */
 std::string et_scene2d_default_text_shader_vs_plain =
-"uniform mat4 mTransform;"
+"uniform mat4 matWorld;"
 "uniform vec3 additionalOffsetAndAlpha;"
 "etVertexIn vec3 Vertex;"
 "etVertexIn vec4 TexCoord0;"
@@ -323,7 +323,7 @@ std::string et_scene2d_default_text_shader_vs_plain =
 "	texCoord = TexCoord0.xy;"
 "	tintColor = Color;"
 "	tintColor.w *= additionalOffsetAndAlpha.z;"
-"	vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
+"	vec4 vTransformed = matWorld * vec4(Vertex, 1.0);"
 "	gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
 "}";
 

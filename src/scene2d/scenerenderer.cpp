@@ -30,7 +30,7 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_defaultProgram.program->setUniform(textureSamplerName, 0);
 	
 	_defaultTexture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
-		vec2i(1), TextureFormat::RGBA, DataType::UnsignedChar, BinaryDataStorage(4, 0), "scene-default-texture");
+		vec2i(1), TextureFormat::RGBA, DataFormat::UnsignedChar, BinaryDataStorage(4, 0), "scene-default-texture");
 	_defaultTexture->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
 	
 	setProjectionMatrices(vector2ToFloat(rc->size()));
@@ -224,7 +224,7 @@ SceneProgram SceneRenderer::createProgramWithFragmentshader(const std::string& n
 }
 
 std::string et_scene2d_default_shader_vs =
-	"uniform mat4 mTransform;"
+	"uniform mat4 matWorld;"
 	"uniform vec3 " + additionalOffsetAndAlphaUniform + ";"
 	"etVertexIn vec3 Vertex;"
 	"etVertexIn vec4 TexCoord0;"
@@ -238,12 +238,12 @@ std::string et_scene2d_default_shader_vs =
 		"vec4 alphaScaledColor = Color * vec4(1.0, 1.0, 1.0, additionalOffsetAndAlpha.z);"
 		"additiveColor = alphaScaledColor * TexCoord0.w;"
 		"tintColor = alphaScaledColor * (1.0 - TexCoord0.w);"
-		"vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
+		"vec4 vTransformed = matWorld * vec4(Vertex, 1.0);"
 		"gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
 	"}";
 
 std::string et_scene2d_default_shader_vs_with_screen_pos =
-	"uniform mat4 mTransform;"
+	"uniform mat4 matWorld;"
 	"uniform vec3 " + additionalOffsetAndAlphaUniform + ";"
 	"etVertexIn vec3 Vertex;"
 	"etVertexIn vec4 TexCoord0;"
@@ -258,7 +258,7 @@ std::string et_scene2d_default_shader_vs_with_screen_pos =
 		"vec4 alphaScaledColor = Color * vec4(1.0, 1.0, 1.0, additionalOffsetAndAlpha.z);"
 		"additiveColor = alphaScaledColor * TexCoord0.w;"
 		"tintColor = alphaScaledColor * (1.0 - TexCoord0.w);"
-		"vec4 vTransformed = mTransform * vec4(Vertex, 1.0);"
+		"vec4 vTransformed = matWorld * vec4(Vertex, 1.0);"
 		"gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
 		"screenSpaceTexCoord = 0.5 + 0.5 * gl_Position.xy / gl_Position.w;"
 	"}";

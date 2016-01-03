@@ -83,7 +83,7 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 	if (_defaultTexture.invalid())
 	{
 		_defaultTexture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
-			vec2i(1), TextureFormat::RGBA, DataType::UnsignedChar, BinaryDataStorage(4, 255),  "__et_particles_default_texture__");
+			vec2i(1), TextureFormat::RGBA, DataFormat::UnsignedChar, BinaryDataStorage(4, 255),  "__et_particles_default_texture__");
 		
 		if (_texture.invalid())
 			_texture = _defaultTexture;
@@ -135,7 +135,7 @@ void ParticlesElement::setTexture(const et::Texture::Pointer& t)
 }
 
 const std::string particlesVertexShader =
-"uniform mat4 mTransform;"
+"uniform mat4 matWorld;"
 "uniform mat4 finalTransform;"
 "uniform vec3 additionalOffsetAndAlpha;"
 
@@ -148,7 +148,7 @@ const std::string particlesVertexShader =
 
 "void main()"
 "{"
-"	vec4 vTransformed = mTransform * finalTransform * vec4(Vertex.xy, 0.0, 1.0);"
+"	vec4 vTransformed = matWorld * finalTransform * vec4(Vertex.xy, 0.0, 1.0);"
 "	texCoord = TexCoord0.xy;"
 "	tintColor = Color * vec4(1.0, 1.0, 1.0, additionalOffsetAndAlpha.z);"
 "	gl_PointSize = Vertex.z;"

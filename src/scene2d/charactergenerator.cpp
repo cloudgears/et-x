@@ -31,7 +31,7 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	_fontBoldFace = fileExists(boldFace) ? getFileName(boldFace) : boldFace;
 	
 	_texture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::R,
-		vec2i(defaultTextureSize), TextureFormat::R, DataType::UnsignedChar,
+		vec2i(defaultTextureSize), TextureFormat::R, DataFormat::UnsignedChar,
 		BinaryDataStorage(defaultTextureSize * defaultTextureSize, 0), face + "font");
 	
 	_grid0.grid.resize(initialGridDimensions);
