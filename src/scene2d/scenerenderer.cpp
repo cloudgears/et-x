@@ -24,7 +24,7 @@ extern const std::string additionalOffsetAndAlphaUniform = "additionalOffsetAndA
 SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_rc(rc), _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f)
 {
-	pushClipRect(recti(vec2i(0), rc->sizei()));
+	pushClipRect(rc->renderState().viewport());
 	
 	_defaultProgram = createProgramWithFragmentshader(defaultProgramName, et_scene2d_default_shader_fs, false);
 	_defaultProgram.program->setUniform(textureSamplerName, 0);
@@ -33,7 +33,7 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 		vec2i(1), TextureFormat::RGBA, DataType::UnsignedChar, BinaryDataStorage(4, 0), "scene-default-texture");
 	_defaultTexture->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
 	
-	setProjectionMatrices(rc->size());
+	setProjectionMatrices(vector2ToFloat(rc->size()));
 }
 
 void s2d::SceneRenderer::resetClipRect()
@@ -137,17 +137,13 @@ void s2d::SceneRenderer::setRendernigElement(const RenderingElement::Pointer& r)
 
 void s2d::SceneRenderer::beginRender(RenderContext* rc)
 {
-	_depthMaskEnabled = rc->renderState().depthMask();
-	_blendEnabled = rc->renderState().blendEnabled();
-	_lastColorBlendState = rc->renderState().blendStateForColor();
-	_lastAlphaBlendState = rc->renderState().blendStateForAlpha();
-	_depthTestEnabled = rc->renderState().depthTestEnabled();
-	_clipeEnabled = rc->renderState().clipEnabled();
-	_latestClipRect = rc->renderState().clipRect();
+	auto& rs = rc->renderState();
+	_lastBlendState = rs.actualState().blend;
+	_lastDepthState = rs.actualState().depth;
+	_lastRasterizerState = rs.actualState().rasterizer;
 	
-	rc->renderState().setDepthMask(false);
-	rc->renderState().setDepthTest(false);
-	rc->renderState().setBlend(true, BlendState::Default);
+	rc->renderState().setDepthState({false, false});
+	rc->renderState().setBlendConfiguration(BlendConfiguration::Default);
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)
@@ -173,7 +169,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 			i.object->setProgramParameters(rc, lastBoundProgram);
 		
 		rs.bindTexture(0, i.texture);
-		rs.setClip(true, i.clip + _additionalWindowOffset);
+		rs.setScissor(true, i.clip + _additionalWindowOffset);
 		
 		renderer->drawElements(i.primitiveType, indexBuffer, i.first, i.count);
 	}
@@ -182,10 +178,9 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 void SceneRenderer::endRender(RenderContext* rc)
 {
 	auto& rs = rc->renderState();
-	rs.setClip(_clipeEnabled, _latestClipRect);
-	rs.setDepthMask(_depthMaskEnabled);
-	rs.setDepthTest(_depthTestEnabled);
-	rs.setSeparateBlend(_blendEnabled, _lastColorBlendState, _lastAlphaBlendState);
+	rs.setScissor(_lastRasterizerState.scissorEnabled, _lastRasterizerState.scissorRectangle);
+	rs.setDepthState(_lastDepthState);
+	rs.setBlendState(_lastBlendState);
 }
 
 void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)
@@ -202,7 +197,7 @@ SceneProgram SceneRenderer::createProgramWithShaders(const std::string& name, co
 	SceneProgram program;
 	if (existingProgram.invalid())
 	{
-		program.program = _rc->programFactory().genProgram(name, vs, fs);
+		program.program = _rc->materialFactory().genProgram(name, vs, fs);
 		_programsCache.manage(program.program, ObjectLoader::Pointer());
 	}
 	else

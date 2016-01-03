@@ -82,16 +82,17 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	auto fbo = rc->framebufferFactory().createFramebuffer(_generator->texture()->size(),
 		"rgba-buffer", TextureFormat::RGBA, TextureFormat::RGBA, DataType::UnsignedChar, TextureFormat::Invalid);
 	
-	bool blendEnabled = rc->renderState().blendEnabled();
+	BinaryDataStorage imageData;
+	auto blendState = rc->renderState().blendState();
 	auto currentBuffer = rc->renderState().boundFramebuffer();
-	rc->renderState().bindFramebuffer(fbo);
-	rc->renderState().setBlend(false, BlendState::Current);
-	rc->renderer()->renderFullscreenTexture(_generator->texture());
-	auto imageData = rc->renderer()->readFramebufferData(fbo->size(), TextureFormat::RGBA, DataType::UnsignedChar);
-
+	{
+		rc->renderState().bindFramebuffer(fbo);
+		rc->renderState().setBlendConfiguration(BlendConfiguration::Disabled);
+		rc->renderer()->renderFullscreenTexture(_generator->texture());
+		rc->renderer()->readFramebufferData(fbo->size(), TextureFormat::RGBA, DataType::UnsignedChar, imageData);
+	}
 	rc->renderState().bindFramebuffer(currentBuffer);
-	rc->renderState().setBlend(blendEnabled, BlendState::Current);
-	fbo.reset(nullptr);
+	rc->renderState().setBlendState(blendState);
 	
 	auto ptr = imageData.begin();
 	auto off = imageData.begin();

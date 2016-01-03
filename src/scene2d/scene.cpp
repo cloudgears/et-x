@@ -22,7 +22,7 @@ Scene::Scene(RenderContext* rc) : _rc(rc),
 	_overlay.setPivotPoint(vec2(0.5f));
 	_overlay.setContentMode(ImageView::ContentMode_Fill);
 	
-	layout(rc->size());
+	layout(vector2ToFloat(rc->size()));
 }
 
 bool Scene::pointerPressed(const et::PointerInputInfo& p)
@@ -516,7 +516,7 @@ void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
 	Element2d::Pointer l = obj;
 	l->reloadFromFile(obj->origin());
 	l->autoLayoutFromFile(obj->origin());
-	l->autoLayout(_rc->size(), 0.0f);
+	l->autoLayout(vector2ToFloat(_rc->size()), 0.0f);
 }
 
 void Scene::broadcastMessage(const Message& msg)

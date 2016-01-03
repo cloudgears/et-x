@@ -80,8 +80,6 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 {
 	initProgram(gr);
 	
-	rc->renderState().setPointSizeControlInVertexShader(true);
-	
 	if (_defaultTexture.invalid())
 	{
 		_defaultTexture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
