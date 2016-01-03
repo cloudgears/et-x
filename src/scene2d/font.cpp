@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2013 by Sergey Reznik
- * Please, do not modify content without approval.
+ * Copyright 2009-2016 by Sergey Reznik
+ * Please, modify content only if you know what are you doing.
  *
  */
 
@@ -418,8 +418,7 @@ vec4 colorTagToColor(const std::wstring& colorTag)
 	};
 	
 	int value = 0;
-	size_t pos = 0;
-	
+	uint32_t pos = 0;
 	for (auto i = hex.rbegin(), e = hex.rend(); (i != e) && (pos <= 8); ++i, ++pos)
 	{
 		value += hexCharacterToInt(*i) * ((pos % 2 == 0) ? 1 : 16);

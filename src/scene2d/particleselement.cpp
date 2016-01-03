@@ -95,7 +95,7 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 		
 		if (!contentValid())
 		{
-			for (size_t i = 0; i < _particles.activeParticlesCount(); ++i)
+			for (uint32_t i = 0; i < _particles.activeParticlesCount(); ++i)
 			{
 				const auto& p = _particles.particle(i);
 				_vertices[i].position = vec3(p.position.xy(), p.size);

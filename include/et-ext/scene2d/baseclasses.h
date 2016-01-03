@@ -1,8 +1,15 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2016 by Sergey Reznik
+ * Please, modify content only if you know what are you doing.
+ *
+ */
+
 #pragma once
 
 #include <et/rendering/texture.h>
 #include <et/rendering/program.h>
-#include <et/locale/locale.h>
+#include <et/locale/locale.hpp>
 #include <et/timers/animator.h>
 #include <et-ext/scene2d/baseconst.h>
 

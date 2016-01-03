@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2013 by Sergey Reznik
- * Please, do not modify content without approval.
+ * Copyright 2009-2016 by Sergey Reznik
+ * Please, modify content only if you know what are you doing.
  *
  */
 
@@ -16,8 +16,8 @@ namespace et
 	{
 		struct RenderChunk
 		{
-			size_t first = 0;
-			size_t count = 0;
+			uint32_t first = 0;
+			uint32_t count = 0;
 			PrimitiveType primitiveType = PrimitiveType::Triangles;
 			
 			recti clip;
@@ -26,7 +26,7 @@ namespace et
 			SceneProgram program;
 			Element2d* object = nullptr;
 			
-			RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture::Pointer& aTexture,
+			RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip, const Texture::Pointer& aTexture,
 				const SceneProgram& aProgram, Element2d* aObject, PrimitiveType pt);
 		};
 		
@@ -41,7 +41,7 @@ namespace et
 			};
 			
 		public:
-			RenderingElement(RenderContext* rc, size_t capacity);
+			RenderingElement(RenderContext* rc, uint32_t capacity);
 			~RenderingElement();
 			
 			void startAllocatingVertices();

@@ -183,7 +183,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 					if (token == "offset-")
 					{
 						offset = strToVector4(params);
-						for (size_t q = 0; q < 4; ++q)
+						for (uint32_t q = 0; q < 4; ++q)
 						{
 							if (offset[q] < 1.0f)
 							{

@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2013 by Sergey Reznik
- * Please, do not modify content without approval.
+ * Copyright 2009-2016 by Sergey Reznik
+ * Please, modify content only if you know what are you doing.
  *
  */
 
@@ -49,7 +49,7 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 	{
 		for (pixel.x = 0; pixel.x < canvasSize.x - 1; ++pixel.x)
 		{
-			size_t i = pixel.x + (canvasSize.y - pixel.y - 1) * canvasSize.x;
+			uint32_t i = pixel.x + (canvasSize.y - pixel.y - 1) * canvasSize.x;
 			if (renderedCharacterData[i])
 			{
 				topLeftOffset = minv(topLeftOffset, pixel);
@@ -72,8 +72,8 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 		targetPixel.x = 0;
 		for (int px = topLeftOffset.x; px < bottomRightOffset.x; ++px, ++targetPixel.x)
 		{
-			size_t i = targetPixel.x + (sizeToSave.y - targetPixel.y - 1) * sizeToSave.x;
-			size_t j = px + (canvasSize.y - py - 1) * canvasSize.x;
+			uint32_t i = targetPixel.x + (sizeToSave.y - targetPixel.y - 1) * sizeToSave.x;
+			uint32_t j = px + (canvasSize.y - py - 1) * canvasSize.x;
 			dataToSave[i] = renderedCharacterData[j];
 		}
 	}
@@ -160,7 +160,7 @@ BinaryDataStorage CharacterGenerator::downsample(BinaryDataStorage& input, const
 	vec2i downsampledSize = size / 2;
 	BinaryDataStorage result(downsampledSize.square(), 0);
 	
-	size_t k = 0;
+	uint32_t k = 0;
 	for (int y = 0; y < downsampledSize.y; ++y)
 	{
 		int thisRow = 2 * y;
@@ -286,7 +286,7 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 		sdf_put(_grid1, w + 1, y, pointInside);
 	}
 	
-	size_t k = 0;
+	uint32_t k = 0;
 	for (int y = 1; y <= h; y++)
 	{
 		for (int x = 1; x <= w; x++)

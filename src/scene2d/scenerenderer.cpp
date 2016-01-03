@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2013 by Sergey Reznik
- * Please, do not modify content without approval.
+ * Copyright 2009-2016 by Sergey Reznik
+ * Please, modify content only if you know what are you doing.
  *
  */
 
@@ -143,7 +143,7 @@ void s2d::SceneRenderer::beginRender(RenderContext* rc)
 	_lastRasterizerState = rs.actualState().rasterizer;
 	
 	rc->renderState().setDepthState({false, false});
-	rc->renderState().setBlendConfiguration(BlendConfiguration::Default);
+	rc->renderState().setBlendConfiguration(BlendConfiguration::AlphaBlend);
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)

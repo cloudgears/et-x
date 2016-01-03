@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2013 by Sergey Reznik
- * Please, do not modify content without approval.
+ * Copyright 2009-2016 by Sergey Reznik
+ * Please, modify content only if you know what are you doing.
  *
  */
 
@@ -199,7 +199,7 @@ void Button::buildVertices(RenderContext* rc, SceneRenderer&)
 
 void Button::setBackground(const Image& img)
 {
-	for (size_t i = 0; i < State_max; ++i)
+	for (uint32_t i = 0; i < State_max; ++i)
 		_background[i] = img;
 	
 	invalidateContent();
@@ -364,18 +364,19 @@ void Button::adjustSizeForText(const std::string& text, float duration, bool ver
 vec2 Button::sizeForText(const std::string& text, const std::string& wrapper)
 {
 	vec2 textSize = font().valid() ? font()->measureStringSize(wrapper + text + wrapper, fontSize(), fontSmoothing()) : vec2(0.0f);
-	
-	for (size_t i = 0; i < State_max; ++i)
+	for (uint32_t i = 0; i < State_max; ++i)
+	{
 		textSize = maxv(textSize, _background[i].descriptor.size);
-
+	}
 	return vec2(floorf(textSize.x), floorf(1.25f * textSize.y));
 }
 
 void Button::setImage(const Image& img)
 {
-	for (size_t i = 0; i < State_max; ++i)
+	for (uint32_t i = 0; i < State_max; ++i)
+	{
 		_image[i] = img;
-	
+	}
 	invalidateContent();
 }
 

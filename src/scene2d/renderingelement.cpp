@@ -1,7 +1,7 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2013 by Sergey Reznik
- * Please, do not modify content without approval.
+ * Copyright 2009-2016 by Sergey Reznik
+ * Please, modify content only if you know what are you doing.
  *
  */
 
@@ -16,14 +16,14 @@ using namespace et::s2d;
 /*
  * Render chunk
  */
-RenderChunk::RenderChunk(size_t aFirst, size_t aCount, const recti& aClip, const Texture::Pointer& aTexture,
+RenderChunk::RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip, const Texture::Pointer& aTexture,
 	const SceneProgram& aProgram, Element2d* aObject, PrimitiveType pt) : first(aFirst), count(aCount), clip(aClip),
 	texture(aTexture), program(aProgram), object(aObject), primitiveType(pt) { }
 
 /*
  * Rendering element
  */
-RenderingElement::RenderingElement(RenderContext* rc, size_t capacity) :
+RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity) :
 	renderState(rc->renderState())
 {
 	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat::Format_16bit, capacity, PrimitiveType::Triangles);

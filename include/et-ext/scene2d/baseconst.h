@@ -1,3 +1,10 @@
+/*
+ * This file is part of `et engine`
+ * Copyright 2009-2016 by Sergey Reznik
+ * Please, modify content only if you know what are you doing.
+ *
+ */
+
 #pragma once
 
 #include <et/core/et.h>
@@ -8,7 +15,7 @@ namespace et
 {
 	namespace s2d
 	{
-		enum State
+		enum State : uint32_t
 		{
 			State_Default,
 			State_Hovered,
@@ -19,7 +26,7 @@ namespace et
 			State_max
 		};
 
-		enum AnimationFlags
+		enum AnimationFlags : uint32_t
 		{
 			AnimationFlag_None = 0x0,
 			AnimationFlag_Fade = 0x01,
@@ -29,7 +36,7 @@ namespace et
 			AnimationFlag_FromBottom = 0x10
 		};
 
-		enum Flags
+		enum Flags : uint32_t
 		{
 			Flag_RequiresKeyboard = 0x0001,
 			Flag_Dragable = 0x0002,
@@ -42,7 +49,7 @@ namespace et
 			Flag_RequiresPreRendering = 0x0100
 		};
 
-		enum AnimatedPropery
+		enum AnimatedPropery : uint32_t
 		{
 			AnimatedProperty_None,
 			AnimatedProperty_Angle,
@@ -53,7 +60,7 @@ namespace et
 			AnimatedProperty_max
 		};
 
-		enum Alignment
+		enum Alignment : uint32_t
 		{
 			Alignment_Near,
 			Alignment_Center,
@@ -61,7 +68,7 @@ namespace et
 			Alignment_max,
 		};
 
-		enum LayoutMode
+		enum LayoutMode : uint32_t
 		{
 			LayoutMode_Absolute,
 			LayoutMode_RelativeToParent,
@@ -69,7 +76,7 @@ namespace et
 			LayoutMode_WrapContent
 		};
 
-		enum LayoutMask
+		enum LayoutMask : uint32_t
 		{
 			LayoutMask_None = 0x00,
 			
@@ -87,7 +94,7 @@ namespace et
 				LayoutMask_Angle | LayoutMask_Scale | LayoutMask_Children,
 		};
 		
-		enum Location
+		enum Location : uint32_t
 		{
 			Location_TopLeft,
 			Location_TopCenter,
