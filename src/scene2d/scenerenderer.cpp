@@ -81,7 +81,7 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 	_defaultTransform[3][3] = 1.0f;
 }
 
-SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture::Pointer& inTexture,
+SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Texture::Pointer& inTexture,
 	const SceneProgram& inProgram, Element2d* object, PrimitiveType pt)
 {
 	ET_ASSERT(_renderingElement.valid());
@@ -121,7 +121,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(size_t count, const Texture::P
 void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture::Pointer& texture,
 	const SceneProgram& program, Element2d* owner, PrimitiveType pt)
 {
-	size_t count = vertices.lastElementIndex();
+	uint32_t count = vertices.lastElementIndex();
 	ET_ASSERT((count > 0) && _renderingElement.valid() && program.valid());
 	
 	auto target = allocateVertices(count, texture, program, owner, pt);

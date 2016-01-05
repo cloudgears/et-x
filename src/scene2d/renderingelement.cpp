@@ -82,7 +82,7 @@ void RenderingElement::startAllocatingVertices()
 #endif
 }
 
-SceneVertex* RenderingElement::allocateVertices(size_t n)
+SceneVertex* RenderingElement::allocateVertices(uint32_t n)
 {
 	auto result = mappedVertices + allocatedVertices;
 	allocatedVertices += n;

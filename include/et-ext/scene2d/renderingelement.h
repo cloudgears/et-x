@@ -45,7 +45,7 @@ namespace et
 			~RenderingElement();
 			
 			void startAllocatingVertices();
-			SceneVertex* allocateVertices(size_t);
+			SceneVertex* allocateVertices(uint32_t);
 			void commitAllocatedVertices();
 			
 			void clear();
@@ -65,9 +65,9 @@ namespace et
 			RenderState& renderState;
 			std::vector<RenderChunk, SharedBlockAllocatorSTDProxy<RenderChunk>> chunks;
 			VertexArrayObject vertices[VertexBuffersCount];
-			size_t allocatedVertices = 0;
+			uint32_t allocatedVertices = 0;
+			uint32_t currentBufferIndex = 0;
 			size_t dataSize = 0;
-			size_t currentBufferIndex = 0;
 		};
 	}
 }
