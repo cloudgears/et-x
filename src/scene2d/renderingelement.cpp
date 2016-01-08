@@ -76,7 +76,7 @@ void RenderingElement::startAllocatingVertices()
 	clear();
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
-	renderState.bindVertexArray(vertices[currentBufferIndex]);
+	renderState.bindVertexArrayObject(vertices[currentBufferIndex]);
 	vertexData = vertices[currentBufferIndex]->vertexBuffer()->map(0, dataSize,
 		MapBufferOptions::Write | MapBufferOptions::InvalidateRange);
 #endif
@@ -92,7 +92,7 @@ SceneVertex* RenderingElement::allocateVertices(uint32_t n)
 void RenderingElement::commitAllocatedVertices()
 {
 	auto vao = vertices[currentBufferIndex];
-	renderState.bindVertexArray(vao);
+	renderState.bindVertexArrayObject(vao);
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	vao->vertexBuffer()->unmap();
@@ -101,10 +101,10 @@ void RenderingElement::commitAllocatedVertices()
 #endif
 }
 
-const VertexArrayObject& RenderingElement::vertexArrayObject()
+const VertexArrayObject::Pointer& RenderingElement::vertexArrayObject()
 {
 	const auto& vao = vertices[currentBufferIndex];
-	renderState.bindVertexArray(vao);
+	renderState.bindVertexArrayObject(vao);
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	ET_ASSERT(!vao->vertexBuffer()->mapped());

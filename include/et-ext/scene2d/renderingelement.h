@@ -50,7 +50,7 @@ namespace et
 			
 			void clear();
 
-			const VertexArrayObject& vertexArrayObject();
+			const VertexArrayObject::Pointer& vertexArrayObject();
 
 		private:
 			friend class SceneRenderer;
@@ -64,7 +64,7 @@ namespace et
 			
 			RenderState& renderState;
 			std::vector<RenderChunk, SharedBlockAllocatorSTDProxy<RenderChunk>> chunks;
-			VertexArrayObject vertices[VertexBuffersCount];
+			VertexArrayObject::Pointer vertices[VertexBuffersCount];
 			uint32_t allocatedVertices = 0;
 			uint32_t currentBufferIndex = 0;
 			size_t dataSize = 0;
