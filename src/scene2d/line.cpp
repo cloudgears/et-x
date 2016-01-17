@@ -108,7 +108,7 @@ void Line::buildVertices(SceneRenderer&)
 			while (t < 1.0f)
 			{
 				vec2 p1 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), t) + _shadowOffset;
-				vec2 p2 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), etMin(1.0f, t + dt)) + _shadowOffset;
+				vec2 p2 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), std::min(1.0f, t + dt)) + _shadowOffset;
 				buildLine(p1, p2, texCoord, _shadowColor, _shadowColor, tr);
 				t += dt;
 			}
@@ -120,7 +120,7 @@ void Line::buildVertices(SceneRenderer&)
 			vec4 c1 = mix(_startColor, _endColor, t);
 			vec4 c2 = mix(_startColor, _endColor, t + dt);
 			vec2 p1 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), t);
-			vec2 p2 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), etMin(1.0f, t + dt));
+			vec2 p2 = origin() + size() * bezierCurve(_controlPoints.data(), _controlPoints.size(), std::min(1.0f, t + dt));
 			buildLine(p1, p2, texCoord, baseColor * c1, baseColor * c2, tr);
 			t += dt;
 		}

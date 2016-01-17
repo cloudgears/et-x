@@ -84,14 +84,14 @@ void Button::buildVertices(RenderContext* rc, SceneRenderer&)
 				containerSize = frameSize - vec2(2.0f * contentGap);
 			
 			if ((_imageLayout == ImageLayout_Right) || (_imageLayout == ImageLayout_Left))
-				_imageSize *= etMin(1.0f, containerSize.x / _imageSize.x);
+				_imageSize *= std::min(1.0f, containerSize.x / _imageSize.x);
 			else
-				_imageSize *= etMin(1.0f, containerSize.y / _imageSize.y);
+				_imageSize *= std::min(1.0f, containerSize.y / _imageSize.y);
 		}
 		else if (sizeMode == ContentMode_ScaleMaxToMin)
 		{
-			float maxImageDim = etMax(_imageSize.x, _imageSize.y);
-			float minFrameDim = etMin(frameSize.x, frameSize.y);
+			float maxImageDim = std::max(_imageSize.x, _imageSize.y);
+			float minFrameDim = std::min(frameSize.x, frameSize.y);
 			_imageSize *= minFrameDim / maxImageDim;
 		}
 		else if (sizeMode != ContentMode_Center)
@@ -346,7 +346,7 @@ void Button::adjustSizeForText(const std::string& text, float duration, bool ver
 	vec2 newSize = sizeForText(text);
 	
 	newSize.x += _image[0].descriptor.size.x;
-	newSize.y = etMax(newSize.y, _image[0].descriptor.size.y);
+	newSize.y = std::max(newSize.y, _image[0].descriptor.size.y);
 	
 	if (horizontal)
 		currentSize.x = newSize.x;

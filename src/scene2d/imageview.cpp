@@ -80,8 +80,8 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 		{
 			_actualImageSize = _descriptor.value().size;
 
-			size_t repeatsWidth = etMax(static_cast<size_t>(1), static_cast<size_t>(size().x / _descriptor.value().size.x));
-			size_t repeatsHeight = etMax(static_cast<size_t>(1), static_cast<size_t>(size().y / _descriptor.value().size.y));
+			size_t repeatsWidth = std::max(static_cast<size_t>(1), static_cast<size_t>(size().x / _descriptor.value().size.x));
+			size_t repeatsHeight = std::max(static_cast<size_t>(1), static_cast<size_t>(size().y / _descriptor.value().size.y));
 
 			_vertices.fitToSize(repeatsWidth * repeatsHeight * measuseVertexCountForImageDescriptor(_descriptor.value()));
 
@@ -173,16 +173,16 @@ ImageDescriptor ImageView::calculateImageFrame()
 			if (_contentMode == ContentMode_Fill)
 			{
 				vec2 sizeAspect = frameSize / descSize;
-				float minScale = etMax(sizeAspect.x, sizeAspect.y);
+				float minScale = std::max(sizeAspect.x, sizeAspect.y);
 				frameSize = descSize * minScale;
 			}
 			else
 			{
 				vec2 sizeAspect = frameSize / descSize;
-				float minScale = etMin(sizeAspect.x, sizeAspect.y);
+				float minScale = std::min(sizeAspect.x, sizeAspect.y);
 				
 				if (_contentMode == ContentMode_Fit)
-					minScale = etMin(minScale, 1.0f);
+					minScale = std::min(minScale, 1.0f);
 				
 				frameSize = descSize * minScale;
 			}

@@ -164,11 +164,11 @@ BinaryDataStorage CharacterGenerator::downsample(BinaryDataStorage& input, const
 	for (int y = 0; y < downsampledSize.y; ++y)
 	{
 		int thisRow = 2 * y;
-		int nextRow = etMin(thisRow + 1, size.y - 1);
+		int nextRow = std::min(thisRow + 1, size.y - 1);
 		for (int x = 0; x < downsampledSize.x; ++x)
 		{
 			int thisCol = 2 * x;
-			int nextCol = etMin(thisCol + 1, size.x - 1);
+			int nextCol = std::min(thisCol + 1, size.x - 1);
 			int in00 = thisRow * size.x + thisCol;
 			int in01 = thisRow * size.x + nextCol;
 			int in10 = nextRow * size.x + thisCol;
@@ -324,8 +324,8 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 			for (int x = 0; x < w; x++)
 			{
 				int index = x + row;
-				int prev = etMax(0, x - 1) + row;
-				int next = etMin(w - 1, x + 1) + row;
+				int prev = std::max(0, x - 1) + row;
+				int next = std::min(w - 1, x + 1) + row;
 				smooth[index] = (distances[prev] + distances[index] + distances[next]) / 3.0f;
 			}
 		}
@@ -335,8 +335,8 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 			for (int y = 0; y < h; y++)
 			{
 				int index = x + w * y;
-				int prev = x + w * etMax(0, y-1);
-				int next = x + w * etMin(h-1, y+1);
+				int prev = x + w * std::max(0, y-1);
+				int next = x + w * std::min(h-1, y+1);
 				distances[index] = (smooth[prev] + smooth[index] + smooth[next]) / 3.0f;
 			}
 		}

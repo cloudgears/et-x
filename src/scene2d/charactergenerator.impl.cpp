@@ -196,7 +196,7 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	
 	int ox = glyph->bitmap_left + CharacterGenerator::charactersRenderingExtent.x / 2;
 	
-	int oy = etMax(0, static_cast<int>(ascender) - glyph->bitmap_top +
+	int oy = std::max(0, static_cast<int>(ascender) - glyph->bitmap_top +
 		CharacterGenerator::charactersRenderingExtent.y / 2);
 	
 	size_t k = 0;

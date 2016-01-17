@@ -147,22 +147,22 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		if (-_contentOffset.x < defaultValues.x)
 		{
 			float diff = std::abs(-_contentOffset.x - defaultValues.x);
-			offsetScale.x *= etMax(0.0f, 1.0f - diff / scrollOutOfContentXSize());
+			offsetScale.x *= std::max(0.0f, 1.0f - diff / scrollOutOfContentXSize());
 		}
 		else if (-_contentOffset.x > defaultValues.z)
 		{
 			float diff = std::abs(-_contentOffset.x - defaultValues.z);
-			offsetScale.x *= etMax(0.0f, 1.0f - diff / scrollOutOfContentXSize());
+			offsetScale.x *= std::max(0.0f, 1.0f - diff / scrollOutOfContentXSize());
 		}
 		if (-_contentOffset.y < defaultValues.y)
 		{
 			float diff = std::abs(-_contentOffset.y - defaultValues.y);
-			offsetScale.y *= etMax(0.0f, 1.0f - diff / scrollOutOfContentYSize());
+			offsetScale.y *= std::max(0.0f, 1.0f - diff / scrollOutOfContentYSize());
 		}
 		else if (-_contentOffset.y > defaultValues.w)
 		{
 			float diff = std::abs(-_contentOffset.y - defaultValues.w);
-			offsetScale.y *= etMax(0.0f, 1.0f - diff / scrollOutOfContentYSize());
+			offsetScale.y *= std::max(0.0f, 1.0f - diff / scrollOutOfContentYSize());
 		}
 		offsetScale *= offsetScale;
 
@@ -474,7 +474,7 @@ void Scroll::update(float t)
 	
 	_updateTime = t;
 	
-	_scrollbarsAlpha = mix(_scrollbarsAlpha, _scrollbarsAlphaTarget, etMin(1.0f, alphaAnimationScale * deltaTime));
+	_scrollbarsAlpha = mix(_scrollbarsAlpha, _scrollbarsAlphaTarget, std::min(1.0f, alphaAnimationScale * deltaTime));
 	
 	if (_scrollbarsAlpha < minAlpha)
 		_scrollbarsAlpha = 0.0f;
@@ -494,10 +494,10 @@ void Scroll::update(float t)
 
 	updateBouncing(deltaTime);
 	
-	float dt = etMin(1.0f, deltaTime * deccelerationRate);
+	float dt = std::min(1.0f, deltaTime * deccelerationRate);
 	_velocity *= 1.0f - dt;
 	
-	_scrollbarsAlphaTarget = etMin(1.0f, _velocity.dotSelf() / maxScrollbarsVisibilityVelocity);
+	_scrollbarsAlphaTarget = std::min(1.0f, _velocity.dotSelf() / maxScrollbarsVisibilityVelocity);
 
 	if (_velocity.dotSelf() < 1.0f)
 		_velocity = vec2(0.0f);
@@ -659,7 +659,7 @@ void Scroll::setBounceExtent(const vec2& e)
 
 void Scroll::scrollToBottom(float delay)
 {
-	setContentOffset(vec2(_contentOffset.x, etMin(0.0f, size().y - _contentSize.y)), delay);
+	setContentOffset(vec2(_contentOffset.x, std::min(0.0f, size().y - _contentSize.y)), delay);
 }
 
 vec2 Scroll::contentSize()

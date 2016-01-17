@@ -106,7 +106,7 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	{
 		actualAlignment = Alignment_Far;
 		textSize.x += caretSize.x;
-		textSize.y = etMax(caretSize.y, textSize.y);
+		textSize.y = std::max(caretSize.y, textSize.y);
 		widthAdjustment = caretSize.x;
 	}
 	

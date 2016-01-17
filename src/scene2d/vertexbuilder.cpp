@@ -45,7 +45,7 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 	
 	for (const CharDescriptor& desc : chars)
 	{
-		line.w = etMax(line.w, lineInterval * desc.originalSize.y);
+		line.w = std::max(line.w, lineInterval * desc.originalSize.y);
 		
 		if ((desc.value == ET_NEWLINE) || (desc.value == ET_RETURN))
 		{

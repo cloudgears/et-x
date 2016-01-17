@@ -211,11 +211,11 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 
 	for (const auto& desc : s)
 	{
-		lineSize.y = etMax(lineSize.y, desc.originalSize.y);
+		lineSize.y = std::max(lineSize.y, desc.originalSize.y);
 		
 		if ((desc.value == ET_RETURN) || (desc.value == ET_NEWLINE))
 		{
-			sz.x = etMax(sz.x, lineSize.x);
+			sz.x = std::max(sz.x, lineSize.x);
 			sz.y += lineSize.y;
 			lineSize = vec2(0.0f);
 		}
@@ -225,7 +225,7 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 		}
 	}
 	
-	sz.x = etMax(lineSize.x, sz.x);
+	sz.x = std::max(lineSize.x, sz.x);
 	sz.y += lineSize.y;
 	
 	return sz;
