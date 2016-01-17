@@ -136,14 +136,14 @@ namespace et
 			SceneVertexList _textVertices;
 			std::string _prefix;
 			StringList _values;
-			ListboxState _state;
+			ListboxState _state = ListboxState_Default;
 			vec2 _contentOffset;
-			ListboxPopupDirection _direction;
-			int _selectedIndex;
-			bool _popupOpened;
-			bool _popupOpening;
-			bool _popupValid;
-			bool _mouseIn;
+			ListboxPopupDirection _direction = ListboxPopupDirection_Bottom;
+			int _selectedIndex = -1;
+			bool _popupOpened = false;
+			bool _popupOpening = false;
+			bool _popupValid = false;
+			bool _mouseIn = false;
 		};
 	}
 }

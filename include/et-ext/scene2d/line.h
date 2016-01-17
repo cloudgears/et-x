@@ -45,10 +45,10 @@ namespace et
 		private:
 			std::vector<vec2> _controlPoints;
 			SceneVertexList _vertices;
-			vec4 _startColor;
-			vec4 _endColor;
-			vec4 _shadowColor;
-			vec2 _shadowOffset;
+			vec4 _startColor = vec4(1.0f);
+			vec4 _endColor = vec4(1.0f);
+			vec4 _shadowColor = vec4(0.0f);
+			vec2 _shadowOffset = vec2(0.0f);
 			float _width = 1.0f;
 			Type _type = Type_Linear;
 		};

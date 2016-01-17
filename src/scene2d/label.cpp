@@ -15,9 +15,7 @@ using namespace et::s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Label)
 
 Label::Label(const std::string& text, const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
-	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _vertices(0), _backgroundColor(0.0f),
-	_shadowOffset(1.0f), _textFade(0.0f), _textFadeDuration(0.0f), _textFadeStartTime(0.0f), _lineInterval(1.0f),
-	_horizontalAlignment(Alignment_Near), _verticalAlignment(Alignment_Near), _animatingText(false)
+	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
 	setFlag(Flag_TransparentForPointer);
 	

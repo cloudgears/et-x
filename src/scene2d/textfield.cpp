@@ -17,8 +17,7 @@ const int securedChar = 0x2022;
 ET_DECLARE_SCENE_ELEMENT_CLASS(TextField)
 
 TextField::TextField(const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
-	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _alignmentH(Alignment_Near),
-	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
+	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
@@ -26,8 +25,7 @@ TextField::TextField(const Font::Pointer& f, float fsz, Element2d* parent, const
 }
 
 TextField::TextField(const std::string& text, const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
-	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _alignmentH(Alignment_Near),
-	_alignmentV(Alignment_Center), _secured(false), _caretVisible(false)
+	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
 	setText(text);
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
@@ -37,8 +35,7 @@ TextField::TextField(const std::string& text, const Font::Pointer& f, float fsz,
 
 TextField::TextField(const Image& background, const std::string& text, const Font::Pointer& f, float fsz,
 	Element2d* parent, const std::string& name) : TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS),
-	_background(background), _alignmentH(Alignment_Near), _alignmentV(Alignment_Center),
-	_secured(false), _caretVisible(false)
+	_background(background)
 {
 	setSize(font()->measureStringSize(text, fontSize(), fontSmoothing()));
 	

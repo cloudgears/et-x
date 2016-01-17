@@ -165,13 +165,13 @@ namespace et
 				{ }
 
 			SceneVertex(const vec2& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-				position(pos, 0.0f), texCoord(tc), color(c) { }
+				texCoord(tc), color(c), position(pos, 0.0f) { }
 
 			SceneVertex(const vec3& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-				position(pos), texCoord(tc), color(c) { }
+				texCoord(tc), color(c), position(pos) { }
 
 		public:
-			vec4 texCoord = vec4(0.0f);;
+			vec4 texCoord = vec4(0.0f);
 			vec4 color = vec4(0.0f);
 			vec3 position = vec3(0.0f);
 		};

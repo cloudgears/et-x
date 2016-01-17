@@ -25,7 +25,7 @@ void internal_sdf_compare(sdf::Grid& g, sdf::Point& p, int x, int y, int offsetx
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace,
 	size_t faceIndex, size_t boldFaceIndex) : _impl(face, boldFace, faceIndex, boldFaceIndex), _rc(rc),
-	_placer(vec2i(static_cast<int>(defaultTextureSize)), true), _fontFace(face), _fontBoldFace(boldFace)
+	_fontFace(face), _fontBoldFace(boldFace), _placer(vec2i(static_cast<int>(defaultTextureSize)), true)
 {
 	_fontFace = fileExists(face) ? getFileName(face) : face;
 	_fontBoldFace = fileExists(boldFace) ? getFileName(boldFace) : boldFace;

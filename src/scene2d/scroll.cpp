@@ -23,10 +23,7 @@ float bounceStopTreshold = 0.5f;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Scroll)
 
 Scroll::Scroll(Element2d* parent, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _contentOffsetAnimator(timerPool()),
-	_updateTime(0.0f), _scrollbarsAlpha(0.0f), _scrollbarsAlphaTarget(0.0f), _bounceExtent(0.5f),
-	_pointerScrollDuration(0.0f), _movementTreshold(9.0f), _bounce(0),
-	_pointerCaptured(false), _manualScrolling(false)
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _contentOffsetAnimator(timerPool())
 {
 	_contentOffsetAnimator.updated.connect([this](){ setOffsetDirectly(_contentOffset); });
 	_contentOffsetAnimator.finished.connect([this]() { scrollEnded.invoke(); });

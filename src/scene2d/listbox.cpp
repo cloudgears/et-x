@@ -147,9 +147,7 @@ void ListboxPopup::pointerLeaved(const PointerInputInfo&)
 ET_DECLARE_SCENE_ELEMENT_CLASS(Listbox)
 
 Listbox::Listbox(const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
-	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _state(ListboxState_Default),
-	_contentOffset(0.0f), _selectedIndex(-1), _direction(ListboxPopupDirection_Bottom),
-	_popupOpened(false), _popupOpening(false), _popupValid(false)
+	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
 	_popup = ListboxPopup::Pointer::create(this);
 	_popup->setVisible(false);

@@ -14,7 +14,7 @@ using namespace et::s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Line)
 
 Line::Line(const vec2& from, const vec2& to, Element2d* parent) :
-	Element2d(parent), _width(1.0f), _startColor(1.0f), _endColor(1.0f)
+	Element2d(parent)
 {
 	setFlag(Flag_TransparentForPointer);
 	

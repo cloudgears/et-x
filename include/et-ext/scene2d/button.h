@@ -176,7 +176,7 @@ namespace et
 			
 			vec4 _textColor = vec4(0.0f, 1.0f);
 			vec4 _textPressedColor = vec4(0.0f, 1.0f);
-			vec4 _pressedColor = vec4(1.0f);
+			vec4 _pressedColor = vec4(0.5f, 1.0f);
 			vec4 _backgroundColor = vec4(0.0f);
 			vec4 _backgroundTintColor = vec4(1.0f);
 			vec4 _commonBackgroundTintColor = vec4(1.0f);
@@ -192,19 +192,18 @@ namespace et
 			Vector4Animator _backgroundTintAnimator;
 			Vector4Animator _commonBackgroundTintAnimator;
 
-			Type _type;
-			State _state;
-			ImageLayout _imageLayout;
-			ContentMode _contentMode;
-			Alignment _horizontalAlignment;
-			Alignment _verticalAlignment;
+			Type _type = Type_PushButton;
+			State _state = State_Default;
+			ImageLayout _imageLayout = ImageLayout_Left;
+			ContentMode _contentMode = ContentMode_Fit;
+			Alignment _horizontalAlignment = Alignment_Center;
+			Alignment _verticalAlignment = Alignment_Center;
 			Action _action = Action_None;
 			
 			float _lastClickTime = 0.0f;
 			float _clickTreshold = 0.0f;
 			
 			bool _pressed = false;
-			bool _hovered = false;
 			bool _selected = false;
 			bool _adjustPressedBackground = false;
 			bool _shouldInvokeClickInRunLoop = false;

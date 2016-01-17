@@ -100,8 +100,8 @@ namespace et
 			vec2 _dragInitialPosition;
 			vec2 _dragInitialOffset;
 			
-			bool _valid;
-			bool _dragging;
+			bool _valid = false;
+			bool _dragging = false;
 		};
 
 		class ModalLayout : public Layout

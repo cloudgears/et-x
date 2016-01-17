@@ -33,10 +33,10 @@ namespace et
 			const vec4& backgroundColor() const
 				{ return _backgroundColor; }
 			
-			const Alignment horizontalAlignment() const
+			Alignment horizontalAlignment() const
 				{ return _horizontalAlignment; }
 
-			const Alignment verticalAlignment() const
+			Alignment verticalAlignment() const
 				{ return _verticalAlignment; }
 			
 			void fitToWidth(float);

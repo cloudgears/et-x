@@ -88,8 +88,8 @@ namespace et
 			vec2 _contentOffset;
 			
 			FlagsHolder _editingFlags;
-			Alignment _alignmentV;
-			Alignment _alignmentH;
+			Alignment _alignmentV = Alignment_Center;
+			Alignment _alignmentH = Alignment_Near;
 			bool _secured = false;
 			bool _focused = false;
 			bool _caretVisible = false;

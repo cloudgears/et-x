@@ -86,9 +86,9 @@ namespace et
 			Image _sliderRight;
 			Image _handle[State_max];
 
-			vec4 _sliderLeftColor = vec4(0.0f);
-			vec4 _sliderRightColor = vec4(0.0f);
-			vec4 _handleFillColor = vec4(0.0f);
+			vec4 _sliderLeftColor = vec4(0.25f, 0.5f, 1.0f, 1.0f);
+			vec4 _sliderRightColor = vec4(0.5f, 0.5f, 0.5f, 1.0f);
+			vec4 _handleFillColor = vec4(1.0f, 0.5f, 0.25f, 1.0f);
 			
 			SceneVertexList _backgroundVertices;
 			SceneVertexList _sliderLeftVertices;
@@ -104,8 +104,8 @@ namespace et
 			FloatAnimator _value;
 			
 			State _state = State_Default;
-			SliderImagesMode _sliderImagesMode;
-			BackgroundImageMode _backgroundImageMode;
+			SliderImagesMode _sliderImagesMode = SliderImagesMode_Crop;
+			BackgroundImageMode _backgroundImageMode = BackgroundImageMode_Center;
         };
     }
 }

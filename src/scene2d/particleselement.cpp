@@ -18,7 +18,7 @@ extern const std::string particlesFragmentShader;
 ET_DECLARE_SCENE_ELEMENT_CLASS(ParticlesElement)
 
 ParticlesElement::ParticlesElement(size_t amount, Element2d* parent, const std::string& name) :
-	s2d::Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _particles(amount), _vertices(amount, 0)
+	s2d::Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _vertices(amount, 0), _particles(amount)
 {
 	setLocationInParent(s2d::Location_Center);
 	setFlag(s2d::Flag_DynamicRendering | s2d::Flag_TransparentForPointer);
