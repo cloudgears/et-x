@@ -6,6 +6,7 @@
  */
 
 #include <et/rendering/rendercontext.h>
+#include <et/core/tools.h>
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/scroll.h>
 
@@ -68,8 +69,8 @@ void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
 	
 	if (_scrollbarsColor.w > 0.0f)
 	{
-		float scaledScollbarSize = scrollbarSize * static_cast<float>(rc->screenScaleFactor());
-		float barHeight = size().y * (size().y / _contentSize.y);
+        float scaledScollbarSize = scrollbarSize * currentScreen().scaleFactor;
+        float barHeight = size().y * (size().y / _contentSize.y);
 		float barOffset = size().y * (_contentOffset.y / _contentSize.y);
 		vec2 origin(size().x - 2.0f * scaledScollbarSize, -barOffset);
 		

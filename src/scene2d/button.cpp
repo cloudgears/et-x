@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/core/tools.h>
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/button.h>
@@ -69,7 +70,7 @@ void Button::buildVertices(RenderContext* rc, SceneRenderer&)
 	_imageSize = absv(_image[_state].descriptor.size);
 	
 	float contentGap = (_imageSize.x > 0.0f) && ((_currentTextSize.x > 0.0f) || (_nextTextSize.x > 0.0f)) ?
-		(5.0f * static_cast<float>(rc->screenScaleFactor())) : 0.0f;
+		(5.0f * currentScreen().scaleFactor) : 0.0f;
 	
 	if (_imageSize.dotSelf() > 0.0f)
 	{
