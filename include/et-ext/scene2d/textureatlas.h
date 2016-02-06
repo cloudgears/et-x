@@ -16,7 +16,7 @@ namespace et
 		class TextureAtlas
 		{
 		public:
-			TextureAtlas();
+			TextureAtlas() = default;
 			TextureAtlas(RenderContext* rc, const std::string& filename, ObjectsCache& cache);
 			
 			bool loaded() const
@@ -40,7 +40,7 @@ namespace et
 			TextureMap _textures;
 			ImageMap _images;
 			
-			bool _loaded;
+			bool _loaded = false;
 		};
 	}
 }

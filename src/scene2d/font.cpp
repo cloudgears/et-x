@@ -151,9 +151,9 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	auto loadedFile = loadTextFile(resolvedFileName);
 	if (!loadedFile.empty())
 	{
-		ValueClass vc = ValueClass_Invalid;
+		VariantClass vc = VariantClass::Invalid;
 		auto info = json::deserialize(loadedFile, vc, false);
-		if (vc == ValueClass_Dictionary)
+		if (vc == VariantClass::Dictionary)
 			return loadFromDictionary(rc, info, cache, resolvedFileName);
 	}
 	

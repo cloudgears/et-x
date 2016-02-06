@@ -61,7 +61,7 @@ void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_imageVertices, _image[_state].texture, program(), this);
 }
 
-void Button::buildVertices(RenderContext* rc, SceneRenderer&)
+void Button::buildVertices(RenderContext*, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	

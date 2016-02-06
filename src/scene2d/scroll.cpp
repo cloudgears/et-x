@@ -54,7 +54,7 @@ void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
 		r.addVertices(_overlayVertices, r.lastUsedTexture(), program(), this);
 }
 
-void Scroll::buildVertices(RenderContext* rc, SceneRenderer&)
+void Scroll::buildVertices(RenderContext*, SceneRenderer&)
 {
 	_backgroundVertices.setOffset(0);
 	_overlayVertices.setOffset(0);

@@ -18,10 +18,9 @@ using namespace et::s2d;
 
 static const Image _emptyImage;
 
-rect parseRectString(std::string& s);
-
-TextureAtlas::TextureAtlas() : _loaded(false)
+namespace helper
 {
+    rect parseRectString(std::string& s);
 }
 
 TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, ObjectsCache& cache) :
@@ -41,10 +40,10 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 	
 	application().pushSearchPath(getFilePath(resolvedFileName));
 
-	ValueClass vc = ValueClass_Invalid;
+	VariantClass vc = VariantClass::Invalid;
 	Dictionary atlas = json::deserialize(loadTextFile(resolvedFileName), vc, false);
 	
-	if (vc == ValueClass_Dictionary)
+	if (vc == VariantClass::Dictionary)
 	{
 		ArrayValue textures = atlas.arrayForKey("textures");
 		for (const Dictionary& tex : textures->content)
@@ -133,13 +132,13 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 							{
 								std::string sRect;
 								parser >> sRect;
-								sourceRect = parseRectString(sRect);
+                                sourceRect = helper::parseRectString(sRect);
 							}
 							else if (aToken == "offset:")
 							{
 								std::string offset;
 								parser >> offset;
-								contentOffset = parseRectString(offset);
+								contentOffset = helper::parseRectString(offset);
 							}
 							else
 							{
@@ -218,7 +217,7 @@ const Texture::Pointer& TextureAtlas::firstTexture() const
 /*
  * Helper funcitons
  */
-rect parseRectString(std::string& s)
+rect helper::parseRectString(std::string& s)
 {
 	rect result;
 	int values[4] = { };

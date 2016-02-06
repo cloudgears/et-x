@@ -66,9 +66,9 @@ void TextElement::loadProperties(const Dictionary& d)
 	{
 		auto obj = d.objectForKey("font_size");
 		
-		if (obj->valueClass() == ValueClass_Float)
+		if (obj->variantClass() == VariantClass::Float)
 			setFontSize(FloatValue(obj)->content);
-		else if (obj->valueClass() == ValueClass_Integer)
+		else if (obj->variantClass() == VariantClass::Integer)
 			setFontSize(static_cast<float>(IntegerValue(obj)->content));
 	}
 	
@@ -76,16 +76,16 @@ void TextElement::loadProperties(const Dictionary& d)
 	{
 		auto obj = d.objectForKey("font_smoothing");
 		
-		if (obj->valueClass() == ValueClass_Float)
+		if (obj->variantClass() == VariantClass::Float)
 			setFontSmoothing(FloatValue(obj)->content);
-		else if (obj->valueClass() == ValueClass_Integer)
+		else if (obj->variantClass() == VariantClass::Integer)
 			setFontSmoothing(static_cast<float>(IntegerValue(obj)->content));
 	}
 	
 	if (d.hasKey("font_style"))
 	{
 		auto obj = d.objectForKey("font_style");
-		if (obj->valueClass() == ValueClass_String)
+		if (obj->variantClass() == VariantClass::String)
 		{
 			if (StringValue(obj)->content == "shadow")
 				setTextStyle(TextStyle_SignedDistanceFieldShadow);

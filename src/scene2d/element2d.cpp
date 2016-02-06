@@ -554,10 +554,10 @@ void Element2d::autoLayoutFromFile(const std::string& fileName)
 {
 	setOrigin(fileName);
 	
-	ValueClass c = ValueClass_Invalid;
-	ValueBase::Pointer base = json::deserialize(loadTextFile(fileName), c);
+	VariantClass c = VariantClass::Invalid;
+	VariantBase::Pointer base = json::deserialize(loadTextFile(fileName), c);
 	
-	if (base.valid() && (c == ValueClass_Dictionary))
+	if (base.valid() && (c == VariantClass::Dictionary))
 	{
 		setAutolayout(base);
 	}

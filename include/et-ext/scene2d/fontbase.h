@@ -42,8 +42,7 @@ namespace et
 			CharDescriptor(int v) :
 				value(v) { }
 		};
-
-		typedef std::vector<CharDescriptor> CharDescriptorList;
-		typedef std::map<int, CharDescriptor> CharDescriptorMap;
+        using CharDescriptorList = Vector<CharDescriptor>;
+        using CharDescriptorMap = Map<int, CharDescriptor>;
 	}
 }
