@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et/timers/notifytimer.h>
+#include <et/core/notifytimer.h>
 #include <et-ext/scene2d/textelement.h>
 #include <et-ext/scene2d/font.h>
 

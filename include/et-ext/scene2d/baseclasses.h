@@ -10,7 +10,7 @@
 #include <et/rendering/texture.h>
 #include <et/rendering/program.h>
 #include <et/locale/locale.hpp>
-#include <et/timers/animator.h>
+#include <et/core/animator.h>
 #include <et-ext/scene2d/baseconst.h>
 
 namespace et

@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <et/timers/notifytimer.h>
-#include <et/helpers/particles.h>
+#include <et/core/notifytimer.h>
+#include <et-ext/helpers/particles.h>
 #include <et-ext/scene2d/element2d.h>
 
 namespace et
