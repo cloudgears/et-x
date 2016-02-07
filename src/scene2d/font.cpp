@@ -9,7 +9,7 @@
 #include <et/core/conversion.h>
 #include <et/core/serialization.h>
 #include <et/app/application.h>
-#include <et/json/json.h>
+#include <et/core/json.h>
 #include <et/rendering/rendercontext.h>
 #include <et/imaging/imagewriter.h>
 #include <et-ext/scene2d/font.h>

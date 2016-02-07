@@ -6,7 +6,7 @@
  */
 
 #include <et/rendering/rendercontext.h>
-#include <et/json/json.h>
+#include <et/core/json.h>
 #include <et-ext/scene2d/layout.h>
 
 using namespace et;

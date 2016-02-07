@@ -6,7 +6,7 @@
 */
 
 #include <fstream>
-#include <et/json/json.h>
+#include <et/core/json.h>
 #include <et/core/conversion.h>
 #include <et/imaging/pngloader.h>
 #include <et/imaging/imagewriter.h>

@@ -6,7 +6,7 @@
  */
 
 #include <et/core/conversion.h>
-#include <et/json/json.h>
+#include <et/core/json.h>
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/element2d.h>
 
