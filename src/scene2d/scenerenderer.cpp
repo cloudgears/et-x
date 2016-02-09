@@ -148,7 +148,7 @@ void s2d::SceneRenderer::beginRender(RenderContext* rc)
 
 void s2d::SceneRenderer::render(RenderContext* rc)
 {
-	if (!_renderingElement.valid()) return;
+	if (_renderingElement.invalid()) return;
 
 	RenderState& rs = rc->renderState();
 	Renderer* renderer = rc->renderer();
