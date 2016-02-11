@@ -12,21 +12,56 @@
 using namespace et;
 using namespace et::s2d;
 
-const float textRevealDuration = 0.1f;
+namespace
+{
+	const float textRevealDuration = 0.1f;
+	const float popupAppearTime = 0.3f;
+}
 
-ET_DECLARE_SCENE_ELEMENT_CLASS(ListboxPopup)
+class Listbox::Popup : public Element2d
+{
+public:
+	Popup(Listbox* owner, const std::string& name = emptyString);
+	
+	void setBackgroundImage(const Image& img);
+	
+	bool pointerPressed(const PointerInputInfo&);
+	bool pointerMoved(const PointerInputInfo&);
+	bool pointerReleased(const PointerInputInfo&);
+	void pointerEntered(const PointerInputInfo&);
+	void pointerLeaved(const PointerInputInfo&);
+	
+	void hideText();
+	void revealText();
+	
+private:
+	void addToRenderQueue(RenderContext*, SceneRenderer&);
+	void buildVertices(SceneRenderer& gr);
+	
+private:
+	Listbox* _owner = nullptr;
+	SceneVertexList _backgroundVertices;
+	SceneVertexList _selectionVertices;
+	SceneVertexList _textVertices;
+	FloatAnimator _textAlphaAnimator;
+	int _selectedIndex = 0;
+	float _textAlpha = 1.0f;
+	bool _pressed = false;
+};
 
-ListboxPopup::ListboxPopup(Listbox* owner, const std::string& name) :
+ET_DECLARE_SCENE_ELEMENT_CLASS(Listbox::Popup)
+
+Listbox::Popup::Popup(Listbox* owner, const std::string& name) :
 	Element2d(owner, ET_S2D_PASS_NAME_TO_BASE_CLASS), _owner(owner), _textAlphaAnimator(timerPool()),
 	_selectedIndex(-1), _textAlpha(0.0f), _pressed(false)
 {
 	setFlag(Flag_RenderTopmost);
 	
-	_textAlphaAnimator.updated.connect<Element2d>(this, &ListboxPopup::invalidateContent);
+	_textAlphaAnimator.updated.connect<Element2d>(this, &Popup::invalidateContent);
 	_textAlphaAnimator.finished.connect(_owner, &Listbox::popupDidOpen);
 }
 
-void ListboxPopup::buildVertices(SceneRenderer&)
+void Listbox::Popup::buildVertices(SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	_backgroundVertices.setOffset(0);
@@ -35,61 +70,65 @@ void ListboxPopup::buildVertices(SceneRenderer&)
 
 	const Image& background = _owner->_background;
 	const Image& selection = _owner->_selection;
+	
+	rect wholeRect(vec2(0.0f), size());
+	buildColorVertices(_backgroundVertices, wholeRect, vec4(0.0f, 1.0f, 0.0f, 0.5f), transform);
 
 	if (background.texture.valid())
 	{
 		buildImageVertices(_backgroundVertices, background.texture, background.descriptor, 
-			rect(vec2(0.0f), size()), finalColor(), transform);
+			wholeRect, finalColor(), transform);
 	}
-
+	
 	const StringList& values = _owner->_values;
 	if (values.size() && (_textAlpha > 0.0f))
 	{
 		bool selectionValid = selection.texture.valid();
 
-		float row = 0.0f;
 		float rowSize = _owner->size().y;
-		float y0 = floorf(0.5f * (rowSize - 10.0f)); // _owner->_font->lineHeight()));
-		float dy = floorf(size().y / static_cast<float>(values.size()));
 
 		vec4 drawColor = finalColor();
 		drawColor.w *= _textAlpha;
 
-		vec2 textPos = _owner->_contentOffset + vec2(0.0f, y0);
+		vec2 textPos = _owner->_contentOffset;
 		
 		int index = 0;
-		for (auto i = values.begin(), e = values.end(); i != e; ++i, ++index, row += 1.0f)
+		for (const auto& i : values)
 		{
+			float row = static_cast<float>(index) * rowSize;
+			
 			if (selectionValid && (_selectedIndex == index))
 			{
 				buildImageVertices(_selectionVertices, selection.texture, selection.descriptor, 
 					rect(vec2(0.0f, row * rowSize), vec2(size().x, rowSize)), drawColor, transform);
 			}
 
-			buildStringVertices(_textVertices, _owner->font()->buildString(*i, _owner->fontSize(), _owner->fontSmoothing()), Alignment_Near,
-				Alignment_Near, textPos, drawColor, transform);
-			textPos.y += dy;
+			buildStringVertices(_textVertices, _owner->font()->buildString(i, _owner->fontSize(),
+				_owner->fontSmoothing()), Alignment_Near, Alignment_Near, textPos, drawColor, transform);
+			
+			textPos.y += rowSize;
 		}
 	}
 
 	setContentValid();
 }
 
-void ListboxPopup::revealText()
+void Listbox::Popup::revealText()
 {
 	hideText();
-	
 	_textAlphaAnimator.animate(&_textAlpha, _textAlpha, 1.0f, textRevealDuration);
 }
 
-void ListboxPopup::hideText()
+void Listbox::Popup::hideText()
 {
 	_textAlpha = 0.0f;
 	invalidateContent();
 }
 
-void ListboxPopup::addToRenderQueue(RenderContext*, SceneRenderer& r)
+void Listbox::Popup::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
+	initProgram(r);
+	
 	if (!contentValid() || !transformValid())
 		buildVertices(r);
 
@@ -103,20 +142,20 @@ void ListboxPopup::addToRenderQueue(RenderContext*, SceneRenderer& r)
 		r.addVertices(_textVertices, _owner->font()->generator()->texture(), _owner->textProgram(r), this);
 }
 
-bool ListboxPopup::pointerPressed(const PointerInputInfo&)
+bool Listbox::Popup::pointerPressed(const PointerInputInfo&)
 {
 	_pressed = true;
 	return true;
 }
 
-bool ListboxPopup::pointerMoved(const PointerInputInfo& p)
+bool Listbox::Popup::pointerMoved(const PointerInputInfo& p)
 {
 	_selectedIndex = static_cast<int>(p.pos.y / _owner->size().y);
 	invalidateContent();
 	return true;
 }
 
-bool ListboxPopup::pointerReleased(const PointerInputInfo& p)
+bool Listbox::Popup::pointerReleased(const PointerInputInfo& p)
 {
 	if (_pressed)
 	{
@@ -129,12 +168,12 @@ bool ListboxPopup::pointerReleased(const PointerInputInfo& p)
 	return true;
 }
 
-void ListboxPopup::pointerEntered(const PointerInputInfo&)
+void Listbox::Popup::pointerEntered(const PointerInputInfo&)
 {
 
 }
 
-void ListboxPopup::pointerLeaved(const PointerInputInfo&)
+void Listbox::Popup::pointerLeaved(const PointerInputInfo&)
 {
 	_selectedIndex = -1;
 	invalidateContent();
@@ -149,7 +188,7 @@ ET_DECLARE_SCENE_ELEMENT_CLASS(Listbox)
 Listbox::Listbox(const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
 	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
-	_popup = ListboxPopup::Pointer::create(this);
+	_popup = etCreateObject<Popup>(this);
 	_popup->setVisible(false);
 	
 	ET_CONNECT_EVENT(_popup->elementAnimationFinished, Listbox::onPopupAnimationFinished)
@@ -181,10 +220,12 @@ void Listbox::setSelectionImage(const Image& img)
 
 void Listbox::buildVertices(SceneRenderer&)
 {
-	mat4 transform = finalTransform();
 	_backgroundVertices.setOffset(0);
 	_textVertices.setOffset(0);
 
+	mat4 transform = finalTransform();
+	buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), vec4(1.0f, 0.5f), transform);
+	
 	if (_images[_state].texture.valid())
 	{
 		buildImageVertices(_backgroundVertices, _images[_state].texture, _images[_state].descriptor, 
@@ -204,13 +245,15 @@ void Listbox::buildVertices(SceneRenderer&)
 
 void Listbox::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
+	initProgram(r);
+	
 	if (!contentValid())
 		buildVertices(r);
 
-	if (_images[_state].texture.valid())
+	if (_backgroundVertices.lastElementIndex() > 0)
 		r.addVertices(_backgroundVertices, _images[_state].texture, program(), this);
 
-	if (shouldDrawText())
+	if (_textVertices.lastElementIndex() > 0)
 		r.addVertices(_textVertices, font()->generator()->texture(), program(), this);
 }
 
@@ -276,38 +319,25 @@ void Listbox::pointerLeaved(const PointerInputInfo& p)
 
 void Listbox::showPopup()
 {
-	ET_FAIL("Need to move from frame to position+size");
-/*
 	setState(ListboxState_Opened);
-	if (_popupOpening) return;
+	if (_popupOpening)
+		return;
 
 	if (!_popupValid)
 		configurePopup();
 
-	rect destSize = _popup->position + size instead of frame();
-	rect currentSize = destSize;
-
-	destSize.top = 0.0f;
-	if (_direction == ListboxPopupDirection_Center)
-		destSize.top = floorf(0.5f * size().y * (1.0f - static_cast<float>(_values.size())));
-	else if (_direction == ListboxPopupDirection_Top)
-		destSize.top = floorf(-size().y * static_cast<float>(_values.size() / 2.0f));
-
-	currentSize.top = 0.0f;
-	currentSize.height = size().y;
-
 	_popupOpened = false;
 	_popupOpening = true;
 
+	vec2 relativeSize = vec2(1.0f, _values.empty() ? 1.0f : _values.size());
+	
 	_popup->hideText();
-	_popup->setAlpha(0.0f);
-	_popup->setPosition + Size instead of Frame(currentSize);
-	_popup->setPosition + Size instead of Frame(destSize, popupAppearTime);
-	_popup->setAlpha(1.0f, popupAppearTime);
-	_popup->setVisible(true);
-
-	owner()->setActiveElement(this);
-*/ 
+	_popup->setAutolayoutRelativeToParent(vec2(0.0f, 0.0f), relativeSize, vec2(0.0f, 1.0f));
+	_popup->setVisible(true, popupAppearTime);
+	_popup->autoLayout(owner()->size());
+	
+	owner()->setFocusedElement(s2d::Element2d::Pointer(this));
+	invalidateContent();
 }
 
 void Listbox::hidePopup()
@@ -322,7 +352,7 @@ void Listbox::hidePopup()
 
 void Listbox::resignFocus(Element2d* e)
 {
-	if (e != _popup.ptr())
+	if (e != _popup)
 		hidePopup();
 }
 

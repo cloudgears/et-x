@@ -87,21 +87,21 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 	if (_textCharacters.empty())
 		textSize = caretSize * vec2(0.0f, 1.0f);
 	
-	auto actualAlignment = _alignmentH;
+	auto actualAlignment = textHorizontalAlignment();
 	
 	if (!_focused && !_placeholderCharacters.empty() && _textCharacters.empty())
 	{
 		vec2 placeholderSize = font()->measureStringSize(_placeholderCharacters);
 		
-		vec2 placeholderOrigin = _contentOffset + vec2(alignmentFactor(actualAlignment), alignmentFactor(_alignmentV)) *
-			((wholeRect.size() - 2.0f * _contentOffset) - placeholderSize);
+		vec2 placeholderOrigin = _contentOffset + vec2(alignmentFactor(actualAlignment),
+			alignmentFactor(textVerticalAlignment())) * ((wholeRect.size() - 2.0f * _contentOffset) - placeholderSize);
 		
 		buildStringVertices(_textVertices, _placeholderCharacters, Alignment_Near, Alignment_Near,
 			placeholderOrigin, finalColor() * vec4(1.0f, 0.5f), transform, 1.0f);
 	}
 	
 	float widthAdjustment = 0.0f;
-	actualAlignment = _alignmentH;
+	actualAlignment = textHorizontalAlignment();
 	if (_focused && (textSize.x + caretSize.x >= wholeRect.width - _contentOffset.x))
 	{
 		actualAlignment = Alignment_Far;
@@ -110,8 +110,8 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 		widthAdjustment = caretSize.x;
 	}
 	
-	vec2 textOrigin = _contentOffset + vec2(alignmentFactor(actualAlignment), alignmentFactor(_alignmentV)) *
-		((wholeRect.size() - 2.0f * _contentOffset) - textSize);
+	vec2 textOrigin = _contentOffset + vec2(alignmentFactor(actualAlignment),
+		alignmentFactor(textVerticalAlignment())) * ((wholeRect.size() - 2.0f * _contentOffset) - textSize);
 	
 	if (!_textCharacters.empty())
 	{
@@ -263,18 +263,6 @@ const std::string& TextField::text() const
 void TextField::setBackgroundColor(const vec4& color)
 {
 	_backgroundColor = color;
-	invalidateContent();
-}
-
-void TextField::setVerticalAlignment(s2d::Alignment a)
-{
-	_alignmentV = a;
-	invalidateContent();
-}
-
-void TextField::setHorizontalAlignment(s2d::Alignment a)
-{
-	_alignmentH = a;
 	invalidateContent();
 }
 

@@ -160,6 +160,25 @@ void TextElement::setProgramParameters(et::RenderContext*, et::Program::Pointer&
 		p->setUniform(_shadowUniform, _shadowOffset * _font->generator()->texture()->texel());
 }
 
+void TextElement::setTextHorizontalAlignment(Alignment a)
+{
+	_horizontalAlignment = a;
+	invalidateContent();
+}
+
+void TextElement::setTextVerticalAlignment(Alignment a)
+{
+	_verticalAlignment = a;
+	invalidateContent();
+}
+
+void TextElement::setTextAlignment(Alignment h, Alignment v)
+{
+	_horizontalAlignment = h;
+	_verticalAlignment = v;
+	invalidateContent();
+}
+
 /*
  * SDF - plain
  */

@@ -57,6 +57,16 @@ namespace et
 			
 			void setShadowOffset(const vec2&);
 			
+			Alignment textHorizontalAlignment() const
+				{ return _horizontalAlignment; }
+			
+			Alignment textVerticalAlignment() const
+				{ return _verticalAlignment; }
+			
+			void setTextHorizontalAlignment(Alignment);
+			void setTextVerticalAlignment(Alignment);
+			void setTextAlignment(Alignment horzontal, Alignment vertical);
+			
 		protected:
 			bool processMessage(const Message&) override;
 			void setProgramParameters(et::RenderContext*, et::Program::Pointer&) override;
@@ -73,6 +83,8 @@ namespace et
 			float _fontSize = 12.0f;
 			float _fontSmoothing = 1.0f;
 			TextStyle _textStyle = TextStyle_SignedDistanceField;
+			Alignment _horizontalAlignment = Alignment_Center;
+			Alignment _verticalAlignment = Alignment_Center;
 		};
 	}
 }

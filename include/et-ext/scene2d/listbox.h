@@ -29,45 +29,10 @@ namespace et
 			ListboxPopupDirection_Bottom,
 		};
 
-		class Listbox;
-
-		class ListboxPopup : public Element2d
-		{
-		public:
-			ET_DECLARE_POINTER(ListboxPopup)
-			
-		public:
-			ListboxPopup(Listbox* owner, const std::string& name = emptyString);
-			
-			void setBackgroundImage(const Image& img);
-
-			bool pointerPressed(const PointerInputInfo&);
-			bool pointerMoved(const PointerInputInfo&);
-			bool pointerReleased(const PointerInputInfo&);
-			void pointerEntered(const PointerInputInfo&);
-			void pointerLeaved(const PointerInputInfo&);
-
-			void hideText();
-			void revealText();
-
-		private:
-			void addToRenderQueue(RenderContext*, SceneRenderer&);
-			void buildVertices(SceneRenderer& gr);
-
-		private:
-			Listbox* _owner = nullptr;
-			SceneVertexList _backgroundVertices;
-			SceneVertexList _selectionVertices;
-			SceneVertexList _textVertices;
-			FloatAnimator _textAlphaAnimator;
-			int _selectedIndex = 0;
-			float _textAlpha = 1.0f;
-			bool _pressed = false;
-		};
-
 		class Listbox : public TextElement
 		{
 		public:
+			class Popup;
 			ET_DECLARE_POINTER(Listbox)
 
 		public:
@@ -126,9 +91,8 @@ namespace et
 			bool shouldDrawText();
 			
 		private:
-			friend class ListboxPopup;
-
-			ListboxPopup::Pointer _popup;
+			Popup* _popup = nullptr;
+			
 			Image _images[ListboxState_max];
 			Image _background;
 			Image _selection;

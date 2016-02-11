@@ -33,22 +33,13 @@ namespace et
 			const vec4& backgroundColor() const
 				{ return _backgroundColor; }
 			
-			Alignment horizontalAlignment() const
-				{ return _horizontalAlignment; }
-
-			Alignment verticalAlignment() const
-				{ return _verticalAlignment; }
-			
 			void fitToWidth(float);
 			void adjustSize();
 			
 			void setShouldAutoAdjustSize(bool);
 			
 			void setBackgroundColor(const vec4&);
-			
-			void setHorizontalAlignment(Alignment);
-			void setVerticalAlignment(Alignment);
-			
+						
 			void setShadowColor(const vec4& color);
 			void setShadowOffset(const vec2& offset);
 			void setText(const std::string& text, float duration = 0.0f);
@@ -83,8 +74,6 @@ namespace et
 			float _textFade = 0.0f;
 			float _textFadeDuration = 0.0f;
 			float _textFadeStartTime = 0.0f;
-			Alignment _horizontalAlignment = Alignment_Near;
-			Alignment _verticalAlignment = Alignment_Near;
 			bool _animatingText = false;
 			bool _autoAdjustSize = true;
 		};

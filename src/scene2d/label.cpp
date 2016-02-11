@@ -42,7 +42,7 @@ void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 void Label::buildVertices(RenderContext*, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
-	vec2 alignment = vec2(alignmentFactor(_horizontalAlignment), alignmentFactor(_verticalAlignment));
+	vec2 alignment = vec2(alignmentFactor(textHorizontalAlignment()), alignmentFactor(textVerticalAlignment()));
 	vec2 textOffset = size() * alignment;
 	
 	_vertices.setOffset(0);
@@ -72,23 +72,23 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 		{
 			shadowColor.w = _shadowColor.w * alphaScale.w * fadeOut;
 			vec2 shadowOffset = textOffset + _shadowOffset;
-			buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
+			buildStringVertices(_vertices, _charListText, textHorizontalAlignment(), textVerticalAlignment(),
 				shadowOffset, shadowColor, transform, _lineInterval);
 			
 			shadowColor.w = _shadowColor.w * alphaScale.w * fadeIn;
-			buildStringVertices(_vertices, _charListNextText, _horizontalAlignment,
-				_verticalAlignment, shadowOffset, shadowColor, transform, _lineInterval);
+			buildStringVertices(_vertices, _charListNextText, textHorizontalAlignment(),
+				textVerticalAlignment(), shadowOffset, shadowColor, transform, _lineInterval);
 		}
 
 		if (fadeOut > 0.0f)
 		{
-			buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment,
+			buildStringVertices(_vertices, _charListText, textHorizontalAlignment(), textVerticalAlignment(),
 				textOffset, finalColorValue * vec4(1.0, fadeOut), transform, _lineInterval);
 		}
 		
 		if (fadeIn > 0.0f)
 		{
-			buildStringVertices(_vertices, _charListNextText, _horizontalAlignment, _verticalAlignment,
+			buildStringVertices(_vertices, _charListNextText, textHorizontalAlignment(), textVerticalAlignment(),
 				textOffset, finalColorValue * vec4(1.0, fadeIn), transform, _lineInterval);
 		}
 	}
@@ -97,11 +97,11 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 		if (hasShadow)
 		{
 			shadowColor.w = _shadowColor.w * alphaScale.w;
-			buildStringVertices(_vertices, _charListText, _horizontalAlignment,
-				_verticalAlignment, textOffset + _shadowOffset, shadowColor, transform, _lineInterval);
+			buildStringVertices(_vertices, _charListText, textHorizontalAlignment(),
+				textVerticalAlignment(), textOffset + _shadowOffset, shadowColor, transform, _lineInterval);
 		}
 
-		buildStringVertices(_vertices, _charListText, _horizontalAlignment, _verticalAlignment, 
+		buildStringVertices(_vertices, _charListText, textHorizontalAlignment(), textVerticalAlignment(), 
 			textOffset, finalColorValue, transform, _lineInterval);
 	}
 
@@ -184,22 +184,6 @@ void Label::adjustSize()
 	
 	if (_autoAdjustSize)
 		setSize(_textSize);
-}
-
-void Label::setHorizontalAlignment(Alignment h)
-{
-	if (_horizontalAlignment == h) return;
-	
-	_horizontalAlignment = h;
-	invalidateContent();
-}
-
-void Label::setVerticalAlignment(Alignment v)
-{
-	if (_verticalAlignment == v) return;
-	
-	_verticalAlignment = v;
-	invalidateContent();
 }
 
 void Label::setBackgroundColor(const vec4& color)

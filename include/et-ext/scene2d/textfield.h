@@ -47,10 +47,8 @@ namespace et
 
 			void setSecured(bool);
 			void setBackgroundColor(const vec4& color);
-			void setVerticalAlignment(Alignment);
-			void setHorizontalAlignment(Alignment);
 			void setContentOffset(const vec2&);
-
+			
 			void setFocus() override;
 			void resignFocus(Element2d*) override;
 			
@@ -88,8 +86,6 @@ namespace et
 			vec2 _contentOffset;
 			
 			FlagsHolder _editingFlags;
-			Alignment _alignmentV = Alignment_Center;
-			Alignment _alignmentH = Alignment_Near;
 			bool _secured = false;
 			bool _focused = false;
 			bool _caretVisible = false;

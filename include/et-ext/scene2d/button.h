@@ -126,10 +126,7 @@ namespace et
 			vec2 contentSize();
 			
 			void setShouldAdjustPressedBackground(bool);
-			
-			void setHorizontalAlignment(Alignment);
-			void setVerticalAlignment(Alignment);
-			
+						
 			bool processMessage(const Message&) override;
 			
 			void setClickTreshold(float);
@@ -196,8 +193,6 @@ namespace et
 			State _state = State_Default;
 			ImageLayout _imageLayout = ImageLayout_Left;
 			ContentMode _contentMode = ContentMode_Fit;
-			Alignment _horizontalAlignment = Alignment_Center;
-			Alignment _verticalAlignment = Alignment_Center;
 			Action _action = Action_None;
 			
 			float _lastClickTime = 0.0f;
