@@ -43,21 +43,22 @@ namespace et
 			void setSelectionImage(const Image& img);
 			void setPopupDirection(ListboxPopupDirection d);
 
-			bool containsPoint(const vec2& p, const vec2&);
+			bool containsPoint(const vec2& p, const vec2&) override;
 
-			bool pointerPressed(const PointerInputInfo&);
-			bool pointerMoved(const PointerInputInfo&);
-			bool pointerReleased(const PointerInputInfo&);
-			void pointerEntered(const PointerInputInfo&);
-			void pointerLeaved(const PointerInputInfo&);
+			bool pointerPressed(const PointerInputInfo&) override;
+			bool pointerMoved(const PointerInputInfo&) override;
+			bool pointerReleased(const PointerInputInfo&) override;
+			void pointerEntered(const PointerInputInfo&) override;
+			void pointerLeaved(const PointerInputInfo&) override;
 
 			void showPopup();
 			void hidePopup();
 
-			void resignFocus(Element2d*);
+			void resignFocus(Element2d*) override;
 
 			void setValues(const StringList& v);
 			void addValue(const std::string& v);
+            const std::string& valueAtIndex(size_t) const;
 
 			int selectedIndex() const
 				{ return _selectedIndex; }
@@ -71,15 +72,14 @@ namespace et
 
 			const StringList& values() const 
 				{ return _values; }
-
-			ET_DECLARE_EVENT1(popupOpened, Listbox*)
-			ET_DECLARE_EVENT1(popupClosed, Listbox*)
+            
+            ET_DECLARE_EVENT1(valueSelected, size_t)
 
 		private:
-			void addToRenderQueue(RenderContext*, SceneRenderer&);
+			void addToRenderQueue(RenderContext*, SceneRenderer&) override;
 			void buildVertices(SceneRenderer& gr);
 			
-			void didChangeFrame();
+			void didChangeFrame() override;
 			
 			void configurePopup();
 
@@ -104,8 +104,6 @@ namespace et
 			vec2 _contentOffset;
 			ListboxPopupDirection _direction = ListboxPopupDirection_Bottom;
 			int _selectedIndex = -1;
-			bool _popupOpened = false;
-			bool _popupOpening = false;
 			bool _popupValid = false;
 			bool _mouseIn = false;
 		};

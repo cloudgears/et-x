@@ -27,6 +27,7 @@ Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Elem
 	_currentTitleCharacters = font()->buildString(_currentTitle.cachedText, fontSize(), fontSmoothing());
 	
 	setSize(sizeForText(title));
+    setTextAlignment(s2d::Alignment::Alignment_Center, s2d::Alignment::Alignment_Center);
 	
 	_backgroundTintAnimator.updated.connect<s2d::Button>(this, &Button::invalidateContent);
 	_commonBackgroundTintAnimator.updated.connect<s2d::Button>(this, &Button::invalidateContent);

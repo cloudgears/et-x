@@ -278,18 +278,19 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 
 Element2d::Pointer Layout::activeElement(const PointerInputInfo& p)
 {
-	if (!_valid)
-	{
-		_topmostElements.clear();
-		for (auto& i : children())
-			collectTopmostElements(i);
-	}
+    _topmostElements.clear();
+    for (auto& i : children())
+        collectTopmostElements(i);
 
 	Element2d::Pointer active;
 	for (auto i = _topmostElements.rbegin(), e = _topmostElements.rend(); i != e; ++i)
 	{
 		active = getActiveElement(p, *i);
-		if (active.valid())	break;
+		if (active.valid())
+        {
+            active->name();
+            break;
+        }
 	}
 
 	if (active.invalid())
@@ -390,12 +391,7 @@ void Layout::setFocusedElement(Element2d::Pointer e)
 		(_focusedElement.valid() && _focusedElement->hasFlag(Flag_RequiresKeyboard));
 
 	if (_focusedElement.valid())
-	{
 		_focusedElement->setFocus();
-
-		if (!_focusedElement->hasFlag(Flag_RequiresKeyboard))
-			_focusedElement.reset(nullptr);
-	}
 	
 	if (needKeyboard)
 		layoutRequiresKeyboard.invoke(this, _focusedElement.ptr());

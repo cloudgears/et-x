@@ -18,19 +18,13 @@ namespace et
 		class Element2d;
 		class Layout;
 		
-		typedef Hierarchy<Element2d, LoadableObject> ElementHierarchy;
+		using ElementHierarchy = Hierarchy<Element2d, LoadableObject>;
 		
 		class Element2d : public ElementHierarchy, public FlagsHolder, public EventReceiver, public TimedObject
 		{
 		public:
 			ET_DECLARE_POINTER(Element2d)
-			typedef std::list<Pointer> List;
-
-			union
-			{
-				size_t tag = 0;
-				int tag_i;
-			};
+            using List = Vector<Pointer>;
 			
 		public:
 			Element2d(Element2d* parent, const std::string& name = emptyString);

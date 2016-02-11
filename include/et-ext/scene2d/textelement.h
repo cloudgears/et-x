@@ -83,8 +83,8 @@ namespace et
 			float _fontSize = 12.0f;
 			float _fontSmoothing = 1.0f;
 			TextStyle _textStyle = TextStyle_SignedDistanceField;
-			Alignment _horizontalAlignment = Alignment_Center;
-			Alignment _verticalAlignment = Alignment_Center;
+			Alignment _horizontalAlignment = Alignment_Near;
+			Alignment _verticalAlignment = Alignment_Near;
 		};
 	}
 }

@@ -125,7 +125,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 	}
 	
 	CharDescriptorMap& mapToInsert = ((flags & CharacterFlag_Bold) == CharacterFlag_Bold) ? _boldChars : _chars;
-	mapToInsert.insert(std::make_pair(value, result));
+	mapToInsert.emplace(value, result);
 					   
 	characterGenerated.invoke(value);
 	

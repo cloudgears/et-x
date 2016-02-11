@@ -129,7 +129,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 			}
 			CFRelease(fontRef);
 		}
-		FT_New_Face(library, fontPath.binary(), boldFaceIndex, &regularFont);
+		FT_New_Face(library, fontPath.binary(), boldFaceIndex, &boldFont);
 		CFRelease(faceString);
 
 #elif (ET_PLATFORM_WIN)
