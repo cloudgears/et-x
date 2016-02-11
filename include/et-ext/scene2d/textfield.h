@@ -51,8 +51,8 @@ namespace et
 			void setHorizontalAlignment(Alignment);
 			void setContentOffset(const vec2&);
 
-			void setFocus();
-			void resignFocus(Element2d*);
+			void setFocus() override;
+			void resignFocus(Element2d*) override;
 			
 			ET_DECLARE_EVENT1(editingStarted, TextField*)
 			ET_DECLARE_EVENT1(textChanged, TextField*)
@@ -60,10 +60,10 @@ namespace et
 			ET_DECLARE_EVENT1(editingFinished, TextField*)
 			
 		private:
-			void addToRenderQueue(RenderContext*, SceneRenderer&);
+			void addToRenderQueue(RenderContext*, SceneRenderer&) override;
 			void buildVertices(RenderContext*, SceneRenderer&);
 			
-			void processMessage(const Message& msg);
+			bool processMessage(const Message& msg) override;
 			void onCreateBlinkTimerExpired(NotifyTimer* t);
 
 		private:

@@ -87,11 +87,11 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 	else 
 	{
 		Element2d::Pointer active(activeElement(p));
-		setCurrentElement(p, active);
+		setHoveredElement(p, active);
 		bool processed = false;
 		if (active.invalid())
 		{
-			setActiveElement(Element2d::Pointer());
+			setFocusedElement(Element2d::Pointer());
 		}
 		else
 		{
@@ -119,9 +119,9 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 					
 					invalidateContent();
 				}
-				else
+				else if (!active->hasFlag(s2d::Flag_HandlesChildEvents))
 				{
-					setActiveElement(active);
+					setFocusedElement(active);
 				}
 			}
 
@@ -152,7 +152,7 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 	}
 	
 	Element2d::Pointer active(activeElement(p));
-	setCurrentElement(p, active);
+	setHoveredElement(p, active);
 	
 	if (active.invalid())
 		return false;
@@ -196,7 +196,7 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 	}
 	else 
 	{
-		setCurrentElement(p, active);
+		setHoveredElement(p, active);
 		bool processed = false;
 
 		if (active.valid())
@@ -239,7 +239,7 @@ bool Layout::pointerCancelled(const et::PointerInputInfo& p)
 	}
 	else
 	{
-		setCurrentElement(p, active);
+		setHoveredElement(p, active);
 		bool processed = false;
 		
 		if (active.valid())
@@ -267,7 +267,7 @@ bool Layout::pointerScrolled(const et::PointerInputInfo& p)
 	{
 		Element2d::Pointer active(activeElement(p));
 
-		setCurrentElement(p, active);
+		setHoveredElement(p, active);
 
 		bool processed = active.valid() && active->pointerScrolled(PointerInputInfo(p.type,
 			active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
@@ -322,7 +322,7 @@ Element2d::Pointer Layout::getActiveElement(const PointerInputInfo& p, Element2d
 	return el->hasFlag(Flag_TransparentForPointer) ? Element2d::Pointer() : el;
 }
 
-void Layout::setCurrentElement(const PointerInputInfo& p, Element2d::Pointer e)
+void Layout::setHoveredElement(const PointerInputInfo& p, Element2d::Pointer e)
 {
 	if (e == _currentElement) return;
 
@@ -377,7 +377,7 @@ void Layout::cancelDragging(float returnDuration)
 	}
 }
 
-void Layout::setActiveElement(Element2d::Pointer e)
+void Layout::setFocusedElement(Element2d::Pointer e)
 {
 	if (_focusedElement == e) return;
 	
@@ -402,7 +402,7 @@ void Layout::setActiveElement(Element2d::Pointer e)
 	else
 		layoutDoesntNeedKeyboard.invoke(this);
 	
-	activeElementChanged(_focusedElement.ptr());
+	focusedElementChanged(_focusedElement.ptr());
 }
 
 void Layout::setInvalid()

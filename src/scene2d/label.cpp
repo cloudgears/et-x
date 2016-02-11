@@ -238,14 +238,23 @@ void Label::setLineInterval(float i)
 	invalidateContent();
 }
 
-void Label::processMessage(const Message& msg)
+bool Label::processMessage(const Message& msg)
 {
-	TextElement::processMessage(msg);
+	bool result = TextElement::processMessage(msg);
 	
 	if (msg.type == Message::Type_SetText)
+	{
 		setText(msg.text, msg.duration);
-	else if (msg.type == Message::Type_UpdateText)
+		result = true;
+	}
+	
+	if (msg.type == Message::Type_UpdateText)
+	{
 		setText(_text.key, msg.duration);
+		result = true;
+	}
+	
+	return result;
 }
 
 void Label::setShouldAutoAdjustSize(bool v)

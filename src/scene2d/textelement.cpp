@@ -54,10 +54,15 @@ void TextElement::setFontSmoothing(float fsm)
 	invalidateText();
 }
 
-void TextElement::processMessage(const Message& msg)
+bool TextElement::processMessage(const Message& msg)
 {
 	if (msg.type == Message::Type_SetFontSmoothing)
+	{
 		setFontSmoothing(msg.paramf);
+		return true;
+	}
+	
+	return false;
 }
 
 void TextElement::loadProperties(const Dictionary& d)

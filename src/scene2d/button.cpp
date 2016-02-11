@@ -506,23 +506,27 @@ const vec4& Button::pressedColor() const
 	return _pressedColor;
 }
 
-void Button::processMessage(const Message& msg)
+bool Button::processMessage(const Message& msg)
 {
-	TextElement::processMessage(msg);
+	bool result = TextElement::processMessage(msg);
 	
 	if (msg.type == Message::Type_SetText)
 	{
 		setTitle(msg.text, msg.duration);
+		result = true;
 	}
 	else if (msg.type == Message::Type_UpdateText)
 	{
 		setTitle(_nextTitle.key, msg.duration);
+		result = true;
 	}
-	else if (msg.type == Message::Type_PerformAction)
+	else if ((msg.type == Message::Type_PerformAction) && (msg.param == _action))
 	{
-		if (msg.param == _action)
-			clicked.invoke(this);
+		clicked.invoke(this);
+		result = true;
 	}
+	
+	return result;
 }
 
 void Button::setClickTreshold(float value)

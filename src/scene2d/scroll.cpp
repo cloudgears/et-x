@@ -5,8 +5,9 @@
  *
  */
 
-#include <et/rendering/rendercontext.h>
 #include <et/core/tools.h>
+#include <et/rendering/rendercontext.h>
+#include <et-ext/scene2d/layout.h>
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/scroll.h>
 
@@ -277,12 +278,12 @@ void Scroll::broadcastPressed(const PointerInputInfo& p)
 		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
 		
-		setActiveElement(localPos, active);
+		setActiveElement(localPos, active, true);
 		active->pointerPressed(localPos);
 	}
 	else
 	{
-		setActiveElement(globalPos, nullptr);
+		setActiveElement(globalPos, nullptr, false);
 	}
 }
 
@@ -304,12 +305,12 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 	{
 		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
-		setActiveElement(localPos, active);
+		setActiveElement(localPos, active, false);
 		active->pointerMoved(localPos);
 	}
 	else
 	{
-		setActiveElement(globalPos, nullptr);
+		setActiveElement(globalPos, nullptr, false);
 	}
 }
 
@@ -332,12 +333,12 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 	{
 		PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
-		setActiveElement(localPos, active);
+		setActiveElement(localPos, active, false);
 		active->pointerReleased(localPos);
 	}
 	else
 	{
-		setActiveElement(globalPos, nullptr);
+		setActiveElement(globalPos, nullptr, false);
 	}
 }
 
@@ -369,22 +370,28 @@ bool Scroll::containsPoint(const vec2& p, const vec2& np)
 	return Element2d::containsPoint(p, np);
 }
 
-void Scroll::setActiveElement(const PointerInputInfo& p, Element2d* e)
+void Scroll::setActiveElement(const PointerInputInfo& p, Element2d* e, bool setFocus)
 {
-	if (e == _activeElement.ptr()) return;
-	
-	if (_activeElement.valid())
+	if (e != _activeElement.ptr())
 	{
-		_activeElement->pointerLeaved(p);
-		_activeElement->hoverEnded.invoke(_activeElement.ptr());
+		if (_activeElement.valid())
+		{
+			_activeElement->pointerLeaved(p);
+			_activeElement->hoverEnded.invoke(_activeElement.ptr());
+		}
+		
+		_activeElement.reset(e);
+		
+		if (_activeElement.valid())
+		{
+			_activeElement->pointerEntered(p);
+			_activeElement->hoverStarted.invoke(_activeElement.ptr());
+		}
 	}
 	
-	_activeElement.reset(e);
-	
-	if (_activeElement.valid())
+	if (_activeElement.valid() && setFocus)
 	{
-		_activeElement->pointerEntered(p);
-		_activeElement->hoverStarted.invoke(_activeElement.ptr());
+		owner()->setFocusedElement(_activeElement);
 	}
 }
 

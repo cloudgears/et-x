@@ -89,41 +89,46 @@ bool Scene::pointerScrolled(const et::PointerInputInfo& p)
 	return false;
 }
 
-void Scene::keyPressed(size_t key)
+bool Scene::keyPressed(size_t key)
 {
 	if (_keyboardFocusedElement.valid())
 	{
-		_keyboardFocusedElement->processMessage(Message(Message::Type_TextFieldControl, key));
+		return _keyboardFocusedElement->processMessage(Message(Message::Type_TextFieldControl, key));
+	}
+	
+	if ((key == ET_KEY_RETURN) || (key == ET_KEY_ESCAPE))
+	{
+		Message msg(Message::Type_PerformAction);
+		msg.param = (key == ET_KEY_RETURN) ? Action_Confirm : Action_Cancel;
+		for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
+		{
+			auto responder = (*i)->layout->findFirstResponder(msg);
+			if (responder.valid())
+			{
+				return responder->processMessage(msg);
+			}
+		}
 	}
 	else
 	{
-		if ((key == ET_KEY_RETURN) || (key == ET_KEY_ESCAPE))
+		for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 		{
-			Message msg(Message::Type_PerformAction);
-			msg.param = (key == ET_KEY_RETURN) ? Action_Confirm : Action_Cancel;
-			
-			for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
-			{
-				auto responder = (*i)->layout->findFirstResponder(msg);
-				if (responder.valid())
-				{
-					responder->processMessage(msg);
-					break;
-				}
-			}
-		}
-		else
-		{
-			for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
-				(*i)->layout->keyPressed(key);
+			if ((*i)->layout->keyPressed(key))
+				return true;
 		}
 	}
+	
+	return false;
 }
 
-void Scene::charactersEntered(std::string p)
+bool Scene::charactersEntered(std::string p)
 {
 	if (_keyboardFocusedElement.valid())
-		_keyboardFocusedElement->processMessage(Message(Message::Type_TextInput, p));
+	{
+		return _keyboardFocusedElement->processMessage(Message(Message::Type_TextInput, p));
+	}
+	
+	return false;
 }
 
 void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout)

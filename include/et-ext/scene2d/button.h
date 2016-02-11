@@ -105,11 +105,11 @@ namespace et
 			void setCommonBackgroundTintColor(const vec4&, float);
 			const vec4& commonBackgroundTintColor() const;
 			
-			bool pointerPressed(const PointerInputInfo&);
-			bool pointerReleased(const PointerInputInfo&);
-			bool pointerCancelled(const PointerInputInfo&);
-			void pointerEntered(const PointerInputInfo&);
-			void pointerLeaved(const PointerInputInfo&);
+			bool pointerPressed(const PointerInputInfo&) override;
+			bool pointerReleased(const PointerInputInfo&) override;
+			bool pointerCancelled(const PointerInputInfo&) override;
+			void pointerEntered(const PointerInputInfo&) override;
+			void pointerLeaved(const PointerInputInfo&) override;
 
 			Button::Type type() const
 				{ return _type; }
@@ -130,7 +130,7 @@ namespace et
 			void setHorizontalAlignment(Alignment);
 			void setVerticalAlignment(Alignment);
 			
-			void processMessage(const Message&);
+			bool processMessage(const Message&) override;
 			
 			void setClickTreshold(float);
 			void setShouldInvokeClickInRunLoop(bool);
@@ -149,15 +149,15 @@ namespace et
 
 		protected:
 			void performClick();
-			bool respondsToMessage(const Message&) const;
+			bool respondsToMessage(const Message&) const override;
 
 		private:
 			void buildVertices(RenderContext* rc, SceneRenderer& gr);
-			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);
+			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer) override;
 			
 			void setCurrentState(State s);
 			
-			void invalidateText();
+			void invalidateText() override;
 
 		private:			
 			LocalizedText _currentTitle;

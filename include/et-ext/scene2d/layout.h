@@ -29,8 +29,6 @@ namespace et
 			
 			void cancelDragging(float returnDuration = 0.0f);
 			void cancelInteractions();
-
-			void setActiveElement(Element2d::Pointer e);
 			
 			ET_DECLARE_EVENT2(layoutRequiresKeyboard, Layout*, Element2d*)
 			ET_DECLARE_EVENT1(layoutDoesntNeedKeyboard, Layout*)
@@ -44,10 +42,11 @@ namespace et
 			const std::function<float(float)>& positionInterpolationFunction() const
 				{ return _positionInterpolationFunction; }
 			
+			void setFocusedElement(Element2d::Pointer);
 			Element2d::Pointer findFirstResponder(const Message&);
-						
+			
 		public:
-			virtual void activeElementChanged(Element2d*) { }
+			virtual void focusedElementChanged(Element2d*) { }
 			
 		protected:
 			friend class Scene;
@@ -81,7 +80,7 @@ namespace et
 			Element2d::Pointer activeElement(const PointerInputInfo& p);
 			Element2d::Pointer getActiveElement(const PointerInputInfo& p, Element2d::Pointer e);
 			
-			void setCurrentElement(const PointerInputInfo& p, Element2d::Pointer e);
+			void setHoveredElement(const PointerInputInfo& p, Element2d::Pointer e);
 			void performDragging(const PointerInputInfo&);
 
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& gr);

@@ -106,7 +106,7 @@ namespace et
 				{ return (_bounce & Bounce_Vertical) != 0; }
 
 			Element2d* getActiveElement(const PointerInputInfo&, Element2d* root);
-			void setActiveElement(const PointerInputInfo& p, Element2d* e);
+			void setActiveElement(const PointerInputInfo& p, Element2d*, bool setFocus);
 			
 		private:
 			enum BounceDirection

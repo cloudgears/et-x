@@ -141,9 +141,9 @@ void TextField::setText(const std::string& s)
 	invalidateContent();
 }
 
-void TextField::processMessage(const Message& msg)
+bool TextField::processMessage(const Message& msg)
 {
-	TextElement::processMessage(msg);
+	bool result = TextElement::processMessage(msg);
 	
 	if (msg.type == Message::Type_TextFieldControl)
 	{
@@ -153,7 +153,10 @@ void TextField::processMessage(const Message& msg)
 			{
 				returnReceived.invoke(this);
 				if (_editingFlags.hasFlag(EditingFlag_ResignFocusOnReturn))
-					owner()->setActiveElement(Element2d::Pointer());
+				{
+					owner()->setFocusedElement(Element2d::Pointer());
+					result = true;
+				}
 				break;
 			}
 				
@@ -185,6 +188,7 @@ void TextField::processMessage(const Message& msg)
 				}
 				
 				textChanged.invoke(this);
+				result = true;
 				break;
 			}
 				
@@ -194,6 +198,7 @@ void TextField::processMessage(const Message& msg)
 				{
 					setText(emptyString);
 					textChanged.invoke(this);
+					result = true;
 				}
 				break;
 			}
@@ -207,11 +212,15 @@ void TextField::processMessage(const Message& msg)
 		setText(_text + msg.text);
 		textChanged.invoke(this);
 		invalidateContent();
+		result = true;
 	}
 	else if (msg.type == Message::Type_UpdateText)
 	{
 		setPlaceholder(_placeholder.key);
+		result = true;
 	}
+	
+	return result;
 }
 
 void TextField::setSecured(bool s)

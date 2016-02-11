@@ -58,7 +58,7 @@ namespace et
 			void setShadowOffset(const vec2&);
 			
 		protected:
-			void processMessage(const Message&) override;
+			bool processMessage(const Message&) override;
 			void setProgramParameters(et::RenderContext*, et::Program::Pointer&) override;
 			
 			virtual void invalidateText() { }

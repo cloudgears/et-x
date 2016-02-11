@@ -81,8 +81,8 @@ namespace et
 			bool pointerCancelled(const et::PointerInputInfo&);
 			bool pointerScrolled(const et::PointerInputInfo&);
 			
-			void keyPressed(size_t);
-			void charactersEntered(std::string);
+			bool keyPressed(size_t);
+			bool charactersEntered(std::string);
 			
 			void broadcastMessage(const Message&);
 

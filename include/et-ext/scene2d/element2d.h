@@ -92,7 +92,7 @@ namespace et
 			
 			virtual void broadcastMessage(const Message&);
 			
-			virtual void processMessage(const Message&) { }
+			virtual bool processMessage(const Message&) { return false; }
 			
 			virtual bool respondsToMessage(const Message&) const
 				{ return false; }
@@ -121,7 +121,7 @@ namespace et
 			virtual void pointerEntered(const PointerInputInfo&) { }
 			virtual void pointerLeaved(const PointerInputInfo&) { }
 			
-			virtual void keyPressed(size_t) { }
+			virtual bool keyPressed(size_t) { return false; }
 			
 			virtual bool containsPoint(const vec2& p, const vec2&);
 			virtual bool containLocalPoint(const vec2& p);

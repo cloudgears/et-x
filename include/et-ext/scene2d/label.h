@@ -57,13 +57,13 @@ namespace et
 			
 			void setLineInterval(float);
 			
-			void processMessage(const Message&);
+			bool processMessage(const Message&) override;
 
 		private:
-			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer);
+			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer) override;
 			void buildVertices(RenderContext* rc, SceneRenderer& renderer);
-			void update(float t);
-			void invalidateText();
+			void update(float t) override;
+			void invalidateText() override;
 			
 		private:
 			LocalizedText _text;
