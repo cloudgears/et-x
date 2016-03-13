@@ -66,17 +66,22 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 	}
 	bottomRightOffset = minv(bottomRightOffset + vec2i(1), canvasSize);
 	sizeToSave = bottomRightOffset - topLeftOffset;
-	
+
 	if ((sizeToSave.x <= 0) || (sizeToSave.y <= 0))
 		return false;
-	
+
+	vec2i additional;
+	additional.x = sizeToSave.x % 4;
+	additional.y = sizeToSave.y % 4;
+	sizeToSave += additional;
+
 	dataToSave.resize(sizeToSave.square());
 	dataToSave.fill(0);
 	
-	vec2i targetPixel;
+	vec2i targetPixel(0, additional.y / 2);
 	for (int py = topLeftOffset.y; py < bottomRightOffset.y; ++py, ++targetPixel.y)
 	{
-		targetPixel.x = 0;
+		targetPixel.x = additional.x / 2;
 		for (int px = topLeftOffset.x; px < bottomRightOffset.x; ++px, ++targetPixel.x)
 		{
 			uint32_t i = targetPixel.x + (sizeToSave.y - targetPixel.y - 1) * sizeToSave.x;
