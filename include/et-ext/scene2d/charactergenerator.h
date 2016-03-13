@@ -20,21 +20,11 @@ namespace et
 	{
 		namespace sdf
 		{
-			struct Point
-			{
-				int dx = 0;
-				int dy = 0;
-				int f = 0;
-				
-				Point(int x, int y, int af) :
-					dx(x), dy(y), f(af) { }
-			};
-
 			struct Grid
 			{
 				int w = 0;
 				int h = 0;
-				DataStorage<Point> grid;
+				DataStorage<vec2i> grid;
 			};
 		}
 		

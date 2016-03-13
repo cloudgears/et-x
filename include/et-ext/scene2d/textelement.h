@@ -21,15 +21,17 @@ namespace et
 		public:
 			ET_DECLARE_POINTER(TextElement)
 			
-			enum TextStyle
+			enum class TextStyle : uint32_t
 			{
-				TextStyle_SignedDistanceField,
-				TextStyle_SignedDistanceFieldShadow,
-				TextStyle_SignedDistanceFieldBevel,
-				TextStyle_SignedDistanceFieldInverseBevel,
-				TextStyle_Plain,
-				TextStyle_max
+				SignedDistanceField,
+				SignedDistanceFieldShadow,
+				SignedDistanceFieldBevel,
+				SignedDistanceFieldInverseBevel,
+				Plain,
+				max
 			};
+
+			const float DefaultFontSmoothing = 0.5f;
 			
 		public:
 			TextElement(Element2d*, const Font::Pointer&, float, const std::string& = emptyString);
@@ -41,14 +43,14 @@ namespace et
 				{ return _font; }
 			
 			float fontSize() const
-				{ return _fontSize; }
+				{ return _fontSize.value(); }
 
 			float fontSmoothing() const
-				{ return _fontSmoothing; }
+				{ return _fontSmoothing.value(); }
 			
 			void setFont(const Font::Pointer&);
-			void setFontSize(float);
-			void setFontSmoothing(float);
+			void setFontSize(float, float duration = 0.0f);
+			void setFontSmoothing(float, float duration = 0.0f);
 			void setTextStyle(TextStyle);
 			
 			void loadProperties(const Dictionary&) override;
@@ -77,12 +79,12 @@ namespace et
 			
 		private:
 			Font::Pointer _font;
+			FloatAnimator _fontSize;
+			FloatAnimator _fontSmoothing;
 			SceneProgram _textProgram;
 			Program::Uniform _shadowUniform;
 			vec2 _shadowOffset;
-			float _fontSize = 12.0f;
-			float _fontSmoothing = 1.0f;
-			TextStyle _textStyle = TextStyle_SignedDistanceField;
+			TextStyle _textStyle = TextStyle::SignedDistanceField;
 			Alignment _horizontalAlignment = Alignment_Near;
 			Alignment _verticalAlignment = Alignment_Near;
 		};

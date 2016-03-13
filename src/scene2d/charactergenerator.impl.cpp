@@ -23,6 +23,9 @@
 using namespace et;
 using namespace et::s2d;
 
+sdf::Grid _grid0;
+sdf::Grid _grid1;
+
 class et::s2d::CharacterGeneratorImplementationPrivate
 {
 public:
@@ -32,7 +35,8 @@ public:
 	~CharacterGeneratorImplementationPrivate();
 	
 	bool startWithCharacter(const CharDescriptor& desc, vec2i& charSize, vec2i& canvasSize, BinaryDataStorage& charData);
-	
+	void generateSignedDistanceFieldOnGrid(sdf::Grid&);
+
 private:
 	BinaryDataStorage regularFontData;
 	BinaryDataStorage boldFontData;
@@ -116,6 +120,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 	else
 	{
 #if (ET_PLATFORM_APPLE)
+
 		StaticDataStorage<unsigned char, 1024> fontPath(0);
 		CFStringRef faceString = CFStringCreateWithCString(kCFAllocatorDefault, boldFace.c_str(), kCFStringEncodingUTF8);
 		CTFontDescriptorRef fontRef = CTFontDescriptorCreateWithNameAndSize(faceString, 10.0f);
@@ -155,6 +160,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
 		DeleteObject(font);
 		DeleteDC(commonDC);
+		
 #endif
 	}
 
@@ -175,7 +181,8 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	auto font = (desc.flags & CharacterFlag_Bold) == CharacterFlag_Bold ? boldFont : regularFont;
 
 	auto glyphIndex = FT_Get_Char_Index(font, desc.value);
-	if (FT_Load_Glyph(font, glyphIndex, FT_LOAD_RENDER)) return false;
+	if (FT_Load_Glyph(font, glyphIndex, FT_LOAD_RENDER))
+		return false;
 	
 	auto glyph = font->glyph;
 	
@@ -187,7 +194,8 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	charSize.x = static_cast<int>(glyph->metrics.horiAdvance >> 6);
 	charSize.y = static_cast<int>(ascender + descender);
 	
-	if (charSize.dotSelf() <= 0) return false;
+	if (charSize.dotSelf() <= 0)
+		return false;
 	
 	canvasSize = charSize + CharacterGenerator::charactersRenderingExtent;
 	
@@ -205,8 +213,8 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 		for (int x = 0; x < bitmapSize.x; ++x)
 		{
 			int targetPos = (ox + x) + (canvasSize.y - oy - y - 1) * canvasSize.x;
-			if (targetPos >= 0)
-				charData[targetPos] = glyph->bitmap.buffer[k++];
+			ET_ASSERT(targetPos >= 0);
+			charData[targetPos] = glyph->bitmap.buffer[k++];
 		}
 	}
 	

@@ -21,6 +21,7 @@ TextField::TextField(const Font::Pointer& f, float fsz, Element2d* parent, const
 {
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
+	setTextAlignment(et::s2d::Alignment::Alignment_Near, et::s2d::Alignment::Alignment_Center);
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
@@ -30,6 +31,7 @@ TextField::TextField(const std::string& text, const Font::Pointer& f, float fsz,
 	setText(text);
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
+	setTextAlignment(et::s2d::Alignment::Alignment_Near, et::s2d::Alignment::Alignment_Center);
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 
@@ -42,6 +44,8 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 	setText(text);
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
+	setTextAlignment(et::s2d::Alignment::Alignment_Near, et::s2d::Alignment::Alignment_Center);
+	
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
 }
 

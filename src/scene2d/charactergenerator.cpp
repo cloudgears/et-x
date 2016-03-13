@@ -5,8 +5,15 @@
  *
  */
 
+#define ET_SHOULD_SAVE_GENERATED_CHARS 0
+
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/charactergenerator.h>
+
+#if (ET_SHOULD_SAVE_GENERATED_CHARS)
+#	include <et/app/application.h>
+#	include <et/imaging/imagewriter.h>
+#endif
 
 using namespace et;
 using namespace et::s2d;
@@ -21,7 +28,7 @@ enum GridProperies : int
 const float CharacterGenerator::baseFontSize = static_cast<float>(baseFontIntegerSize);
 const vec2i CharacterGenerator::charactersRenderingExtent = vec2i(64);
 
-void internal_sdf_compare(sdf::Grid& g, sdf::Point& p, int x, int y, int offsetx, int offsety);
+void internal_sdf_compare(sdf::Grid& g, vec2i& p, int x, int y, int offsetx, int offsety);
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace,
 	size_t faceIndex, size_t boldFaceIndex) : _impl(face, boldFace, faceIndex, boldFaceIndex), _rc(rc),
@@ -100,6 +107,11 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 		
 		if (performCropping(renderedCharacterData, canvasSize, dataToSave, sizeToSave, topLeftOffset))
 		{
+		#if (ET_SHOULD_SAVE_GENERATED_CHARS)
+			auto path = application().environment().applicationDocumentsFolder() + "char_" + intToStr(value) + ".png";
+			writeImageToFile(path, dataToSave, sizeToSave, 1, 8, et::ImageFormat::ImageFormat_PNG, true);
+		#endif
+
 			vec2i downsampledSize = sizeToSave / 2;
 			auto downsampled = downsample(dataToSave, sizeToSave);
 			downsampled = downsample(downsampled, downsampledSize);
@@ -180,81 +192,71 @@ BinaryDataStorage CharacterGenerator::downsample(BinaryDataStorage& input, const
 	return result;
 }
 
-#define sdf_get(g, x, y)		g.grid[(y) * (2 + g.w) + (x)]
-#define sdf_put(g, x, y, p)		g.grid[(y) * (2 + g.w) + (x)] = p;
-
-inline void internal_sdf_compare(sdf::Point* points, int gridWidth, sdf::Point& p, int x, int y, int offsetx, int offsety)
+inline const vec2i& sdf_get(sdf::Grid& g, int x, int y)
 {
-	sdf::Point& other = *(points + x + offsetx + (y + offsety) * gridWidth);
-	
-	int add = 0;
+	ET_ASSERT((x >= 0) && (y >= 0) & (x < g.w) && (y < g.h));
+	return g.grid[y * g.w + x];
+}
 
-	if (offsety == 0)
-		add = 2 * other.dx + 1;
-	else if (offsetx == 0)
-		add = 2 * other.dy + 1;
-	else
-		add = 2 * (other.dy + other.dx + 1);
-	
-	other.f += add;
-	
-	if (other.f < p.f)
-	{	
-		p.f = other.f;
-		
-		if (offsety == 0)
-		{
-			p.dx = other.dx + 1;
-			p.dy = other.dy;
-		}
-		else if (offsetx == 0)
-		{
-			p.dy = other.dy + 1;
-			p.dx = other.dx;
-		}
-		else
-		{
-			p.dy = other.dy + 1;
-			p.dx = other.dx + 1;
-		}
-	}
+inline void sdf_put(sdf::Grid& g, int x, int y, const vec2i& p)
+{
+	ET_ASSERT((x >= 0) && (y >= 0) & (x < g.w) && (y < g.h));
+	g.grid[y * g.w + x] = p;
+}
+
+inline void internal_sdf_compare(sdf::Grid& g, vec2i& p, int x, int y, int offsetx, int offsety)
+{
+	vec2i other = sdf_get(g, x + offsetx, y + offsety) + vec2i(offsetx, offsety);
+	if (other.dotSelf() < p.dotSelf())
+		p = other;
 }
 
 void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 {
-	auto points = g.grid.data();
-	int gridWidth = g.w + 2;
-
-	for (int y = 1; y <= g.h; y++)
+	for (int y = 1; y < g.h - 1; ++y)
 	{
-		for (int x = 1; x <= g.w; x++)
+		for (int x = 1; x < g.w - 1; ++x)
 		{
-			sdf::Point& p = *(points + x + gridWidth * y);
-			internal_sdf_compare(points, gridWidth, p, x, y, -1,  0);
-			internal_sdf_compare(points, gridWidth, p, x, y,  0, -1);
-			internal_sdf_compare(points, gridWidth, p, x, y, -1, -1);
-			internal_sdf_compare(points, gridWidth, p, x, y,  1, -1);
+			vec2i p = sdf_get(g, x, y);
+			internal_sdf_compare(g, p, x, y, -1,  0);
+			internal_sdf_compare(g, p, x, y,  0, -1);
+			internal_sdf_compare(g, p, x, y, -1, -1);
+			internal_sdf_compare(g, p, x, y,  1, -1);
+			sdf_put(g, x, y, p);
+		}
+		for (int x = g.w - 2; x > 0; --x)
+		{
+			vec2i p = sdf_get(g, x, y);
+			internal_sdf_compare(g, p, x, y, 1, 0);
+			sdf_put(g, x, y, p);
 		}
 	}
-	
-	for(int y = g.h; y > 0; y--)
+
+	for (int y = g.h - 2; y > 0; --y)
 	{
-		for(int x = g.w; x > 0; x--)
+		for (int x = g.w - 2; x > 0; --x)
 		{
-			sdf::Point& p = *(points + x + gridWidth * y);
-			internal_sdf_compare(points, gridWidth, p, x, y,  1, 0);
-			internal_sdf_compare(points, gridWidth, p, x, y,  0, 1);
-			internal_sdf_compare(points, gridWidth, p, x, y, -1, 1);
-			internal_sdf_compare(points, gridWidth, p, x, y,  1, 1);
+			vec2i p = sdf_get(g, x, y);
+			internal_sdf_compare(g, p, x, y,  1,  0);
+			internal_sdf_compare(g, p, x, y,  0,  1);
+			internal_sdf_compare(g, p, x, y, -1,  1);
+			internal_sdf_compare(g, p, x, y,  1,  1);
+			sdf_put(g, x, y, p);
+		}
+		for (int x = 1; x < g.w - 1; ++x)
+		{
+			vec2i p = sdf_get(g, x, y);
+			internal_sdf_compare(g, p, x, y, -1, 0);
+			sdf_put(g, x, y, p);
 		}
 	}
 }
 
 void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, int w, int h)
 {
-	static const sdf::Point pointInside = { 0, 0, 255 };
-		 
-	size_t targetGridSize = (w + 2) * (h + 2);
+	const vec2i pointOutside = vec2i(255);
+
+	size_t targetGridSize = w * h;
 	
 	if (_grid0.grid.size() < targetGridSize)
 		_grid0.grid.resize(targetGridSize);
@@ -269,86 +271,39 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 	
 	_grid0.grid.fill(0);
 	_grid1.grid.fill(0);
-	
-	for (int x = 0; x < w + 2; x++)
+
+	for (int y = 0; y < _grid0.h; ++y)
 	{
-		sdf_put(_grid0, x, 0, pointInside);
-		sdf_put(_grid1, x, 0, pointInside);
-		sdf_put(_grid0, x, h + 1, pointInside);
-		sdf_put(_grid1, x, h + 1, pointInside);
+		sdf_put(_grid1, 0, y, pointOutside);
+		sdf_put(_grid1, _grid0.w - 1, y, pointOutside);
 	}
-	
-	for (int y = 1; y <= h; y++)
+
+	for (int x = 0; x < _grid0.w; ++x)
 	{
-		sdf_put(_grid0, 0, y, pointInside);
-		sdf_put(_grid1, 0, y, pointInside);
-		sdf_put(_grid0, w + 1, y, pointInside);
-		sdf_put(_grid1, w + 1, y, pointInside);
+		sdf_put(_grid1, x, 0, pointOutside);
+		sdf_put(_grid1, x, _grid0.h - 1, pointOutside);
 	}
-	
-	uint32_t k = 0;
-	for (int y = 1; y <= h; y++)
+
+	for (int y = 1; y < h - 1; ++y)
 	{
-		for (int x = 1; x <= w; x++)
+		for (int x = 1; x < w - 1; ++x)
 		{
-			auto val = data[k++];
-			sdf_put(_grid0, x, y, sdf::Point(val, val, val));
-			sdf_put(_grid1, x, y, sdf::Point(0, 0, 255 - val));
+			auto& targetGrid = (data[x + y * _grid0.w] == 0) ? _grid1 : _grid0;
+			sdf_put(targetGrid, x, y, pointOutside);
 		}
 	}
 	
 	generateSignedDistanceFieldOnGrid(_grid0);
 	generateSignedDistanceFieldOnGrid(_grid1);
 	
-	k = 0;
-	
-	DataStorage<float> distances(w * h, 0);
-	for (int y = 1; y <= h; y++)
+	for (int y = 1; y < h - 1; ++y)
 	{
-		for (int x = 1; x <= w; x++)
+		for (int x = 1; x < w - 1; ++x)
 		{
-			float dist1 = std::sqrt(static_cast<float>(sdf_get(_grid0, x, y).f + 1));
-			float dist2 = std::sqrt(static_cast<float>(sdf_get(_grid1, x, y).f + 1));
-			distances[k++] = 127.0f + 9.9489595774f * (dist1 - dist2);
-		}
-	}
-
-	const int blurTimes = 2;
-	DataStorage<float> smooth(w * h, 0);
-	for (int i = 0; i < blurTimes; ++i)
-	{
-		int row = 0;
-		
-		for (int y = 0; y < h; y++, row += w)
-		{
-			for (int x = 0; x < w; x++)
-			{
-				int index = x + row;
-				int prev = std::max(0, x - 1) + row;
-				int next = std::min(w - 1, x + 1) + row;
-				smooth[index] = (distances[prev] + distances[index] + distances[next]) / 3.0f;
-			}
-		}
-		
-		for (int x = 0; x < w; x++)
-		{
-			for (int y = 0; y < h; y++)
-			{
-				int index = x + w * y;
-				int prev = x + w * std::max(0, y-1);
-				int next = x + w * std::min(h-1, y+1);
-				distances[index] = (smooth[prev] + smooth[index] + smooth[next]) / 3.0f;
-			}
-		}
-	}
-	
-	k = 0;
-	for (int y = 0; y < h; y++)
-	{
-		for (int x = 0; x < w; x++)
-		{
-			data[k] = static_cast<unsigned char>(clamp(distances[k], 0.0f, 255.0f));
-			++k;
+			auto& p1 = sdf_get(_grid0, x, y);
+			auto& p2 = sdf_get(_grid1, x, y);
+			float value = 3.0f * (p1.length() - p2.length()) + 128.0f;
+			data[x + y * _grid0.w] = static_cast<unsigned char>(clamp(value, 0.0f, 255.0f));
 		}
 	}
 }
