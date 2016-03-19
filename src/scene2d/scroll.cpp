@@ -64,7 +64,7 @@ void Scroll::buildVertices(RenderContext*, SceneRenderer&)
 	
 	if (_backgroundColor.w > 0.0f)
 	{
-		buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), alphaScale * _backgroundColor,
+		buildColorVertices(_backgroundVertices, rectf(vec2(0.0f), size()), alphaScale * _backgroundColor,
 			Element2d::finalTransform());
 	}
 	
@@ -78,12 +78,12 @@ void Scroll::buildVertices(RenderContext*, SceneRenderer&)
 		vec4 adjutsedColor = alphaScale * _scrollbarsColor;
 		adjutsedColor.w *= _scrollbarsAlpha;
 		
-		buildColorVertices(_overlayVertices, rect(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
+		buildColorVertices(_overlayVertices, rectf(origin, vec2(scaledScollbarSize, barHeight)), adjutsedColor,
 		  Element2d::finalTransform());
 	}
 	
 	if (_overlayColor.w > 0.0f)
-		buildColorVertices(_overlayVertices, rect(vec2(0.0f), size()), alphaScale * _overlayColor, Element2d::finalTransform());
+		buildColorVertices(_overlayVertices, rectf(vec2(0.0f), size()), alphaScale * _overlayColor, Element2d::finalTransform());
 	
 	setContentValid();
 }

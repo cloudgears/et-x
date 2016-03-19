@@ -127,8 +127,8 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 			{
 				updateTexture(textureRect.origin(), downsampledSize, downsampled);
 				
-				result.contentRect = rect(vector2ToFloat(topLeftOffset - charactersRenderingExtent / 2), vector2ToFloat(sizeToSave));
-				result.uvRect = rect(_texture->getTexCoord(vector2ToFloat(textureRect.origin())),
+				result.contentRect = rectf(vector2ToFloat(topLeftOffset - charactersRenderingExtent / 2), vector2ToFloat(sizeToSave));
+				result.uvRect = rectf(_texture->getTexCoord(vector2ToFloat(textureRect.origin())),
 					vector2ToFloat(textureRect.size()) / _texture->sizeFloat());
 			}
 			else

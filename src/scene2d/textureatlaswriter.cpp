@@ -203,7 +203,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 			Dictionary imageDictionary;
 			imageDictionary.setStringForKey("name", name);
 			imageDictionary.setStringForKey("texture", texId);
-			imageDictionary.setArrayForKey("rect", rectToArray(rect(ii.place.origin, ii.place.size - spacing)));
+			imageDictionary.setArrayForKey("rect", rectToArray(rectf(ii.place.origin, ii.place.size - spacing)));
 			imageDictionary.setArrayForKey("offset", vec4ToArray(offset));
 			images->content.push_back(imageDictionary);
 			

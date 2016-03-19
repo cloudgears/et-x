@@ -32,8 +32,8 @@ namespace et
 			
 			vec4 color = vec4(1.0f);
 			vec2 originalSize = vec2(0.0f);
-			rect contentRect;
-			rect uvRect;
+			rectf contentRect;
+			rectf uvRect;
 			vec4 parameters = vec4(0.0f);
 			
 			CharDescriptor()

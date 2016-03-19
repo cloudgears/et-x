@@ -20,7 +20,7 @@ static const Image _emptyImage;
 
 namespace helper
 {
-    rect parseRectString(std::string& s);
+    rectf parseRectString(std::string& s);
 }
 
 TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, ObjectsCache& cache) :
@@ -105,8 +105,8 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 						
 						std::string imageName;
 						std::string textureName;
-						rect sourceRect;
-						rect contentOffset;
+						rectf sourceRect;
+						rectf contentOffset;
 						
 						while (!parser.eof())
 						{
@@ -217,9 +217,9 @@ const Texture::Pointer& TextureAtlas::firstTexture() const
 /*
  * Helper funcitons
  */
-rect helper::parseRectString(std::string& s)
+rectf helper::parseRectString(std::string& s)
 {
-	rect result;
+	rectf result;
 	int values[4] = { };
 	int vIndex = 0;
 

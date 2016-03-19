@@ -62,7 +62,7 @@ void Listbox::Popup::buildVertices(SceneRenderer&)
 	const Image& selection = _owner->_selection;
     vec4 drawColor = finalColor();
 	
-	rect wholeRect(vec2(0.0f), size());
+	rectf wholeRect(vec2(0.0f), size());
 	buildColorVertices(_backgroundVertices, wholeRect, vec4(0.25f, 1.0f) * finalColor(), transform);
 
 	if (background.texture.valid())
@@ -80,7 +80,7 @@ void Listbox::Popup::buildVertices(SceneRenderer&)
 		for (const auto& i : values)
 		{
 			float row = static_cast<float>(index) * rowSize;
-            auto rowRect = rect(vec2(0.0f, row), vec2(size().x, rowSize));
+            rectf rowRect(vec2(0.0f, row), vec2(size().x, rowSize));
 			
 			if (_selectedIndex == index)
 			{
@@ -210,12 +210,12 @@ void Listbox::buildVertices(SceneRenderer&)
 	_textVertices.setOffset(0);
 
 	mat4 transform = finalTransform();
-	buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), vec4(1.0f, 0.5f), transform);
+	buildColorVertices(_backgroundVertices, rectf(vec2(0.0f), size()), vec4(1.0f, 0.5f), transform);
 	
 	if (_images[_state].texture.valid())
 	{
 		buildImageVertices(_backgroundVertices, _images[_state].texture, _images[_state].descriptor, 
-			rect(vec2(0.0f), size()), finalColor(), transform);
+			rectf(vec2(0.0f), size()), finalColor(), transform);
 	}
 
 	if (shouldDrawText())

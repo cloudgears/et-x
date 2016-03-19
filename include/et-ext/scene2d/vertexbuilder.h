@@ -26,9 +26,9 @@ namespace et
 			Alignment vAlign, const vec2& pos, const vec4& color, const mat4& transform, float lineInterval = 1.0f);
 
 		void buildImageVertices(SceneVertexList& vertices, const Texture::Pointer& tex, const ImageDescriptor& desc,
-			const rect& p, const vec4& color, const mat4& transform);
+			const rectf& p, const vec4& color, const mat4& transform);
 
-		void buildColorVertices(SceneVertexList& vertices, const rect& p, const vec4& color,
+		void buildColorVertices(SceneVertexList& vertices, const rectf& p, const vec4& color,
 			const mat4& transform);
 	}
 }

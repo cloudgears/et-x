@@ -145,19 +145,19 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	
 	if (_backgroundColor.w > 0.0f)
 	{
-		buildColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * backgroundScale, transform);
+		buildColorVertices(_bgVertices, rectf(vec2(0.0f), size()), _backgroundColor * backgroundScale, transform);
 	}
 	
 	if (_commonBackground.texture.valid())
 	{
 		buildImageVertices(_bgVertices, _commonBackground.texture, _commonBackground.descriptor,
-			rect(vec2(0.0f), size()), _commonBackgroundTintColor * finalColorValue, transform);
+			rectf(vec2(0.0f), size()), _commonBackgroundTintColor * finalColorValue, transform);
 	}
 
 	if (_background[_state].texture.valid())
 	{
 		buildImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor,
-			rect(vec2(0.0f), size()), _backgroundTintColor * backgroundScale * finalColorValue, transform);
+			rectf(vec2(0.0f), size()), _backgroundTintColor * backgroundScale * finalColorValue, transform);
 	}
 
 	vec4 currentTextColor = isPressed ? _textPressedColor : _textColor;
@@ -186,7 +186,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 		if (aColor.w > 0.0f)
 		{
 			buildImageVertices(_imageVertices, _image[_state].texture, _image[_state].descriptor,
-				rect(_imageOrigin, _imageSize), aColor, transform);
+				rectf(_imageOrigin, _imageSize), aColor, transform);
 		}
 	}
 }

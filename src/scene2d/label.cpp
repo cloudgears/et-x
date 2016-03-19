@@ -55,7 +55,7 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 	vec4 alphaScale = vec4(1.0f, finalColorValue.w);
 
 	if (_backgroundColor.w > std::numeric_limits<float>::epsilon())
-		buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
+		buildColorVertices(_backgroundVertices, rectf(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
 
 	if (_charListText.empty() && _charListNextText.empty())
 	{

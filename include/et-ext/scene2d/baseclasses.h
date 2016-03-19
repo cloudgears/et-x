@@ -120,8 +120,8 @@ namespace et
 			vec2 centerPartBottomRight() const 
 				{ return origin + size - vec2(contentOffset.right, contentOffset.bottom); }
 
-			rect rectangle() const
-				{ return rect(origin, size); }
+			rectf rectangle() const
+				{ return rectf(origin, size); }
 
 			ImageDescriptor operator * (float t) const
 			{
@@ -246,7 +246,7 @@ namespace et
 			ElementLayout() : scale(1.0f), angle(0.0f), layoutMask(LayoutMask_All),
 				layoutPositionMode(LayoutMode_Absolute), layoutSizeMode(LayoutMode_Absolute) { }
 
-			ElementLayout(const rect& frame) :
+			ElementLayout(const rectf& frame) :
 				position(frame.origin()), size(frame.size()), scale(1.0f), angle(0.0f),
 				layoutMask(LayoutMask_All), layoutPositionMode(LayoutMode_Absolute),
 				layoutSizeMode(LayoutMode_Absolute) { }

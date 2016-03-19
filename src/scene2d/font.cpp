@@ -194,8 +194,8 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 			desc.flags = deserializeInt32(fontFile.stream());
 			desc.color = deserializeVector<vec4>(fontFile.stream());
 			desc.originalSize = deserializeVector<vec2>(fontFile.stream());
-			desc.contentRect = deserializeVector<rect>(fontFile.stream());
-			desc.uvRect = deserializeVector<rect>(fontFile.stream());
+			desc.contentRect = deserializeVector<rectf>(fontFile.stream());
+			desc.uvRect = deserializeVector<rectf>(fontFile.stream());
 			desc.parameters = deserializeVector<vec4>(fontFile.stream());
 			_generator->pushCharacter(desc);
 		}

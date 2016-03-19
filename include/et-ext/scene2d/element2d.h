@@ -28,7 +28,7 @@ namespace et
 			
 		public:
 			Element2d(Element2d* parent, const std::string& name = emptyString);
-			Element2d(const rect& frame, Element2d* parent, const std::string& name = emptyString);
+			Element2d(const rectf& frame, Element2d* parent, const std::string& name = emptyString);
 			
 			void setParent(Element2d* element);
 			
@@ -153,7 +153,7 @@ namespace et
 			FloatAnimator& angleAnimator()
 				{ return _angleAnimator; }
 
-			rect frame() const;
+			rectf frame() const;
 			vec2 origin() const;
 			vec2 offset() const;
 			

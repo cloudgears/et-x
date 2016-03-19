@@ -23,7 +23,7 @@ Element2d::Element2d(Element2d* parent, const std::string& name) :
 	initAnimators();
 }
 
-Element2d::Element2d(const rect& frame, Element2d* parent, const std::string& name) :
+Element2d::Element2d(const rectf& frame, Element2d* parent, const std::string& name) :
 	ElementHierarchy(parent), _name(name), _positionAnimator(timerPool()),
 	_sizeAnimator(timerPool()), _colorAnimator(timerPool()), _scaleAnimator(timerPool()),
 	_angleAnimator(timerPool()), _layout(frame), _desiredLayout(frame)
@@ -229,8 +229,8 @@ const vec2& Element2d::scale() const
 float Element2d::angle() const
 	{ return _layout.angle; }
 
-rect Element2d::frame() const
-	{ return rect(origin(), size()); }
+rectf Element2d::frame() const
+	{ return rectf(origin(), size()); }
 
 void Element2d::setPosition(float x, float y, float duration)
 	{ return setPosition(vec2(x, y), duration); }

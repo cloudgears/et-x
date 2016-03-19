@@ -71,7 +71,7 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 	
 	if (_backgroundColor.w > 0.0f)
 	{
-		buildColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
+		buildColorVertices(_vertices, rectf(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
 	}
 	
 	if (_texture.valid() && (std::abs(_descriptor.value().size.square()) > 0.0f))
@@ -92,7 +92,7 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 					float fx = static_cast<float>(u * _descriptor.value().size.x);
 					float fy = static_cast<float>(v * _descriptor.value().size.y);
 					buildImageVertices(_vertices, _texture, _descriptor.value(),
-						rect(vec2(fx, fy), _descriptor.value().size), finalColor(), transform);
+						rectf(vec2(fx, fy), _descriptor.value().size), finalColor(), transform);
 				}
 			}
 		}
@@ -100,7 +100,7 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 		{
 			auto frame = calculateImageFrame();
 			buildImageVertices(_vertices, _texture, frame,
-				rect(_actualImageOrigin, _actualImageSize), finalColor(), transform);
+				rectf(_actualImageOrigin, _actualImageSize), finalColor(), transform);
 		}
 	}
 

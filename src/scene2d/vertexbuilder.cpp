@@ -126,7 +126,7 @@ size_t et::s2d::measuseVertexCountForImageDescriptor(const ImageDescriptor& desc
 }
 
 void et::s2d::buildImageVertices(SceneVertexList& vertices, const Texture::Pointer& tex, const ImageDescriptor& desc,
-	const rect& p, const vec4& color, const mat4& transform)
+	const rectf& p, const vec4& color, const mat4& transform)
 {
 	if (!tex.valid()) return;
 
@@ -298,7 +298,7 @@ void et::s2d::buildImageVertices(SceneVertexList& vertices, const Texture::Point
 	}
 }
 
-void et::s2d::buildColorVertices(SceneVertexList& vertices, const rect& p, const vec4& color,
+void et::s2d::buildColorVertices(SceneVertexList& vertices, const rectf& p, const vec4& color,
 	const mat4& transform)
 {
 	static const vec4 texCoord[] =

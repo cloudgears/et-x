@@ -70,7 +70,7 @@ void TextField::buildVertices(RenderContext*, SceneRenderer&)
 {
 	vec4 alphaScale = vec4(1.0f, finalAlpha());
 	mat4 transform = finalTransform();
-	rect wholeRect(vec2(0.0f), size());
+	rectf wholeRect(vec2(0.0f), size());
 
 	_backgroundVertices.setOffset(0);
 	_imageVertices.setOffset(0);
