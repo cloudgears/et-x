@@ -26,7 +26,7 @@ enum GridProperies : int
 };
 
 const float CharacterGenerator::baseFontSize = static_cast<float>(baseFontIntegerSize);
-const vec2i CharacterGenerator::charactersRenderingExtent = vec2i(64);
+const vec2i CharacterGenerator::charactersRenderingExtent = vec2i(128);
 
 void internal_sdf_compare(sdf::Grid& g, vec2i& p, int x, int y, int offsetx, int offsety);
 
@@ -305,9 +305,9 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 	{
 		for (int x = 1; x < w - 1; ++x)
 		{
-			auto& p1 = sdf_get(_grid0, x, y);
-			auto& p2 = sdf_get(_grid1, x, y);
-			float value = 3.0f * (p1.length() - p2.length()) + 128.0f;
+			float p1 = static_cast<float>(sdf_get(_grid0, x, y).dotSelf());
+			float p2 = static_cast<float>(sdf_get(_grid1, x, y).dotSelf());
+			float value = 3.0f * (std::sqrt(p1) - std::sqrt(p2)) + 128.0f;
 			data[x + y * _grid0.w] = static_cast<unsigned char>(clamp(value, 0.0f, 255.0f));
 		}
 	}
