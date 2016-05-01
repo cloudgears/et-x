@@ -23,16 +23,16 @@ namespace et
 		struct ElementClass
 		{
 			static const std::string className;
-			static AtomicCounter instanceConter;
+            static std::atomic<size_t> instanceConter;
 			
 			static std::string uniqueName(const std::string&);
 		};
 
 #		define ET_DECLARE_SCENE_ELEMENT_CLASS(CLASS) template <> \
 			const std::string et::s2d::ElementClass<et::s2d::CLASS*>::className = std::string(#CLASS);\
-			template <> et::AtomicCounter et::s2d::ElementClass<et::s2d::CLASS*>::instanceConter = { };\
+			template <> std::atomic<size_t> et::s2d::ElementClass<et::s2d::CLASS*>::instanceConter = { 0 };\
 			template <> std::string et::s2d::ElementClass<et::s2d::CLASS*>::uniqueName(const std::string& inputName)\
-			{ return (inputName.empty()) ? className + intToStr(instanceConter.retain()) : inputName; }
+			{ return (inputName.empty()) ? className + intToStr(++instanceConter) : inputName; }
 
 #		define ET_S2D_PASS_NAME_TO_BASE_CLASS ElementClass<decltype(this)>::uniqueName(name)
 
