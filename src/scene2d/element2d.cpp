@@ -16,18 +16,20 @@ using namespace et::s2d;
 ET_DECLARE_SCENE_ELEMENT_CLASS(Element2d)
 
 Element2d::Element2d(Element2d* parent, const std::string& name) :
-	ElementHierarchy(parent), _name(name), _positionAnimator(timerPool()),
+	ElementHierarchy(parent), _positionAnimator(timerPool()),
 	_sizeAnimator(timerPool()), _colorAnimator(timerPool()), _scaleAnimator(timerPool()),
 	_angleAnimator(timerPool())
 {
+	setName(name);
 	initAnimators();
 }
 
 Element2d::Element2d(const rectf& frame, Element2d* parent, const std::string& name) :
-	ElementHierarchy(parent), _name(name), _positionAnimator(timerPool()),
+	ElementHierarchy(parent), _positionAnimator(timerPool()),
 	_sizeAnimator(timerPool()), _colorAnimator(timerPool()), _scaleAnimator(timerPool()),
 	_angleAnimator(timerPool()), _layout(frame), _desiredLayout(frame)
 {
+	setName(name);
 	initAnimators();
 }
 

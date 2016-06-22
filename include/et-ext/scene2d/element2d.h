@@ -276,8 +276,6 @@ namespace et
 						
 			Element2d* childWithNameCallback(const std::string&, Element2d*, bool recursive);
 			
-			ET_DECLARE_PROPERTY_GET_REF_SET_REF(std::string, name, setName)
-			
 		private:
 			friend class Hierarchy<Element2d, LoadableObject>;
 			ET_DENY_COPY(Element2d)

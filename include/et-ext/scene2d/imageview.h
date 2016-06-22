@@ -66,8 +66,11 @@ namespace et
 
 			ImageDescriptor calculateImageFrame();
 
-			ET_DECLARE_PROPERTY_GET_REF(vec2, actualImageOrigin)
-			ET_DECLARE_PROPERTY_GET_REF(vec2, actualImageSize)
+			const vec2& actualImageOrigin() const
+				{ return _actualImageOrigin; }
+
+			const vec2& actualImageSize() const
+				{ return _actualImageSize; }
 			
 		public:
 			void addToRenderQueue(RenderContext*, SceneRenderer&);
@@ -83,6 +86,8 @@ namespace et
 			Animator<ImageDescriptor> _descriptor;
 			Vector4Animator _backgroundColorAnimator;
 			vec4 _backgroundColor = vec4(0.0f);
+			vec2 _actualImageOrigin = vec2(0.0f);
+			vec2 _actualImageSize = vec2(0.0f);;
 			ContentMode _contentMode = ContentMode_Stretch;
 		};
 
