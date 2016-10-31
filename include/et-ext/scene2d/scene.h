@@ -23,6 +23,7 @@
 #include <et-ext/scene2d/slider.h>
 #include <et-ext/scene2d/table.h>
 #include <et-ext/scene2d/line.h>
+#include <et-ext/scene2d/particleselement.h>
 
 namespace et
 {
@@ -31,7 +32,7 @@ namespace et
 		class Scene : public ObjectLoader, public EventReceiver
 		{
 		public:
-			ET_DECLARE_POINTER(Scene)
+			ET_DECLARE_POINTER(Scene);
 
 		public:
 			Scene(RenderContext* rc);
@@ -139,7 +140,7 @@ namespace et
 			class LayoutEntry : public Shared
 			{
 			public:
-				ET_DECLARE_POINTER(LayoutEntry)
+				ET_DECLARE_POINTER(LayoutEntry);
 				
 			public:
 				enum State
@@ -156,7 +157,7 @@ namespace et
 				void animateTo(const vec3& oa, float duration, State s);
 				
 			private:
-				ET_DENY_COPY(LayoutEntry)
+				ET_DENY_COPY(LayoutEntry);
 				
 			public:
 				Layout::Pointer layout;

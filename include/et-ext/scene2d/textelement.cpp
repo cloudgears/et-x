@@ -11,8 +11,6 @@
 using namespace et;
 using namespace s2d;
 
-ET_DECLARE_SCENE_ELEMENT_CLASS(TextElement)
-
 extern const std::string textureSamplerName;
 extern const std::string additionalOffsetAndAlphaUniform;
 extern std::string et_scene2d_default_text_shader_vs_plain;
@@ -144,7 +142,6 @@ void TextElement::initTextProgram(SceneRenderer& r)
 
 	uint32_t index = static_cast<uint32_t>(_textStyle);
 	_textProgram = r.createProgramWithShaders(programNames[index], vertexShaders[index], fragmentShaders[index]);
-	_shadowUniform = _textProgram.program->getUniform("shadowOffset");
 }
 
 void TextElement::setTextStyle(TextStyle style)
@@ -163,8 +160,9 @@ void TextElement::setShadowOffset(const vec2& o)
 
 void TextElement::setProgramParameters(et::RenderContext*, et::Program::Pointer& p)
 {
-	if ((_textStyle == TextStyle::SignedDistanceFieldShadow) && (p == _textProgram.program))
-		p->setUniform(_shadowUniform, _shadowOffset * _font->generator()->texture()->texel());
+	// TODO : set parameter
+	// if ((_textStyle == TextStyle::SignedDistanceFieldShadow) && (p == _textProgram.program))
+	//	p->setUniform(_shadowUniform, _shadowOffset * _font->generator()->texture()->texel());
 }
 
 void TextElement::setTextHorizontalAlignment(Alignment a)

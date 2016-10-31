@@ -15,7 +15,7 @@ namespace emb
 	class MainUI : public et::s2d::Layout
 	{
 	public:
-		ET_DECLARE_POINTER(MainUI)
+		ET_DECLARE_POINTER(MainUI);
 		
 	public:
 		MainUI(ResourceManager&);

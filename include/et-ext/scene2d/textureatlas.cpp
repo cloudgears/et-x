@@ -9,12 +9,11 @@
 #include <et/core/conversion.h>
 #include <et/app/application.h>
 #include <et/rendering/rendercontext.h>
-#include <et/imaging/textureloader.h>
 #include <et/core/json.h>
 #include <et-ext/scene2d/textureatlas.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 static const Image _emptyImage;
 
@@ -50,9 +49,12 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 		{
 			auto textureId = tex.stringForKey("id")->content;
 			auto textureFile = tex.stringForKey("filename")->content;
-			_textures[textureId] = rc->textureFactory().loadTexture(textureFile, cache, async);
+			_textures[textureId] = rc->renderer()->loadTexture(textureFile, cache);
 			if (_textures[textureId].valid())
-				_textures[textureId]->setWrap(rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
+			{
+				// TODO : use sampler!!!
+				// _textures[textureId]->setWrap(rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
+			}
 		}
 		
 		ArrayValue images = atlas.arrayForKey("images");
@@ -62,9 +64,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 			auto tex = img.stringForKey("texture")->content;
 			auto r = arrayToRect(img.arrayForKey("rect"));
 			vec4 offset = arrayToVec4(img.arrayForKey("offset"));
-			
-			_images[name] = Image(_textures[tex],
-				ImageDescriptor(r.origin(), r.size(), ContentOffset(offset.x, offset.y, offset.z, offset.w)));
+			_images[name] = Image(_textures[tex], ImageDescriptor(r.origin(), r.size(), ContentOffset(offset.x, offset.y, offset.z, offset.w)));
 		}
 	}
 	else
@@ -89,10 +89,13 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 					if (!fileExists(textureName))
 						textureName = application().resolveFileName(textureId);
 					
-					_textures[textureId] = rc->textureFactory().loadTexture(textureName, cache, async);
+					_textures[textureId] = rc->renderer()->loadTexture(textureName, cache);
 					
 					if (_textures[textureId].valid())
-						_textures[textureId]->setWrap(rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
+					{
+						// TODO : use sampler!!!
+						// _textures[textureId]->setWrap(rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
+					}
 				}
 				else if (token == "image:")
 				{
@@ -251,4 +254,7 @@ rectf helper::parseRectString(std::string& s)
 	result.height = static_cast<float>(values[3]);
 
 	return result;
+}
+
+}
 }

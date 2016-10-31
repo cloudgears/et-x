@@ -16,7 +16,7 @@ namespace et
 		class FullscreenElement : public Element2d
 		{
 		public:
-			ET_DECLARE_POINTER(FullscreenElement)
+			ET_DECLARE_POINTER(FullscreenElement);
 
 		public:
 			FullscreenElement(Element2d* parent, const std::string& name = emptyString);

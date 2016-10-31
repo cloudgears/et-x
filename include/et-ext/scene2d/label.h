@@ -17,7 +17,7 @@ namespace et
 		class Label : public TextElement
 		{
 		public:
-			ET_DECLARE_POINTER(Label)
+			ET_DECLARE_POINTER(Label);
 			
 			static std::string fitStringToWidthWithFont(std::string inputString, Font::Pointer font,
 				float fontSize, float width);
@@ -53,6 +53,7 @@ namespace et
 		private:
 			void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer) override;
 			void buildVertices(RenderContext* rc, SceneRenderer& renderer);
+
 			void update(float t) override;
 			void invalidateText() override;
 			

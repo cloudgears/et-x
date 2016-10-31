@@ -63,7 +63,7 @@ namespace et
 			
 			SceneVertex* allocateVertices(uint32_t, const Texture::Pointer&, const SceneProgram&, Element2d*, PrimitiveType);
 
-			ET_DENY_COPY(SceneRenderer)
+			ET_DENY_COPY(SceneRenderer);
 			
 		private:
 			RenderContext* _rc;

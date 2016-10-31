@@ -9,10 +9,8 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/label.h>
 
-using namespace et;
-using namespace et::s2d;
-
-ET_DECLARE_SCENE_ELEMENT_CLASS(Label)
+namespace et {
+namespace s2d {
 
 Label::Label(const std::string& text, const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
 	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
@@ -356,4 +354,7 @@ void Label::invalidateText()
 	_charListNextText = font()->buildString(_nextText.cachedText, fontSize(), fontSmoothing());
 
 	invalidateContent();
+}
+
+}
 }

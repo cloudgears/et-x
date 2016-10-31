@@ -8,8 +8,8 @@
 #include <et/app/application.h>
 #include <et-ext/scene2d/scene.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 Scene::Scene(RenderContext* rc) : _rc(rc),
 	_renderer(rc), _renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
@@ -193,14 +193,17 @@ void Scene::render(RenderContext* rc)
 
 	if (!_prerenderElements.empty())
 	{
-		auto currentBuffer = rc->renderState().boundFramebuffer();
-		auto viewportSize = rc->renderState().viewportSize();
+		/*
+		 * TODO : render
+		 */
+		// auto currentBuffer = rc->renderState().boundFramebuffer();
+		// auto viewportSize = rc->renderState().viewportSize();
 		
 		for (auto e : _prerenderElements)
 			e->preRender(rc);
 		
-		rc->renderState().bindFramebuffer(currentBuffer);
-		rc->renderState().setViewportSize(viewportSize);
+		// rc->renderState().bindFramebuffer(currentBuffer);
+		// rc->renderState().setViewportSize(viewportSize);
 	}
 	
 	_renderer.beginRender(rc);
@@ -561,7 +564,7 @@ void Scene::validateTopLevelLayout()
  */
 
 Scene::LayoutEntry::LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l) :
-	layout(l), animator(mainTimerPool()), offsetAlpha(0.0f, 0.0f, 1.0f),
+	layout(l), animator(l->timerPool()), offsetAlpha(0.0f, 0.0f, 1.0f),
 	state(Scene::LayoutEntry::State_Still)
 {
 	animator.finished.connect([this, own]()
@@ -583,4 +586,7 @@ void Scene::LayoutEntry::animateTo(const vec3& oa, float duration, State s)
 	state = s;
 	animator.setTimeInterpolationFunction(layout->positionInterpolationFunction());
 	animator.animate(&offsetAlpha, offsetAlpha, oa, duration);
+}
+
+}
 }

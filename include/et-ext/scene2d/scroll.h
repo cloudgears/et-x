@@ -16,7 +16,7 @@ namespace et
 		class Scroll : public Element2d
 		{
 		public:
-			ET_DECLARE_POINTER(Scroll)
+			ET_DECLARE_POINTER(Scroll);
 			
 			enum Bounce
 			{

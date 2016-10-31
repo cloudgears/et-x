@@ -11,8 +11,8 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/scroll.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 float deccelerationRate = 10.0f;
 float accelerationRate = 0.5f;
@@ -21,8 +21,6 @@ float maxScrollbarsVisibilityVelocity = 50.0f;
 float minAlpha = 1.0f / 255.0f;
 float alphaAnimationScale = 5.0f;
 float bounceStopTreshold = 0.5f;
-
-ET_DECLARE_SCENE_ELEMENT_CLASS(Scroll)
 
 Scroll::Scroll(Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _contentOffsetAnimator(timerPool())
@@ -102,7 +100,7 @@ const mat4& Scroll::finalTransform()
 
 const mat4& Scroll::finalInverseTransform()
 {
-	_localInverseTransform = Element2d::finalTransform().inverse();
+	_localInverseTransform = Element2d::finalTransform().inversed();
 	return _localInverseTransform;
 }
 
@@ -690,4 +688,7 @@ void Scroll::setShouldUseIntegerValuesForScroll(bool v)
 {
 	_floorOffset = v;
 	setOffsetDirectly(_contentOffset);
+}
+
+}
 }

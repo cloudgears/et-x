@@ -8,8 +8,8 @@
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/renderingelement.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 #define ET_RENDER_CHUNK_USE_MAP_BUFFER	1
 
@@ -23,8 +23,7 @@ RenderChunk::RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip, c
 /*
  * Rendering element
  */
-RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity) :
-	renderState(rc->renderState())
+RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity)
 {
 	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat::Format_16bit, capacity, PrimitiveType::Triangles);
 	indexArray->linearize(capacity);
@@ -32,26 +31,23 @@ RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity) :
 	VertexDeclaration decl(true, VertexAttributeUsage::TexCoord0, DataType::Vec4);
 	decl.push_back(VertexAttributeUsage::Color, DataType::Vec4);
 	decl.push_back(VertexAttributeUsage::Position, DataType::Vec3);
-	dataSize = decl.dataSize() * capacity;
+	dataSize = decl.totalSize() * capacity;
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)
 	vertexData = sharedBlockAllocator().alloc(dataSize);
 #endif
 	
-	IndexBuffer::Pointer sharedIndexBuffer;
-	VertexArray::Pointer sharedVertexArray = VertexArray::Pointer::create(decl, capacity);
+	IndexBuffer::Pointer sharedIndexBuffer = rc->renderer()->createIndexBuffer("dynamic-buffer-ib", indexArray, BufferDrawType::Static);
+	VertexStorage::Pointer sharedVertexStorage = VertexStorage::Pointer::create(decl, capacity);
 	
-	auto nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao-1";
-	vertices[0] = rc->vertexBufferFactory().createVertexArrayObject(nameId,
-		sharedVertexArray, BufferDrawType::Stream, indexArray, BufferDrawType::Static);
 	sharedIndexBuffer = vertices[0]->indexBuffer();
 	
-	for (size_t i = 1; i < VertexBuffersCount; ++i)
+	for (uint32_t i = 0; i < VertexBuffersCount; ++i)
 	{
-		nameId = intToStr(reinterpret_cast<size_t>(this)) + "-vao-" + intToStr(i + 1);
-		vertices[i] = rc->vertexBufferFactory().createVertexArrayObject(nameId);
-		auto vb = rc->vertexBufferFactory().createVertexBuffer(nameId + "-vb",
-			sharedVertexArray, BufferDrawType::Stream);
+		char nameId[128] = { };
+		sprintf(nameId, "dynamic-buffer-%u-ib", i);
+		vertices[i] = VertexStream::Pointer::create();
+		auto vb = rc->renderer()->createVertexBuffer(nameId, sharedVertexStorage, BufferDrawType::Dynamic);
 		vertices[i]->setBuffers(vb, sharedIndexBuffer);
 	}
 	currentBufferIndex = 0;
@@ -76,7 +72,6 @@ void RenderingElement::startAllocatingVertices()
 	clear();
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
-	renderState.bindVertexArrayObject(vertices[currentBufferIndex]);
 	vertexData = vertices[currentBufferIndex]->vertexBuffer()->map(0, dataSize,
 		MapBufferOptions::Write | MapBufferOptions::InvalidateRange);
 #endif
@@ -92,8 +87,6 @@ SceneVertex* RenderingElement::allocateVertices(uint32_t n)
 void RenderingElement::commitAllocatedVertices()
 {
 	auto vao = vertices[currentBufferIndex];
-	renderState.bindVertexArrayObject(vao);
-	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	vao->vertexBuffer()->unmap();
 #else
@@ -101,14 +94,14 @@ void RenderingElement::commitAllocatedVertices()
 #endif
 }
 
-const VertexArrayObject::Pointer& RenderingElement::vertexArrayObject()
+const VertexStream::Pointer& RenderingElement::VertexStream()
 {
 	const auto& vao = vertices[currentBufferIndex];
-	renderState.bindVertexArrayObject(vao);
-	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	ET_ASSERT(!vao->vertexBuffer()->mapped());
 #endif
-	
 	return vao;
+}
+
+}
 }

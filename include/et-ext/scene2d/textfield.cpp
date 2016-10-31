@@ -8,13 +8,11 @@
 #include <et-ext/scene2d/layout.h>
 #include <et-ext/scene2d/textfield.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 const std::string caret = "|";
 const int securedChar = 0x2022;
-
-ET_DECLARE_SCENE_ELEMENT_CLASS(TextField)
 
 TextField::TextField(const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
 	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
@@ -300,4 +298,7 @@ void TextField::setPlaceholder(const std::string& s)
 	_placeholderCharacters = font()->buildString(_placeholder.cachedText, fontSize(), fontSmoothing());
 	
 	invalidateContent();
+}
+
+}
 }

@@ -16,7 +16,7 @@ namespace et
 		class Table : public et::s2d::Scroll
 		{
 		public:
-			ET_DECLARE_POINTER(Table)
+			ET_DECLARE_POINTER(Table);
 			
 			class Section
 			{

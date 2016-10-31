@@ -5,15 +5,15 @@
  *
  */
 
-#include <et/core/conversion.h>
-#include <et/core/json.h>
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/element2d.h>
+#include <et/core/conversion.h>
+#include <et/core/json.h>
 
-using namespace et;
-using namespace et::s2d;
-
-ET_DECLARE_SCENE_ELEMENT_CLASS(Element2d)
+namespace et
+{
+namespace s2d
+{
 
 Element2d::Element2d(Element2d* parent, const std::string& name) :
 	ElementHierarchy(parent), _positionAnimator(timerPool()),
@@ -191,7 +191,7 @@ const mat4& Element2d::finalInverseTransform()
 {
 	if (!inverseTransformValid())
 	{
-		_finalInverseTransform = finalTransform().inverse();
+		_finalInverseTransform = finalTransform().inversed();
 		setInverseTransformValid(true);
 	}
 
@@ -458,15 +458,21 @@ void Element2d::setLocationInParent(Location l, const vec2& offset)
 }
 
 void Element2d::setAutolayoutRelativeToParent(const vec2& pos, const vec2& sz, const vec2& pivot)
-{ setAutolayout(pos, LayoutMode_RelativeToParent, sz, LayoutMode_RelativeToParent, pivot); }
+{
+	setAutolayout(pos, LayoutMode_RelativeToParent, sz, LayoutMode_RelativeToParent, pivot);
+}
 
 void Element2d::setAutolayoutSizeMode(LayoutMode mode)
-{ _autoLayout.layoutSizeMode = mode; }
+{
+	_autoLayout.layoutSizeMode = mode;
+}
 
 void Element2d::setAutolayoutPositionMode(LayoutMode mode)
-{ _autoLayout.layoutPositionMode = mode; }
+{
+	_autoLayout.layoutPositionMode = mode;
+}
 
-et::Dictionary Element2d::autoLayoutDictionary() const
+Dictionary Element2d::autoLayoutDictionary() const
 {
 	Dictionary result;
 	
@@ -603,7 +609,7 @@ Element2d* Element2d::baseChildWithName(const std::string& name, bool recursive)
 	return childWithNameCallback(name, this, recursive);
 }
 
-void Element2d::setAutolayout(const et::s2d::ElementLayout& al)
+void Element2d::setAutolayout(const ElementLayout& al)
 {
 	_autoLayout = al;
 }
@@ -621,13 +627,13 @@ void Element2d::fillParent()
 /*
  * Service functions
  */
-float et::s2d::alignmentFactor(Alignment a)
+float alignmentFactor(Alignment a)
 {
 	static const float alignmentValues[Alignment_max] = { 0.0f, 0.5f, 1.0f };
 	return alignmentValues[a];
 }
 
-State et::s2d::adjustState(State s)
+State adjustState(State s)
 {
 	bool isHovered = (s == State_Hovered) || (s == State_SelectedHovered);
 	return (!Input::canGetCurrentPointerInfo() && isHovered) ? static_cast<State>(s - 1) : s;
@@ -641,7 +647,7 @@ static const std::string kLayoutMode_WrapContent = "wrap_content";
 #define RETURN_STR_IF(V) case V: return k##V;
 #define RETURN_VAL_IF(V) if (s == k##V) return V;
 
-std::string et::s2d::layoutModeToString(LayoutMode m)
+std::string layoutModeToString(LayoutMode m)
 {
 	switch (m)
 	{
@@ -657,7 +663,7 @@ std::string et::s2d::layoutModeToString(LayoutMode m)
 	return kLayoutMode_Absolute;
 }
 
-LayoutMode et::s2d::layoutModeFromString(const std::string& s)
+LayoutMode layoutModeFromString(const std::string& s)
 {
 	RETURN_VAL_IF(LayoutMode_Absolute);
 	RETURN_VAL_IF(LayoutMode_RelativeToContext);
@@ -666,4 +672,7 @@ LayoutMode et::s2d::layoutModeFromString(const std::string& s)
 	
 	log::error("Invalid layout mode string %s", s.c_str());
 	return LayoutMode_Absolute;
+}
+
+}
 }

@@ -8,8 +8,8 @@
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/scenerenderer.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 extern std::string et_scene2d_default_shader_vs;
 extern std::string et_scene2d_default_shader_vs_with_screen_pos;
@@ -24,15 +24,20 @@ extern const std::string additionalOffsetAndAlphaUniform = "additionalOffsetAndA
 SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_rc(rc), _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f)
 {
-	pushClipRect(rc->renderState().viewport());
-	
+	// TODO : push viewport rect
+	// pushClipRect(rc->renderer()->);
+
+	/*
+	 * TODO : load programs / gen textures
+	 *
+
 	_defaultProgram = createProgramWithFragmentshader(defaultProgramName, et_scene2d_default_shader_fs, false);
 	_defaultProgram.program->setUniform(textureSamplerName, 0);
 	
 	_defaultTexture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
 		vec2i(1), TextureFormat::RGBA, DataFormat::UnsignedChar, BinaryDataStorage(4, 0), "scene-default-texture");
 	_defaultTexture->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
-	
+	// */
 	setProjectionMatrices(vector2ToFloat(rc->size()));
 }
 
@@ -137,22 +142,28 @@ void s2d::SceneRenderer::setRendernigElement(const RenderingElement::Pointer& r)
 
 void s2d::SceneRenderer::beginRender(RenderContext* rc)
 {
+	/*
+	 * TODO : beginrender
+	 *
 	auto& rs = rc->renderState();
 	_lastBlendState = rs.actualState().blend;
 	_lastDepthState = rs.actualState().depth;
 	_lastRasterizerState = rs.actualState().rasterizer;
-	
 	rc->renderState().setDepthState({false, false});
 	rc->renderState().setBlendConfiguration(BlendConfiguration::AlphaBlend);
+	// */
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)
 {
 	if (_renderingElement.invalid()) return;
 
+	/*
+	 * TODO : render something
+	 *
 	RenderState& rs = rc->renderState();
 	Renderer* renderer = rc->renderer();
-	const IndexBuffer::Pointer& indexBuffer = _renderingElement->vertexArrayObject()->indexBuffer();
+	const IndexBuffer::Pointer& indexBuffer = _renderingElement->VertexStream()->indexBuffer();
 	
 	Program::Pointer lastBoundProgram;
 	for (auto& i : _renderingElement->chunks)
@@ -173,14 +184,19 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 		
 		renderer->drawElements(i.primitiveType, indexBuffer, i.first, i.count);
 	}
+	*/
 }
 
 void SceneRenderer::endRender(RenderContext* rc)
 {
+	/*
+	 * TODO : end render
+	 *
 	auto& rs = rc->renderState();
 	rs.setScissor(_lastRasterizerState.scissorEnabled, _lastRasterizerState.scissorRectangle);
 	rs.setDepthState(_lastDepthState);
 	rs.setBlendState(_lastBlendState);
+	// */
 }
 
 void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)
@@ -192,9 +208,12 @@ void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)
 
 SceneProgram SceneRenderer::createProgramWithShaders(const std::string& name, const std::string& vs, const std::string& fs)
 {
-	Program::Pointer existingProgram = _programsCache.findAnyObject(name);
-	
 	SceneProgram program;
+
+	/*
+	 * TODO : load program
+	 *
+	Program::Pointer existingProgram = _programsCache.findAnyObject(name);
 	if (existingProgram.invalid())
 	{
 		program.program = _rc->materialFactory().genProgram(name, vs, fs);
@@ -205,12 +224,8 @@ SceneProgram SceneRenderer::createProgramWithShaders(const std::string& name, co
 		program.program = existingProgram;
 		_rc->renderState().bindProgram(program.program);
 	}
-	
-	program.additionalOffsetAndAlpha = program.program->getUniform(additionalOffsetAndAlphaUniform);
-	
-	ET_ASSERT((program.additionalOffsetAndAlpha.location != -1) &&
-		"Program should contain uniform for additional offset and alpha, of type vec3 and named additionalOffsetAndAlpha");
-	
+	*/ 
+
 	return program;
 }
 
@@ -283,3 +298,6 @@ std::string et_scene2d_default_text_shader_fs =
 	"	etFragmentOut = tintColor + additiveColor;"
 	"	etFragmentOut.w *= etTexture2D(inputTexture, texCoord).x;"
 	"}";
+
+}
+}

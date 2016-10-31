@@ -7,67 +7,66 @@
 
 #pragma once
 
-#include <et/rendering/vertexarrayobject.h>
+#include <et/rendering/base/vertexstream.h>
 #include <et-ext/scene2d/element2d.h>
 
 namespace et
 {
-	namespace s2d
+namespace s2d
+{
+struct RenderChunk
+{
+	uint32_t first = 0;
+	uint32_t count = 0;
+	PrimitiveType primitiveType = PrimitiveType::Triangles;
+	
+	recti clip;
+	
+	Texture::Pointer texture;
+	SceneProgram program;
+	Element2d* object = nullptr;
+	
+	RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip, const Texture::Pointer& aTexture,
+		const SceneProgram& aProgram, Element2d* aObject, PrimitiveType pt);
+};
+
+class RenderingElement : public Shared
+{
+public:
+	ET_DECLARE_POINTER(RenderingElement);
+	
+	enum : uint32_t
 	{
-		struct RenderChunk
-		{
-			uint32_t first = 0;
-			uint32_t count = 0;
-			PrimitiveType primitiveType = PrimitiveType::Triangles;
-			
-			recti clip;
-			
-			Texture::Pointer texture;
-			SceneProgram program;
-			Element2d* object = nullptr;
-			
-			RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip, const Texture::Pointer& aTexture,
-				const SceneProgram& aProgram, Element2d* aObject, PrimitiveType pt);
-		};
-		
-		class RenderingElement : public Shared
-		{
-		public:
-			ET_DECLARE_POINTER(RenderingElement)
-			
-			enum : uint32_t
-			{
-				MaxCapacity = 65536,
-			};
-			
-		public:
-			RenderingElement(RenderContext* rc, uint32_t capacity);
-			~RenderingElement();
-			
-			void startAllocatingVertices();
-			SceneVertex* allocateVertices(uint32_t);
-			void commitAllocatedVertices();
-			
-			void clear();
+		MaxCapacity = 65536,
+	};
+	
+public:
+	RenderingElement(RenderContext* rc, uint32_t capacity);
+	~RenderingElement();
+	
+	void startAllocatingVertices();
+	SceneVertex* allocateVertices(uint32_t);
+	void commitAllocatedVertices();
+	
+	void clear();
 
-			const VertexArrayObject::Pointer& vertexArrayObject();
+	const VertexStream::Pointer& VertexStream();
 
-		private:
-			friend class SceneRenderer;
-			enum : uint32_t { VertexBuffersCount = 3 };
-			
-			union
-			{
-				void* vertexData = nullptr;
-				SceneVertex* mappedVertices;
-			};
-			
-			RenderState& renderState;
-			std::vector<RenderChunk, SharedBlockAllocatorSTDProxy<RenderChunk>> chunks;
-			VertexArrayObject::Pointer vertices[VertexBuffersCount];
-			uint32_t allocatedVertices = 0;
-			uint32_t currentBufferIndex = 0;
-			size_t dataSize = 0;
-		};
-	}
+private:
+	friend class SceneRenderer;
+	enum : uint32_t { VertexBuffersCount = 3 };
+	
+	union
+	{
+		void* vertexData = nullptr;
+		SceneVertex* mappedVertices;
+	};
+	
+	std::vector<RenderChunk, SharedBlockAllocatorSTDProxy<RenderChunk>> chunks;
+	VertexStream::Pointer vertices[VertexBuffersCount];
+	uint32_t allocatedVertices = 0;
+	uint32_t currentBufferIndex = 0;
+	uint32_t dataSize = 0;
+};
+}
 }

@@ -1,4 +1,4 @@
-#include <et/primitives/primitives.h>
+#include <et/rendering/base/primitives.h>
 #include <et/imaging/imagewriter.h>
 #include "maincontroller.h"
 
@@ -15,17 +15,19 @@ const vec3 lightPosition = normalize(vec3(1.0f, 1.0f, 1.0f));
 
 void MainController::setApplicationParameters(et::ApplicationParameters& p)
 {
-	p.windowStyle = WindowStyle_Caption | WindowStyle_Sizable;
+#if (ET_PLATFORM_MAC)
+	p.renderingAPI = RenderingAPI::Metal;
+#else
+#	error TODO
+#endif
 	p.shouldSuspendOnDeactivate = false;
 }
 
 void MainController::setRenderContextParameters(et::RenderContextParameters& p)
 {
-	p.multisamplingQuality = MultisamplingQuality_None;
+	p.multisamplingQuality = MultisamplingQuality::None;
 	p.supportedInterfaceOrientations = InterfaceOrientation_AnyLandscape;
-	p.contextBaseSize = vec2i(1600, 900);
-	p.contextSize = p.contextBaseSize;
-	
+
 	_gestures.pointerPressed.connect([this](PointerInputInfo p)
 	{
 		_ui->pointerPressed(p);
@@ -42,8 +44,7 @@ void MainController::setRenderContextParameters(et::RenderContextParameters& p)
 void MainController::applicationDidLoad(et::RenderContext* rc)
 {
 	_rc = rc;
-	_rc->renderState().setClearColor(vec4(0.25f, 0.25f, 0.25f, 1.0f));
-	
+
 	loadPrograms();
 	loadGeometry();
 	
@@ -68,15 +69,15 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 		
 		realOffset.y += 2.0f * scale.y;
 	}
-	
+
 	std::string fileToLoad;
-	size_t numParams = application().launchParamtersCount();
+	size_t numParams = application().launchParameters().size();
 	for (size_t i = 0; i < numParams - 1; ++i)
 	{
-		const auto& param = application().launchParameter(i);
+		const auto& param = application().launchParameters().at(i);
 		if (param == "--file")
 		{
-			fileToLoad = application().launchParameter(i+1);
+			fileToLoad = application().launchParameters().at(i+1);
 			break;
 		}
 	}
@@ -85,8 +86,10 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 	_mainUi = MainUI::Pointer::create(_rm);
 	_mainUi->fileSelected.connect([this](std::string name)
 	{
+		/*
+		 * TODO : do stuff
+		 *
 		ObjectsCache localCache;
-		
 		_loadedTexture = _rc->textureFactory().loadTexture(name, localCache);
 		if (_loadedTexture.valid())
 		{
@@ -110,6 +113,7 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 			_framebuffer.reset(nullptr);
 		}
 		_mainUi->setImages(_loadedTexture, _framebuffer->renderTarget(0));
+		*/
 	});
 	_mainUi->processSelected.connect([this]()
 	{
@@ -142,12 +146,12 @@ void MainController::updateCamera()
 	_camera.lookAt(5.0f * fromSpherical(_cameraAngles.value().y, _cameraAngles.value().x));
 };
 
-void MainController::onDrag(et::vec2 v, et::PointerType)
+void MainController::onDrag(const et::GesturesRecognizer::DragGesture& gest)
 {
 	const float maxTheta = HALF_PI - 10.0f * DEG_1;
 	const vec2 anglesScale(0.125f, -0.25f);
 	
-	vec2 t = _cameraAngles.targetValue() + v * anglesScale;
+	vec2 t = _cameraAngles.targetValue() + gest.velocity * anglesScale;
 	
 	if (std::abs(t.y) >= maxTheta)
 		t.y = maxTheta * signOrZero(t.y);
@@ -157,6 +161,9 @@ void MainController::onDrag(et::vec2 v, et::PointerType)
 
 void MainController::loadPrograms()
 {
+	/*
+	 * TODO : Create program
+	 *
 	programs.gaussianBlur = _rc->programFactory().genProgram("gaussian-blur", fullscreenVertexShader, gaussianBlurShader);
 	programs.gaussianBlur->setUniform("inputTexture", 0);
 
@@ -167,24 +174,29 @@ void MainController::loadPrograms()
 
 	programs.preview = _rc->programFactory().genProgram("preview", previewVertexShader, previewFragmentShader);
 	programs.preview->setUniform("colorTexture", 0);
+	*/
 }
 
 void MainController::loadGeometry()
 {
-	VertexDeclaration decl(false, VertexAttributeUsage::Position, VertexAttributeType::Vec3);
-	decl.push_back(VertexAttributeUsage::Normal, VertexAttributeType::Vec3);
+	/*
+	 * TODO : create model
+	 *
+	VertexDeclaration decl(false, VertexAttributeUsage::Position, DataType::Vec3);
+	decl.push_back(VertexAttributeUsage::Normal, DataType::Vec3);
 	
 	vec2i gridDensity(100);
-	size_t numIndexes = primitives::indexCountForRegularMesh(gridDensity, PrimitiveType::TriangleStrips);
+	uint32_t numIndexes = primitives::indexCountForRegularMesh(gridDensity, PrimitiveType::TriangleStrips);
 	
-	auto va = VertexArray::Pointer::create(decl, 0);
-	auto ia = IndexArray::Pointer::create(IndexArrayFormat::Format_32bit, numIndexes, PrimitiveType::TriangleStrips);
-	
+	 auto va = VertexArray::Pointer::create(decl, 0);
 	primitives::createSphere(va, 1.0f, gridDensity);
+
+	auto ia = IndexArray::Pointer::create(IndexArrayFormat::Format_32bit, numIndexes, PrimitiveType::TriangleStrips);
 	primitives::buildTriangleStripIndexes(ia, gridDensity, 0, 0);
-	
-	_vaoSphere = _rc->vertexBufferFactory().createVertexArrayObject("sphere", va, BufferDrawType::Static,
+
+	_vaoSphere = _rc->vertexBufferFactory().createVertexStream("sphere", va, BufferDrawType::Static,
 		ia, BufferDrawType::Static);
+	*/
 }
 
 void MainController::applicationWillResizeContext(const et::vec2i& sz)
@@ -196,6 +208,9 @@ void MainController::applicationWillResizeContext(const et::vec2i& sz)
 
 void MainController::render(et::RenderContext* rc)
 {
+	/*
+	 * TODO : render something ^_^
+	 *
 	if (_shouldProcessPass1)
 		processImage_Pass1();
 	else if (_shouldProcessPass2)
@@ -259,12 +274,14 @@ void MainController::render(et::RenderContext* rc)
 		rc->renderState().setClearColor(vec4(0.5f));
 		_shouldSaveToFile = false;
 	}
-	
+	*/
 	_ui->render(rc);
 }
 
 void MainController::renderPreview()
 {
+	/*
+	 * TODO : render preview
 	auto& rs = _rc->renderState();
 	
 	rs.setBlend(false);
@@ -278,10 +295,14 @@ void MainController::renderPreview()
 	programs.preview->setUniform("exposure", _mainUi->exposureValue());
 	programs.preview->setUniform("expocorrection", _mainUi->expoCorrection());
 	_rc->renderer()->drawAllElements(_vaoSphere->indexBuffer());
+	*/
 }
 
 void MainController::processImage_Pass1()
 {
+	/*
+	 * TODO : process
+	 *
 	if (_framebuffer.invalid()) return;
 	
 	auto& rs = _rc->renderState();
@@ -309,10 +330,14 @@ void MainController::processImage_Pass1()
 		_shouldProcessPass2 = true;
 		_processingSample = 0;
 	}
+	*/
 }
 
 void MainController::processImage_Pass2()
 {
+	/*
+	 * TODO : process
+	 *
 	auto& rs = _rc->renderState();
 	const auto& p = _offsetAndScales.at(_processingSample);
 	
@@ -334,6 +359,7 @@ void MainController::processImage_Pass2()
 		_shouldProcessPass2 = false;
 		_processingSample = 0;
 	}
+	*/ 
 }
 
 ApplicationIdentifier MainController::applicationIdentifier() const

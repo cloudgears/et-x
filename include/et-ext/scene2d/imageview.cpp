@@ -10,8 +10,6 @@
 using namespace et;
 using namespace s2d;
 
-ET_DECLARE_SCENE_ELEMENT_CLASS(ImageView)
-
 ImageView::ImageView(Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _descriptor(timerPool()),
 	_backgroundColorAnimator(timerPool()), _contentMode(ImageView::ContentMode_Stretch)
@@ -80,8 +78,8 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 		{
 			_actualImageSize = _descriptor.value().size;
 
-			size_t repeatsWidth = std::max(static_cast<size_t>(1), static_cast<size_t>(size().x / _descriptor.value().size.x));
-			size_t repeatsHeight = std::max(static_cast<size_t>(1), static_cast<size_t>(size().y / _descriptor.value().size.y));
+			uint32_t repeatsWidth = std::max(1u, static_cast<uint32_t>(size().x / _descriptor.value().size.x));
+			uint32_t repeatsHeight = std::max(1u, static_cast<uint32_t>(size().y / _descriptor.value().size.y));
 
 			_vertices.fitToSize(repeatsWidth * repeatsHeight * measuseVertexCountForImageDescriptor(_descriptor.value()));
 

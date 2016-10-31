@@ -33,7 +33,7 @@ namespace et
 		{
 		public:
 			class Popup;
-			ET_DECLARE_POINTER(Listbox)
+			ET_DECLARE_POINTER(Listbox);
 
 		public:
 			Listbox(const Font::Pointer& font, float fsz, Element2d* parent, const std::string& name = emptyString);

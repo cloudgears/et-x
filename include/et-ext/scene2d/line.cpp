@@ -8,10 +8,8 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/line.h>
 
-using namespace et;
-using namespace et::s2d;
-
-ET_DECLARE_SCENE_ELEMENT_CLASS(Line)
+namespace et {
+namespace s2d {
 
 Line::Line(const vec2& from, const vec2& to, Element2d* parent) :
 	Element2d(parent)
@@ -150,4 +148,7 @@ void Line::setGradientColors(const vec4& s, const vec4& e)
 	_startColor = s;
 	_endColor = e;
 	invalidateContent();
+}
+
+}
 }

@@ -13,8 +13,8 @@
 #include <et/imaging/imageoperations.h>
 #include <et-ext/scene2d/textureatlaswriter.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 const int defaultSpacing = 1;
 
@@ -207,27 +207,14 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 			imageDictionary.setArrayForKey("offset", vec4ToArray(offset));
 			images->content.push_back(imageDictionary);
 			
-			int components = 0;
-			switch (image.format)
+			if (image.format == TextureFormat::RGBA8)
 			{
-			case TextureFormat::RGB:
-			{
-					components = 3;
-					break;
-				}
-			case TextureFormat::RGBA:
-			{
-					components = 4;
-					break;
-				}
-			default:
-				break;
-			};
-
-			if (components)
-			{
-				ImageOperations::transfer(image.data, image.size, components, data, i->texture->size, 4,
+				ImageOperations::transfer(image.data, image.size, 4, data, i->texture->size, 4,
 					vec2i(static_cast<int>(ii.place.origin.x), static_cast<int>(ii.place.origin.y)));
+			}
+			else
+			{
+				ET_FAIL("Unsupported image format!");
 			}
 			
 			++index;
@@ -252,4 +239,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
 		log::error("Unable to create output file: %s\nOutputting result to console:", fileName.c_str());
 		output.printContent();
 	}
+}
+
+}
 }

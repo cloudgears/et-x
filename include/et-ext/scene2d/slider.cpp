@@ -9,8 +9,8 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/slider.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 const float colorPlaceholdersSize = 0.5f;
 
@@ -273,4 +273,7 @@ void Slider::setHandleFillColor(const vec4& clr)
 {
 	_handleFillColor = clr;
 	invalidateContent();
+}
+
+}
 }

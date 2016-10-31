@@ -16,7 +16,7 @@ namespace et
         class Slider : public Element2d
         {
         public:
-			ET_DECLARE_POINTER(Slider)
+			ET_DECLARE_POINTER(Slider);
 			
 			enum SliderImagesMode
 			{

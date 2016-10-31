@@ -9,8 +9,8 @@
 #include <et-ext/scene2d/layout.h>
 #include <et-ext/scene2d/scenerenderer.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 namespace
 {
@@ -42,8 +42,6 @@ private:
 	int _selectedIndex = -1;
 	bool _pressed = false;
 };
-
-ET_DECLARE_SCENE_ELEMENT_CLASS(Listbox::Popup)
 
 Listbox::Popup::Popup(Listbox* owner, const std::string& name) :
 	Element2d(owner, ET_S2D_PASS_NAME_TO_BASE_CLASS), _owner(owner)
@@ -168,8 +166,6 @@ void Listbox::Popup::pointerLeaved(const PointerInputInfo&)
 /*
  * Listbox
  */
-
-ET_DECLARE_SCENE_ELEMENT_CLASS(Listbox)
 
 Listbox::Listbox(const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
 	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
@@ -392,4 +388,7 @@ void Listbox::setPrefix(const std::string& prefix)
 void Listbox::setPopupDirection(ListboxPopupDirection d)
 {
 	_direction = d;
+}
+
+}
 }

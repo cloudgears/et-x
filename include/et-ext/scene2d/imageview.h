@@ -17,7 +17,7 @@ namespace et
 		class ImageView : public Element2d
 		{
 		public:
-			ET_DECLARE_POINTER(ImageView)
+			ET_DECLARE_POINTER(ImageView);
 			
 		public:
 			enum ContentMode

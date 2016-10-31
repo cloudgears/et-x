@@ -9,10 +9,10 @@
 #include <et-ext/scene2d/element2d.h>
 #include <et-ext/scene2d/vertexbuilder.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
-void et::s2d::buildQuad(SceneVertexList& vertices, const SceneVertex& topLeft, const SceneVertex& topRight,
+void buildQuad(SceneVertexList& vertices, const SceneVertex& topLeft, const SceneVertex& topRight,
 	const SceneVertex& bottomLeft, const SceneVertex& bottomRight)
 {
 	vertices.fitToSize(6);
@@ -24,7 +24,7 @@ void et::s2d::buildQuad(SceneVertexList& vertices, const SceneVertex& topLeft, c
 	vertices.push_back(topLeft);
 }
 
-void et::s2d::buildQuad(SceneVertexList& vertices, SceneVertex topLeft, SceneVertex topRight,
+void buildQuad(SceneVertexList& vertices, SceneVertex topLeft, SceneVertex topRight,
 	SceneVertex bottomLeft, SceneVertex bottomRight, const mat4& m)
 {
 	topLeft.position = m * topLeft.position;
@@ -34,7 +34,7 @@ void et::s2d::buildQuad(SceneVertexList& vertices, SceneVertex topLeft, SceneVer
 	buildQuad(vertices, topLeft, topRight, bottomLeft, bottomRight);
 }
 
-void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescriptorList& chars,
+void buildStringVertices(SceneVertexList& vertices, const CharDescriptorList& chars,
 	Alignment hAlign, Alignment vAlign, const vec2& pos, const vec4& color, const mat4& transform,
 	float lineInterval)
 {
@@ -71,10 +71,10 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 		i.y -= vAlignFactor * textHeight;
 	}
 	
-	size_t lineIndex = 0;
+	uint32_t lineIndex = 0;
 	line = lines.front();
 	
-	vertices.fitToSize(6 * chars.size());
+	vertices.fitToSize(6 * static_cast<uint32_t>(chars.size()));
 	for (const CharDescriptor& desc : chars)
 	{
 		vec2 sdfParameters = desc.parameters.xy();
@@ -107,7 +107,7 @@ void et::s2d::buildStringVertices(SceneVertexList& vertices, const CharDescripto
 	}
 }
 
-size_t et::s2d::measuseVertexCountForImageDescriptor(const ImageDescriptor& desc)
+uint32_t measuseVertexCountForImageDescriptor(const ImageDescriptor& desc)
 {
 	bool hasLeftSafe = desc.contentOffset.left > 0;
 	bool hasTopSafe = desc.contentOffset.top > 0;
@@ -125,7 +125,7 @@ size_t et::s2d::measuseVertexCountForImageDescriptor(const ImageDescriptor& desc
 	return 6 * (1 + numCorners + numBorders);
 }
 
-void et::s2d::buildImageVertices(SceneVertexList& vertices, const Texture::Pointer& tex, const ImageDescriptor& desc,
+void buildImageVertices(SceneVertexList& vertices, const Texture::Pointer& tex, const ImageDescriptor& desc,
 	const rectf& p, const vec4& color, const mat4& transform)
 {
 	if (!tex.valid()) return;
@@ -298,7 +298,7 @@ void et::s2d::buildImageVertices(SceneVertexList& vertices, const Texture::Point
 	}
 }
 
-void et::s2d::buildColorVertices(SceneVertexList& vertices, const rectf& p, const vec4& color,
+void buildColorVertices(SceneVertexList& vertices, const rectf& p, const vec4& color,
 	const mat4& transform)
 {
 	static const vec4 texCoord[] =
@@ -319,4 +319,7 @@ void et::s2d::buildColorVertices(SceneVertexList& vertices, const rectf& p, cons
 		SceneVertex(transform * topRight, texCoord[1], color),
 		SceneVertex(transform * bottomLeft, texCoord[2], color),
 		SceneVertex(transform * bottomRight, texCoord[3], color));
+}
+
+}
 }

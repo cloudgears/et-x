@@ -17,7 +17,7 @@ namespace et
 		class Layout : public Element2d
 		{
 		public:
-			ET_DECLARE_POINTER(Layout)
+			ET_DECLARE_POINTER(Layout);
 			
 		public:
 			Layout(const std::string& name = emptyString);

@@ -18,7 +18,7 @@ namespace et
 		class TextField : public TextElement
 		{
 		public:
-			ET_DECLARE_POINTER(TextField)
+			ET_DECLARE_POINTER(TextField);
 			
 			enum
 			{

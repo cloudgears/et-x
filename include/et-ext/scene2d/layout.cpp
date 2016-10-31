@@ -9,11 +9,8 @@
 #include <et/core/json.h>
 #include <et-ext/scene2d/layout.h>
 
-using namespace et;
-using namespace et::s2d;
-
-ET_DECLARE_SCENE_ELEMENT_CLASS(Layout)
-ET_DECLARE_SCENE_ELEMENT_CLASS(ModalLayout)
+namespace et {
+namespace s2d {
 
 Layout::Layout(const std::string& name) :
 	Element2d(nullptr, ET_S2D_PASS_NAME_TO_BASE_CLASS), _positionInterpolationFunction(linearInerpolation)
@@ -514,4 +511,7 @@ bool ModalLayout::pointerScrolled(const et::PointerInputInfo& p )
 {
 	Layout::pointerScrolled(p);
 	return true;
+}
+
+}
 }

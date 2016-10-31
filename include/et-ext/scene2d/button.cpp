@@ -5,19 +5,19 @@
  *
  */
 
-#include <et/core/tools.h>
-#include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/button.h>
+#include <et/rendering/rendercontext.h>
+#include <et/core/hardware.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
-ET_DECLARE_SCENE_ELEMENT_CLASS(Button)
-
-Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
-	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS), _titleAnimator(timerPool()),
-	_backgroundTintAnimator(timerPool()), _commonBackgroundTintAnimator(timerPool())
+Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Element2d* p, const std::string& name)
+	: TextElement(p, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
+	, _titleAnimator(timerPool())
+	, _backgroundTintAnimator(timerPool())
+	, _commonBackgroundTintAnimator(timerPool())
 {
 	_currentTitle.setKey(title);
 	_currentTextSize = font()->measureStringSize(_currentTitle.cachedText, fontSize(), fontSmoothing());
@@ -534,4 +534,7 @@ void Button::invalidateText()
 	_nextTitleCharacters = font()->buildString(_nextTitle.cachedText, fontSize(), fontSmoothing());
 	_currentTitleCharacters = font()->buildString(_currentTitle.cachedText, fontSize(), fontSmoothing());
 	invalidateContent();
+}
+
+}
 }

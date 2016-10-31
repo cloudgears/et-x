@@ -15,9 +15,7 @@ using namespace s2d;
 extern const std::string particlesVertexShader;
 extern const std::string particlesFragmentShader;
 
-ET_DECLARE_SCENE_ELEMENT_CLASS(ParticlesElement)
-
-ParticlesElement::ParticlesElement(size_t amount, Element2d* parent, const std::string& name) :
+ParticlesElement::ParticlesElement(uint32_t amount, Element2d* parent, const std::string& name) :
 	s2d::Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _vertices(amount, 0), _particles(amount)
 {
 	setLocationInParent(s2d::Location_Center);
@@ -82,9 +80,12 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 	
 	if (_defaultTexture.invalid())
 	{
-		_defaultTexture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
-			vec2i(1), TextureFormat::RGBA, DataFormat::UnsignedChar, BinaryDataStorage(4, 255),  "__et_particles_default_texture__");
-		
+		TextureDescription::Pointer desc = TextureDescription::Pointer::create();
+		desc->size = vec2i(1);
+		desc->format = TextureFormat::RGBA8;
+		desc->data = BinaryDataStorage(4, 255);
+		_defaultTexture = rc->renderer()->createTexture(desc);
+
 		if (_texture.invalid())
 			_texture = _defaultTexture;
 	}
@@ -126,7 +127,8 @@ et::s2d::SceneProgram ParticlesElement::initProgram(et::s2d::SceneRenderer& r)
 
 void ParticlesElement::setProgramParameters(et::RenderContext*, et::Program::Pointer& p)
 {
-	p->setUniform("finalTransform", finalTransform());
+	// TODO : set parameter
+	// p->setUniform("finalTransform", finalTransform());
 }
 
 void ParticlesElement::setTexture(const et::Texture::Pointer& t)

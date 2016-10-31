@@ -2,7 +2,7 @@
 
 #include <et/app/application.h>
 #include <et/input/gestures.h>
-#include <et/timers/interpolationvalue.h>
+#include <et/core/interpolationvalue.h>
 #include "ui/MainUI.h"
 
 namespace emb
@@ -26,7 +26,7 @@ namespace emb
 		void loadPrograms();
 		void loadGeometry();
 		
-		void onDrag(et::vec2, et::PointerType);
+		void onDrag(const et::GesturesRecognizer::DragGesture&);
 		
 		void updateCamera();
 		
@@ -45,7 +45,7 @@ namespace emb
 		et::Texture::Pointer _loadedTexture;
 		et::Framebuffer::Pointer _framebuffer;
 		et::Framebuffer::Pointer _cubemapFramebuffer;
-		et::VertexArrayObject _vaoSphere;
+		et::VertexStream _vaoSphere;
 		et::InterpolationValue<et::vec2> _cameraAngles;
 		et::Camera _camera;
 		

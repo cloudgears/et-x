@@ -16,7 +16,7 @@ namespace et
 		class Line : public Element2d
 		{
 		public:
-			ET_DECLARE_POINTER(Line)
+			ET_DECLARE_POINTER(Line);
 			
 			enum Type
 			{

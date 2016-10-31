@@ -15,8 +15,8 @@
 #	include <et/imaging/imagewriter.h>
 #endif
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 enum GridProperies : int
 {
@@ -31,16 +31,21 @@ const vec2i CharacterGenerator::charactersRenderingExtent = vec2i(128);
 void internal_sdf_compare(sdf::Grid& g, vec2i& p, int x, int y, int offsetx, int offsety);
 
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace,
-	size_t faceIndex, size_t boldFaceIndex) : _impl(face, boldFace, faceIndex, boldFaceIndex), _rc(rc),
+	size_t faceIndex, size_t boldFaceIndex) : _impl(face, boldFace, faceIndex, boldFaceIndex),
 	_fontFace(face), _fontBoldFace(boldFace), _placer(vec2i(static_cast<int>(defaultTextureSize)), true)
 {
 	_fontFace = fileExists(face) ? getFileName(face) : face;
 	_fontBoldFace = fileExists(boldFace) ? getFileName(boldFace) : boldFace;
-	
+
+	TextureDescription::Pointer desc = TextureDescription::Pointer::create();
+	desc->format = TextureFormat::R8;
+	desc->size = vec2i(defaultTextureSize);
+	_texture = rc->renderer()->createTexture(desc);
+	/*
 	_texture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::R,
 		vec2i(defaultTextureSize), TextureFormat::R, DataFormat::UnsignedChar,
 		BinaryDataStorage(defaultTextureSize * defaultTextureSize, 0), face + "font");
-	
+	*/
 	_grid0.grid.resize(initialGridDimensions);
 	_grid1.grid.resize(initialGridDimensions);
 }
@@ -128,8 +133,9 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 				updateTexture(textureRect.origin(), downsampledSize, downsampled);
 				
 				result.contentRect = rectf(vector2ToFloat(topLeftOffset - charactersRenderingExtent / 2), vector2ToFloat(sizeToSave));
-				result.uvRect = rectf(_texture->getTexCoord(vector2ToFloat(textureRect.origin())),
-					vector2ToFloat(textureRect.size()) / _texture->sizeFloat());
+				vec2 fOrigin = vector2ToFloat(textureRect.origin());
+				_texture->getTexCoord(fOrigin);
+				result.uvRect = rectf(fOrigin, vector2ToFloat(textureRect.size()) / vector2ToFloat(_texture->size()));
 			}
 			else
 			{
@@ -152,7 +158,8 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 void CharacterGenerator::updateTexture(const vec2i& position, const vec2i& size, BinaryDataStorage& data)
 {
 	vec2i dest(position.x, _texture->size().y - position.y - size.y - 1);
-	_texture->updatePartialDataDirectly(_rc, dest, size, data.binary(), data.dataSize());
+	// TODO : update texture
+	//_texture->updatePartialDataDirectly(_rc, dest, size, data.binary(), data.dataSize());
 }
 
 void CharacterGenerator::setTexture(Texture::Pointer tex)
@@ -261,7 +268,7 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 {
 	const vec2i pointOutside = vec2i(255);
 
-	size_t targetGridSize = w * h;
+	uint32_t targetGridSize = static_cast<uint32_t>(w * h);
 	
 	if (_grid0.grid.size() < targetGridSize)
 		_grid0.grid.resize(targetGridSize);
@@ -311,4 +318,7 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 			data[x + y * _grid0.w] = static_cast<unsigned char>(clamp(value, 0.0f, 255.0f));
 		}
 	}
+}
+
+}
 }

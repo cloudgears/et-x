@@ -20,10 +20,10 @@ namespace et
 		class ParticlesElement : public et::s2d::Element2d
 		{
 		public:
-			ET_DECLARE_POINTER(ParticlesElement)
+			ET_DECLARE_POINTER(ParticlesElement);
 			
 		public:
-			ParticlesElement(size_t, Element2d*, const std::string& = emptyString);
+			ParticlesElement(uint32_t, Element2d*, const std::string& = emptyString);
 			
 			particles::PointSpriteEmitter& emitter()
 				{ return _particles; }

@@ -7,10 +7,8 @@
 
 #include <et-ext/scene2d/table.h>
 
-using namespace et;
-using namespace et::s2d;
-
-ET_DECLARE_SCENE_ELEMENT_CLASS(Table)
+namespace et {
+namespace s2d {
 
 Table::Section::Section() :
 	headerOffset(0.0f), footerOffset(0.0f), headerSize(0.0f), itemsSize(0.0f),
@@ -158,4 +156,7 @@ void Table::clean()
 	}
 	
 	_sections.clear();
+}
+
+}
 }

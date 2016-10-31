@@ -20,13 +20,15 @@
 #	include <Windows.h>
 #endif
 
-using namespace et;
-using namespace et::s2d;
+namespace et
+{
+namespace s2d
+{
 
 sdf::Grid _grid0;
 sdf::Grid _grid1;
 
-class et::s2d::CharacterGeneratorImplementationPrivate
+class CharacterGeneratorImplementationPrivate
 {
 public:
 	CharacterGeneratorImplementationPrivate(const std::string& face, const std::string& boldFace, 
@@ -219,4 +221,7 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	}
 	
 	return true;
+}
+
+}
 }

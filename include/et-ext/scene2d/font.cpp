@@ -14,8 +14,8 @@
 #include <et/imaging/imagewriter.h>
 #include <et-ext/scene2d/font.h>
 
-using namespace et;
-using namespace et::s2d;
+namespace et {
+namespace s2d {
 
 size_t textLength(const wchar_t* text);
 std::wstring subString(const wchar_t* begin, const wchar_t* end);
@@ -30,6 +30,9 @@ Font::Font(const CharacterGenerator::Pointer& generator) :
 
 void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 {
+	/*
+	 * TODO : save to file
+	 *
 	std::ofstream fOut(fileName, std::ios::out);
 	if (fOut.fail())
 	{
@@ -107,11 +110,15 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	
 	writeImageToFile(getFilePath(fileName) + textureFile, imageData, _generator->texture()->size(),
 		1, 8, ImageFormat_PNG, true);
+	*/
 }
 
 bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, ObjectsCache& cache, 
 	const std::string& baseFileName)
 {
+	/*
+	 * TODO : load
+	 *
 	std::string fontFileDir = getFilePath(baseFileName);
 	std::string textureFile = object.stringForKey("texture-file")->content;
 	std::string textureFileName = fontFileDir + textureFile;
@@ -140,8 +147,8 @@ bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, Objec
 		desc.parameters = arrayToVec4(character.arrayForKey("parameters"));
 		_generator->pushCharacter(desc);
 	}
-
-	return true;
+	*/
+	return false;
 }
 
 bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
@@ -175,7 +182,7 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	Texture::Pointer tex = rc->textureFactory().loadTexture(actualName, cache);
+	Texture::Pointer tex = rc->renderer()->loadTexture(actualName, cache);
 	if (tex.invalid())
 	{
 		log::error("Unable to load texture for font %s. Missing file: %s", fileName.c_str(), textureFile.c_str());
@@ -430,4 +437,6 @@ vec4 colorTagToColor(const std::wstring& colorTag)
 		}
 	}
 	return result;
+}
+}
 }
