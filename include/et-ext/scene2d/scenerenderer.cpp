@@ -25,7 +25,7 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_rc(rc), _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f)
 {
 	// TODO : push viewport rect
-	// pushClipRect(rc->renderer()->);
+	pushClipRect(recti(0, 0, 640, 480));
 
 	/*
 	 * TODO : load programs / gen textures

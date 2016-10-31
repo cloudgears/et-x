@@ -39,9 +39,7 @@ RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity)
 	
 	IndexBuffer::Pointer sharedIndexBuffer = rc->renderer()->createIndexBuffer("dynamic-buffer-ib", indexArray, BufferDrawType::Static);
 	VertexStorage::Pointer sharedVertexStorage = VertexStorage::Pointer::create(decl, capacity);
-	
-	sharedIndexBuffer = vertices[0]->indexBuffer();
-	
+		
 	for (uint32_t i = 0; i < VertexBuffersCount; ++i)
 	{
 		char nameId[128] = { };

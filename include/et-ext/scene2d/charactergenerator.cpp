@@ -40,6 +40,7 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	TextureDescription::Pointer desc = TextureDescription::Pointer::create();
 	desc->format = TextureFormat::R8;
 	desc->size = vec2i(defaultTextureSize);
+	desc->data = BinaryDataStorage(desc->size.square(), 0);
 	_texture = rc->renderer()->createTexture(desc);
 	/*
 	_texture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::R,
