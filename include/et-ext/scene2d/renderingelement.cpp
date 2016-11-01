@@ -16,9 +16,11 @@ namespace s2d {
 /*
  * Render chunk
  */
-RenderChunk::RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip, const Texture::Pointer& aTexture,
-	const SceneProgram& aProgram, Element2d* aObject, PrimitiveType pt) : first(aFirst), count(aCount),
-	primitiveType(pt), clip(aClip), texture(aTexture), program(aProgram), object(aObject) { }
+RenderChunk::RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip,
+	const MaterialInstance::Pointer& aMaterial, Element2d* aObject, PrimitiveType pt) :
+	first(aFirst), count(aCount), primitiveType(pt), clip(aClip), material(aMaterial), object(aObject)
+{
+}
 
 /*
  * Rendering element
@@ -92,7 +94,7 @@ void RenderingElement::commitAllocatedVertices()
 #endif
 }
 
-const VertexStream::Pointer& RenderingElement::VertexStream()
+const VertexStream::Pointer& RenderingElement::vertexStream()
 {
 	const auto& vao = vertices[currentBufferIndex];
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)

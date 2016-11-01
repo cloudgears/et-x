@@ -57,22 +57,22 @@ float Slider::normalizedValue() const
 
 void Slider::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	initProgram(r);
+	validateMaterialInstance(r);
 	
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, _background.texture, program(), this);
+		r.addVertices(_backgroundVertices, _background.texture, materialInstance(), this);
 
 	if (_sliderLeftVertices.lastElementIndex() > 0)
-		r.addVertices(_sliderLeftVertices, _sliderLeft.texture, program(), this);
+		r.addVertices(_sliderLeftVertices, _sliderLeft.texture, materialInstance(), this);
 
 	if (_sliderRightVertices.lastElementIndex() > 0)
-		r.addVertices(_sliderRightVertices, _sliderRight.texture, program(), this);
+		r.addVertices(_sliderRightVertices, _sliderRight.texture, materialInstance(), this);
 	
 	if (_handleVertices.lastElementIndex() > 0)
-		r.addVertices(_handleVertices, _handle[_state].texture, program(), this);
+		r.addVertices(_handleVertices, _handle[_state].texture, materialInstance(), this);
 }
 
 void Slider::buildVertices(RenderContext*, SceneRenderer&)

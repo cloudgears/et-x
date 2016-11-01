@@ -8,23 +8,8 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/textelement.h>
 
-using namespace et;
-using namespace s2d;
-
-extern const std::string textureSamplerName;
-extern const std::string additionalOffsetAndAlphaUniform;
-extern std::string et_scene2d_default_text_shader_vs_plain;
-extern std::string et_scene2d_default_text_shader_fs_plain;
-
-extern std::string et_scene2d_default_text_shader_sdf_vs_base;
-extern std::string et_scene2d_default_text_shader_sdf_fs_plain;
-
-extern std::string et_scene2d_default_text_shader_sdf_vs_shadow;
-extern std::string et_scene2d_default_text_shader_sdf_fs_shadow;
-
-extern std::string et_scene2d_default_text_shader_sdf_vs_bevel;
-extern std::string et_scene2d_default_text_shader_sdf_fs_bevel;
-extern std::string et_scene2d_default_text_shader_sdf_fs_inv_bevel;
+namespace et {
+namespace s2d {
 
 const float maxShadowDistance = 1.0f;
 
@@ -102,54 +87,13 @@ void TextElement::loadProperties(const Dictionary& d)
 	}
 }
 
-SceneProgram& TextElement::textProgram(SceneRenderer& r)
-{
-	if (_textProgram.invalid())
-		initTextProgram(r);
-	
-	return _textProgram;
-}
-
-void TextElement::initTextProgram(SceneRenderer& r)
-{
-	const size_t numStyles = static_cast<size_t>(TextStyle::max);
-
-	static const std::string programNames[numStyles] =
-	{
-		"et-default-text-program-sdf-plain",
-		"et-default-text-program-sdf-shadow",
-		"et-default-text-program-sdf-bevel",
-		"et-default-text-program-plain",
-	};
-	
-	const std::string vertexShaders[numStyles] =
-	{
-		et_scene2d_default_text_shader_sdf_vs_base,
-		et_scene2d_default_text_shader_sdf_vs_shadow,
-		et_scene2d_default_text_shader_sdf_vs_bevel,
-		et_scene2d_default_text_shader_sdf_vs_bevel,
-		et_scene2d_default_text_shader_vs_plain,
-	};
-	
-	const std::string fragmentShaders[numStyles] =
-	{
-		et_scene2d_default_text_shader_sdf_fs_plain,
-		et_scene2d_default_text_shader_sdf_fs_shadow,
-		et_scene2d_default_text_shader_sdf_fs_bevel,
-		et_scene2d_default_text_shader_sdf_fs_inv_bevel,
-		et_scene2d_default_text_shader_fs_plain,
-	};
-
-	uint32_t index = static_cast<uint32_t>(_textStyle);
-	_textProgram = r.createProgramWithShaders(programNames[index], vertexShaders[index], fragmentShaders[index]);
-}
-
 void TextElement::setTextStyle(TextStyle style)
 {
-	if (style == _textStyle) return;
-	
-	_textStyle = style;
-	_textProgram.program.reset(nullptr);
+	if (style != _textStyle)
+	{
+		_textStyle = style;
+		_textMaterial.reset(nullptr);
+	}
 }
 
 void TextElement::setShadowOffset(const vec2& o)
@@ -158,12 +102,15 @@ void TextElement::setShadowOffset(const vec2& o)
 	_shadowOffset.y = -(std::abs(o.y) > maxShadowDistance ? maxShadowDistance : o.y);
 }
 
+/*
+ * TODO : text parameters here
+ *
 void TextElement::setProgramParameters(et::RenderContext*, et::Program::Pointer& p)
 {
-	// TODO : set parameter
-	// if ((_textStyle == TextStyle::SignedDistanceFieldShadow) && (p == _textProgram.program))
-	//	p->setUniform(_shadowUniform, _shadowOffset * _font->generator()->texture()->texel());
+	if ((_textStyle == TextStyle::SignedDistanceFieldShadow) && (p == _textProgram.program))
+		p->setUniform(_shadowUniform, _shadowOffset * _font->generator()->texture()->texel());
 }
+// */
 
 void TextElement::setTextHorizontalAlignment(Alignment a)
 {
@@ -182,6 +129,18 @@ void TextElement::setTextAlignment(Alignment h, Alignment v)
 	_horizontalAlignment = h;
 	_verticalAlignment = v;
 	invalidateContent();
+}
+
+MaterialInstance::Pointer TextElement::textMaterial(SceneRenderer& r)
+{
+	if (_textMaterial.invalid())
+	{
+		_textMaterial = r.defaultMaterial()->instance();
+	}
+	return _textMaterial;
+}
+
+}
 }
 
 /*

@@ -54,9 +54,7 @@ public:
 	void setTextStyle(TextStyle);
 	
 	void loadProperties(const Dictionary&) override;
-	
-	SceneProgram& textProgram(SceneRenderer&);
-	
+
 	void setShadowOffset(const vec2&);
 	
 	Alignment textHorizontalAlignment() const
@@ -68,10 +66,11 @@ public:
 	void setTextHorizontalAlignment(Alignment);
 	void setTextVerticalAlignment(Alignment);
 	void setTextAlignment(Alignment horzontal, Alignment vertical);
+
+	MaterialInstance::Pointer textMaterial(SceneRenderer&);
 	
 protected:
 	bool processMessage(const Message&) override;
-	void setProgramParameters(et::RenderContext*, et::Program::Pointer&) override;
 	
 	virtual void invalidateText() { }
 	
@@ -79,11 +78,9 @@ protected:
 	
 private:
 	Font::Pointer _font;
+	MaterialInstance::Pointer _textMaterial;
 	FloatAnimator _fontSize;
 	FloatAnimator _fontSmoothing;
-	SceneProgram _textProgram;
-	// TODO : FIX
-	// Program::Uniform _shadowUniform;
 	vec2 _shadowOffset;
 	TextStyle _textStyle = TextStyle::SignedDistanceField;
 	Alignment _horizontalAlignment = Alignment_Near;

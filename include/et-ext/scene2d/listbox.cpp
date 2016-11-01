@@ -114,17 +114,19 @@ void Listbox::Popup::hideText()
 
 void Listbox::Popup::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
+	validateMaterialInstance(r);
+
 	if (!contentValid() || !transformValid())
 		buildVertices(r);
 
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, _owner->_background.texture, r.defaultProgram(), this);
+		r.addVertices(_backgroundVertices, _owner->_background.texture, materialInstance(), this);
 
 	if (_selectionVertices.lastElementIndex() > 0)
-		r.addVertices(_selectionVertices, _owner->_selection.texture, r.defaultProgram(), this);
+		r.addVertices(_selectionVertices, _owner->_selection.texture, materialInstance(), this);
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _owner->font()->generator()->texture(), _owner->textProgram(r), this);
+		r.addVertices(_textVertices, _owner->font()->generator()->texture(), _owner->textMaterial(r), this);
 }
 
 bool Listbox::Popup::pointerPressed(const PointerInputInfo&)
@@ -228,14 +230,16 @@ void Listbox::buildVertices(SceneRenderer&)
 
 void Listbox::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
+	validateMaterialInstance(r);
+
 	if (!contentValid())
 		buildVertices(r);
 
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, _images[_state].texture, r.defaultProgram(), this);
+		r.addVertices(_backgroundVertices, _images[_state].texture, materialInstance(), this);
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, font()->generator()->texture(), textProgram(r), this);
+		r.addVertices(_textVertices, font()->generator()->texture(), textMaterial(r), this);
 }
 
 bool Listbox::shouldDrawText()

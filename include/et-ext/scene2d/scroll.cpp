@@ -35,13 +35,13 @@ Scroll::Scroll(Element2d* parent, const std::string& name) :
 
 void Scroll::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	initProgram(r);
+	validateMaterialInstance(r);
 	
 	if (!contentValid())
 		buildVertices(rc, r);
 	
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, r.lastUsedTexture(), program(), this);
+		r.addVertices(_backgroundVertices, r.transparentTexture(), materialInstance(), this);
 }
 
 void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
@@ -50,7 +50,7 @@ void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
 		buildVertices(rc, r);
 
 	if (_overlayVertices.lastElementIndex() > 0)
-		r.addVertices(_overlayVertices, r.lastUsedTexture(), program(), this);
+		r.addVertices(_overlayVertices, r.transparentTexture(), materialInstance(), this);
 }
 
 void Scroll::buildVertices(RenderContext*, SceneRenderer&)
@@ -244,7 +244,7 @@ Element2d* Scroll::getActiveElement(const PointerInputInfo& p, Element2d* root)
 	{
 		for (auto cI = root->children().rbegin(), cE = root->children().rend(); cI != cE; ++cI)
 		{
-			auto el = getActiveElement(p, cI->ptr());
+			auto el = getActiveElement(p, cI->pointer());
 			if (el != nullptr)
 				return el;
 		}
@@ -253,7 +253,7 @@ Element2d* Scroll::getActiveElement(const PointerInputInfo& p, Element2d* root)
 	{
 		for (auto cI = root->children().rbegin(), cE = root->children().rend(); cI != cE; ++cI)
 		{
-			auto el = getActiveElement(p, cI->ptr());
+			auto el = getActiveElement(p, cI->pointer());
 			if (el != nullptr)
 				return el;
 		}
@@ -292,7 +292,7 @@ void Scroll::broadcastMoved(const PointerInputInfo& p)
 	
 	Element2d* active = getActiveElement(globalPos, this);
 	
-	if (_capturedElement.valid() && (_capturedElement.ptr() != active))
+	if (_capturedElement.valid() && (_capturedElement.pointer() != active))
 	{
 		PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
@@ -319,7 +319,7 @@ void Scroll::broadcastReleased(const PointerInputInfo& p)
 
 	Element2d* active = getActiveElement(globalPos, this);
 	
-	if (_capturedElement.valid() && (_capturedElement.ptr() != active))
+	if (_capturedElement.valid() && (_capturedElement.pointer() != active))
 	{
 		PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
@@ -347,7 +347,7 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p)
 	
 	Element2d* active = getActiveElement(globalPos, this);
 	
-	if (_capturedElement.valid() && (_capturedElement.ptr() != active))
+	if (_capturedElement.valid() && (_capturedElement.pointer() != active))
 	{
 		PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos),
 			globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
@@ -370,12 +370,12 @@ bool Scroll::containsPoint(const vec2& p, const vec2& np)
 
 void Scroll::setActiveElement(const PointerInputInfo& p, Element2d* e, bool setFocus)
 {
-	if (e != _activeElement.ptr())
+	if (e != _activeElement.pointer())
 	{
 		if (_activeElement.valid())
 		{
 			_activeElement->pointerLeaved(p);
-			_activeElement->hoverEnded.invoke(_activeElement.ptr());
+			_activeElement->hoverEnded.invoke(_activeElement.pointer());
 		}
 		
 		_activeElement.reset(e);
@@ -383,7 +383,7 @@ void Scroll::setActiveElement(const PointerInputInfo& p, Element2d* e, bool setF
 		if (_activeElement.valid())
 		{
 			_activeElement->pointerEntered(p);
-			_activeElement->hoverStarted.invoke(_activeElement.ptr());
+			_activeElement->hoverStarted.invoke(_activeElement.pointer());
 		}
 	}
 	

@@ -11,8 +11,8 @@
 namespace et {
 namespace s2d {
 
-Scene::Scene(RenderContext* rc) : _rc(rc),
-	_renderer(rc), _renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
+Scene::Scene(RenderContext* rc) : _rc(rc), _renderer(rc),
+	_renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
 	_renderingElementOverlay(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
 	_background(Image(), nullptr), _overlay(Image(), nullptr)
 {
@@ -135,7 +135,7 @@ void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer ele
 {
 	ET_ASSERT(element.valid());
 	
-	_renderer.setRendernigElement(element);
+	_renderer.setRenderingElement(element);
 	
 	if (!layout->valid())
 	{
@@ -147,7 +147,7 @@ void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer ele
 
 void Scene::buildBackgroundVertices(RenderContext* rc)
 {
-	_renderer.setRendernigElement(_renderingElementBackground);
+	_renderer.setRenderingElement(_renderingElementBackground);
 	
 	if (!_background.contentValid())
 	{
@@ -159,7 +159,7 @@ void Scene::buildBackgroundVertices(RenderContext* rc)
 
 void Scene::buildOverlayVertices(RenderContext* rc)
 {
-	_renderer.setRendernigElement(_renderingElementOverlay);
+	_renderer.setRenderingElement(_renderingElementOverlay);
 	
 	if (!_overlay.contentValid())
 	{
@@ -321,13 +321,13 @@ void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 		else
 		{
 			_layouts.erase(std::find_if(_layouts.begin(), _layouts.end(),
-				[layoutToShow](const LayoutEntry::Pointer& lp) { return (lp.ptr() == layoutToShow.ptr()); }));
+				[layoutToShow](const LayoutEntry::Pointer& lp) { return (lp.pointer() == layoutToShow.pointer()); }));
 		}
 		
 		_layouts.insert(i, layoutToShow);
 		validateTopLevelLayout();
 		
-		animateLayoutAppearing(l.newLayout, layoutToShow.ptr(), desc.flags, desc.duration);
+		animateLayoutAppearing(l.newLayout, layoutToShow.pointer(), desc.flags, desc.duration);
 	}
 
 	internal_removeLayout(l.oldLayout, desc);
@@ -341,7 +341,7 @@ void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor
 	layoutWillDisappear.invoke(oldLayout);
 	
 	if (oldLayout->hasFlag(Flag_RequiresKeyboard))
-		onKeyboardResigned(oldLayout.ptr());
+		onKeyboardResigned(oldLayout.pointer());
 
 	oldLayout->cancelInteractions();
 	oldLayout->willDisappear();
@@ -372,7 +372,7 @@ void Scene::internal_pushLayout(Layout::Pointer newLayout, AnimationDescriptor d
 	_layouts.push_back(LayoutEntry::Pointer::create(this, _rc, newLayout));
 	validateTopLevelLayout();
 	
-	animateLayoutAppearing(newLayout, _layouts.back().ptr(), desc.flags, desc.duration);
+	animateLayoutAppearing(newLayout, _layouts.back().pointer(), desc.flags, desc.duration);
 }
 
 void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntry* newEntry,
@@ -392,7 +392,7 @@ void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntry* newEn
 		newLayout->didAppear();
 
 		if (newLayout->hasFlag(Flag_RequiresKeyboard))
-			onKeyboardNeeded(newLayout.ptr(), nullptr);
+			onKeyboardNeeded(newLayout.pointer(), nullptr);
 
 		layoutDidAppear.invoke(newLayout);
 	}
@@ -408,7 +408,7 @@ void Scene::removeLayoutEntryFromList(LayoutEntry* ptr)
 {
 	for (auto i = _layouts.begin(), e = _layouts.end(); i != e; ++i)
 	{
-		if (i->ptr() == ptr)
+		if (i->pointer() == ptr)
 		{
 			_layouts.erase(i);
 			validateTopLevelLayout();
@@ -434,7 +434,7 @@ void Scene::layoutEntryTransitionFinished(LayoutEntry* l)
 		l->layout->didAppear();
 
 		if (l->layout->hasFlag(Flag_RequiresKeyboard))
-			onKeyboardNeeded(l->layout.ptr(), nullptr);
+			onKeyboardNeeded(l->layout.pointer(), nullptr);
 
 		l->state = Scene::LayoutEntry::State_Still;
 	}
@@ -461,7 +461,7 @@ Scene::LayoutEntry* Scene::entryForLayout(Layout::Pointer ptr)
 	for (auto& i : _layouts)
 	{
 		if (i->layout == ptr)
-			return i.ptr();
+			return i.pointer();
 	}
 
 	return nullptr;
@@ -471,7 +471,7 @@ bool Scene::animatingTransition()
 {
 	for (auto& i : _layouts)
 	{
-		if (i.ptr()->state != Scene::LayoutEntry::State_Still)
+		if (i.pointer()->state != Scene::LayoutEntry::State_Still)
 			return true;
 	}
 	

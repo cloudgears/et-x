@@ -108,7 +108,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 					_dragInitialPosition = active->position();
 					_dragInitialOffset = elementPos;
 					
-					_capturedElement->dragStarted.invoke(_capturedElement.ptr(),
+					_capturedElement->dragStarted.invoke(_capturedElement.pointer(),
 						ElementDragInfo(_dragInitialPosition, _dragInitialPosition, p.normalizedPos));
 
 					if (Input::canGetCurrentPointerInfo())
@@ -175,7 +175,7 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 			if (Input::canGetCurrentPointerInfo())
 				cancelUpdates();
 
-			_capturedElement->dragFinished.invoke(_capturedElement.ptr(),
+			_capturedElement->dragFinished.invoke(_capturedElement.pointer(),
 				ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos),
 				_dragInitialPosition, p.normalizedPos));
 
@@ -219,7 +219,7 @@ bool Layout::pointerCancelled(const et::PointerInputInfo& p)
 			if (Input::canGetCurrentPointerInfo())
 				cancelUpdates();
 			
-			_capturedElement->dragFinished.invoke(_capturedElement.ptr(),
+			_capturedElement->dragFinished.invoke(_capturedElement.pointer(),
 				ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos), _dragInitialPosition, p.normalizedPos));
 			
 			_dragging = false;
@@ -327,7 +327,7 @@ void Layout::setHoveredElement(const PointerInputInfo& p, Element2d::Pointer e)
 	if (_currentElement.valid())
 	{
 		_currentElement->pointerLeaved(p);
-		_currentElement->hoverEnded.invoke(_currentElement.ptr());
+		_currentElement->hoverEnded.invoke(_currentElement.pointer());
 	}
 
 	_currentElement = e;
@@ -335,7 +335,7 @@ void Layout::setHoveredElement(const PointerInputInfo& p, Element2d::Pointer e)
 	if (_currentElement.valid())
 	{
 		_currentElement->pointerEntered(p);
-		_currentElement->hoverStarted.invoke(_currentElement.ptr());
+		_currentElement->hoverStarted.invoke(_currentElement.pointer());
 	}
 }
 
@@ -348,7 +348,7 @@ void Layout::performDragging(const PointerInputInfo& p)
 	
 	_capturedElement->setPosition(_capturedElement->position() + delta, 0.0f);
 	
-	_capturedElement->dragged.invoke(_capturedElement.ptr(),
+	_capturedElement->dragged.invoke(_capturedElement.pointer(),
 		ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
 }
 
@@ -380,7 +380,7 @@ void Layout::setFocusedElement(Element2d::Pointer e)
 	if (_focusedElement == e) return;
 	
 	if (_focusedElement.valid())
-		_focusedElement->resignFocus(e.ptr());
+		_focusedElement->resignFocus(e.pointer());
 
 	_focusedElement = e;
 
@@ -391,11 +391,11 @@ void Layout::setFocusedElement(Element2d::Pointer e)
 		_focusedElement->setFocus();
 	
 	if (needKeyboard)
-		layoutRequiresKeyboard.invoke(this, _focusedElement.ptr());
+		layoutRequiresKeyboard.invoke(this, _focusedElement.pointer());
 	else
 		layoutDoesntNeedKeyboard.invoke(this);
 	
-	focusedElementChanged(_focusedElement.ptr());
+	focusedElementChanged(_focusedElement.pointer());
 }
 
 void Layout::setInvalid()

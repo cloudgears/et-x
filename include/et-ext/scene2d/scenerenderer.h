@@ -16,78 +16,54 @@
 
 namespace et
 {
-	namespace s2d
-	{
-		class SceneRenderer
-		{
-		public:
-			static const std::string defaultProgramName;
-			static const std::string defaultTextProgramName;
-			
-		public:
-			SceneRenderer(RenderContext* rc);
+namespace s2d
+{
+class SceneRenderer
+{
+public:
+	SceneRenderer(RenderContext* rc);
 
-			void beginRender(RenderContext* rc);
-			void render(RenderContext* rc);
-			void endRender(RenderContext* rc);
+	void beginRender(RenderContext* rc);
+	void render(RenderContext* rc);
+	void endRender(RenderContext* rc);
 
-			void resetClipRect();
-			void pushClipRect(const recti&);
-			void popClipRect();
+	void resetClipRect();
+	void pushClipRect(const recti&);
+	void popClipRect();
 
-			void setProjectionMatrices(const vec2& contextSize);
-			void setRendernigElement(const RenderingElement::Pointer& r);
+	void setProjectionMatrices(const vec2& contextSize);
+	void setRenderingElement(const RenderingElement::Pointer& r);
 
-			void addVertices(const SceneVertexList&, const Texture::Pointer&, const SceneProgram&, Element2d*,
-				PrimitiveType = PrimitiveType::Triangles);
-			
-			void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
-						
-			const SceneProgram& defaultProgram() const
-				{ return _defaultProgram; }
-			
-			const Texture::Pointer& lastUsedTexture() const
-				{ return _lastTexture; }
+	void addVertices(const SceneVertexList&, const Texture::Pointer, const MaterialInstance::Pointer&,
+		Element2d*, PrimitiveType = PrimitiveType::Triangles);
+	
+	void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 
-			const Texture::Pointer& defaultTexture() const
-				{ return _defaultTexture; }
-			
-			SceneProgram createProgramWithFragmentshader(const std::string& name, const std::string& fs,
-				bool includeScreenSpacePosVarying);
-			
-			SceneProgram createProgramWithShaders(const std::string& name, const std::string& vs,
-				const std::string& fs);
+	Texture::Pointer transparentTexture();
+	Material::Pointer defaultMaterial();
 
-		private:
-			void init(RenderContext* rc);
-			
-			SceneVertex* allocateVertices(uint32_t, const Texture::Pointer&, const SceneProgram&, Element2d*, PrimitiveType);
+private:
+	ET_DENY_COPY(SceneRenderer);
 
-			ET_DENY_COPY(SceneRenderer);
-			
-		private:
-			RenderContext* _rc;
-			RenderingElement::Pointer _renderingElement;
-			
-			Texture::Pointer _lastTexture;
-			Texture::Pointer _defaultTexture;
-			
-			ObjectsCache _programsCache;
-			
-			SceneProgram _defaultProgram;
-			SceneProgram _defaultTextProgram;
-			SceneProgram _lastProgram;
-					
-			mat4 _defaultTransform;
-			
-			std::stack<recti> _clip;
+	void init(RenderContext* rc);
+	SceneVertex* allocateVertices(uint32_t, const Texture::Pointer, const MaterialInstance::Pointer&,
+		Element2d*, PrimitiveType);
 
-			BlendState _lastBlendState;
-			DepthState _lastDepthState;
-			RasterizerState _lastRasterizerState;
-			
-			vec3 _additionalOffsetAndAlpha;
-			recti _additionalWindowOffset;
-		};
-	}
+private:
+	RenderContext* _rc = nullptr;
+	RenderingElement::Pointer _renderingElement;
+	RenderPass::Pointer _renderPass;
+	Material::Pointer _defaultMaterial;
+	Texture::Pointer _transparentTexture;
+	std::stack<recti> _clip;
+
+	mat4 _defaultTransform;
+	vec3 _additionalOffsetAndAlpha;
+	recti _additionalWindowOffset;
+};
+
+inline Texture::Pointer SceneRenderer::transparentTexture() { return _transparentTexture; }
+inline Material::Pointer SceneRenderer::defaultMaterial() { return _defaultMaterial; }
+
+}
 }

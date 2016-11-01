@@ -9,11 +9,10 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/particleselement.h>
 
-using namespace et;
-using namespace s2d;
-
-extern const std::string particlesVertexShader;
-extern const std::string particlesFragmentShader;
+namespace et
+{
+namespace s2d
+{
 
 ParticlesElement::ParticlesElement(uint32_t amount, Element2d* parent, const std::string& name) :
 	s2d::Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _vertices(amount, 0), _particles(amount)
@@ -74,9 +73,9 @@ void ParticlesElement::pause()
 	_updateTimer.cancelUpdates();
 }
 
-void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
+void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	initProgram(gr);
+	validateMaterialInstance(r);
 	
 	if (_defaultTexture.invalid())
 	{
@@ -106,10 +105,11 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& gr)
 			setContentValid();
 		}
 		
-		gr.addVertices(_vertices, _texture, program(), this, PrimitiveType::Points);
+		r.addVertices(_vertices, _texture, materialInstance(), this, PrimitiveType::Points);
 	}
 }
 
+/*
 et::s2d::SceneProgram ParticlesElement::program() const
 {
 	return _program;
@@ -130,12 +130,18 @@ void ParticlesElement::setProgramParameters(et::RenderContext*, et::Program::Poi
 	// TODO : set parameter
 	// p->setUniform("finalTransform", finalTransform());
 }
+*/
 
 void ParticlesElement::setTexture(const et::Texture::Pointer& t)
 {
 	_texture = t.invalid() ? _defaultTexture : t;
 }
 
+}
+
+}
+
+/*
 const std::string particlesVertexShader =
 "uniform mat4 matWorld;"
 "uniform mat4 finalTransform;"
@@ -165,4 +171,4 @@ const std::string particlesFragmentShader =
 "	etFragmentOut = tintColor * etTexture2D(inputTexture, gl_PointCoord);"
 "}"
 "";
-
+*/

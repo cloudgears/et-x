@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5C4198AD1DC931E5001AE483 /* engine_data in Resources */ = {isa = PBXBuildFile; fileRef = 5C4198AC1DC931E5001AE483 /* engine_data */; };
 		5C4990261DC7E9FA00B7353C /* libet-static-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C498FDA1DC7BD3E00B7353C /* libet-static-mac.a */; };
 		5C49902A1DC7EA8600B7353C /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4990281DC7EA8600B7353C /* Metal.framework */; };
 		5C49902B1DC7EA8600B7353C /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4990291DC7EA8600B7353C /* MetalKit.framework */; };
@@ -46,6 +47,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5C4198AC1DC931E5001AE483 /* engine_data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = engine_data; path = ../../../../et/engine_data; sourceTree = "<group>"; };
 		5C498FD51DC7BD3E00B7353C /* et-static-mac.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "et-static-mac.xcodeproj"; path = "../../../../et/projects/et-static-mac.xcodeproj"; sourceTree = "<group>"; };
 		5C498FDC1DC7BE0400B7353C /* baseclasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseclasses.h; sourceTree = "<group>"; };
 		5C498FDD1DC7BE0400B7353C /* baseconst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseconst.h; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 		A5F093F118A00A1E0017B239 = {
 			isa = PBXGroup;
 			children = (
+				5C4198AC1DC931E5001AE483 /* engine_data */,
 				5C498FD51DC7BD3E00B7353C /* et-static-mac.xcodeproj */,
 				A5896B9918A0276900962607 /* et-ext */,
 				A5F0940618A00A350017B239 /* source */,
@@ -350,6 +353,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C4198AD1DC931E5001AE483 /* engine_data in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

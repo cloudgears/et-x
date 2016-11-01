@@ -62,7 +62,7 @@ MainUI::MainUI(ResourceManager& rm)
 		lab->setText(floatToStr(slider->value() * TO_DEGREES, 2) + "º");
 	});
 	
-	auto lab = rm.label("5.00º", _sliderAngle.ptr());
+	auto lab = rm.label("5.00º", _sliderAngle.pointer());
 	lab->setAutolayoutRelativeToParent(vec2(0.5f, 1.0f), vec2(0.0f), vec2(0.5f, 0.0f));
 	lab->setAutolayoutMask(s2d::LayoutMask_NoSize);
 	
@@ -78,7 +78,7 @@ MainUI::MainUI(ResourceManager& rm)
 		lab->setText(floatToStr(slider->value(), 3));
 	});
 	
-	lab = rm.label("1.00", _sliderExposure.ptr());
+	lab = rm.label("1.00", _sliderExposure.pointer());
 	lab->setAutolayoutRelativeToParent(vec2(0.5f, 0.0f), vec2(0.0f), vec2(0.5f, 1.0f));
 	lab->setAutolayoutMask(s2d::LayoutMask_NoSize);
 }

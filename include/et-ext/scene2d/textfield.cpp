@@ -49,19 +49,19 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 
 void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	initProgram(r);
+	validateMaterialInstance(r);
 	
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 	
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, _background.texture, program(), this);
+		r.addVertices(_backgroundVertices, _background.texture, materialInstance(), this);
 
 	if (_imageVertices.lastElementIndex() > 0)
-		r.addVertices(_imageVertices, _background.texture, program(), this);
+		r.addVertices(_imageVertices, _background.texture, materialInstance(), this);
 	
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, font()->generator()->texture(), textProgram(r), this);
+		r.addVertices(_textVertices, font()->generator()->texture(), textMaterial(r), this);
 }
 
 void TextField::buildVertices(RenderContext*, SceneRenderer&)

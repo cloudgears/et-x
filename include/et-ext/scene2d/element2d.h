@@ -8,7 +8,7 @@
 #pragma once
 
 #include <et/input/input.h>
-#include <et/rendering/interface/program.h>
+#include <et/rendering/base/material.h>
 #include <et-ext/scene2d/baseclasses.h>
 
 namespace et
@@ -92,10 +92,7 @@ public:
 	virtual void addToRenderQueue(RenderContext*, SceneRenderer&) { }
 	virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) { }
 	virtual void preRender(RenderContext*) { }
-	
-	virtual void setDefaultProgram(et::Program::Pointer&) { }
-	virtual void setProgramParameters(et::RenderContext*, et::Program::Pointer&) { }
-	
+
 	virtual bool pointerPressed(const PointerInputInfo& info) 
 		{ onPointerPressed.invoke(info); return !hasFlag(Flag_TransparentForPointer); }
 
@@ -251,12 +248,11 @@ protected:
 	void initAnimators();
 	void buildFinalTransform();
 	mat4 buildFinalTransform(const vec2& aOffset, float aAngle, const vec2& aScale, const vec2& aPosition);
-	
-	virtual SceneProgram initProgram(SceneRenderer&);
-	virtual void setDefaultProgram(const SceneProgram&);
-	virtual SceneProgram program() const
-		{ return _defaultProgram; }
-	
+
+	MaterialInstance::Pointer materialInstance() const;
+	virtual void validateMaterialInstance(SceneRenderer& renderer);
+	virtual MaterialInstance::Pointer allocateMaterial(SceneRenderer&);
+
 	/*
 	 * From Element
 	 */
@@ -286,13 +282,12 @@ private:
 	friend class Hierarchy<Element2d, LoadableObject>;
 	ET_DENY_COPY(Element2d);
 
+	MaterialInstance::Pointer _material;
 	Vector2Animator _positionAnimator;
 	Vector2Animator _sizeAnimator;
 	Vector4Animator _colorAnimator;
 	Vector2Animator _scaleAnimator;
 	FloatAnimator _angleAnimator;
-	
-	SceneProgram _defaultProgram;
 	
 	mat4 _transform = identityMatrix;
 	mat4 _finalTransform = identityMatrix;

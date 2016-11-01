@@ -198,9 +198,6 @@ const mat4& Element2d::finalInverseTransform()
 	return _finalInverseTransform;
 }
 
-void Element2d::setDefaultProgram(const SceneProgram& p)
-	{ _defaultProgram = p; }
-
 const vec4& Element2d::ownColor() const
 	{ return _colorAnimator.value(); }
 
@@ -341,7 +338,7 @@ Element2d* Element2d::childWithNameCallback(const std::string& name, Element2d* 
 	{
 		for (auto& c : root->children())
 		{
-			Element2d* aElement = childWithNameCallback(name, c.ptr(), recursive);
+			Element2d* aElement = childWithNameCallback(name, c.pointer(), recursive);
 			if (aElement != nullptr)
 				return aElement;
 		}
@@ -351,7 +348,7 @@ Element2d* Element2d::childWithNameCallback(const std::string& name, Element2d* 
 		for (auto& c : root->children())
 		{
 			if (c->name() == name)
-				return c.ptr();
+				return c.pointer();
 		}
 	}
 	
@@ -596,14 +593,6 @@ void Element2d::setEnabled(bool enabled)
 	_enabled = enabled;
 }
 
-SceneProgram Element2d::initProgram(SceneRenderer& r)
-{
-	if (_defaultProgram.invalid())
-		setDefaultProgram(r.defaultProgram());
-	
-	return _defaultProgram;
-}
-
 Element2d* Element2d::baseChildWithName(const std::string& name, bool recursive)
 {
 	return childWithNameCallback(name, this, recursive);
@@ -622,6 +611,24 @@ void Element2d::setAutolayoutMask(size_t m)
 void Element2d::fillParent()
 {
 	setAutolayoutRelativeToParent(vec2(0.0f), vec2(1.0f), vec2(0.0f));
+}
+
+MaterialInstance::Pointer Element2d::materialInstance() const
+{
+	return _material;
+}
+
+void Element2d::validateMaterialInstance(SceneRenderer& renderer)
+{
+	if (_material.invalid())
+	{
+		_material = allocateMaterial(renderer);
+	}
+}
+
+MaterialInstance::Pointer Element2d::allocateMaterial(SceneRenderer& renderer)
+{
+	return renderer.defaultMaterial()->instance();
 }
 
 /*

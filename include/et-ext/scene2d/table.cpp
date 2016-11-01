@@ -95,14 +95,14 @@ Table::Section* Table::addSection(Element2d::Pointer header, const Element2d::Li
 	{
 		section->header = header;
 		section->header->setParent(this);
-		bringToFront(section->header.ptr());
+		bringToFront(section->header.pointer());
 	}
 	
 	if (footer.valid())
 	{
 		section->footer = footer;
 		section->footer->setParent(this);
-		bringToFront(section->footer.ptr());
+		bringToFront(section->footer.pointer());
 	}
 	
 	_sections.push_back(section);

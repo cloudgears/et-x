@@ -47,19 +47,19 @@ Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Elem
 
 void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	initProgram(r);
+	validateMaterialInstance(r);
 	
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 
 	if (_bgVertices.lastElementIndex() > 0)
-		r.addVertices(_bgVertices, _background[_state].texture, program(), this);
+		r.addVertices(_bgVertices, _background[_state].texture, materialInstance(), this);
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, font()->generator()->texture(), textProgram(r), this);
+		r.addVertices(_textVertices, font()->generator()->texture(), textMaterial(r), this);
 
 	if (_imageVertices.lastElementIndex() > 0)
-		r.addVertices(_imageVertices, _image[_state].texture, program(), this);
+		r.addVertices(_imageVertices, _image[_state].texture, materialInstance(), this);
 }
 
 void Button::buildVertices(RenderContext*, SceneRenderer&)

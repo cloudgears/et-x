@@ -169,7 +169,7 @@ namespace et
 			typedef std::list<LayoutEntry::Pointer> LayoutEntryList;
 
 		private:
-			RenderContext* _rc;
+			RenderContext* _rc = nullptr;
 			SceneRenderer _renderer;
 			ObjectsCache _sharedCache;
 

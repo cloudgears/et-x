@@ -8,7 +8,7 @@
 #pragma once
 
 #include <et/rendering/interface/texture.h>
-#include <et/rendering/interface/program.h>
+#include <et/rendering/interface/pipelinestate.h>
 #include <et/locale/locale.hpp>
 #include <et/core/animator.h>
 #include <et-ext/scene2d/baseconst.h>
@@ -254,19 +254,6 @@ struct ElementLayout
 	ElementLayout(const vec2& pos, const vec2& sz, LayoutMode pMode,
 		LayoutMode sMode) : position(pos), size(sz), scale(1.0f), angle(0.0f),
 		layoutMask(LayoutMask_All), layoutPositionMode(pMode), layoutSizeMode(sMode) { }
-};
-
-struct SceneProgram
-{
-	Program::Pointer program;
-	// TODO : FIX
-	// Program::Uniform additionalOffsetAndAlpha;
-	
-	bool valid() const
-		{ return program.valid(); }
-	
-	bool invalid() const
-		{ return program.invalid(); }
 };
 
 struct LocalizedText
