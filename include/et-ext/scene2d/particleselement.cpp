@@ -98,7 +98,7 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 			for (uint32_t i = 0; i < _particles.activeParticlesCount(); ++i)
 			{
 				const auto& p = _particles.particle(i);
-				_vertices[i].position = vec3(p.position.xy(), p.size);
+				_vertices[i].position = vec4(p.position.xy(), p.size, 0.0f);
 				_vertices[i].color = fc * p.color;
 			}
 			_vertices.setOffset(_particles.activeParticlesCount());

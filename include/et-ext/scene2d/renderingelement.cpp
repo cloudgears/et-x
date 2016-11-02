@@ -30,9 +30,10 @@ RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity)
 	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat::Format_16bit, capacity, PrimitiveType::Triangles);
 	indexArray->linearize(capacity);
 	
-	VertexDeclaration decl(true, VertexAttributeUsage::TexCoord0, DataType::Vec4);
+	VertexDeclaration decl;
+	decl.push_back(VertexAttributeUsage::Position, DataType::Vec4);
 	decl.push_back(VertexAttributeUsage::Color, DataType::Vec4);
-	decl.push_back(VertexAttributeUsage::Position, DataType::Vec3);
+	decl.push_back(VertexAttributeUsage::TexCoord0, DataType::Vec4);
 	dataSize = decl.totalSize() * capacity;
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)

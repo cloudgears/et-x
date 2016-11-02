@@ -14,8 +14,7 @@ namespace s2d {
 SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_rc(rc), _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f)
 {
-	// TODO : push viewport rect
-	pushClipRect(recti(0, 0, 640, 480));
+	_clip.emplace(); // default clip, which would be replaced with correct later
 
 	TextureDescription::Pointer desc = TextureDescription::Pointer::create();
 	desc->size = vec2i(1);
@@ -23,22 +22,23 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	desc->format = TextureFormat::RGBA8;
 	_transparentTexture = rc->renderer()->createTexture(desc);
 
+	std::string scene2dMaterial = application().resolveFileName("engine_ext_data/materials/scene2d.json");
+	ET_ASSERT(fileExists(scene2dMaterial));
+
 	_defaultMaterial = Material::Pointer::create(rc->renderer().pointer());
+	_defaultMaterial->loadFromJson(loadTextFile(scene2dMaterial), getFilePath(scene2dMaterial));
 
 	RenderPass::ConstructionInfo passInfo;
 	passInfo.target.depthLoadOperation = FramebufferOperation::Clear;
+	passInfo.camera = _sceneCamera;
 	_renderPass = rc->renderer()->allocateRenderPass(passInfo);
 
-	/*
-	 * TODO : load programs / gen textures
-	 *
-
-	_defaultProgram = createProgramWithFragmentshader(defaultProgramName, et_scene2d_default_shader_fs, false);
-	_defaultProgram.program->setUniform(textureSamplerName, 0);
-	
-	_defaultTexture->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
-	// */
 	setProjectionMatrices(vector2ToFloat(rc->size()));
+}
+
+SceneRenderer::~SceneRenderer()
+{
+	_defaultMaterial->releaseInstances();
 }
 
 void s2d::SceneRenderer::resetClipRect()
@@ -77,20 +77,21 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 		tempClipStack.pop();
 	}
 	
-	_defaultTransform = identityMatrix;
-	
-	_defaultTransform[0][0] =  2.0f / contextSize.x;
-	_defaultTransform[1][1] = -2.0f / contextSize.y;
-	_defaultTransform[3][0] = -1.0f;
-	_defaultTransform[3][1] = 1.0f;
-	_defaultTransform[3][3] = 1.0f;
+	mat4 transform = identityMatrix;
+	transform[0][0] =  2.0f / contextSize.x;
+	transform[1][1] = -2.0f / contextSize.y;
+	transform[3][0] = -1.0f;
+	transform[3][1] = 1.0f;
+	transform[3][3] = 1.0f;
+	_sceneCamera->setProjectionMatrix(transform);
 }
 
 SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Texture::Pointer,
 	const MaterialInstance::Pointer& inMaterial, Element2d* object, PrimitiveType pt)
 {
+	ET_ASSERT(inMaterial.valid());
 	ET_ASSERT(_renderingElement.valid());
-	
+
 	if (object && !object->hasFlag(Flag_DynamicRendering))
 		object = nullptr;
 
@@ -124,7 +125,7 @@ void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture::
 	ET_ASSERT((count > 0) && _renderingElement.valid() && material.valid());
 	
 	SceneVertex* target = allocateVertices(count, texture, material, owner, pt);
-	for (const auto& v : vertices)
+	for (const SceneVertex& v : vertices)
 		*target++ = v;
 }
 
@@ -174,7 +175,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 			lastBoundProgram = i.program.program;
 			rs.bindProgram(lastBoundProgram);
 			lastBoundProgram->setUniform(i.program.additionalOffsetAndAlpha, _additionalOffsetAndAlpha);
-			lastBoundProgram->setTransformMatrix(_defaultTransform);
+			lastBoundProgram->setTransformMatrix(transform);
 		}
 		
 		if (i.object != nullptr)

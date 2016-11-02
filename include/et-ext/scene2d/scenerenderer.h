@@ -22,6 +22,7 @@ class SceneRenderer
 {
 public:
 	SceneRenderer(RenderContext* rc);
+	~SceneRenderer();
 
 	void beginRender(RenderContext* rc);
 	void render(RenderContext* rc);
@@ -53,11 +54,12 @@ private:
 	RenderContext* _rc = nullptr;
 	RenderingElement::Pointer _renderingElement;
 	RenderPass::Pointer _renderPass;
+	Camera::Pointer _sceneCamera = Camera::Pointer::create();
 	Material::Pointer _defaultMaterial;
 	Texture::Pointer _transparentTexture;
 	std::stack<recti> _clip;
 
-	mat4 _defaultTransform;
+	// mat4 _defaultTransform;
 	vec3 _additionalOffsetAndAlpha;
 	recti _additionalWindowOffset;
 };

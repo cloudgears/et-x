@@ -1,0 +1,21 @@
+{
+	"input-layout" : {
+		"position" : 4,
+		"color" : 4,
+		"texcoord0" : 4
+	},
+
+	"depth-state": {
+		"depth-function": "always",
+		"depth-test": false,
+		"depth-write": false
+	},
+
+	"blend-state": {
+		"blend-configuration" : "default"
+	},
+
+	"cull-mode" : "disabled",
+
+	"code" : "shaders/scene2d"
+}

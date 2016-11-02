@@ -161,19 +161,16 @@ struct Image
 struct SceneVertex
 {
 public:
-	SceneVertex() 
-		{ }
-
 	SceneVertex(const vec2& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-		texCoord(tc), color(c), position(pos, 0.0f) { }
+		position(pos, 0.0f, 1.0f), color(c), texCoord(tc) { }
 
 	SceneVertex(const vec3& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-		texCoord(tc), color(c), position(pos) { }
+		position(pos, 1.0f), color(c), texCoord(tc) { }
 
 public:
-	vec4 texCoord = vec4(0.0f);
+	vec4 position = vec4(0.0f);
 	vec4 color = vec4(0.0f);
-	vec3 position = vec3(0.0f);
+	vec4 texCoord = vec4(0.0f);
 };
 
 struct ElementDragInfo
