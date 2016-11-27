@@ -102,7 +102,7 @@ const mat4& Scroll::finalTransform()
 
 const mat4& Scroll::finalInverseTransform()
 {
-	_localInverseTransform = Element2d::finalTransform().inversed();
+	_localInverseTransform = Element2d::finalTransform().inverted();
 	return _localInverseTransform;
 }
 
