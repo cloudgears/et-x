@@ -37,16 +37,17 @@ public:
 
 	void addVertices(const SceneVertexList&, const Texture::Pointer, const MaterialInstance::Pointer&,
 		Element2d*, PrimitiveType = PrimitiveType::Triangles);
-	
+
 	void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 
+	Texture::Pointer whiteTexture();
 	Texture::Pointer transparentTexture();
 	Material::Pointer defaultMaterial();
+	Material::Pointer fontMaterial();
 
 private:
 	ET_DENY_COPY(SceneRenderer);
 
-	void init(RenderContext* rc);
 	SceneVertex* allocateVertices(uint32_t, const Texture::Pointer, const MaterialInstance::Pointer&,
 		Element2d*, PrimitiveType);
 
@@ -56,6 +57,8 @@ private:
 	RenderPass::Pointer _renderPass;
 	Camera::Pointer _sceneCamera = Camera::Pointer::create();
 	Material::Pointer _defaultMaterial;
+	Material::Pointer _fontMaterial;
+	Texture::Pointer _whiteTexture;
 	Texture::Pointer _transparentTexture;
 	std::stack<recti> _clip;
 
@@ -64,8 +67,10 @@ private:
 	recti _additionalWindowOffset;
 };
 
+inline Texture::Pointer SceneRenderer::whiteTexture() { return _whiteTexture; }
 inline Texture::Pointer SceneRenderer::transparentTexture() { return _transparentTexture; }
 inline Material::Pointer SceneRenderer::defaultMaterial() { return _defaultMaterial; }
+inline Material::Pointer SceneRenderer::fontMaterial() { return _fontMaterial; }
 
 }
 }

@@ -28,10 +28,8 @@ enum GridProperies : int
 const float CharacterGenerator::baseFontSize = static_cast<float>(baseFontIntegerSize);
 const vec2i CharacterGenerator::charactersRenderingExtent = vec2i(128);
 
-void internal_sdf_compare(sdf::Grid& g, vec2i& p, int x, int y, int offsetx, int offsety);
-
 CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace,
-	size_t faceIndex, size_t boldFaceIndex) : _impl(face, boldFace, faceIndex, boldFaceIndex),
+	uint32_t faceIndex, uint32_t boldFaceIndex) : _impl(face, boldFace, faceIndex, boldFaceIndex),
 	_fontFace(face), _fontBoldFace(boldFace), _placer(vec2i(static_cast<int>(defaultTextureSize)), true)
 {
 	_fontFace = fileExists(face) ? getFileName(face) : face;
@@ -42,13 +40,6 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	desc->size = vec2i(defaultTextureSize);
 	desc->data = BinaryDataStorage(desc->size.square(), 0);
 	_texture = rc->renderer()->createTexture(desc);
-	/*
-	_texture = rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::R,
-		vec2i(defaultTextureSize), TextureFormat::R, DataFormat::UnsignedChar,
-		BinaryDataStorage(defaultTextureSize * defaultTextureSize, 0), face + "font");
-	*/
-	_grid0.grid.resize(initialGridDimensions);
-	_grid1.grid.resize(initialGridDimensions);
 }
 
 bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharacterData, const vec2i& canvasSize,
@@ -85,10 +76,10 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 	dataToSave.fill(0);
 	
 	vec2i targetPixel(0, additional.y / 2);
-	for (int py = topLeftOffset.y; py < bottomRightOffset.y; ++py, ++targetPixel.y)
+	for (int32_t py = topLeftOffset.y; py < bottomRightOffset.y; ++py, ++targetPixel.y)
 	{
 		targetPixel.x = additional.x / 2;
-		for (int px = topLeftOffset.x; px < bottomRightOffset.x; ++px, ++targetPixel.x)
+		for (int32_t px = topLeftOffset.x; px < bottomRightOffset.x; ++px, ++targetPixel.x)
 		{
 			uint32_t i = targetPixel.x + (sizeToSave.y - targetPixel.y - 1) * sizeToSave.x;
 			uint32_t j = px + (canvasSize.y - py - 1) * canvasSize.x;
@@ -99,16 +90,17 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 	return true;
 }
 
-CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags flags)
+const CharDescriptor& CharacterGenerator::generateCharacter(wchar_t value, CharacterFlags flags)
 {
-	CharDescriptor result(value);
+	CharDescriptorMap& mapToInsert = ((flags & CharacterFlag_Bold) == CharacterFlag_Bold) ? _boldChars : _chars;
+	CharDescriptor& result = mapToInsert[value];
+	result.value = value;
 	result.flags = flags;
 	
 	vec2i charSize;
 	vec2i canvasSize;
 	vec2i topLeftOffset;
 	BinaryDataStorage renderedCharacterData;
-	
 	if (_impl.processCharacter(result, charSize, canvasSize, renderedCharacterData))
 	{
 		generateSignedDistanceField(renderedCharacterData, canvasSize.x, canvasSize.y);
@@ -131,12 +123,11 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 			recti textureRect;
 			if (_placer.place(downsampledSize, textureRect))
 			{
-				updateTexture(textureRect.origin(), downsampledSize, downsampled);
-				
+				vec2i invPos(textureRect.left, _texture->size().y - textureRect.top - downsampledSize.y - 1);
+				vec2 fOrigin = _texture->getTexCoord(vector2ToFloat(textureRect.origin()));
 				result.contentRect = rectf(vector2ToFloat(topLeftOffset - charactersRenderingExtent / 2), vector2ToFloat(sizeToSave));
-				vec2 fOrigin = vector2ToFloat(textureRect.origin());
-				_texture->getTexCoord(fOrigin);
 				result.uvRect = rectf(fOrigin, vector2ToFloat(textureRect.size()) / vector2ToFloat(_texture->size()));
+				updateTexture(invPos, downsampledSize, downsampled);
 			}
 			else
 			{
@@ -147,10 +138,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 		
 		result.originalSize = vector2ToFloat(charSize);
 	}
-	
-	CharDescriptorMap& mapToInsert = ((flags & CharacterFlag_Bold) == CharacterFlag_Bold) ? _boldChars : _chars;
-	mapToInsert.emplace(value, result);
-					   
+						   
 	characterGenerated.invoke(value);
 	
 	return result;
@@ -158,9 +146,7 @@ CharDescriptor CharacterGenerator::generateCharacter(int value, CharacterFlags f
 
 void CharacterGenerator::updateTexture(const vec2i& position, const vec2i& size, BinaryDataStorage& data)
 {
-	vec2i dest(position.x, _texture->size().y - position.y - size.y - 1);
-	// TODO : update texture
-	//_texture->updatePartialDataDirectly(_rc, dest, size, data.binary(), data.dataSize());
+	_texture->updateRegion(position, size, data);
 }
 
 void CharacterGenerator::setTexture(Texture::Pointer tex)
@@ -186,18 +172,18 @@ BinaryDataStorage CharacterGenerator::downsample(BinaryDataStorage& input, const
 	BinaryDataStorage result(downsampledSize.square(), 0);
 	
 	uint32_t k = 0;
-	for (int y = 0; y < downsampledSize.y; ++y)
+	for (int32_t y = 0; y < downsampledSize.y; ++y)
 	{
-		int thisRow = 2 * y;
-		int nextRow = std::min(thisRow + 1, size.y - 1);
-		for (int x = 0; x < downsampledSize.x; ++x)
+		int32_t thisRow = 2 * y;
+		int32_t nextRow = std::min(thisRow + 1, size.y - 1);
+		for (int32_t x = 0; x < downsampledSize.x; ++x)
 		{
-			int thisCol = 2 * x;
-			int nextCol = std::min(thisCol + 1, size.x - 1);
-			int in00 = thisRow * size.x + thisCol;
-			int in01 = thisRow * size.x + nextCol;
-			int in10 = nextRow * size.x + thisCol;
-			int in11 = nextRow * size.x + nextCol;
+			int32_t thisCol = 2 * x;
+			int32_t nextCol = std::min(thisCol + 1, size.x - 1);
+			int32_t in00 = thisRow * size.x + thisCol;
+			int32_t in01 = thisRow * size.x + nextCol;
+			int32_t in10 = nextRow * size.x + thisCol;
+			int32_t in11 = nextRow * size.x + nextCol;
 			result[k++] = (input[in00] + input[in01] + input[in10] + input[in11]) / 4;
 		}
 	}
@@ -205,30 +191,30 @@ BinaryDataStorage CharacterGenerator::downsample(BinaryDataStorage& input, const
 	return result;
 }
 
-inline const vec2i& sdf_get(sdf::Grid& g, int x, int y)
+inline const vec2i& sdf_get(const sdf::Grid& g, int32_t x, int32_t y)
 {
 	ET_ASSERT((x >= 0) && (y >= 0) & (x < g.w) && (y < g.h));
 	return g.grid[y * g.w + x];
 }
 
-inline void sdf_put(sdf::Grid& g, int x, int y, const vec2i& p)
+inline void sdf_put(sdf::Grid& g, int32_t x, int32_t y, const vec2i& p)
 {
 	ET_ASSERT((x >= 0) && (y >= 0) & (x < g.w) && (y < g.h));
 	g.grid[y * g.w + x] = p;
 }
 
-inline void internal_sdf_compare(sdf::Grid& g, vec2i& p, int x, int y, int offsetx, int offsety)
+inline void internal_sdf_compare(const sdf::Grid& g, vec2i& p, int32_t x, int32_t y, int32_t offsetx, int32_t offsety)
 {
 	vec2i other = sdf_get(g, x + offsetx, y + offsety) + vec2i(offsetx, offsety);
-	if (other.dotSelf() < p.dotSelf())
+	if ((other.dotSelf() - p.dotSelf()) & 0x80000000)
 		p = other;
 }
 
 void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 {
-	for (int y = 1; y < g.h - 1; ++y)
+	for (int32_t y = 1; y < g.h - 1; ++y)
 	{
-		for (int x = 1; x < g.w - 1; ++x)
+		for (int32_t x = 1; x < g.w - 1; ++x)
 		{
 			vec2i p = sdf_get(g, x, y);
 			internal_sdf_compare(g, p, x, y, -1,  0);
@@ -237,7 +223,7 @@ void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 			internal_sdf_compare(g, p, x, y,  1, -1);
 			sdf_put(g, x, y, p);
 		}
-		for (int x = g.w - 2; x > 0; --x)
+		for (int32_t x = g.w - 2; x > 0; --x)
 		{
 			vec2i p = sdf_get(g, x, y);
 			internal_sdf_compare(g, p, x, y, 1, 0);
@@ -245,9 +231,9 @@ void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 		}
 	}
 
-	for (int y = g.h - 2; y > 0; --y)
+	for (int32_t y = g.h - 2; y > 0; --y)
 	{
-		for (int x = g.w - 2; x > 0; --x)
+		for (int32_t x = g.w - 2; x > 0; --x)
 		{
 			vec2i p = sdf_get(g, x, y);
 			internal_sdf_compare(g, p, x, y,  1,  0);
@@ -256,7 +242,7 @@ void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 			internal_sdf_compare(g, p, x, y,  1,  1);
 			sdf_put(g, x, y, p);
 		}
-		for (int x = 1; x < g.w - 1; ++x)
+		for (int32_t x = 1; x < g.w - 1; ++x)
 		{
 			vec2i p = sdf_get(g, x, y);
 			internal_sdf_compare(g, p, x, y, -1, 0);
@@ -265,41 +251,40 @@ void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 	}
 }
 
-void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, int w, int h)
+void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, int32_t w, int32_t h)
 {
-	const vec2i pointOutside = vec2i(255);
+	uint32_t requiredSize = static_cast<uint32_t>(sizeof(vec2i) * w * h);
+	uint32_t providedSize = static_cast<uint32_t>(sizeof(sdf::Grid::grid));
+	if (requiredSize > providedSize)
+	{
+		ET_FAIL_FMT("Insufficient storage for SDF generator. Required: %d (%d x %d), provided: %d", 
+			requiredSize, w, h, providedSize);
+	}
 
-	uint32_t targetGridSize = static_cast<uint32_t>(w * h);
-	
-	if (_grid0.grid.size() < targetGridSize)
-		_grid0.grid.resize(targetGridSize);
-	
-	if (_grid1.grid.size() < targetGridSize)
-		_grid1.grid.resize(targetGridSize);
-	
 	_grid0.w = w;
 	_grid1.w = w;
 	_grid0.h = h;
 	_grid1.h = h;
-	
-	_grid0.grid.fill(0);
-	_grid1.grid.fill(0);
+	memset(_grid0.grid, 0, sizeof(_grid0.grid));
+	memset(_grid1.grid, 0, sizeof(_grid1.grid));
 
-	for (int y = 0; y < _grid0.h; ++y)
+	const vec2i pointOutside = vec2i(255);
+
+	for (int32_t y = 0; y < _grid0.h; ++y)
 	{
 		sdf_put(_grid1, 0, y, pointOutside);
 		sdf_put(_grid1, _grid0.w - 1, y, pointOutside);
 	}
 
-	for (int x = 0; x < _grid0.w; ++x)
+	for (int32_t x = 0; x < _grid0.w; ++x)
 	{
 		sdf_put(_grid1, x, 0, pointOutside);
 		sdf_put(_grid1, x, _grid0.h - 1, pointOutside);
 	}
 
-	for (int y = 1; y < h - 1; ++y)
+	for (int32_t y = 1; y < h - 1; ++y)
 	{
-		for (int x = 1; x < w - 1; ++x)
+		for (int32_t x = 1; x < w - 1; ++x)
 		{
 			auto& targetGrid = (data[x + y * _grid0.w] == 0) ? _grid1 : _grid0;
 			sdf_put(targetGrid, x, y, pointOutside);
@@ -309,9 +294,9 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 	generateSignedDistanceFieldOnGrid(_grid0);
 	generateSignedDistanceFieldOnGrid(_grid1);
 	
-	for (int y = 1; y < h - 1; ++y)
+	for (int32_t y = 1; y < h - 1; ++y)
 	{
-		for (int x = 1; x < w - 1; ++x)
+		for (int32_t x = 1; x < w - 1; ++x)
 		{
 			float p1 = static_cast<float>(sdf_get(_grid0, x, y).dotSelf());
 			float p2 = static_cast<float>(sdf_get(_grid1, x, y).dotSelf());

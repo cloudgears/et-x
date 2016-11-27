@@ -1,9 +1,12 @@
 #include <et/rendering/base/primitives.h>
 #include <et/imaging/imagewriter.h>
+#include <et/core/hardware.h>
 #include "maincontroller.h"
 
-using namespace et;
-using namespace emb;
+namespace et
+{
+
+extern const char* etExtWorkingFolder;
 
 extern const std::string fullscreenVertexShader;
 extern const std::string cubemapFragmentShader;
@@ -15,12 +18,7 @@ const vec3 lightPosition = normalize(vec3(1.0f, 1.0f, 1.0f));
 
 void MainController::setApplicationParameters(et::ApplicationParameters& p)
 {
-#if (ET_PLATFORM_MAC)
-	p.renderingAPI = RenderingAPI::Metal;
-#else
-#	error TODO
-#endif
-	p.shouldSuspendOnDeactivate = false;
+	p.context.size = 4 * currentScreen().availableFrame.size() / 5;
 }
 
 void MainController::setRenderContextParameters(et::RenderContextParameters& p)
@@ -45,8 +43,18 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 {
 	_rc = rc;
 
+	application().pushSearchPath(etExtWorkingFolder);
 	loadPrograms();
 	loadGeometry();
+
+	_camera = Camera::Pointer::create();
+
+	RenderPass::ConstructionInfo passInfo;
+	passInfo.color[0].clearValue = vec4(0.5f, 0.25f, 0.5f, 1.0f);
+	passInfo.color[0].enabled = true;
+	passInfo.depth.enabled = true;
+	passInfo.camera = _camera;
+	_mainPass = rc->renderer()->allocateRenderPass(passInfo);
 	
 	size_t verticalSamples = 12;
 	size_t horizontalSamples = 12;
@@ -143,7 +151,7 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 
 void MainController::updateCamera()
 {
-	_camera.lookAt(5.0f * fromSpherical(_cameraAngles.value().y, _cameraAngles.value().x));
+	_camera->lookAt(5.0f * fromSpherical(_cameraAngles.value().y, _cameraAngles.value().x));
 };
 
 void MainController::onDrag(const et::GesturesRecognizer::DragGesture& gest)
@@ -202,12 +210,15 @@ void MainController::loadGeometry()
 void MainController::applicationWillResizeContext(const et::vec2i& sz)
 {
 	vec2 fSize = vector2ToFloat(sz);
+	_camera->perspectiveProjection(QUARTER_PI, fSize.aspect(), 1.0f, 100.0f);
 	_ui->layout(fSize);
-	_camera.perspectiveProjection(QUARTER_PI, fSize.aspect(), 1.0f, 100.0f);
 }
 
 void MainController::render(et::RenderContext* rc)
 {
+	_mainPass->begin();
+	_mainPass->end();
+	rc->renderer()->submitRenderPass(_mainPass);
 	/*
 	 * TODO : render something ^_^
 	 *
@@ -370,6 +381,8 @@ ApplicationIdentifier MainController::applicationIdentifier() const
 IApplicationDelegate* Application::initApplicationDelegate()
 {
 	return sharedObjectFactory().createObject<MainController>();
+}
+
 }
 
 const std::string fullscreenVertexShader = R"(

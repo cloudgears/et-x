@@ -97,7 +97,7 @@ bool Layout::pointerPressed(const et::PointerInputInfo& p)
 			processed = active->pointerPressed(PointerInputInfo(p.type, elementPos,
 				p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
-			if ((p.type == PointerType_General))
+			if ((p.type == PointerTypeMask::General))
 			{
 				if (active->hasFlag(Flag_Dragable))
 				{
@@ -139,7 +139,7 @@ bool Layout::pointerMoved(const et::PointerInputInfo& p)
 
 	if (_capturedElement.valid())
 	{
-		if (!Input::canGetCurrentPointerInfo() && (p.type == PointerType_General) && _dragging)
+		if (!Input::canGetCurrentPointerInfo() && (p.type == PointerTypeMask::General) && _dragging)
 			performDragging(p);
 
 		_capturedElement->pointerMoved(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos),
@@ -170,7 +170,7 @@ bool Layout::pointerReleased(const et::PointerInputInfo& p)
 			_capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id,
 			p.timestamp, p.origin));
 
-		if ((p.type == PointerType_General) && _dragging)
+		if ((p.type == PointerTypeMask::General) && _dragging)
 		{
 			if (Input::canGetCurrentPointerInfo())
 				cancelUpdates();
@@ -214,7 +214,7 @@ bool Layout::pointerCancelled(const et::PointerInputInfo& p)
 		bool processed = _capturedElement->pointerCancelled(PointerInputInfo(p.type,
 			_capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 		
-		if ((p.type == PointerType_General) && _dragging)
+		if ((p.type == PointerTypeMask::General) && _dragging)
 		{
 			if (Input::canGetCurrentPointerInfo())
 				cancelUpdates();

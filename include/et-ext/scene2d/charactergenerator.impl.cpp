@@ -25,19 +25,14 @@ namespace et
 namespace s2d
 {
 
-sdf::Grid _grid0;
-sdf::Grid _grid1;
-
 class CharacterGeneratorImplementationPrivate
 {
 public:
 	CharacterGeneratorImplementationPrivate(const std::string& face, const std::string& boldFace, 
-		size_t faceIndex, size_t boldFaceIndex);
-
+		uint32_t faceIndex, uint32_t boldFaceIndex);
 	~CharacterGeneratorImplementationPrivate();
 	
 	bool startWithCharacter(const CharDescriptor& desc, vec2i& charSize, vec2i& canvasSize, BinaryDataStorage& charData);
-	void generateSignedDistanceFieldOnGrid(sdf::Grid&);
 
 private:
 	BinaryDataStorage regularFontData;
@@ -49,7 +44,7 @@ private:
 };
 
 CharacterGeneratorImplementation::CharacterGeneratorImplementation(const std::string& face, const std::string& boldFace, 
-	size_t faceIndex, size_t boldFaceIndex)
+	uint32_t faceIndex, uint32_t boldFaceIndex)
 {
 	ET_PIMPL_INIT(CharacterGeneratorImplementation, face, boldFace, faceIndex, boldFaceIndex) 
 }
@@ -61,7 +56,7 @@ bool CharacterGeneratorImplementation::processCharacter(const CharDescriptor& a,
 	{ return _private->startWithCharacter(a, b, c, d); }
 
 CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate(const std::string& face, 
-	const std::string& boldFace, size_t faceIndex, size_t boldFaceIndex)
+	const std::string& boldFace, uint32_t faceIndex, uint32_t boldFaceIndex)
 {
 	FT_Init_FreeType(&library);
 
@@ -209,7 +204,7 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	int oy = std::max(0, static_cast<int>(ascender) - glyph->bitmap_top +
 		CharacterGenerator::charactersRenderingExtent.y / 2);
 	
-	size_t k = 0;
+	uint32_t k = 0;
 	for (int y = 0; y < bitmapSize.y; ++y)
 	{
 		for (int x = 0; x < bitmapSize.x; ++x)

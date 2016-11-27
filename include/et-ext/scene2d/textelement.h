@@ -24,10 +24,6 @@ public:
 	enum class TextStyle : uint32_t
 	{
 		SignedDistanceField,
-		SignedDistanceFieldShadow,
-		SignedDistanceFieldBevel,
-		SignedDistanceFieldInverseBevel,
-		Plain,
 		max
 	};
 
@@ -73,9 +69,7 @@ protected:
 	bool processMessage(const Message&) override;
 	
 	virtual void invalidateText() { }
-	
-	void initTextProgram(SceneRenderer&);
-	
+		
 private:
 	Font::Pointer _font;
 	MaterialInstance::Pointer _textMaterial;

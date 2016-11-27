@@ -5,60 +5,60 @@
 #include <et/core/interpolationvalue.h>
 #include "ui/MainUI.h"
 
-namespace emb
+namespace et
 {
-	class MainController : public et::IApplicationDelegate, public et::InputHandler
+class MainController : public IApplicationDelegate, public InputHandler
+{
+private:
+	ApplicationIdentifier applicationIdentifier() const;
+
+	void setApplicationParameters(ApplicationParameters&);
+	void setRenderContextParameters(RenderContextParameters&);
+	void applicationDidLoad(RenderContext*);
+	void applicationWillResizeContext(const vec2i&);
+
+	void render(RenderContext*);
+	void renderPreview();
+
+	void processImage_Pass1();
+	void processImage_Pass2();
+
+	void loadPrograms();
+	void loadGeometry();
+
+	void onDrag(const GesturesRecognizer::DragGesture&);
+
+	void updateCamera();
+
+private:
+	struct
 	{
-	private:
-		et::ApplicationIdentifier applicationIdentifier() const;
+		Program::Pointer gaussianBlur;
+		Program::Pointer preview;
+		Program::Pointer cubemap;
+	} programs;
 
-		void setApplicationParameters(et::ApplicationParameters&);
-		void setRenderContextParameters(et::RenderContextParameters&);
-		void applicationDidLoad(et::RenderContext*);
-		void applicationWillResizeContext(const et::vec2i&);
-		
-		void render(et::RenderContext*);
-		void renderPreview();
-		
-		void processImage_Pass1();
-		void processImage_Pass2();
-		
-		void loadPrograms();
-		void loadGeometry();
-		
-		void onDrag(const et::GesturesRecognizer::DragGesture&);
-		
-		void updateCamera();
-		
-	private:
-		struct
-		{
-			et::Program::Pointer gaussianBlur;
-			et::Program::Pointer preview;
-			et::Program::Pointer cubemap;
-		} programs;
+private:
+	RenderContext* _rc = nullptr;
+	RenderPass::Pointer _mainPass;
+	Camera::Pointer _camera;
 
-	private:
-		et::RenderContext* _rc = nullptr;
-		et::GesturesRecognizer _gestures;
-		et::s2d::Scene::Pointer _ui;
-		et::Texture::Pointer _loadedTexture;
-		et::Framebuffer::Pointer _framebuffer;
-		et::Framebuffer::Pointer _cubemapFramebuffer;
-		et::VertexStream _vaoSphere;
-		et::InterpolationValue<et::vec2> _cameraAngles;
-		et::Camera _camera;
-		
-		std::vector<std::pair<et::vec2, et::vec2>> _offsetAndScales;
-		
-		ResourceManager _rm;
-		MainUI::Pointer _mainUi;
-		
-		std::string _fileToSave;
-		size_t _processingSample = 0;
-		
-		bool _shouldProcessPass1 = false;
-		bool _shouldProcessPass2 = false;
-		bool _shouldSaveToFile = false;
-	};
+	GesturesRecognizer _gestures;
+	s2d::Scene::Pointer _ui;
+	Texture::Pointer _loadedTexture;
+	VertexStream _vaoSphere;
+	InterpolationValue<vec2> _cameraAngles;
+
+	std::vector<std::pair<vec2, vec2>> _offsetAndScales;
+
+	ResourceManager _rm;
+	MainUI::Pointer _mainUi;
+
+	std::string _fileToSave;
+	size_t _processingSample = 0;
+
+	bool _shouldProcessPass1 = false;
+	bool _shouldProcessPass2 = false;
+	bool _shouldSaveToFile = false;
+};
 }

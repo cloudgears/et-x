@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\et-ext\scene2d\baseclasses.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\baseconst.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\button.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\charactergenerator.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\element2d.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\font.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\fontbase.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\fullscreenelement.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\imageview.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\label.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\layout.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\line.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\listbox.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\particleselement.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\renderingelement.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\scene.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\scenerenderer.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\scroll.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\slider.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\table.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\textelement.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\textfield.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\textureatlas.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\textureatlaswriter.h" />
+    <ClInclude Include="..\include\et-ext\scene2d\vertexbuilder.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\include\et-ext\compile_packs\scene2d.pack.cxx" />
+    <ClCompile Include="et_ext_info.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\button.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\charactergenerator.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\charactergenerator.impl.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\element2d.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\font.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\fullscreenelement.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\imageview.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\label.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\layout.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\line.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\listbox.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\particleselement.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\renderingelement.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\scene.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\scenerenderer.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\scroll.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\slider.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\table.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\textelement.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\textfield.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\textureatlas.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\textureatlaswriter.cpp" />
+    <ClInclude Include="..\include\et-ext\scene2d\vertexbuilder.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{86E9D65D-4E45-4A60-8D7F-40108718BA67}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>etextstaticwin</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+	<UseNativeEnvironment>true</UseNativeEnvironment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+	<UseNativeEnvironment>true</UseNativeEnvironment>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)..\lib\vs2015\</OutDir>
+    <TargetName>et-ext-$(Configuration)</TargetName>
+    <IncludePath>$(ProjectDir)..\include;$(ProjectDir)..\..\et\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\lib\vs2015;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>et-ext-$(Configuration)</TargetName>
+    <OutDir>$(ProjectDir)..\lib\vs2015\</OutDir>
+    <IncludePath>$(ProjectDir)..\include;$(ProjectDir)..\..\et\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)..\lib\vs2015;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OmitDefaultLibName>true</OmitDefaultLibName>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Lib>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>freetype.lib</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>echo #pragma once &gt; et_ext_info.cpp
+echo. &gt;&gt; et_ext_info.cpp
+echo namespace et  &gt;&gt; et_ext_info.cpp
+echo { &gt;&gt; et_ext_info.cpp
+echo const char* etExtWorkingFolder = R"($(ProjectDir)..\)"; &gt;&gt; et_ext_info.cpp
+git log -1 --pretty=format:"const char* etExtCommit = \"%%h\";" &gt;&gt; et_ext_info.cpp
+echo. &gt;&gt; et_ext_info.cpp
+echo } &gt;&gt; et_ext_info.cpp
+</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OmitDefaultLibName>true</OmitDefaultLibName>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>freetype.lib</AdditionalDependencies>
+    </Lib>
+    <PreBuildEvent>
+      <Command>echo #pragma once &gt; et_ext_info.cpp
+echo. &gt;&gt; et_ext_info.cpp
+echo namespace et  &gt;&gt; et_ext_info.cpp
+echo { &gt;&gt; et_ext_info.cpp
+echo const char* etExtWorkingFolder = R"($(ProjectDir)..\)"; &gt;&gt; et_ext_info.cpp
+git log -1 --pretty=format:"const char* etExtCommit = \"%%h\";" &gt;&gt; et_ext_info.cpp
+echo. &gt;&gt; et_ext_info.cpp
+echo } &gt;&gt; et_ext_info.cpp
+</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

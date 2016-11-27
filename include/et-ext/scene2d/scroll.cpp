@@ -108,7 +108,7 @@ bool Scroll::pointerPressed(const PointerInputInfo& p)
 {
 	_contentOffsetAnimator.cancelUpdates();
 	
-	if ((_currentPointer.id == 0) && (p.type == PointerType_General))
+	if ((_currentPointer.id == 0) && (p.type == PointerTypeMask::General))
 	{
 		_previousPointer = p;
 		_currentPointer = p;
@@ -169,7 +169,7 @@ bool Scroll::pointerMoved(const PointerInputInfo& p)
 		applyContentOffset(offsetScale * aOffset);
 		manualScroll.invoke(aOffset, offsetScale);
 	}
-	else if (!_pointerCaptured && (p.type == PointerType_General))
+	else if (!_pointerCaptured && (p.type == PointerTypeMask::General))
 	{
 		_manualScrolling = true;
 		_pointerCaptured = true;

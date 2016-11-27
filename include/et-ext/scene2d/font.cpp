@@ -358,11 +358,12 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 			float localScale = scaleStack.top();
 			float localOffset = offsetStack.top();
 			float finalScale = globalScale * localScale;
+			float smoothScale = 0.03f / std::pow(finalScale, 2.0f / 2.5f);
 			
 			cd.contentRect *= finalScale;
 			cd.originalSize *= finalScale;
 			cd.color = colorsStack.top();
-			cd.parameters = vec4(0.5f, smoothing * sqr(0.1666666f / std::pow(finalScale, 1.0f / 2.5f)), 0.0f, 0.0f);
+			cd.parameters = vec4(0.5f, smoothing * smoothScale, 0.0f, 0.0f);
 			
 			cd.contentRect.top += localOffset;
 			

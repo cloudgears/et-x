@@ -5,3 +5,7 @@ tools/FBXConverter/x64/
 *.sdf
 *.suo
 demo/ambient-occlusion/windows/x64/
+tools/envmapblur/windows/x64/
+projects/x64/
+*.db
+*.opendb

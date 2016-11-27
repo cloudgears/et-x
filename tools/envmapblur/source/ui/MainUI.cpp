@@ -10,8 +10,8 @@
 #include <et/app/application.h>
 #include "MainUI.h"
 
-using namespace et;
-using namespace emb;
+namespace et
+{
 
 MainUI::MainUI(ResourceManager& rm)
 {
@@ -83,8 +83,10 @@ MainUI::MainUI(ResourceManager& rm)
 	lab->setAutolayoutMask(s2d::LayoutMask_NoSize);
 }
 
-void MainUI::setImages(const et::s2d::Image& original, const et::s2d::Image& processed)
+void MainUI::setImages(const s2d::Image& original, const s2d::Image& processed)
 {
 	_imageViewOriginal->setImage(original);
 	_imageViewProcessed->setImage(processed);
+}
+
 }

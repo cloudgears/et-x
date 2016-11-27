@@ -17,5 +17,5 @@
 
 	"cull-mode" : "disabled",
 
-	"code" : "shaders/scene2d"
+	"code" : "shaders/font"
 }

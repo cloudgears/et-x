@@ -9,6 +9,9 @@
 #include <et-ext/scene2d/scenerenderer.h>
 
 namespace et {
+
+extern const char* etExtWorkingFolder;
+
 namespace s2d {
 
 SceneRenderer::SceneRenderer(RenderContext* rc) :
@@ -18,18 +21,33 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 
 	TextureDescription::Pointer desc = TextureDescription::Pointer::create();
 	desc->size = vec2i(1);
-	desc->data = BinaryDataStorage(4, 255);
 	desc->format = TextureFormat::RGBA8;
+	
+	desc->data = BinaryDataStorage(4, 255);
+	_whiteTexture = rc->renderer()->createTexture(desc);
+	
+	desc->data.fill(0);
 	_transparentTexture = rc->renderer()->createTexture(desc);
 
+	application().pushSearchPath(etExtWorkingFolder);
 	std::string scene2dMaterial = application().resolveFileName("engine_ext_data/materials/scene2d.json");
 	ET_ASSERT(fileExists(scene2dMaterial));
+	std::string fontMaterial = application().resolveFileName("engine_ext_data/materials/font.json");
+	ET_ASSERT(fileExists(fontMaterial));
+	application().popSearchPaths();
 
 	_defaultMaterial = Material::Pointer::create(rc->renderer().pointer());
 	_defaultMaterial->loadFromJson(loadTextFile(scene2dMaterial), getFilePath(scene2dMaterial));
+	_defaultMaterial->setTexture(MaterialTexture::Albedo, _whiteTexture);
+
+	_fontMaterial = Material::Pointer::create(rc->renderer().pointer());
+	_fontMaterial->loadFromJson(loadTextFile(fontMaterial), getFilePath(fontMaterial));
 
 	RenderPass::ConstructionInfo passInfo;
-	passInfo.target.depthLoadOperation = FramebufferOperation::Clear;
+	passInfo.color[0].enabled = true;
+	passInfo.color[0].loadOperation = FramebufferOperation::Load;
+	passInfo.depth.enabled = true;
+	passInfo.depth.loadOperation = FramebufferOperation::Clear;
 	passInfo.camera = _sceneCamera;
 	_renderPass = rc->renderer()->allocateRenderPass(passInfo);
 
@@ -39,6 +57,7 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 SceneRenderer::~SceneRenderer()
 {
 	_defaultMaterial->releaseInstances();
+	_fontMaterial->releaseInstances();
 }
 
 void s2d::SceneRenderer::resetClipRect()
@@ -78,10 +97,10 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 	}
 	
 	mat4 transform = identityMatrix;
-	transform[0][0] =  2.0f / contextSize.x;
-	transform[1][1] = -2.0f / contextSize.y;
+	transform[0][0] = 2.0f / contextSize.x;
+	transform[1][1] = -Camera::renderingOriginTransform * 2.0f / contextSize.y;
 	transform[3][0] = -1.0f;
-	transform[3][1] = 1.0f;
+	transform[3][1] = Camera::renderingOriginTransform;
 	transform[3][3] = 1.0f;
 	_sceneCamera->setProjectionMatrix(transform);
 }
@@ -192,14 +211,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 void SceneRenderer::endRender(RenderContext* rc)
 {
 	_renderPass->end();
-	/*
-	 * TODO : end render
-	 *
-	auto& rs = rc->renderState();
-	rs.setScissor(_lastRasterizerState.scissorEnabled, _lastRasterizerState.scissorRectangle);
-	rs.setDepthState(_lastDepthState);
-	rs.setBlendState(_lastBlendState);
-	// */
+	rc->renderer()->submitRenderPass(_renderPass);
 }
 
 void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)

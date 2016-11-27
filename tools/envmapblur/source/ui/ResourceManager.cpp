@@ -9,34 +9,25 @@
 #include <et/app/application.h>
 #include "ResourceManager.h"
 
-using namespace et;
-using namespace emb;
+namespace et
+{
 
-void ResourceManager::load(et::RenderContext* rc)
+void ResourceManager::load(RenderContext* rc)
 {
 	_rc = rc;
-	
-#if (ET_PLATFORM_WIN)
-	auto commonFont = s2d::CharacterGenerator::Pointer::create(rc, "Tahoma", "Tahoma");
-#else
-	auto commonFont = s2d::CharacterGenerator::Pointer::create(rc, "Helvetica", "Helvetica");
-#endif
-
-	fonts.buttonsFont = s2d::Font::Pointer::create(commonFont);
-	fonts.labelsFont = s2d::Font::Pointer::create(commonFont);
+	s2d::CharacterGenerator::Pointer commonFont = s2d::CharacterGenerator::Pointer::create(rc, "Tahoma", "Tahoma");
+	fonts.main = s2d::Font::Pointer::create(commonFont);
 }
 
-et::s2d::Label::Pointer ResourceManager::label(const std::string& text, et::s2d::Element2d* parent)
+s2d::Label::Pointer ResourceManager::label(const std::string& text, s2d::Element2d* parent)
 {
-	auto result = s2d::Label::Pointer::create(text, fonts.labelsFont, 24.0f, parent);
-	result->setTextStyle(s2d::TextElement::TextStyle::SignedDistanceFieldShadow);
+	auto result = s2d::Label::Pointer::create(text, fonts.main, 24.0f, parent);
 	return result;
 }
 
-et::s2d::Button::Pointer ResourceManager::button(const std::string& text, et::s2d::Element2d* parent)
+s2d::Button::Pointer ResourceManager::button(const std::string& text, s2d::Element2d* parent)
 {
-	auto result = s2d::Button::Pointer::create(text, fonts.buttonsFont, 18.0f, parent);
-	result->setTextStyle(s2d::TextElement::TextStyle::SignedDistanceFieldBevel);
+	auto result = s2d::Button::Pointer::create(text, fonts.main, 18.0f, parent);
 	result->setTextColor(vec4(1.0f));
 	result->setTextPressedColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 	result->setBackgroundColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
@@ -44,8 +35,5 @@ et::s2d::Button::Pointer ResourceManager::button(const std::string& text, et::s2
 	result->adjustSize();
 	return result;
 }
-
-void ResourceManager::cacheFonts()
-{
 
 }

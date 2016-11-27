@@ -34,22 +34,23 @@ RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity)
 	decl.push_back(VertexAttributeUsage::Position, DataType::Vec4);
 	decl.push_back(VertexAttributeUsage::Color, DataType::Vec4);
 	decl.push_back(VertexAttributeUsage::TexCoord0, DataType::Vec4);
-	dataSize = decl.totalSize() * capacity;
+	dataSize = decl.sizeInBytes() * capacity;
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)
 	vertexData = sharedBlockAllocator().alloc(dataSize);
 #endif
 	
-	IndexBuffer::Pointer sharedIndexBuffer = rc->renderer()->createIndexBuffer("dynamic-buffer-ib", indexArray, BufferDrawType::Static);
-	VertexStorage::Pointer sharedVertexStorage = VertexStorage::Pointer::create(decl, capacity);
-		
+	Buffer::Pointer sharedIndexBuffer = rc->renderer()->createIndexBuffer("dynamic-buffer-ib", indexArray, Buffer::Location::Device);
+	VertexStorage::Pointer sharedVertexStorage = VertexStorage::Pointer::create(decl, capacity);	
 	for (uint32_t i = 0; i < VertexBuffersCount; ++i)
 	{
 		char nameId[128] = { };
 		sprintf(nameId, "dynamic-buffer-%u-ib", i);
+		Buffer::Pointer vb = rc->renderer()->createVertexBuffer(nameId, sharedVertexStorage, Buffer::Location::Host);
+
 		vertices[i] = VertexStream::Pointer::create();
-		auto vb = rc->renderer()->createVertexBuffer(nameId, sharedVertexStorage, BufferDrawType::Dynamic);
-		vertices[i]->setBuffers(vb, sharedIndexBuffer);
+		vertices[i]->setIndexBuffer(sharedIndexBuffer, indexArray->format(), indexArray->primitiveType());
+		vertices[i]->setVertexBuffer(vb, sharedVertexStorage->declaration());
 	}
 	currentBufferIndex = 0;
 }
@@ -73,8 +74,7 @@ void RenderingElement::startAllocatingVertices()
 	clear();
 	
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
-	vertexData = vertices[currentBufferIndex]->vertexBuffer()->map(0, dataSize,
-		MapBufferOptions::Write | MapBufferOptions::InvalidateRange);
+	vertexData = vertices[currentBufferIndex]->vertexBuffer()->map(0, dataSize);
 #endif
 }
 
@@ -87,11 +87,14 @@ SceneVertex* RenderingElement::allocateVertices(uint32_t n)
 
 void RenderingElement::commitAllocatedVertices()
 {
-	auto vao = vertices[currentBufferIndex];
+	VertexStream::Pointer vao = vertices[currentBufferIndex];
+	uint32_t modifiedRange = sizeof(SceneVertex) * allocatedVertices;
+
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
+	vertices[currentBufferIndex]->vertexBuffer()->modifyRange(0, modifiedRange);
 	vao->vertexBuffer()->unmap();
 #else
-	vao->vertexBuffer()->setData(vertexData, sizeof(SceneVertex) * allocatedVertices);
+	vao->vertexBuffer()->setData(vertexData, modifiedRange);
 #endif
 }
 

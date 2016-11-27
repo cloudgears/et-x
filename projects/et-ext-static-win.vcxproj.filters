@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{74107afe-8376-49e0-abab-67e016c1332c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\compile_packs">
+      <UniqueIdentifier>{565a0c34-097e-4436-8389-17f9a7404134}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\scene2d">
+      <UniqueIdentifier>{e4a9cf3f-99c8-443a-8eec-1377691e8aa8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\et-ext\scene2d\baseclasses.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\baseconst.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\button.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\charactergenerator.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\element2d.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\font.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\fontbase.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\fullscreenelement.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\imageview.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\label.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\layout.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\line.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\listbox.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\particleselement.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\renderingelement.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\scene.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\scenerenderer.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\scroll.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\slider.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\table.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\textelement.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\textfield.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\textureatlas.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\textureatlaswriter.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\vertexbuilder.h">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\button.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\charactergenerator.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\charactergenerator.impl.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\element2d.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\font.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\fullscreenelement.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\imageview.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\label.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\layout.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\line.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\listbox.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\particleselement.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\renderingelement.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\scene.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\scenerenderer.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\scroll.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\slider.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\table.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\textelement.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\textfield.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\textureatlas.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\textureatlaswriter.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\et-ext\scene2d\vertexbuilder.cpp">
+      <Filter>Source\scene2d</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\include\et-ext\compile_packs\scene2d.pack.cxx">
+      <Filter>Source\compile_packs</Filter>
+    </ClCompile>
+    <ClCompile Include="et_ext_info.cpp" />
+  </ItemGroup>
+</Project>

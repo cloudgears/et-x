@@ -213,7 +213,7 @@ void Button::setCommonBackground(const Image& img)
 
 bool Button::pointerPressed(const PointerInputInfo& p)
 {
-	if (p.type != PointerType_General) return false;
+	if (p.type != PointerTypeMask::General) return false;
 
 	_pressed = true;
 	setCurrentState(_selected ? State_SelectedPressed : State_Pressed);
@@ -224,7 +224,7 @@ bool Button::pointerPressed(const PointerInputInfo& p)
 
 bool Button::pointerReleased(const PointerInputInfo& p)
 {
-	if ((p.type != PointerType_General) || !_pressed) return false;
+	if ((p.type != PointerTypeMask::General) || !_pressed) return false;
 	
 	_pressed = false;
 	released.invoke(this);
