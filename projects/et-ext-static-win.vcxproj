@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\et-ext\atmosphere\atmosphere.h" />
     <ClInclude Include="..\include\et-ext\scene2d\baseclasses.h" />
     <ClInclude Include="..\include\et-ext\scene2d\baseconst.h" />
     <ClInclude Include="..\include\et-ext\scene2d\button.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="..\include\et-ext\scene2d\vertexbuilder.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\include\et-ext\atmosphere\atmosphere.cpp" />
     <ClCompile Include="..\include\et-ext\compile_packs\scene2d.pack.cxx" />
     <ClCompile Include="et_ext_info.cpp" />
     <ClInclude Include="..\include\et-ext\scene2d\button.cpp" />
@@ -76,7 +78,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
-	<UseNativeEnvironment>true</UseNativeEnvironment>
+    <UseNativeEnvironment>true</UseNativeEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -84,7 +86,7 @@
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-	<UseNativeEnvironment>true</UseNativeEnvironment>
+    <UseNativeEnvironment>true</UseNativeEnvironment>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">

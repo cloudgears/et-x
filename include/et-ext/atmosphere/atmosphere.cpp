@@ -1,7 +1,7 @@
 #include <et/core/tools.h>
 #include <et/camera/camera.h>
 #include <et/geometry/geometry.h>
-#include <et/primitives/primitives.h>
+#include <et/rendering/base/primitives.h>
 #include <et/imaging/imagewriter.h>
 #include <et-ext/atmosphere/atmosphere.h>
 
@@ -23,11 +23,12 @@ Atmosphere::Atmosphere(RenderContext* rc) :
 	
 	ObjectsCache localCache;
 	
+	/*/ TODO : do stuff
 	_atmospherePerVertexProgram = rc->programFactory().genProgram("et~atmosphere~per-vertex~program",
 		atmospherePerVertexVS, atmospherePerVertexFS);
 	setProgramParameters(_atmospherePerVertexProgram);
-
 	setPlanetFragmentShader(defaultPlanetFragmentShader());
+	// */
 	
 	generateGeometry(rc);
 }
@@ -80,6 +81,7 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 	float fKr4PI = fKr * 4.0f * PI;
 	float fKm4PI = fKm * 4.0f * PI;
 	
+	/*/ TODO : do stuff
 	prog->setUniform("nSamples", numSamples);
 	prog->setUniform("fSamples", static_cast<float>(numSamples));
 	prog->setUniform("vInvWavelength", waveLength);
@@ -98,13 +100,15 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 	prog->setUniform("fKm4PI", fKm4PI);
 	prog->setPrimaryLightPosition(_lightDirection);
 	prog->setCameraPosition(_cameraPosition);
+	// */
 }
 
 void Atmosphere::generateGeometry(RenderContext* rc)
 {
-	auto va = VertexArray::Pointer::create(VertexDeclaration(true, VertexAttributeUsage::Position, VertexAttributeType::Vec3), 0);
+	auto va = VertexArray::Pointer::create(VertexDeclaration(true, VertexAttributeUsage::Position, DataType::Vec3), 0);
 	auto ia = IndexArray::Pointer::create(IndexArrayFormat::Format_32bit, 0, PrimitiveType::Triangles);
-	primitives::createIcosahedron(va, 1.0f, true, false, false);
+	// TODO : create one
+	// primitives::createIcosahedron(va, 1.0f, true, false, false);
 	for (size_t i = 0; i < 7; ++i)
 	{
 		primitives::tesselateTriangles(va, ia);
@@ -114,17 +118,20 @@ void Atmosphere::generateGeometry(RenderContext* rc)
 	}
 	
 	RawDataAcessor<vec3> pos = va->chunk(VertexAttributeUsage::Position).accessData<vec3>(0);
-	for (size_t i = 0, e = va->size(); i < e; ++i)
+	for (uint32_t i = 0, e = va->size(); i < e; ++i)
 		pos[i] = normalize(pos[i]);
 	
+	/*/ TODO : do stuff
 	_atmosphereVAO = rc->vertexBufferFactory().createVertexArrayObject("et~sky-sphere", va,
 		BufferDrawType::Static, ia, BufferDrawType::Static);
+	// */
 }
 
 void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool drawSky, bool drawPlanet)
 {
 	ET_ASSERT(drawSky || drawPlanet);
 	
+	/*/ TODO : do stuff
 	auto& rs = _rc->renderState();
 	
 	Camera adjustedCamera(baseCamera);
@@ -190,10 +197,12 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 		rs.setCulling(cullingEnabled, lastCullState);
 		rs.setDepthMask(depthMaskEnabled);
 	}
+	// */
 }
 
 void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
 {
+	/*/ TODO : do stuff
 	ET_ASSERT(framebuffer->isCubemap());
 	
 	static const vec3 lookDirections[] =
@@ -255,6 +264,7 @@ void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
 	rs.setSeparateBlend(blendEnabled, lastColorBlendState, lastAlphaBlendState);
 	rs.setCulling(cullingEnabled, lastCullState);
 	rs.setDepthMask(depthMaskEnabled);
+	// */
 }
 
 void Atmosphere::setLightDirection(const vec3& l)
@@ -282,11 +292,11 @@ void Atmosphere::setPlanetFragmentShader(const std::string& shader)
 {
 	_skyParametersValid = false;
 	_groundParametersValid = false;
-	
+	/*/ TODO : do stuff
 	_planetPerVertexProgram = _rc->programFactory().genProgram("et~planet~per-vertex~program",
 		_computeScatteringOnPlanet ? planetPerVertexVS : planetPerVertexSimpleVS, shader);
-	
 	setProgramParameters(_planetPerVertexProgram);
+	// */
 }
 
 const std::string& Atmosphere::defaultPlanetFragmentShader()
