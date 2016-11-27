@@ -35,7 +35,7 @@ public:
 	ET_DECLARE_POINTER(Scene);
 
 public:
-	Scene(RenderContext* rc);
+	Scene(RenderContext*, const RenderPass::ConstructionInfo&);
 
 	void layout(const vec2& size, float duration = 0.0);
 	void render(RenderContext* rc);

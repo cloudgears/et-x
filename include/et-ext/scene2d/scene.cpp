@@ -13,10 +13,13 @@ namespace et
 namespace s2d
 {
 
-Scene::Scene(RenderContext* rc) : _rc(rc), _renderer(rc),
-_renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
-_renderingElementOverlay(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
-_background(Image(), nullptr), _overlay(Image(), nullptr)
+Scene::Scene(RenderContext* rc, const RenderPass::ConstructionInfo& passInfo) 
+	: _rc(rc)
+	, _renderer(rc, passInfo)
+	, _renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc, 256))
+	, _renderingElementOverlay(sharedObjectFactory().createObject<RenderingElement>(rc, 256))
+	, _background(Image(), nullptr)
+	, _overlay(Image(), nullptr)
 {
 	_background.setPivotPoint(vec2(0.5f));
 	_background.setContentMode(ImageView::ContentMode_Fill);

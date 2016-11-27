@@ -21,7 +21,7 @@ namespace s2d
 class SceneRenderer
 {
 public:
-	SceneRenderer(RenderContext* rc);
+	SceneRenderer(RenderContext* rc, const RenderPass::ConstructionInfo&);
 	~SceneRenderer();
 
 	void beginRender(RenderContext* rc);

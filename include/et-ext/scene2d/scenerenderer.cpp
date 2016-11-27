@@ -16,7 +16,7 @@ extern const char* etExtWorkingFolder;
 namespace s2d
 {
 
-SceneRenderer::SceneRenderer(RenderContext* rc) :
+SceneRenderer::SceneRenderer(RenderContext* rc, const RenderPass::ConstructionInfo& passInfo) :
 	_rc(rc), _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f)
 {
 	_clip.emplace(); // default clip, which would be replaced with correct later
@@ -45,12 +45,6 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_fontMaterial = Material::Pointer::create(rc->renderer().pointer());
 	_fontMaterial->loadFromJson(loadTextFile(fontMaterial), getFilePath(fontMaterial));
 
-	RenderPass::ConstructionInfo passInfo;
-	passInfo.color[0].enabled = true;
-	passInfo.color[0].loadOperation = FramebufferOperation::Load;
-	passInfo.depth.enabled = true;
-	passInfo.depth.loadOperation = FramebufferOperation::Clear;
-	passInfo.camera = _sceneCamera;
 	_renderPass = rc->renderer()->allocateRenderPass(passInfo);
 
 	setProjectionMatrices(vector2ToFloat(rc->size()));

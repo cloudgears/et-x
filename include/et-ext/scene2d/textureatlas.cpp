@@ -50,7 +50,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 		for (const Dictionary& tex : textures->content)
 		{
 			auto textureId = tex.stringForKey("id")->content;
-			auto textureFile = tex.stringForKey("filename")->content;
+			auto textureFile = application().resolveFileName(tex.stringForKey("filename")->content);
 			_textures[textureId] = rc->renderer()->loadTexture(textureFile, cache);
 			if (_textures[textureId].valid())
 			{
