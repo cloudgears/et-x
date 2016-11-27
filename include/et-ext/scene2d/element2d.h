@@ -24,6 +24,8 @@ public:
 	ET_DECLARE_POINTER(Element2d);
 	using List = Vector<Pointer>;
 
+	int64_t tag = 0;
+
 public:
 	Element2d(Element2d* parent, const std::string& name = emptyString);
 	Element2d(const rectf& frame, Element2d* parent, const std::string& name = emptyString);
