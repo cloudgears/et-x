@@ -22,7 +22,7 @@ class Element2d : public ElementHierarchy, public FlagsHolder, public EventRecei
 {
 public:
 	ET_DECLARE_POINTER(Element2d);
-	using List = Vector<Pointer>;
+	using Collection = Vector<Pointer>;
 
 	int64_t tag = 0;
 

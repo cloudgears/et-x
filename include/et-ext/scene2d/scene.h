@@ -187,7 +187,7 @@ private:
 	ImageView _overlay;
 
 	Element2d::Pointer _keyboardFocusedElement;
-	Element2d::List _prerenderElements;
+	Element2d::Collection _prerenderElements;
 
 	LayoutEntryList _layouts;
 	Layout::Pointer _topLayout;

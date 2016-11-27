@@ -85,7 +85,7 @@ private:
 	void setInvalid();
 	void collectTopmostElements(Element2d::Pointer);
 
-	void collectPreRenderingObjects(Element2d::Pointer, Element2d::List&);
+	void collectPreRenderingObjects(Element2d::Pointer, Element2d::Collection&);
 
 	Element2d::Pointer activeElement(const PointerInputInfo& p);
 	Element2d::Pointer getActiveElement(const PointerInputInfo& p, Element2d::Pointer e);
@@ -104,7 +104,7 @@ private:
 	Element2d::Pointer _currentElement;
 	Element2d::Pointer _focusedElement;
 	Element2d::Pointer _capturedElement;
-	Element2d::List _topmostElements;
+	Element2d::Collection _topmostElements;
 
 	vec2 _dragInitialPosition;
 	vec2 _dragInitialOffset;

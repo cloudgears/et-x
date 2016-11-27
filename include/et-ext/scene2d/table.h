@@ -22,7 +22,7 @@ public:
 	{
 	public:
 		Element2d::Pointer header;
-		Element2d::List items;
+		Element2d::Collection items;
 		Element2d::Pointer footer;
 
 		Section();
@@ -45,7 +45,7 @@ public:
 	Table(et::s2d::Element2d*, const std::string& name = emptyString);
 	~Table();
 
-	Section* addSection(Element2d::Pointer header, const Element2d::List& items,
+	Section* addSection(Element2d::Pointer header, const Element2d::Collection& items,
 		Element2d::Pointer footer);
 
 	const std::vector<Section*>& sections() const

@@ -405,7 +405,7 @@ void Layout::setInvalid()
 	_valid = false;
 }
 
-void Layout::collectPreRenderingObjects(Element2d::Pointer element, Element2d::List& elementList)
+void Layout::collectPreRenderingObjects(Element2d::Pointer element, Element2d::Collection& elementList)
 {
 	if (element->visible())
 	{

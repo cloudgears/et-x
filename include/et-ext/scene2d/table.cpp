@@ -86,7 +86,7 @@ void Table::validateSections()
 	}
 }
 
-Table::Section* Table::addSection(Element2d::Pointer header, const Element2d::List& items,
+Table::Section* Table::addSection(Element2d::Pointer header, const Element2d::Collection& items,
 	Element2d::Pointer footer)
 {
 	Section* section = sharedObjectFactory().createObject<Section>();
