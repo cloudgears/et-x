@@ -8,35 +8,43 @@
 
 #pragma once
 
-#include <et/timers/notifytimer.h>
+#include <et/core/notifytimer.h>
 #include <et/camera/camera.h>
 
+namespace et
+{
 namespace demo
 {
-	class CameraController
+
+class CameraController
+{
+public:
+	CameraController();
+
+	void init(RenderContext*);
+
+	const Camera& camera() const
 	{
-	public:
-		CameraController();
-		
-		void init(et::RenderContext*);
-		
-		const et::Camera& camera() const
-			{ return _mainCamera; }
+		return _mainCamera;
+	}
 
-		et::Camera& camera()
-			{ return _mainCamera; }
+	Camera& camera()
+	{
+		return _mainCamera;
+	}
 
-		void adjustCameraToNextContextSize(const et::vec2&);
-		
-		void handlePressedKey(size_t);
-		void handleReleasedKey(size_t);
-		
-		void handlePointerDrag(const et::vec2&);
-		
-	private:
-		et::Camera _mainCamera;
-		et::NotifyTimer _updateTimer;
-		et::vec2 _movements;
-		bool _boostEnabled = false;
-	};
+	void adjustCameraToNextContextSize(const vec2&);
+
+	void handlePressedKey(size_t);
+	void handleReleasedKey(size_t);
+
+	void handlePointerDrag(const vec2&);
+
+private:
+	Camera _mainCamera;
+	NotifyTimer _updateTimer;
+	vec2 _movements;
+	bool _boostEnabled = false;
+};
+}
 }

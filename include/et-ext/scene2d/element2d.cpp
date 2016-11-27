@@ -38,40 +38,40 @@ void Element2d::initAnimators()
 	_sizeAnimator.setTag(AnimatedProperty_Size);
 	_sizeAnimator.updated.connect(this, &Element2d::invalidateTransform);
 	_sizeAnimator.updated.connect(this, &Element2d::invalidateContent);
-	_sizeAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Size); });
-	
+	_sizeAnimator.finished.connect([this]() { elementAnimationFinished.invoke(this, AnimatedProperty_Size); });
+
 	_colorAnimator.animate(vec4(1.0f), 0.0f);
 	_colorAnimator.setTag(AnimatedProperty_Color);
 	_colorAnimator.updated.connect([this]() { invalidateContent(); });
-	_colorAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Color); });
-	
+	_colorAnimator.finished.connect([this]() { elementAnimationFinished.invoke(this, AnimatedProperty_Color); });
+
 	_scaleAnimator.setTag(AnimatedProperty_Scale);
 	_scaleAnimator.updated.connect(this, &Element2d::invalidateTransform);
 	_scaleAnimator.updated.connect(this, &Element2d::invalidateContent);
-	_scaleAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Scale); });
-	
+	_scaleAnimator.finished.connect([this]() { elementAnimationFinished.invoke(this, AnimatedProperty_Scale); });
+
 	_angleAnimator.setTag(AnimatedProperty_Angle);
 	_angleAnimator.updated.connect(this, &Element2d::invalidateTransform);
 	_angleAnimator.updated.connect(this, &Element2d::invalidateContent);
-	_angleAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Angle); });
-	
+	_angleAnimator.finished.connect([this]() { elementAnimationFinished.invoke(this, AnimatedProperty_Angle); });
+
 	_positionAnimator.setTag(AnimatedProperty_Position);
 	_positionAnimator.updated.connect(this, &Element2d::invalidateTransform);
 	_positionAnimator.updated.connect(this, &Element2d::invalidateContent);
-	_positionAnimator.finished.connect([this](){ elementAnimationFinished.invoke(this, AnimatedProperty_Position); });
+	_positionAnimator.finished.connect([this]() { elementAnimationFinished.invoke(this, AnimatedProperty_Position); });
 }
 
 void Element2d::setAngle(float anAngle, float duration)
 {
 	_angleAnimator.cancelUpdates();
 	_desiredLayout.angle = anAngle;
-	
+
 	if (duration <= std::numeric_limits<float>::epsilon())
 	{
 		_layout.angle = _desiredLayout.angle;
 		invalidateTransform();
 	}
-	else 
+	else
 	{
 		_angleAnimator.animate(&_layout.angle, _layout.angle, _desiredLayout.angle, duration);
 	}
@@ -81,7 +81,7 @@ void Element2d::setPivotPoint(const vec2& p, bool preservePosition)
 {
 	_layout.pivotPoint = p;
 	_desiredLayout.pivotPoint = p;
-	
+
 	if (preservePosition)
 		setPosition(_layout.position - offset());
 }
@@ -90,13 +90,13 @@ void Element2d::setScale(const vec2& aScale, float duration)
 {
 	_scaleAnimator.cancelUpdates();
 	_desiredLayout.scale = aScale;
-	
+
 	if (duration <= std::numeric_limits<float>::epsilon())
 	{
 		_layout.scale = _desiredLayout.scale;
 		invalidateTransform();
 	}
-	else 
+	else
 	{
 		_scaleAnimator.animate(&_layout.scale, _layout.scale, _desiredLayout.scale, duration);
 	}
@@ -107,18 +107,18 @@ void Element2d::setColor(const vec4& aColor, float duration)
 	_colorAnimator.animate(aColor, duration);
 }
 
-void Element2d::setAlpha(float alpha, float duration) 
+void Element2d::setAlpha(float alpha, float duration)
 {
 	setColor(vec4(_colorAnimator.value().xyz(), alpha), duration);
 }
 
-void Element2d::setPosition(const vec2& p, float duration) 
+void Element2d::setPosition(const vec2& p, float duration)
 {
 	willChangeFrame();
-	
+
 	_positionAnimator.cancelUpdates();
 	_desiredLayout.position = p;
-	
+
 	if (duration <= std::numeric_limits<float>::epsilon())
 	{
 		_layout.position = _desiredLayout.position;
@@ -129,17 +129,17 @@ void Element2d::setPosition(const vec2& p, float duration)
 	{
 		_positionAnimator.animate(&_layout.position, _layout.position, _desiredLayout.position, duration);
 	}
-	
+
 	didChangeFrame();
 }
 
-void Element2d::setSize(const vec2& s, float duration) 
-{ 
+void Element2d::setSize(const vec2& s, float duration)
+{
 	willChangeFrame();
-	
+
 	_sizeAnimator.cancelUpdates();
 	_desiredLayout.size = s;
-	
+
 	if (duration <= std::numeric_limits<float>::epsilon())
 	{
 		_layout.size = _desiredLayout.size;
@@ -150,7 +150,7 @@ void Element2d::setSize(const vec2& s, float duration)
 	{
 		_sizeAnimator.animate(&_layout.size, _layout.size, _desiredLayout.size, duration);
 	}
-	
+
 	didChangeFrame();
 }
 
@@ -163,7 +163,7 @@ const mat4& Element2d::transform()
 {
 	if (!transformValid())
 		buildFinalTransform();
-	
+
 	return _transform;
 }
 
@@ -199,40 +199,64 @@ const mat4& Element2d::finalInverseTransform()
 }
 
 const vec4& Element2d::ownColor() const
-	{ return _colorAnimator.value(); }
+{
+	return _colorAnimator.value();
+}
 
 vec4 Element2d::finalColor()
-	{ return vec4(_colorAnimator.value().xyz(), finalAlpha()); }
+{
+	return vec4(_colorAnimator.value().xyz(), finalAlpha());
+}
 
 const vec2& Element2d::size() const
-	{ return _layout.size; }
+{
+	return _layout.size;
+}
 
 const vec2& Element2d::position() const
-	{ return _layout.position; }
+{
+	return _layout.position;
+}
 
 const vec2& Element2d::desiredSize() const
-	{ return _desiredLayout.size; }
+{
+	return _desiredLayout.size;
+}
 
 const vec2& Element2d::desiredPosition() const
-	{ return _desiredLayout.position; }
+{
+	return _desiredLayout.position;
+}
 
 const vec2& Element2d::desiredScale() const
-	{ return _desiredLayout.scale; }
+{
+	return _desiredLayout.scale;
+}
 
 const vec2& Element2d::pivotPoint() const
-	{ return _layout.pivotPoint; }
+{
+	return _layout.pivotPoint;
+}
 
 const vec2& Element2d::scale() const
-	{ return _layout.scale; }
+{
+	return _layout.scale;
+}
 
 float Element2d::angle() const
-	{ return _layout.angle; }
+{
+	return _layout.angle;
+}
 
 rectf Element2d::frame() const
-	{ return rectf(origin(), size()); }
+{
+	return rectf(origin(), size());
+}
 
 void Element2d::setPosition(float x, float y, float duration)
-	{ return setPosition(vec2(x, y), duration); }
+{
+	return setPosition(vec2(x, y), duration);
+}
 
 void Element2d::setSize(float w, float h, float duration)
 {
@@ -245,25 +269,39 @@ bool Element2d::visible()
 }
 
 void Element2d::rotate(float anAngle, float duration)
-	{ return setAngle(_layout.angle + anAngle, duration); }
+{
+	return setAngle(_layout.angle + anAngle, duration);
+}
 
 bool Element2d::containsPoint(const vec2& p, const vec2&)
-	{ return containLocalPoint(finalInverseTransform() * p); }
+{
+	return containLocalPoint(finalInverseTransform() * p);
+}
 
 bool Element2d::containLocalPoint(const vec2& p)
-	{ return (p.x >= 0.0f) && (p.y >= 0.0f) && (p.x < _layout.size.x) && (p.y < _layout.size.y); }
+{
+	return (p.x >= 0.0f) && (p.y >= 0.0f) && (p.x < _layout.size.x) && (p.y < _layout.size.y);
+}
 
 vec2 Element2d::offset() const
-	{ return -_layout.size * _layout.pivotPoint; }
+{
+	return -_layout.size * _layout.pivotPoint;
+}
 
 vec2 Element2d::origin() const
-	{ return _layout.position + offset(); }
+{
+	return _layout.position + offset();
+}
 
 vec2 Element2d::positionInElement(const vec2& p)
-	{ return finalInverseTransform() * p; }
+{
+	return finalInverseTransform() * p;
+}
 
 vec2 Element2d::contentSize()
-	{ return _layout.size; }
+{
+	return _layout.size;
+}
 
 /*
  * From Element
@@ -290,10 +328,10 @@ void Element2d::invalidateContent()
 {
 	_contentValid = false;
 	_finalAlphaValid = false;
-	
+
 	for (auto& c : children())
 		c->invalidateContent();
-	
+
 	setInvalid();
 }
 
@@ -301,10 +339,10 @@ void Element2d::invalidateTransform()
 {
 	setTransformValid(false);
 	setInverseTransformValid(false);
-	
+
 	for (auto& c : children())
 		c->invalidateTransform();
-	
+
 	setInvalid();
 }
 
@@ -333,7 +371,7 @@ Element2d* Element2d::childWithNameCallback(const std::string& name, Element2d* 
 {
 	if (root->name() == name)
 		return root;
-	
+
 	if (recursive)
 	{
 		for (auto& c : root->children())
@@ -351,12 +389,12 @@ Element2d* Element2d::childWithNameCallback(const std::string& name, Element2d* 
 				return c.pointer();
 		}
 	}
-	
+
 	return nullptr;
 }
 
 void Element2d::setAutolayout(const vec2& pos, LayoutMode pMode, const vec2& sz,
-							LayoutMode sMode, const vec2& pivot)
+	LayoutMode sMode, const vec2& pivot)
 {
 	_autoLayout.position = pos;
 	_autoLayout.size = sz;
@@ -378,72 +416,72 @@ void Element2d::setAutolayoutSize(const vec2& sz)
 void Element2d::autoLayout(const vec2& contextSize, float duration)
 {
 	willAutoLayout(duration);
-	
+
 	if (_autoLayout.layoutMask & LayoutMask_Size)
 	{
 		vec2 aSize = _autoLayout.size;
-		
+
 		switch (_autoLayout.layoutSizeMode)
 		{
-			case LayoutMode_RelativeToContext:
-				aSize = contextSize * _autoLayout.size;
-				break;
-				
-			case LayoutMode_RelativeToParent:
-				aSize = _autoLayout.size * ((parent() == nullptr) ? contextSize : parent()->desiredSize());
-				break;
-				
-			case LayoutMode_WrapContent:
-				aSize = contentSize();
-				break;
-				
-			default:
-				break;
+		case LayoutMode_RelativeToContext:
+			aSize = contextSize * _autoLayout.size;
+			break;
+
+		case LayoutMode_RelativeToParent:
+			aSize = _autoLayout.size * ((parent() == nullptr) ? contextSize : parent()->desiredSize());
+			break;
+
+		case LayoutMode_WrapContent:
+			aSize = contentSize();
+			break;
+
+		default:
+			break;
 		}
-		
+
 		setSize(aSize, duration);
 	}
-	
+
 	if (_autoLayout.layoutMask & LayoutMask_Position)
 	{
 		vec2 aPos = _autoLayout.position;
-		
+
 		switch (_autoLayout.layoutPositionMode)
 		{
-			case LayoutMode_RelativeToContext:
-				aPos = contextSize * _autoLayout.position;
-				break;
-				
-			case LayoutMode_RelativeToParent:
-				aPos = _autoLayout.position * ((parent() == nullptr) ? contextSize : parent()->desiredSize());
-				break;
-				
-			case LayoutMode_WrapContent:
-				abort();
-				break;
-				
-			default:
-				break;
+		case LayoutMode_RelativeToContext:
+			aPos = contextSize * _autoLayout.position;
+			break;
+
+		case LayoutMode_RelativeToParent:
+			aPos = _autoLayout.position * ((parent() == nullptr) ? contextSize : parent()->desiredSize());
+			break;
+
+		case LayoutMode_WrapContent:
+			abort();
+			break;
+
+		default:
+			break;
 		}
-		
+
 		setPosition(aPos, duration);
 	}
-	
+
 	if (_autoLayout.layoutMask & LayoutMask_Pivot)
 		setPivotPoint(_autoLayout.pivotPoint, false);
-	
+
 	if (_autoLayout.layoutMask & LayoutMask_Angle)
 		setAngle(_autoLayout.angle, duration);
-	
+
 	if (_autoLayout.layoutMask & LayoutMask_Scale)
 		setScale(_autoLayout.scale, duration);
-	
+
 	if (!hasFlag(Flag_HandlesChildLayout))
 	{
 		for (auto aChild : children())
 			aChild->autoLayout(contextSize, duration);
 	}
-	
+
 	didAutoLayout(duration);
 }
 
@@ -472,65 +510,65 @@ void Element2d::setAutolayoutPositionMode(LayoutMode mode)
 Dictionary Element2d::autoLayoutDictionary() const
 {
 	Dictionary result;
-	
+
 	result.setStringForKey("name", name());
-	
+
 	result.setArrayForKey("position", vec2ToArray(_autoLayout.position));
 	result.setArrayForKey("size", vec2ToArray(_autoLayout.size));
 	result.setArrayForKey("scale", vec2ToArray(_autoLayout.scale));
 	result.setArrayForKey("pivotPoint", vec2ToArray(_autoLayout.pivotPoint));
 	result.setFloatForKey("angle", _autoLayout.angle);
-	
+
 	result.setIntegerForKey("autolayout_position", (_autoLayout.layoutMask & LayoutMask_Position) ? 1 : 0);
 	result.setIntegerForKey("autolayout_size", (_autoLayout.layoutMask & LayoutMask_Size) ? 1 : 0);
 	result.setIntegerForKey("autolayout_pivot", (_autoLayout.layoutMask & LayoutMask_Pivot) ? 1 : 0);
 	result.setIntegerForKey("autolayout_angle", (_autoLayout.layoutMask & LayoutMask_Angle) ? 1 : 0);
 	result.setIntegerForKey("autolayout_scale", (_autoLayout.layoutMask & LayoutMask_Scale) ? 1 : 0);
 	result.setIntegerForKey("autolayout_children", (_autoLayout.layoutMask & LayoutMask_Children) ? 1 : 0);
-	
+
 	result.setStringForKey("positionMode", layoutModeToString(_autoLayout.layoutPositionMode));
 	result.setStringForKey("sizeMode", layoutModeToString(_autoLayout.layoutSizeMode));
-	
+
 	storeProperties(result);
-	
+
 	if ((_autoLayout.layoutMask & LayoutMask_Children) && (children().size() > 0))
 	{
 		Dictionary childrenValues;
-		
+
 		for (auto& c : children())
 			childrenValues.setDictionaryForKey(c->name(), c->autoLayoutDictionary());
-		
+
 		result.setDictionaryForKey("children", childrenValues);
 	}
-	
+
 	return result;
 }
 
 void Element2d::setAutolayout(const Dictionary& d)
 {
 	ElementLayout l = _autoLayout;
-	
+
 	if (d.hasKey("position"))
 		l.position = arrayToVec2(d.arrayForKey("position"));
-	
+
 	if (d.hasKey("size"))
 		l.size = arrayToVec2(d.arrayForKey("size"));
-	
+
 	if (d.hasKey("scale"))
 		l.scale = arrayToVec2(d.arrayForKey("scale"));
-	
+
 	if (d.hasKey("pivotPoint"))
 		l.pivotPoint = arrayToVec2(d.arrayForKey("pivotPoint"));
-	
+
 	if (d.hasKey("angle"))
 		l.angle = d.floatForKey("angle", 0.0f)->content;
-	
+
 	if (d.hasKey("positionMode"))
 		l.layoutPositionMode = layoutModeFromString(d.stringForKey("positionMode", "parent_relative")->content);
-	
+
 	if (d.hasKey("sizeMode"))
 		l.layoutSizeMode = layoutModeFromString(d.stringForKey("sizeMode", "parent_relative")->content);
-	
+
 	l.layoutMask =
 		(d.integerForKey("autolayout_position", l.layoutMask & LayoutMask_Position)->content ? LayoutMask_Position : 0) |
 		(d.integerForKey("autolayout_size", l.layoutMask & LayoutMask_Size)->content ? LayoutMask_Size : 0) |
@@ -538,9 +576,9 @@ void Element2d::setAutolayout(const Dictionary& d)
 		(d.integerForKey("autolayout_angle", l.layoutMask & LayoutMask_Angle)->content ? LayoutMask_Angle : 0) |
 		(d.integerForKey("autolayout_scale", l.layoutMask & LayoutMask_Scale)->content ? LayoutMask_Scale : 0) |
 		(d.integerForKey("autolayout_children", l.layoutMask & LayoutMask_Children)->content ? LayoutMask_Children : 0);
-	
+
 	loadProperties(d);
-	
+
 	if (l.layoutMask & LayoutMask_Children)
 	{
 		Dictionary dChildren = d.dictionaryForKey("children");
@@ -551,17 +589,17 @@ void Element2d::setAutolayout(const Dictionary& d)
 				el->setAutolayout(p.second);
 		}
 	}
-	
+
 	setAutolayout(l);
 }
 
 void Element2d::autoLayoutFromFile(const std::string& fileName)
 {
 	setOrigin(fileName);
-	
+
 	VariantClass c = VariantClass::Invalid;
 	VariantBase::Pointer base = json::deserialize(loadTextFile(fileName), c);
-	
+
 	if (base.valid() && (c == VariantClass::Dictionary))
 	{
 		setAutolayout(base);
@@ -579,7 +617,7 @@ float Element2d::finalAlpha()
 		_finalAlpha = ownColor().w * (parent() ? parent()->finalAlpha() : 1.0f);
 		_finalAlphaValid = true;
 	}
-	
+
 	return _finalAlpha;
 }
 
@@ -636,8 +674,8 @@ MaterialInstance::Pointer Element2d::allocateMaterial(SceneRenderer& renderer)
  */
 float alignmentFactor(Alignment a)
 {
-	static const float alignmentValues[Alignment_max] = { 0.0f, 0.5f, 1.0f };
-	return alignmentValues[a];
+	static const float alignmentValues[static_cast<uint32_t>(Alignment::max)] = { 0.0f, 0.5f, 1.0f };
+	return alignmentValues[static_cast<uint32_t>(a)];
 }
 
 State adjustState(State s)
@@ -658,15 +696,15 @@ std::string layoutModeToString(LayoutMode m)
 {
 	switch (m)
 	{
-			RETURN_STR_IF(LayoutMode_Absolute)
+		RETURN_STR_IF(LayoutMode_Absolute)
 			RETURN_STR_IF(LayoutMode_RelativeToContext)
 			RETURN_STR_IF(LayoutMode_RelativeToParent)
 			RETURN_STR_IF(LayoutMode_WrapContent)
-			
-		default:
-			log::error("Invalid layout mode");
+
+	default:
+		log::error("Invalid layout mode");
 	}
-	
+
 	return kLayoutMode_Absolute;
 }
 
@@ -676,7 +714,7 @@ LayoutMode layoutModeFromString(const std::string& s)
 	RETURN_VAL_IF(LayoutMode_RelativeToContext);
 	RETURN_VAL_IF(LayoutMode_RelativeToParent);
 	RETURN_VAL_IF(LayoutMode_WrapContent);
-	
+
 	log::error("Invalid layout mode string %s", s.c_str());
 	return LayoutMode_Absolute;
 }

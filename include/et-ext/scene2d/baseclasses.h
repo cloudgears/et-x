@@ -24,7 +24,7 @@ struct ElementClass
 {
 	static const std::string className;
 	static std::atomic<size_t> instanceConter;
-	
+
 	static std::string uniqueName(const std::string&);
 };
 
@@ -44,10 +44,14 @@ public:
 
 public:
 	AnimationDescriptor() :
-		flags(AnimationFlag_None), duration(0.0f) { }
+		flags(AnimationFlag_None), duration(0.0f)
+	{
+	}
 
 	AnimationDescriptor(size_t aFlags, float aDuration) :
-		flags(aFlags), duration(aDuration) { }
+		flags(aFlags), duration(aDuration)
+	{
+	}
 };
 
 struct ContentOffset
@@ -60,16 +64,24 @@ public:
 
 public:
 	ContentOffset(float value = 0.0f) :
-		left(value), top(value), right(value), bottom(value) { }
+		left(value), top(value), right(value), bottom(value)
+	{
+	}
 
 	ContentOffset(const vec2& values) :
-		left(values.x), top(values.y), right(values.x), bottom(values.y) { }
+		left(values.x), top(values.y), right(values.x), bottom(values.y)
+	{
+	}
 
-	ContentOffset(float l, float t, float r, float b) :	
-		left(l), top(t), right(r), bottom(b) { }
+	ContentOffset(float l, float t, float r, float b) :
+		left(l), top(t), right(r), bottom(b)
+	{
+	}
 
 	const vec2 origin() const
-		{ return vec2(left, top); }
+	{
+		return vec2(left, top);
+	}
 
 	ContentOffset& operator *= (float t)
 	{
@@ -96,32 +108,50 @@ struct ImageDescriptor
 	vec2 size;
 	ContentOffset contentOffset;
 
-	ImageDescriptor() : 
-		origin(0.0f), size(0.0f) { } 
+	ImageDescriptor() :
+		origin(0.0f), size(0.0f)
+	{
+	}
 
 	ImageDescriptor(const Texture::Pointer& tex) :
-		origin(0.0f), size(tex.valid() ? tex->sizeFloat() : vec2(0.0f)) { }
+		origin(0.0f), size(tex.valid() ? tex->sizeFloat() : vec2(0.0f))
+	{
+	}
 
-	ImageDescriptor(const Texture::Pointer& tex, const ContentOffset& offset) : 
-		origin(0.0f), size(tex.valid() ? tex->sizeFloat() : vec2(0.0f)), contentOffset(offset) { }
+	ImageDescriptor(const Texture::Pointer& tex, const ContentOffset& offset) :
+		origin(0.0f), size(tex.valid() ? tex->sizeFloat() : vec2(0.0f)), contentOffset(offset)
+	{
+	}
 
 	ImageDescriptor(const vec2& aOrigin, const vec2& aSize, const ContentOffset& offset = ContentOffset()) :
-		origin(aOrigin), size(aSize), contentOffset(offset) { }
+		origin(aOrigin), size(aSize), contentOffset(offset)
+	{
+	}
 
-	vec2 centerPartTopLeft() const 
-		{ return origin + contentOffset.origin(); }
+	vec2 centerPartTopLeft() const
+	{
+		return origin + contentOffset.origin();
+	}
 
-	vec2 centerPartTopRight() const 
-		{ return origin + vec2(size.x - contentOffset.right, contentOffset.top); }
+	vec2 centerPartTopRight() const
+	{
+		return origin + vec2(size.x - contentOffset.right, contentOffset.top);
+	}
 
-	vec2 centerPartBottomLeft() const 
-		{ return origin + vec2(contentOffset.left, size.y - contentOffset.bottom); }
+	vec2 centerPartBottomLeft() const
+	{
+		return origin + vec2(contentOffset.left, size.y - contentOffset.bottom);
+	}
 
-	vec2 centerPartBottomRight() const 
-		{ return origin + size - vec2(contentOffset.right, contentOffset.bottom); }
+	vec2 centerPartBottomRight() const
+	{
+		return origin + size - vec2(contentOffset.right, contentOffset.bottom);
+	}
 
 	rectf rectangle() const
-		{ return rectf(origin, size); }
+	{
+		return rectf(origin, size);
+	}
 
 	ImageDescriptor operator * (float t) const
 	{
@@ -149,23 +179,32 @@ struct Image
 	ImageDescriptor descriptor;
 
 	Image()
-		{ }
+	{
+	}
 
 	Image(const Texture::Pointer& t) :
-		texture(t), descriptor(ImageDescriptor(t)) { }
+		texture(t), descriptor(ImageDescriptor(t))
+	{
+	}
 
 	Image(const Texture::Pointer& t, const ImageDescriptor& d) :
-		texture(t), descriptor(d) { }
+		texture(t), descriptor(d)
+	{
+	}
 };
 
 struct SceneVertex
 {
 public:
-	SceneVertex(const vec2& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-		position(pos, 0.0f, 1.0f), color(c), texCoord(tc) { }
+	SceneVertex(const vec2& pos, const vec4& tc, const vec4& c = vec4(1.0f)) :
+		position(pos, 0.0f, 1.0f), color(c), texCoord(tc)
+	{
+	}
 
-	SceneVertex(const vec3& pos, const vec4& tc, const vec4& c = vec4(1.0f)) : 
-		position(pos, 1.0f), color(c), texCoord(tc) { }
+	SceneVertex(const vec3& pos, const vec4& tc, const vec4& c = vec4(1.0f)) :
+		position(pos, 1.0f), color(c), texCoord(tc)
+	{
+	}
 
 public:
 	vec4 position = vec4(0.0f);
@@ -178,12 +217,15 @@ struct ElementDragInfo
 	vec2 currentPosition = vec2(0.0f);
 	vec2 initialPosition = vec2(0.0f);
 	vec2 normalizedPointerPosition = vec2(0.0f);
-	
+
 	ElementDragInfo()
-		{ }
-	
-	ElementDragInfo(const vec2& c, const vec2& i, const vec2& npp) : 
-		currentPosition(c), initialPosition(i), normalizedPointerPosition(npp) { }
+	{
+	}
+
+	ElementDragInfo(const vec2& c, const vec2& i, const vec2& npp) :
+		currentPosition(c), initialPosition(i), normalizedPointerPosition(npp)
+	{
+	}
 };
 
 enum Action : size_t
@@ -206,26 +248,32 @@ struct Message
 		Type_PerformAction,
 		Type_SetFontSmoothing
 	};
-	
+
 	size_t type = 0;
-	
+
 	union
 	{
 		size_t param = 0;
 		float paramf;
 	};
-	
+
 	std::string text;
 	float duration = 0.0f;
 
 	explicit Message(size_t aType) :
-		type(aType) { }
-	
+		type(aType)
+	{
+	}
+
 	Message(size_t aType, size_t aParam) :
-		type(aType), param(aParam) { }
-	
+		type(aType), param(aParam)
+	{
+	}
+
 	Message(size_t aType, const std::string& aText) :
-		type(aType), param(0), text(aText) { }
+		type(aType), param(0), text(aText)
+	{
+	}
 };
 
 struct ElementLayout
@@ -235,37 +283,49 @@ struct ElementLayout
 	vec2 scale = vec2(1.0f);
 	vec2 pivotPoint = vec2(0.0f);
 	float angle = 0.0f;
-	
+
 	size_t layoutMask = LayoutMask_All;
 	LayoutMode layoutPositionMode = LayoutMode_Absolute;
 	LayoutMode layoutSizeMode = LayoutMode_Absolute;
 
 	ElementLayout() : scale(1.0f), angle(0.0f), layoutMask(LayoutMask_All),
-		layoutPositionMode(LayoutMode_Absolute), layoutSizeMode(LayoutMode_Absolute) { }
+		layoutPositionMode(LayoutMode_Absolute), layoutSizeMode(LayoutMode_Absolute)
+	{
+	}
 
 	ElementLayout(const rectf& frame) :
 		position(frame.origin()), size(frame.size()), scale(1.0f), angle(0.0f),
 		layoutMask(LayoutMask_All), layoutPositionMode(LayoutMode_Absolute),
-		layoutSizeMode(LayoutMode_Absolute) { }
-	
+		layoutSizeMode(LayoutMode_Absolute)
+	{
+	}
+
 	ElementLayout(const vec2& pos, const vec2& sz, LayoutMode pMode,
 		LayoutMode sMode) : position(pos), size(sz), scale(1.0f), angle(0.0f),
-		layoutMask(LayoutMask_All), layoutPositionMode(pMode), layoutSizeMode(sMode) { }
+		layoutMask(LayoutMask_All), layoutPositionMode(pMode), layoutSizeMode(sMode)
+	{
+	}
 };
 
 struct LocalizedText
 {
 	std::string key;
 	std::string cachedText;
-	
+
 	void setKey(const std::string& aKey)
-		{ key = aKey; updateCache(); }
-	
+	{
+		key = aKey; updateCache();
+	}
+
 	void updateCache()
-		{ cachedText = localized(key); }
-	
+	{
+		cachedText = localized(key);
+	}
+
 	void clear()
-		{ key.clear(); cachedText.clear(); }
+	{
+		key.clear(); cachedText.clear();
+	}
 };
 
 typedef DataStorage<SceneVertex> SceneVertexList;

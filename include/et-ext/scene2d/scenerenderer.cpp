@@ -8,11 +8,13 @@
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/scenerenderer.h>
 
-namespace et {
+namespace et
+{
 
 extern const char* etExtWorkingFolder;
 
-namespace s2d {
+namespace s2d
+{
 
 SceneRenderer::SceneRenderer(RenderContext* rc) :
 	_rc(rc), _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f)
@@ -22,10 +24,10 @@ SceneRenderer::SceneRenderer(RenderContext* rc) :
 	TextureDescription::Pointer desc = TextureDescription::Pointer::create();
 	desc->size = vec2i(1);
 	desc->format = TextureFormat::RGBA8;
-	
+
 	desc->data = BinaryDataStorage(4, 255);
 	_whiteTexture = rc->renderer()->createTexture(desc);
-	
+
 	desc->data.fill(0);
 	_transparentTexture = rc->renderer()->createTexture(desc);
 
@@ -80,22 +82,22 @@ void s2d::SceneRenderer::popClipRect()
 void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 {
 	std::stack<recti> tempClipStack;
-	
+
 	while (_clip.size() > 1)
 	{
 		tempClipStack.push(_clip.top());
 		_clip.pop();
 	}
-	
+
 	_clip.pop();
 	_clip.push(recti(vec2i(0), vec2i(static_cast<int>(contextSize.x), static_cast<int>(contextSize.y))));
-	
+
 	while (tempClipStack.size())
 	{
 		_clip.push(tempClipStack.top());
 		tempClipStack.pop();
 	}
-	
+
 	mat4 transform = identityMatrix;
 	transform[0][0] = 2.0f / contextSize.x;
 	transform[1][1] = -Camera::renderingOriginTransform * 2.0f / contextSize.y;
@@ -119,10 +121,10 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Texture:
 	if ((shouldAdd == false) && _renderingElement->chunks.size())
 	{
 		RenderChunk& lastChunk = _renderingElement->chunks.back();
-		
+
 		bool sameConfiguration = (lastChunk.clip == _clip.top()) &&
 			(lastChunk.material == inMaterial) && (lastChunk.primitiveType == pt);
-		
+
 		if (sameConfiguration)
 			lastChunk.count += count;
 		else
@@ -133,7 +135,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Texture:
 	{
 		_renderingElement->chunks.emplace_back(_renderingElement->allocatedVertices, count, _clip.top(), inMaterial, object, pt);
 	}
-	
+
 	return _renderingElement->allocateVertices(count);
 }
 
@@ -142,7 +144,7 @@ void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture::
 {
 	uint32_t count = vertices.lastElementIndex();
 	ET_ASSERT((count > 0) && _renderingElement.valid() && material.valid());
-	
+
 	SceneVertex* target = allocateVertices(count, texture, material, owner, pt);
 	for (const SceneVertex& v : vertices)
 		*target++ = v;
@@ -185,7 +187,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 	RenderState& rs = rc->renderState();
 	Renderer* renderer = rc->renderer();
 	const IndexBuffer::Pointer& indexBuffer = _renderingElement->VertexStream()->indexBuffer();
-	
+
 	Program::Pointer lastBoundProgram;
 	for (auto& i : _renderingElement->chunks)
 	{
@@ -196,13 +198,13 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 			lastBoundProgram->setUniform(i.program.additionalOffsetAndAlpha, _additionalOffsetAndAlpha);
 			lastBoundProgram->setTransformMatrix(transform);
 		}
-		
+
 		if (i.object != nullptr)
 			i.object->setProgramParameters(rc, lastBoundProgram);
-		
+
 		rs.bindTexture(0, i.texture);
 		rs.setScissor(true, i.clip + _additionalWindowOffset);
-		
+
 		renderer->drawElements(i.primitiveType, indexBuffer, i.first, i.count);
 	}
 	*/
@@ -284,6 +286,6 @@ std::string et_scene2d_default_text_shader_fs =
 	"	etFragmentOut.w *= etTexture2D(inputTexture, texCoord).x;"
 	"}";
 // */
-	
+
 }
 }

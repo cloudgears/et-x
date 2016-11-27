@@ -28,10 +28,10 @@ namespace s2d
 class CharacterGeneratorImplementationPrivate
 {
 public:
-	CharacterGeneratorImplementationPrivate(const std::string& face, const std::string& boldFace, 
+	CharacterGeneratorImplementationPrivate(const std::string& face, const std::string& boldFace,
 		uint32_t faceIndex, uint32_t boldFaceIndex);
 	~CharacterGeneratorImplementationPrivate();
-	
+
 	bool startWithCharacter(const CharDescriptor& desc, vec2i& charSize, vec2i& canvasSize, BinaryDataStorage& charData);
 
 private:
@@ -43,19 +43,23 @@ private:
 	FT_Face boldFont = nullptr;
 };
 
-CharacterGeneratorImplementation::CharacterGeneratorImplementation(const std::string& face, const std::string& boldFace, 
+CharacterGeneratorImplementation::CharacterGeneratorImplementation(const std::string& face, const std::string& boldFace,
 	uint32_t faceIndex, uint32_t boldFaceIndex)
 {
-	ET_PIMPL_INIT(CharacterGeneratorImplementation, face, boldFace, faceIndex, boldFaceIndex) 
+	ET_PIMPL_INIT(CharacterGeneratorImplementation, face, boldFace, faceIndex, boldFaceIndex)
 }
 
 CharacterGeneratorImplementation::~CharacterGeneratorImplementation()
-	{ ET_PIMPL_FINALIZE(CharacterGeneratorImplementation) }
+{
+	ET_PIMPL_FINALIZE(CharacterGeneratorImplementation)
+}
 
 bool CharacterGeneratorImplementation::processCharacter(const CharDescriptor& a, vec2i& b, vec2i& c, BinaryDataStorage& d)
-	{ return _private->startWithCharacter(a, b, c, d); }
+{
+	return _private->startWithCharacter(a, b, c, d);
+}
 
-CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate(const std::string& face, 
+CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate(const std::string& face,
 	const std::string& boldFace, uint32_t faceIndex, uint32_t boldFaceIndex)
 {
 	FT_Init_FreeType(&library);
@@ -85,7 +89,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 #elif (ET_PLATFORM_WIN)
 		auto commonDC = CreateCompatibleDC(nullptr);
 
-		HFONT font = CreateFontA(-12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 
+		HFONT font = CreateFontA(-12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 			OUT_TT_ONLY_PRECIS, CLIP_EMBEDDED, PROOF_QUALITY, FF_DONTCARE, face.c_str());
 
 		SelectObject(commonDC, font);
@@ -97,7 +101,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
 			if (GetFontData(commonDC, 0, 0, regularFontData.data(), DWORD(regularFontData.size())) != GDI_ERROR)
 			{
-				FT_New_Memory_Face(library, regularFontData.data(), 
+				FT_New_Memory_Face(library, regularFontData.data(),
 					FT_Long(regularFontData.size()), FT_Long(faceIndex), &regularFont);
 			}
 		}
@@ -106,7 +110,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 		DeleteDC(commonDC);
 #endif
 	}
-	
+
 	/*
 	 * Load bold font
 	 */
@@ -138,7 +142,7 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
 		auto commonDC = CreateCompatibleDC(nullptr);
 
-		HFONT font = CreateFontA(-12, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, 
+		HFONT font = CreateFontA(-12, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 			OUT_TT_ONLY_PRECIS, CLIP_EMBEDDED, PROOF_QUALITY, FF_DONTCARE, boldFace.c_str());
 
 		SelectObject(commonDC, font);
@@ -150,14 +154,14 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
 			if (GetFontData(commonDC, 0, 0, boldFontData.data(), DWORD(boldFontData.size())) != GDI_ERROR)
 			{
-				FT_New_Memory_Face(library, boldFontData.data(), FT_Long(boldFontData.size()), 
+				FT_New_Memory_Face(library, boldFontData.data(), FT_Long(boldFontData.size()),
 					FT_Long(boldFaceIndex), &boldFont);
 			}
 		}
 
 		DeleteObject(font);
 		DeleteDC(commonDC);
-		
+
 #endif
 	}
 
@@ -180,30 +184,30 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 	auto glyphIndex = FT_Get_Char_Index(font, desc.value);
 	if (FT_Load_Glyph(font, glyphIndex, FT_LOAD_RENDER))
 		return false;
-	
+
 	auto glyph = font->glyph;
-	
+
 	vec2i bitmapSize(glyph->bitmap.width, glyph->bitmap.rows);
-	
+
 	long ascender = font->size->metrics.ascender >> 6;
 	long descender = (-font->size->metrics.descender) >> 6;
-	
+
 	charSize.x = static_cast<int>(glyph->metrics.horiAdvance >> 6);
 	charSize.y = static_cast<int>(ascender + descender);
-	
+
 	if (charSize.dotSelf() <= 0)
 		return false;
-	
+
 	canvasSize = charSize + CharacterGenerator::charactersRenderingExtent;
-	
+
 	charData.resize(canvasSize.square());
 	charData.fill(0);
-	
+
 	int ox = glyph->bitmap_left + CharacterGenerator::charactersRenderingExtent.x / 2;
-	
+
 	int oy = std::max(0, static_cast<int>(ascender) - glyph->bitmap_top +
 		CharacterGenerator::charactersRenderingExtent.y / 2);
-	
+
 	uint32_t k = 0;
 	for (int y = 0; y < bitmapSize.y; ++y)
 	{
@@ -214,7 +218,7 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
 			charData[targetPos] = glyph->bitmap.buffer[k++];
 		}
 	}
-	
+
 	return true;
 }
 

@@ -8,18 +8,20 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/line.h>
 
-namespace et {
-namespace s2d {
+namespace et
+{
+namespace s2d
+{
 
 Line::Line(const vec2& from, const vec2& to, Element2d* parent) :
 	Element2d(parent)
 {
 	setFlag(Flag_TransparentForPointer);
-	
+
 	_controlPoints.push_back(from);
 	_controlPoints.push_back(0.5f * (from + to));
 	_controlPoints.push_back(to);
-	
+
 	fillParent();
 }
 
@@ -45,10 +47,10 @@ void Line::setWidth(float w)
 void Line::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
 	validateMaterialInstance(r);
-	
+
 	if (!contentValid())
 		buildVertices(r);
-	
+
 	r.addVertices(_vertices, Texture::Pointer(), materialInstance(), this);
 }
 
@@ -65,11 +67,11 @@ void Line::buildLine(const vec2& p1, const vec2& p2, const vec4& tc, const vec4&
 void Line::buildVertices(SceneRenderer&)
 {
 	_vertices.setOffset(0);
-	
+
 	vec4 baseColor = finalColor();
 	vec4 texCoord(0.0f, 0.0f, 0.0f, 1.0f);
 	mat4 tr = finalTransform();
-	
+
 	if (_type == Type_Linear)
 	{
 		if (_shadowColor.w > 0.0f)
@@ -78,7 +80,7 @@ void Line::buildVertices(SceneRenderer&)
 			vec2 p2 = origin() + size() * _controlPoints.back() + _shadowOffset;
 			buildLine(p1, p2, texCoord, _shadowColor, _shadowColor, tr);
 		}
-		
+
 		vec2 p1 = origin() + size() * _controlPoints.front();
 		vec2 p2 = origin() + size() * _controlPoints.back();
 		buildLine(p1, p2, texCoord, baseColor * _startColor, baseColor * _endColor, tr);
@@ -88,7 +90,7 @@ void Line::buildVertices(SceneRenderer&)
 		vec2 cp1 = origin() + size() * _controlPoints[0];
 		vec2 cp2 = origin() + size() * _controlPoints[1];
 		vec2 cp3 = origin() + size() * _controlPoints[2];
-		
+
 		float curveLength = 0.0f;
 		float t = 0.0f;
 		float dt = 0.0001f;
@@ -99,7 +101,7 @@ void Line::buildVertices(SceneRenderer&)
 			t += dt;
 		}
 		dt = 1.0f / std::sqrt(curveLength);
-		
+
 		if (_shadowColor.w > 0.0f)
 		{
 			t = 0.0f;
@@ -127,7 +129,7 @@ void Line::buildVertices(SceneRenderer&)
 	{
 		ET_FAIL("Invalid line type.")
 	}
-	
+
 	setContentValid();
 }
 

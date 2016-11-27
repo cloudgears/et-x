@@ -17,31 +17,35 @@
 
 #include "ui/MainUI.h"
 
+namespace et
+{
 namespace demo
 {
-	class MainController : public et::IApplicationDelegate
-	{
-	private:
-		et::ApplicationIdentifier applicationIdentifier() const;
-		
-		void setApplicationParameters(et::ApplicationParameters&);
-		void setRenderContextParameters(et::RenderContextParameters&);
-		
-		void applicationDidLoad(et::RenderContext*);
-		void applicationWillResizeContext(const et::vec2i&);
-		
-		void render(et::RenderContext*);
-		void connectInputEvents();
-		
-	private:
-		demo::SceneRenderer _renderer;
-		demo::SceneLoader _loader;
-		demo::CameraController _cameraController;
-		demo::MainUI::Pointer _mainUI;
+class MainController : public IApplicationDelegate
+{
+private:
+	ApplicationIdentifier applicationIdentifier() const;
 
-		et::GesturesRecognizer _gestures;
-		et::s2d::Scene::Pointer _ui;
+	void setApplicationParameters(ApplicationParameters&);
+	void setRenderContextParameters(RenderContextParameters&);
 
-		bool _uiCaptured = false;
-	};
+	void applicationDidLoad(RenderContext*);
+	void applicationWillResizeContext(const vec2i&);
+
+	void render(RenderContext*);
+	void connectInputEvents();
+
+private:
+	demo::SceneRenderer _renderer;
+	demo::SceneLoader _loader;
+	demo::CameraController _cameraController;
+	demo::MainUI::Pointer _mainUI;
+
+	GesturesRecognizer _gestures;
+	s2d::Scene::Pointer _ui;
+
+	bool _uiCaptured = false;
+};
+}
+
 }

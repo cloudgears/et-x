@@ -9,19 +9,21 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/label.h>
 
-namespace et {
-namespace s2d {
+namespace et
+{
+namespace s2d
+{
 
 Label::Label(const std::string& text, const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
 	TextElement(parent, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
 {
 	setFlag(Flag_TransparentForPointer);
-	
+
 	_text.setKey(text);
 	_nextText.setKey(text);
-	
+
 	invalidateText();
-	
+
 	adjustSize();
 }
 
@@ -34,7 +36,7 @@ void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 
 	if (_backgroundVertices.lastElementIndex() > 0)
 		r.addVertices(_backgroundVertices, Texture::Pointer(), materialInstance(), this);
-	
+
 	if (_vertices.lastElementIndex() > 0)
 		r.addVertices(_vertices, font()->generator()->texture(), textMaterial(r), this);
 }
@@ -44,13 +46,13 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 	mat4 transform = finalTransform();
 	vec2 alignment = vec2(alignmentFactor(textHorizontalAlignment()), alignmentFactor(textVerticalAlignment()));
 	vec2 textOffset = size() * alignment;
-	
+
 	_vertices.setOffset(0);
 	_backgroundVertices.setOffset(0);
-	
+
 	bool hasShadow = _shadowColor.w > std::numeric_limits<float>::epsilon();
 	vec4 shadowColor = _shadowColor;
-	
+
 	vec4 finalColorValue = finalColor();
 	vec4 alphaScale = vec4(1.0f, finalColorValue.w);
 
@@ -74,7 +76,7 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 			vec2 shadowOffset = textOffset + _shadowOffset;
 			buildStringVertices(_vertices, _charListText, textHorizontalAlignment(), textVerticalAlignment(),
 				shadowOffset, shadowColor, transform, _lineInterval);
-			
+
 			shadowColor.w = _shadowColor.w * alphaScale.w * fadeIn;
 			buildStringVertices(_vertices, _charListNextText, textHorizontalAlignment(),
 				textVerticalAlignment(), shadowOffset, shadowColor, transform, _lineInterval);
@@ -85,14 +87,14 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 			buildStringVertices(_vertices, _charListText, textHorizontalAlignment(), textVerticalAlignment(),
 				textOffset, finalColorValue * vec4(1.0, fadeOut), transform, _lineInterval);
 		}
-		
+
 		if (fadeIn > 0.0f)
 		{
 			buildStringVertices(_vertices, _charListNextText, textHorizontalAlignment(), textVerticalAlignment(),
 				textOffset, finalColorValue * vec4(1.0, fadeIn), transform, _lineInterval);
 		}
 	}
-	else 
+	else
 	{
 		if (hasShadow)
 		{
@@ -101,7 +103,7 @@ void Label::buildVertices(RenderContext*, SceneRenderer&)
 				textVerticalAlignment(), textOffset + _shadowOffset, shadowColor, transform, _lineInterval);
 		}
 
-		buildStringVertices(_vertices, _charListText, textHorizontalAlignment(), textVerticalAlignment(), 
+		buildStringVertices(_vertices, _charListText, textHorizontalAlignment(), textVerticalAlignment(),
 			textOffset, finalColorValue, transform, _lineInterval);
 	}
 
@@ -114,11 +116,11 @@ void Label::setText(const std::string& aText, float duration)
 	{
 		_animatingText = false;
 		cancelUpdates();
-	
+
 		_text.setKey(aText);
 		_nextText.setKey(aText);
 	}
-	else 
+	else
 	{
 		startUpdates();
 
@@ -127,16 +129,16 @@ void Label::setText(const std::string& aText, float duration)
 			_text = _nextText;
 			_charListText = _charListNextText;
 		}
-		
+
 		_nextText.setKey(aText);
 		_nextTextSize = font()->measureStringSize(_nextText.cachedText, fontSize(), fontSmoothing());
-		
+
 		_textFade = 0.0f;
 		_animatingText = true;
 		_textFadeStartTime = actualTime();
 		_textFadeDuration = duration;
 	}
-	
+
 	invalidateText();
 	adjustSize();
 }
@@ -157,16 +159,16 @@ vec2 Label::textSize()
 void Label::update(float t)
 {
 	_textFade = (t - _textFadeStartTime) / _textFadeDuration;
-	
+
 	if (_textFade >= 1.0f)
 	{
 		_textFade = 0.0f;
 		_animatingText = false;
-		
+
 		_text = _nextText;
 		_textSize = _nextTextSize;
 		_charListText = _charListNextText;
-		
+
 		adjustSize();
 		cancelUpdates();
 		invalidateText();
@@ -178,10 +180,10 @@ void Label::update(float t)
 void Label::adjustSize()
 {
 	_textSize = font()->measureStringSize(_text.cachedText, fontSize(), fontSmoothing());
-	
+
 	if (_animatingText)
 		_textSize = maxv(_textSize, font()->measureStringSize(_nextText.cachedText, fontSize(), fontSmoothing()));
-	
+
 	if (_autoAdjustSize)
 		setSize(_textSize);
 }
@@ -207,7 +209,7 @@ void Label::setShadowOffset(const vec2& offset)
 void Label::fitToWidth(float w)
 {
 	if (_text.cachedText.empty()) return;
-	
+
 	setText(fitStringToWidthWithFont(_text.cachedText, font(), fontSize(), w));
 }
 
@@ -225,19 +227,19 @@ void Label::setLineInterval(float i)
 bool Label::processMessage(const Message& msg)
 {
 	bool result = TextElement::processMessage(msg);
-	
+
 	if (msg.type == Message::Type_SetText)
 	{
 		setText(msg.text, msg.duration);
 		result = true;
 	}
-	
+
 	if (msg.type == Message::Type_UpdateText)
 	{
 		setText(_text.key, msg.duration);
 		result = true;
 	}
-	
+
 	return result;
 }
 
@@ -252,19 +254,19 @@ void Label::setShouldAutoAdjustSize(bool v)
 std::string Label::fitStringToWidthWithFont(std::string oldText, Font::Pointer font, float fontSize, float width)
 {
 	float minimalWidthToFit = font->measureStringSize("W", fontSize).x;
-	
+
 	if (std::abs(width) < minimalWidthToFit)
 		return oldText;
-	
+
 	std::string newText;
 	std::string latestLine;
-	
+
 	const std::string dividers(" \n\t\r");
-	
+
 	while (oldText.size())
 	{
 		size_t wsPos = oldText.find_first_of(dividers);
-		
+
 		if (wsPos == std::string::npos)
 		{
 			std::string appended = latestLine + oldText;
@@ -278,16 +280,16 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, Font::Pointer f
 			newText.append(oldText);
 			break;
 		}
-		
+
 		std::string word = oldText.substr(0, wsPos);
-		
+
 		char nextCharStr[] = { oldText[wsPos++], 0 };
 		oldText.erase(0, wsPos);
-		
+
 		std::string appended = latestLine + word;
 		if (!isNewLineChar(nextCharStr[0]))
 			appended.append(nextCharStr);
-		
+
 		if (font->measureStringSize(appended, fontSize).x < width)
 		{
 			newText.append(word);
@@ -320,7 +322,7 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, Font::Pointer f
 		{
 			size_t lastCharPos = newText.size() - 1;
 			char lastChar = (lastCharPos == std::string::npos) ? 0 : newText.at(lastCharPos);
-			
+
 			if (isWhitespaceChar(lastChar) && !isNewLineChar(lastChar))
 			{
 				newText[lastCharPos] = '\n';
@@ -333,7 +335,7 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, Font::Pointer f
 				else
 					newText.append("\n" + word);
 			}
-			
+
 			if (isNewLineChar(nextCharStr[0]))
 			{
 				latestLine = emptyString;
@@ -346,7 +348,7 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, Font::Pointer f
 			}
 		}
 	}
-	
+
 	return newText;
 }
 

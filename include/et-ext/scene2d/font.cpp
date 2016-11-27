@@ -14,8 +14,10 @@
 #include <et/imaging/imagewriter.h>
 #include <et-ext/scene2d/font.h>
 
-namespace et {
-namespace s2d {
+namespace et
+{
+namespace s2d
+{
 
 size_t textLength(const wchar_t* text);
 std::wstring subString(const wchar_t* begin, const wchar_t* end);
@@ -81,10 +83,10 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	fOut << json::serialize(values, json::SerializationFlag_ReadableFormat);
 	fOut.flush();
 	fOut.close();
-	
+
 	auto fbo = rc->framebufferFactory().createFramebuffer(_generator->texture()->size(),
 		"rgba-buffer", TextureFormat::RGBA, TextureFormat::RGBA, DataFormat::UnsignedChar, TextureFormat::Invalid);
-	
+
 	BinaryDataStorage imageData;
 	auto blendState = rc->renderState().blendState();
 	auto currentBuffer = rc->renderState().boundFramebuffer();
@@ -96,7 +98,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	}
 	rc->renderState().bindFramebuffer(currentBuffer);
 	rc->renderState().setBlendState(blendState);
-	
+
 	auto ptr = imageData.begin();
 	auto off = imageData.begin();
 	auto end = imageData.end();
@@ -105,15 +107,15 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 		*ptr++ = *off;
 		off += 4;
 	}
-	
+
 	setCompressionLevelForImageFormat(ImageFormat_PNG, 1.0f / 9.0f);
-	
+
 	writeImageToFile(getFilePath(fileName) + textureFile, imageData, _generator->texture()->size(),
 		1, 8, ImageFormat_PNG, true);
 	*/
 }
 
-bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, ObjectsCache& cache, 
+bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, ObjectsCache& cache,
 	const std::string& baseFileName)
 {
 	/*
@@ -127,7 +129,7 @@ bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, Objec
 	Texture::Pointer tex = rc->textureFactory().loadTexture(actualName, cache);
 	if (tex.invalid())
 	{
-		log::error("Unable to load texture for font %s. Missing file: %s", 
+		log::error("Unable to load texture for font %s. Missing file: %s",
 			baseFileName.c_str(), textureFile.c_str());
 		return false;
 	}
@@ -163,9 +165,9 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 		if (vc == VariantClass::Dictionary)
 			return loadFromDictionary(rc, info, cache, resolvedFileName);
 	}
-	
+
 	InputStream fontFile(resolvedFileName, StreamMode_Binary);
-	
+
 	if (fontFile.invalid())
 		return false;
 
@@ -173,10 +175,10 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 
 	uint32_t version = deserializeUInt32(fontFile.stream());
 	ET_ASSERT(version >= FONT_VERSION_2);
-	
+
 	deserializeString(fontFile.stream());
 	deserializeFloat(fontFile.stream());
-	
+
 	std::string textureFile = deserializeString(fontFile.stream());
 	deserializeString(fontFile.stream()); // read layout file name, deprecated and not used anymore
 	std::string textureFileName = fontFileDir + textureFile;
@@ -188,9 +190,9 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 		log::error("Unable to load texture for font %s. Missing file: %s", fileName.c_str(), textureFile.c_str());
 		return false;
 	}
-	
+
 	_generator->setTexture(tex);
-	
+
 	uint32_t charCount = deserializeUInt32(fontFile.stream());
 	if (version == FONT_VERSION_2)
 	{
@@ -207,7 +209,7 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 			_generator->pushCharacter(desc);
 		}
 	}
-	
+
 	return true;
 }
 
@@ -219,22 +221,22 @@ vec2 Font::measureStringSize(const CharDescriptorList& s)
 	for (const auto& desc : s)
 	{
 		lineSize.y = std::max(lineSize.y, desc.originalSize.y);
-		
+
 		if ((desc.value == ET_RETURN) || (desc.value == ET_NEWLINE))
 		{
 			sz.x = std::max(sz.x, lineSize.x);
 			sz.y += lineSize.y;
 			lineSize = vec2(0.0f);
 		}
-		else 
+		else
 		{
 			lineSize.x += desc.originalSize.x;
 		}
 	}
-	
+
 	sz.x = std::max(lineSize.x, sz.x);
 	sz.y += lineSize.y;
-	
+
 	return sz;
 }
 
@@ -257,25 +259,25 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 {
 	if (s.empty())
 		return CharDescriptorList();
-	
+
 	float globalScale = size / CharacterGenerator::baseFontSize;
-	
+
 	CharDescriptorList result(s.size());
-	
+
 	static const wchar_t* boldTagStart = L"<b>";
 	static const wchar_t* boldTagEnd = L"</b>";
-	
+
 	static const wchar_t* colorTagStart = L"<color=";
 	static const wchar_t* colorTagEnd = L"</color>";
-	
+
 	static const wchar_t* scaleTagStart = L"<scale=";
 	static const wchar_t* scaleTagEnd = L"</scale>";
-	
+
 	static const wchar_t* offsetTagStart = L"<offset=";
 	static const wchar_t* offsetTagEnd = L"</offset>";
-	
+
 	size_t resultSize = 0;
-	
+
 	size_t boldTags = 0;
 	std::stack<vec4> colorsStack;
 	std::stack<float> scaleStack;
@@ -283,7 +285,7 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 	colorsStack.push(vec4(1.0f));
 	scaleStack.push(1.0f);
 	offsetStack.push(0.0f);
-	
+
 	auto* b = s.data();
 	auto* e = b + s.size();
 	while (b < e)
@@ -354,24 +356,24 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 		else
 		{
 			CharDescriptor cd = (boldTags > 0) ? _generator->boldCharDescription(*b) : _generator->charDescription(*b);
-			
+
 			float localScale = scaleStack.top();
 			float localOffset = offsetStack.top();
 			float finalScale = globalScale * localScale;
 			float smoothScale = 0.03f / std::pow(finalScale, 2.0f / 2.5f);
-			
+
 			cd.contentRect *= finalScale;
 			cd.originalSize *= finalScale;
 			cd.color = colorsStack.top();
 			cd.parameters = vec4(0.5f, smoothing * smoothScale, 0.0f, 0.0f);
-			
+
 			cd.contentRect.top += localOffset;
-			
+
 			result[resultSize++] = cd;
 			++b;
 		}
 	}
-	
+
 	result.shrink_to_fit();
 	return result;
 }
@@ -386,14 +388,16 @@ bool textBeginsFrom(const wchar_t* text, const wchar_t* entry)
 		if (*entry != *text)
 			return false;
 		++text;
-	} while (*(++entry));
+	}
+	while (*(++entry));
 	return true;
 }
 
 const wchar_t* findClosingBracket(const wchar_t* text)
 {
 	static const wchar_t closingBracket = L'>';
-	do { if (*text == closingBracket) break; } while (*(++text));
+	do { if (*text == closingBracket) break; }
+	while (*(++text));
 	return text;
 }
 
@@ -416,7 +420,7 @@ std::wstring subString(const wchar_t* begin, const wchar_t* end)
 vec4 colorTagToColor(const std::wstring& colorTag)
 {
 	vec4 result(0.0f, 0.0f, 0.0f, 1.0f);
-	
+
 	std::wstring hex;
 	for (auto i = colorTag.begin(), e = colorTag.end(); i != e; ++i)
 	{
@@ -424,13 +428,13 @@ vec4 colorTagToColor(const std::wstring& colorTag)
 		if (((l >= L'0') && (l <= L'9')) || ((l >= L'a') && (l <= L'f')))
 			hex.push_back(*i);
 	};
-	
+
 	int value = 0;
 	uint32_t pos = 0;
 	for (auto i = hex.rbegin(), e = hex.rend(); (i != e) && (pos <= 8); ++i, ++pos)
 	{
 		value += hexCharacterToInt(*i) * ((pos % 2 == 0) ? 1 : 16);
-		
+
 		if ((pos % 2) == 1)
 		{
 			result[pos / 2] = static_cast<float>(value) / 255.0f;

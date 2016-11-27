@@ -6,13 +6,12 @@
 //  Copyright (c) 2015 Cheetek. All rights reserved.
 //
 
-#include <et/opengl/opengl.h>
 #include <et/app/application.h>
 #include <et/rendering/rendercontext.h>
 #include "DemoSceneRenderer.h"
 
-using namespace et;
-using namespace demo;
+namespace et {
+namespace demo {
 
 #define ENABLE_DEBUG_RENDERING		0
 #define NUM_SAMPLES					64
@@ -30,21 +29,22 @@ enum
 	occlusionTextureUnit = 5,
 };
 
-void SceneRenderer::init(et::RenderContext* rc)
+void SceneRenderer::init(RenderContext* rc)
 {
 	_rc = rc;
 
-	auto bufferSize = _rc->sizei();
+	vec2i bufferSize = _rc->size();
 
 	vec2i downsampledBufferSize
 	(
-		(bufferSize.x + INTERLEAVE_X - 1) / INTERLEAVE_X, 
+		(bufferSize.x + INTERLEAVE_X - 1) / INTERLEAVE_X,
 		(bufferSize.y + INTERLEAVE_Y - 1) / INTERLEAVE_Y
 	);
-	
+
 	log::info("Context size: %dx%d, downsampled size: %dx%d", bufferSize.x, bufferSize.y,
 		downsampledBufferSize.x, downsampledBufferSize.y);
-	
+
+	/*/ TODO : create shit
 	_geometryBuffer = rc->framebufferFactory().createFramebuffer(bufferSize, TextureTarget::Texture_Rectangle, "geometry-buffer");
 	_geometryBuffer->renderTarget(0)->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
 
@@ -53,33 +53,33 @@ void SceneRenderer::init(et::RenderContext* rc)
 
 	_geometryBuffer->depthBuffer()->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
 
-	_interleavedFramebuffer = rc->framebufferFactory().createFramebuffer(downsampledBufferSize, 
-		TextureTarget::Texture_2D_Array, "interleaved-fbo", TextureFormat::RGBA32F, TextureFormat::RGBA, 
-		DataType::Float, TextureFormat::Invalid, TextureFormat::Invalid, DataType::Char, TOTAL_INTERLEAVE_FRAMES);
+	_interleavedFramebuffer = rc->framebufferFactory().createFramebuffer(downsampledBufferSize,
+		TextureTarget::Texture_2D_Array, "interleaved-fbo", TextureFormat::RGBA32F, TextureFormat::RGBA8,
+		DataType::Float, TextureFormat::Invalid, TextureFormat::Invalid, DataFormat::Char, TOTAL_INTERLEAVE_FRAMES);
 	_interleavedFramebuffer->renderTarget()->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
-	
-	_aoFramebuffer = rc->framebufferFactory().createFramebuffer(downsampledBufferSize, TextureTarget::Texture_2D_Array, 
-		"ao-buffer", TextureFormat::RGBA, TextureFormat::RGBA, DataType::UnsignedChar, 
-		TextureFormat::Invalid, TextureFormat::Invalid, DataType::Char, TOTAL_INTERLEAVE_FRAMES);
+
+	_aoFramebuffer = rc->framebufferFactory().createFramebuffer(downsampledBufferSize, TextureTarget::Texture_2D_Array,
+		"ao-buffer", TextureFormat::RGBA8, TextureFormat::RGBA8, DataFormat::UnsignedChar,
+		TextureFormat::Invalid, TextureFormat::Invalid, DataFormat::Char, TOTAL_INTERLEAVE_FRAMES);
 	_aoFramebuffer->renderTarget(0)->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
 	_aoFramebuffer->addSameRendertarget();
 	_aoFramebuffer->renderTarget(1)->setFiltration(rc, TextureFiltration::Nearest, TextureFiltration::Nearest);
 
-	_finalFramebuffer = rc->framebufferFactory().createFramebuffer(bufferSize, TextureTarget::Texture_Rectangle, 
-		"final-buffer",  TextureFormat::RGBA, TextureFormat::RGBA, DataType::UnsignedChar, TextureFormat::Invalid);
+	_finalFramebuffer = rc->framebufferFactory().createFramebuffer(bufferSize, TextureTarget::Texture_Rectangle,
+		"final-buffer", TextureFormat::RGBA8, TextureFormat::RGBA8, DataFormat::UnsignedChar, TextureFormat::Invalid);
 	_finalFramebuffer->addSameRendertarget();
 
-	_defaultTexture = _rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
-		vec2i(1), TextureFormat::RGBA, DataType::UnsignedChar, BinaryDataStorage(4, 255), "white-texture");
-	
+	_defaultTexture = _rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA8,
+		vec2i(1), TextureFormat::RGBA8, DataFormat::UnsignedChar, BinaryDataStorage(4, 255), "white-texture");
+
 	_noiseTexture = _rc->textureFactory().genNoiseTexture(vec2i(4), false, "noise-texture");
-	
+
 	BinaryDataStorage normalData(4, 128);
 	normalData[2] = 255;
-	
-	_defaultNormalTexture = _rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA,
-		vec2i(1), TextureFormat::RGBA, DataType::UnsignedChar, normalData, "normal-texture");
-	
+
+	_defaultNormalTexture = _rc->textureFactory().genTexture(TextureTarget::Texture_2D, TextureFormat::RGBA8,
+		vec2i(1), TextureFormat::RGBA8, DataFormat::UnsignedChar, normalData, "normal-texture");
+
 	ObjectsCache localCache;
 	programs.prepass = _rc->programFactory().loadProgram("data/shaders/prepass.program", localCache);
 	programs.prepass->setUniform("texture_mask", transparencyTextureUnit);
@@ -106,7 +106,7 @@ void SceneRenderer::init(et::RenderContext* rc)
 	programs.ambientOcclusionBlur->setUniform("texture_input", 0);
 	programs.ambientOcclusionBlur->setUniform("texture_normals", 1);
 	programs.ambientOcclusionBlur->setUniform("texture_depth", 2);
-	
+
 	programs.final = _rc->programFactory().loadProgram("data/shaders/final.program", localCache);
 	programs.final->setUniform("texture_diffuse", diffuseTextureUnit);
 	programs.final->setUniform("texture_normal", normalTextureUnit);
@@ -125,6 +125,8 @@ void SceneRenderer::init(et::RenderContext* rc)
 	programs.deinterleave->setUniform("texture_depth", depthTextureUnit);
 	programs.deinterleave->setUniform("texture_normal", normalTextureUnit);
 
+	// */
+
 	for (size_t i = 0; i < TOTAL_INTERLEAVE_FRAMES; ++i)
 	{
 		_jitterSamples.emplace_back();
@@ -141,40 +143,29 @@ void SceneRenderer::init(et::RenderContext* rc)
 	}
 }
 
-void SceneRenderer::setScene(et::s3d::Scene::Pointer aScene)
+void SceneRenderer::setScene(s3d::Scene::Pointer aScene)
 {
-	_allObjects.clear();
-	
 	_scene = aScene;
-	
-	auto meshes = _scene->childrenOfType(s3d::ElementType::SupportMesh);
-	for (auto e : meshes)
+	_allObjects.clear();
+
+	s3d::BaseElement::List meshes = _scene->childrenOfType(s3d::ElementType::Mesh);
+	for (s3d::Mesh::Pointer e : meshes)
 		_allObjects.push_back(e);
-	
-	for (s3d::SupportMesh::Pointer& e : _allObjects)
-	{
-		auto mat = e->material();
-		for (uint32_t i = MaterialParameter_AmbientMap; i < MaterialParameter_AmbientFactor; ++i)
-		{
-			Texture::Pointer tex = mat->getTexture(i);
-			if (tex.valid())
-				tex->setAnisotropyLevel(_rc, RenderingCapabilities::instance().maxAnisotropyLevel());
-		}
-	}
 	
 	log::info("Scene set. %llu objects to render", static_cast<uint64_t>(_allObjects.size()));
 }
 
-void SceneRenderer::renderToGeometryBuffer(const et::Camera& cam, const AOParameters& params)
+void SceneRenderer::renderToGeometryBuffer(const Camera& cam, const AOParameters& params)
 {
+	/*/ TODO : render
 	auto& rs = _rc->renderState();
 	auto rn = _rc->renderer();
-	
+
 	rs.setDepthMask(true);
 	rs.setDepthTest(true);
-	
+
 	rs.setSampleAlphaToCoverage(true);
-		
+
 	rs.bindFramebuffer(_geometryBuffer);
 	rn->clear(true, true);
 
@@ -188,36 +179,38 @@ void SceneRenderer::renderToGeometryBuffer(const et::Camera& cam, const AOParame
 		if (cam.frustum().containsAABB(e->boundingBox()))
 		{
 			const auto& mat = e->material();
-			
+
 			programs.prepass->setTransformMatrix(e->finalTransform());
 			programs.prepass->setUniform("diffuseColor", mat->getVector(MaterialParameter_DiffuseColor));
-			
+
 			rs.bindVertexArray(e->vertexArrayObject());
-			
+
 			if (params.showDiffuse && mat->hasTexture(MaterialParameter_DiffuseMap))
 				rs.bindTexture(diffuseTextureUnit, mat->getTexture(MaterialParameter_DiffuseMap));
 			else
 				rs.bindTexture(diffuseTextureUnit, _defaultTexture);
-			
+
 			if (mat->hasTexture(MaterialParameter_NormalMap))
 				rs.bindTexture(normalTextureUnit, mat->getTexture(MaterialParameter_NormalMap));
 			else
 				rs.bindTexture(normalTextureUnit, _defaultNormalTexture);
-			
+
 			if (mat->hasTexture(MaterialParameter_TransparencyMap))
 				rs.bindTexture(transparencyTextureUnit, mat->getTexture(MaterialParameter_TransparencyMap));
 			else
 				rs.bindTexture(transparencyTextureUnit, _defaultTexture);
-			
+
 			rn->drawElements(e->indexBuffer(), e->startIndex(), e->numIndexes());
 		}
 	}
 
 	rs.setSampleAlphaToCoverage(false);
+	// */
 }
 
-void SceneRenderer::computeAmbientOcclusion(const et::Camera& cam, const AOParameters& params)
+void SceneRenderer::computeAmbientOcclusion(const Camera& cam, const AOParameters& params)
 {
+	/*/ TODO : render
 	auto& rs = _rc->renderState();
 	auto rn = _rc->renderer();
 
@@ -239,14 +232,16 @@ void SceneRenderer::computeAmbientOcclusion(const et::Camera& cam, const AOParam
 		programs.ambientOcclusionFixed->setUniform<vec3>("randomSamples[0]", _jitterSamples[i].data(), _jitterSamples[i].size());
 		rn->fullscreenPass();
 	}
+	// */
 }
 
 void SceneRenderer::handlePressedKey(size_t key)
 {
 }
 
-void SceneRenderer::renderToInterleavedBuffer(const et::Camera& cam)
+void SceneRenderer::renderToInterleavedBuffer(const Camera& cam)
 {
+	/*/ TODO : render
 	auto& rs = _rc->renderState();
 	auto rn = _rc->renderer();
 
@@ -275,11 +270,13 @@ void SceneRenderer::renderToInterleavedBuffer(const et::Camera& cam)
 
 	programs.deinterleave->setUniform("start_position", vec2i(0, 2));
 	rn->fullscreenPass();
+	// */
 }
 
 void SceneRenderer::interleaveAmbientOcclusion()
 {
-	auto& rs = _rc->renderState();
+	/*/ TODO : render
+	auto& rs = _rc->renderState()
 	auto rn = _rc->renderer();
 
 	rs.bindFramebuffer(_finalFramebuffer);
@@ -287,10 +284,12 @@ void SceneRenderer::interleaveAmbientOcclusion()
 	rs.bindProgram(programs.interleave);
 	rs.bindTexture(0, _aoFramebuffer->renderTarget(0));
 	rn->fullscreenPass();
+	// */
 }
 
-void SceneRenderer::blurAmbientOcclusion(const et::Camera& cam, const AOParameters& params)
+void SceneRenderer::blurAmbientOcclusion(const Camera& cam, const AOParameters& params)
 {
+	/*/ TODO : render
 	auto& rs = _rc->renderState();
 	auto rn = _rc->renderer();
 
@@ -312,44 +311,42 @@ void SceneRenderer::blurAmbientOcclusion(const et::Camera& cam, const AOParamete
 	programs.ambientOcclusionBlur->setUniform("direction", vec2(0.0f, 1.0f));
 	rs.bindTexture(0, _finalFramebuffer->renderTarget(1));
 	rn->fullscreenPass();
+	// */
 }
 
-void SceneRenderer::render(const et::Camera& cam, const AOParameters& params, bool obs)
+void SceneRenderer::render(const Camera& cam, const AOParameters& params, bool obs)
 {
+	/*/ TODO : render
 	auto& rs = _rc->renderState();
 	auto rn = _rc->renderer();
-	
+
 	rs.setBlend(false);
 
 	renderToGeometryBuffer(cam, params);
-
 	renderToInterleavedBuffer(cam);
-
 	computeAmbientOcclusion(cam, params);
-
 	interleaveAmbientOcclusion();
 
 	if (params.performBlur)
 		blurAmbientOcclusion(cam, params);
-	
+
 	rs.bindDefaultFramebuffer();
 	rn->renderFullscreenTexture(_finalFramebuffer->renderTarget());
 
-	/*
 	// */
 
 	return;
 
 	/*
 	rs.bindProgram(programs.final);
-	
+
 	programs.final->setCameraProperties(cam);
 	programs.final->setUniform("aoPower", params.aoPower);
 	programs.final->setUniform("texel", _geometryBuffer->renderTarget(0)->texel());
 	programs.final->setUniform("mProjection", cam.projectionMatrix());
 	programs.final->setUniform("clipPlanes", vec2(cam.zNear(), cam.zFar()));
 	programs.final->setUniform("texCoordScales", vec2(-cam.inverseProjectionMatrix()[0][0], -cam.inverseProjectionMatrix()[1][1]));
-	
+
 	rs.bindTexture(diffuseTextureUnit, _geometryBuffer->renderTarget(0));
 	rs.bindTexture(normalTextureUnit, _geometryBuffer->renderTarget(1));
 	rs.bindTexture(depthTextureUnit, _geometryBuffer->depthBuffer());
@@ -358,3 +355,5 @@ void SceneRenderer::render(const et::Camera& cam, const AOParameters& params, bo
 	rn->fullscreenPass();
 	// */
 }
+
+}}

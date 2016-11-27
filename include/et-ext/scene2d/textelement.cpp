@@ -8,8 +8,10 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/textelement.h>
 
-namespace et {
-namespace s2d {
+namespace et
+{
+namespace s2d
+{
 
 const float maxShadowDistance = 1.0f;
 
@@ -21,7 +23,7 @@ TextElement::TextElement(Element2d* parent, const Font::Pointer& f, float fsz, c
 
 	_fontSmoothing.setValue(DefaultFontSmoothing);
 	_fontSmoothing.updated.connect(this, &TextElement::invalidateText);
-	
+
 	setFlag(s2d::Flag_DynamicRendering);
 }
 
@@ -52,7 +54,7 @@ bool TextElement::processMessage(const Message& msg)
 		setFontSmoothing(msg.paramf);
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -61,23 +63,23 @@ void TextElement::loadProperties(const Dictionary& d)
 	if (d.hasKey("font_size"))
 	{
 		auto obj = d.objectForKey("font_size");
-		
+
 		if (obj->variantClass() == VariantClass::Float)
 			setFontSize(FloatValue(obj)->content);
 		else if (obj->variantClass() == VariantClass::Integer)
 			setFontSize(static_cast<float>(IntegerValue(obj)->content));
 	}
-	
+
 	if (d.hasKey("font_smoothing"))
 	{
 		auto obj = d.objectForKey("font_smoothing");
-		
+
 		if (obj->variantClass() == VariantClass::Float)
 			setFontSmoothing(FloatValue(obj)->content);
 		else if (obj->variantClass() == VariantClass::Integer)
 			setFontSmoothing(static_cast<float>(IntegerValue(obj)->content));
 	}
-	
+
 	if (d.hasKey("font_style"))
 	{
 		auto obj = d.objectForKey("font_style");

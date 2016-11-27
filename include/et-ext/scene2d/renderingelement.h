@@ -22,7 +22,7 @@ struct RenderChunk
 	recti clip;
 	MaterialInstance::Pointer material;
 	Element2d* object = nullptr;
-	
+
 	RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip,
 		const MaterialInstance::Pointer& aMaterial, Element2d* aObject, PrimitiveType pt);
 };
@@ -31,20 +31,20 @@ class RenderingElement : public Shared
 {
 public:
 	ET_DECLARE_POINTER(RenderingElement);
-	
+
 	enum : uint32_t
 	{
 		MaxCapacity = 65536,
 	};
-	
+
 public:
 	RenderingElement(RenderContext* rc, uint32_t capacity);
 	~RenderingElement();
-	
+
 	void startAllocatingVertices();
 	SceneVertex* allocateVertices(uint32_t);
 	void commitAllocatedVertices();
-	
+
 	void clear();
 
 	const VertexStream::Pointer& vertexStream();
@@ -52,13 +52,13 @@ public:
 private:
 	friend class SceneRenderer;
 	enum : uint32_t { VertexBuffersCount = 3 };
-	
+
 	union
 	{
 		void* vertexData = nullptr;
 		SceneVertex* mappedVertices;
 	};
-	
+
 	std::vector<RenderChunk, SharedBlockAllocatorSTDProxy<RenderChunk>> chunks;
 	VertexStream::Pointer vertices[VertexBuffersCount];
 	uint32_t allocatedVertices = 0;

@@ -6,27 +6,31 @@
 //  Copyright (c) 2015 Cheetek. All rights reserved.
 //
 
-#include <et/models/objloader.h>
-#include <et/app/application.h>
 #include "DemoSceneLoader.h"
 
-using namespace et;
-using namespace demo;
+#include <et/rendering/rendercontext.h>
+#include <et/scene3d/objloader.h>
+#include <et/app/application.h>
 
-void SceneLoader::init(et::RenderContext* rc)
+namespace et
+{
+namespace demo
+{
+
+void SceneLoader::init(RenderContext* rc)
 {
 	_rc = rc;
 }
 
-et::s3d::Scene::Pointer SceneLoader::loadFromFile(const std::string& fileName)
+s3d::Scene::Pointer SceneLoader::loadFromFile(const std::string& fileName)
 {
 	ET_ASSERT(_rc);
-	
-	et::s3d::Scene::Pointer result = et::s3d::Scene::Pointer::create();
-	
+
+	s3d::Scene::Pointer result = s3d::Scene::Pointer::create();
+
 	auto ext = getFileExt(fileName);
 	lowercase(ext);
-	
+
 	if (ext == "obj")
 	{
 		loadObjFile(fileName, result);
@@ -43,15 +47,17 @@ et::s3d::Scene::Pointer SceneLoader::loadFromFile(const std::string& fileName)
 	return result;
 }
 
-void SceneLoader::loadObjFile(const std::string& fileName, et::s3d::Scene::Pointer scene)
+void SceneLoader::loadObjFile(const std::string& fileName, s3d::Scene::Pointer scene)
 {
-	OBJLoader loader(fileName, OBJLoader::Option_SupportMeshes);
-	
+	OBJLoader loader(fileName, OBJLoader::Option_CalculateTransforms);
+
 	ObjectsCache localCache;
-	auto container = loader.load(_rc, scene->storage(), localCache);
+	auto container = loader.load(_rc->renderer(), scene->storage(), localCache);
 	auto allObjects = container->children();
-	
+
 	for (auto c : allObjects)
-		c->setParent(scene.ptr());
+		c->setParent(scene.pointer());
 }
 
+}
+}

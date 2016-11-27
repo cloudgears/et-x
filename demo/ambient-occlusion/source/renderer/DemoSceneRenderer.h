@@ -10,62 +10,67 @@
 
 #include <et/scene3d/scene3d.h>
 
+namespace et
+{
 namespace demo
 {
-	struct AOParameters
+struct AOParameters
+{
+	int32_t numSamples = 32;
+	float aoPower = 6.0f;
+	float depthDifference = 5.0f;
+	vec2 sampleScale = vec2(0.001f, 1.0f);
+
+	bool showDiffuse = true;
+	bool performBlur = false;
+};
+
+class SceneRenderer
+{
+public:
+	void init(RenderContext*);
+	void render(const Camera&, const AOParameters&, bool);
+
+	void setScene(s3d::Scene::Pointer);
+
+	void handlePressedKey(size_t);
+
+private:
+	void renderToInterleavedBuffer(const Camera&);
+	void renderToGeometryBuffer(const Camera&, const AOParameters&);
+	void computeAmbientOcclusion(const Camera&, const AOParameters&);
+	void interleaveAmbientOcclusion();
+	void blurAmbientOcclusion(const Camera&, const AOParameters&);
+
+private:
+	struct
 	{
-		int numSamples = 32;
-		float aoPower = 6.0f;
-		float depthDifference = 5.0f;
-		et::vec2 sampleScale = et::vec2(0.001f, 1.0f);
+		Program::Pointer prepass;
+		Program::Pointer ambientOcclusion;
+		Program::Pointer ambientOcclusionFixed;
+		Program::Pointer ambientOcclusionBlur;
+		Program::Pointer final;
+		Program::Pointer interleave;
+		Program::Pointer deinterleave;
+	} programs;
 
-		bool showDiffuse = true;
-		bool performBlur = false;
-	};
+private:
+	RenderContext* _rc = nullptr;
+	/*/
+	Framebuffer::Pointer _geometryBuffer;
+	Framebuffer::Pointer _aoFramebuffer;
+	Framebuffer::Pointer _interleavedFramebuffer;
+	Framebuffer::Pointer _finalFramebuffer;
+	// */
 
-	class SceneRenderer
-	{
-	public:
-		void init(et::RenderContext*);
-		void render(const et::Camera&, const AOParameters&, bool);
-		
-		void setScene(et::s3d::Scene::Pointer);
-		
-		void handlePressedKey(size_t);
-		
-	private:
-		void renderToInterleavedBuffer(const et::Camera&);
-		void renderToGeometryBuffer(const et::Camera&, const AOParameters&);
-		void computeAmbientOcclusion(const et::Camera&, const AOParameters&);
-		void interleaveAmbientOcclusion();
-		void blurAmbientOcclusion(const et::Camera&, const AOParameters&);
-		
-	private:
-		struct
-		{
-			et::Program::Pointer prepass;
-			et::Program::Pointer ambientOcclusion;
-			et::Program::Pointer ambientOcclusionFixed;
-			et::Program::Pointer ambientOcclusionBlur;
-			et::Program::Pointer final;
-			et::Program::Pointer interleave;
-			et::Program::Pointer deinterleave;
-		} programs;
-		
-	private:
-		et::RenderContext* _rc = nullptr;
-		et::Framebuffer::Pointer _geometryBuffer;
-		et::Framebuffer::Pointer _aoFramebuffer;
-		et::Framebuffer::Pointer _interleavedFramebuffer;
-		et::Framebuffer::Pointer _finalFramebuffer;
+	s3d::Scene::Pointer _scene;
+	std::vector<s3d::Mesh::Pointer> _allObjects;
 
-		et::s3d::Scene::Pointer _scene;
-		std::vector<et::s3d::SupportMesh::Pointer> _allObjects;
-		
-		et::Texture::Pointer _noiseTexture;
-		et::Texture::Pointer _defaultTexture;
-		et::Texture::Pointer _defaultNormalTexture;
+	Texture::Pointer _noiseTexture;
+	Texture::Pointer _defaultTexture;
+	Texture::Pointer _defaultNormalTexture;
 
-		std::vector<std::vector<et::vec3>> _jitterSamples;
-	};
+	std::vector<std::vector<vec3>> _jitterSamples;
+};
+}
 }

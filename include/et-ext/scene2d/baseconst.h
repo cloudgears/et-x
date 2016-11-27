@@ -61,12 +61,12 @@ enum AnimatedPropery : uint32_t
 	AnimatedProperty_max
 };
 
-enum Alignment : uint32_t
+enum class Alignment : uint32_t
 {
-	Alignment_Near,
-	Alignment_Center,
-	Alignment_Far,
-	Alignment_max,
+	Near,
+	Center,
+	Far,
+	max,
 };
 
 enum LayoutMode : uint32_t
@@ -80,7 +80,7 @@ enum LayoutMode : uint32_t
 enum LayoutMask : uint32_t
 {
 	LayoutMask_None = 0x00,
-	
+
 	LayoutMask_Position = 0x01,
 	LayoutMask_Size = 0x02,
 	LayoutMask_Pivot = 0x04,
@@ -89,10 +89,10 @@ enum LayoutMask : uint32_t
 	LayoutMask_Children = 0x20,
 
 	LayoutMask_NoSize = LayoutMask_Position | LayoutMask_Pivot |
-		LayoutMask_Angle | LayoutMask_Scale | LayoutMask_Children,
-	
+	LayoutMask_Angle | LayoutMask_Scale | LayoutMask_Children,
+
 	LayoutMask_All = LayoutMask_Position | LayoutMask_Size | LayoutMask_Pivot |
-		LayoutMask_Angle | LayoutMask_Scale | LayoutMask_Children,
+	LayoutMask_Angle | LayoutMask_Scale | LayoutMask_Children,
 };
 
 enum Location : uint32_t
@@ -100,11 +100,11 @@ enum Location : uint32_t
 	Location_TopLeft,
 	Location_TopCenter,
 	Location_TopRight,
-	
+
 	Location_CenterLeft,
 	Location_Center,
 	Location_CenterRight,
-	
+
 	Location_BottomLeft,
 	Location_BottomCenter,
 	Location_BottomRight,

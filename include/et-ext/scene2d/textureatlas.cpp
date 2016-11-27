@@ -12,14 +12,16 @@
 #include <et/core/json.h>
 #include <et-ext/scene2d/textureatlas.h>
 
-namespace et {
-namespace s2d {
+namespace et
+{
+namespace s2d
+{
 
 static const Image _emptyImage;
 
 namespace helper
 {
-    rectf parseRectString(std::string& s);
+rectf parseRectString(std::string& s);
 }
 
 TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, ObjectsCache& cache) :
@@ -36,12 +38,12 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 		log::error("Unable to load texture atlas from %s", filename.c_str());
 		return;
 	}
-	
+
 	application().pushSearchPath(getFilePath(resolvedFileName));
 
 	VariantClass vc = VariantClass::Invalid;
 	Dictionary atlas = json::deserialize(loadTextFile(resolvedFileName), vc, false);
-	
+
 	if (vc == VariantClass::Dictionary)
 	{
 		ArrayValue textures = atlas.arrayForKey("textures");
@@ -56,7 +58,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 				// _textures[textureId]->setWrap(rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
 			}
 		}
-		
+
 		ArrayValue images = atlas.arrayForKey("images");
 		for (const Dictionary& img : images->content)
 		{
@@ -77,20 +79,20 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 			{
 				std::string token;
 				std::string line;
-				
+
 				descFile.stream() >> token;
 				std::getline(descFile.stream(), line);
-				
+
 				if (token == "texture:")
 				{
 					std::string textureId = trim(line);
 					std::string textureName = application().resolveFileName(textureId);
-					
+
 					if (!fileExists(textureName))
 						textureName = application().resolveFileName(textureId);
-					
+
 					_textures[textureId] = rc->renderer()->loadTexture(textureName, cache);
-					
+
 					if (_textures[textureId].valid())
 					{
 						// TODO : use sampler!!!
@@ -105,12 +107,12 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 						line = line.substr(1, line.length() - 2);
 						trim(line);
 						std::istringstream parser(line);
-						
+
 						std::string imageName;
 						std::string textureName;
 						rectf sourceRect;
 						rectf contentOffset;
-						
+
 						while (!parser.eof())
 						{
 							std::string aToken;
@@ -135,7 +137,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 							{
 								std::string sRect;
 								parser >> sRect;
-                                sourceRect = helper::parseRectString(sRect);
+								sourceRect = helper::parseRectString(sRect);
 							}
 							else if (aToken == "offset:")
 							{
@@ -148,12 +150,12 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 								log::warning("Unknown token at line %d : %s", lineNumber, aToken.c_str());
 							}
 						}
-						
+
 						ImageDescriptor desc(sourceRect.origin(), sourceRect.size());
-						
+
 						desc.contentOffset = ContentOffset(contentOffset[0], contentOffset[1],
-														   contentOffset[2], contentOffset[3]);
-						
+							contentOffset[2], contentOffset[3]);
+
 						_images[imageName] = Image(_textures[textureName], desc);
 					}
 					else
@@ -166,13 +168,13 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 					if (token.length() && line.length())
 						log::warning("Unknown token at line %d : %s", lineNumber, token.c_str());
 				}
-				
+
 				++lineNumber;
 			}
 		}
 	}
 	application().popSearchPaths();
-	
+
 	_loaded = true;
 }
 
@@ -184,23 +186,23 @@ bool TextureAtlas::hasImage(const std::string& key) const
 const s2d::Image& TextureAtlas::image(const std::string& key) const
 {
 	ET_ASSERT(key.length() > 0);
-	
+
 	if (_images.count(key) == 0)
 		return _emptyImage;
-	
+
 	return _images.at(key);
 }
 
 std::vector<Image> TextureAtlas::imagesForTexture(const Texture::Pointer& t) const
 {
 	std::vector<Image> result;
-	
+
 	for (auto& i : _images)
 	{
 		if (i.second.texture == t)
 			result.push_back(i.second);
 	}
-			
+
 	return result;
 }
 
@@ -223,7 +225,7 @@ const Texture::Pointer& TextureAtlas::firstTexture() const
 rectf helper::parseRectString(std::string& s)
 {
 	rectf result;
-	int values[4] = { };
+	int values[4] = {};
 	int vIndex = 0;
 
 	if (*s.begin() == '"')
@@ -244,7 +246,7 @@ rectf helper::parseRectString(std::string& s)
 		{
 			std::string value = s.substr(0, dpos);
 			values[vIndex++] = strToInt(value);
-			s.erase(0, dpos+1);
+			s.erase(0, dpos + 1);
 		}
 	}
 

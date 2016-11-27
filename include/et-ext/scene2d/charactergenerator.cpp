@@ -15,8 +15,10 @@
 #	include <et/imaging/imagewriter.h>
 #endif
 
-namespace et {
-namespace s2d {
+namespace et
+{
+namespace s2d
+{
 
 enum GridProperies : int
 {
@@ -47,7 +49,7 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 {
 	topLeftOffset = canvasSize - vec2i(1);
 	vec2i bottomRightOffset = vec2i(0);
-	
+
 	vec2i pixel;
 	for (pixel.y = 0; pixel.y < canvasSize.y - 1; ++pixel.y)
 	{
@@ -74,7 +76,7 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 
 	dataToSave.resize(sizeToSave.square());
 	dataToSave.fill(0);
-	
+
 	vec2i targetPixel(0, additional.y / 2);
 	for (int32_t py = topLeftOffset.y; py < bottomRightOffset.y; ++py, ++targetPixel.y)
 	{
@@ -86,7 +88,7 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 			dataToSave[i] = renderedCharacterData[j];
 		}
 	}
-	
+
 	return true;
 }
 
@@ -96,7 +98,7 @@ const CharDescriptor& CharacterGenerator::generateCharacter(wchar_t value, Chara
 	CharDescriptor& result = mapToInsert[value];
 	result.value = value;
 	result.flags = flags;
-	
+
 	vec2i charSize;
 	vec2i canvasSize;
 	vec2i topLeftOffset;
@@ -107,13 +109,13 @@ const CharDescriptor& CharacterGenerator::generateCharacter(wchar_t value, Chara
 
 		vec2i sizeToSave;
 		BinaryDataStorage dataToSave;
-		
+
 		if (performCropping(renderedCharacterData, canvasSize, dataToSave, sizeToSave, topLeftOffset))
 		{
-		#if (ET_SHOULD_SAVE_GENERATED_CHARS)
+#if (ET_SHOULD_SAVE_GENERATED_CHARS)
 			auto path = application().environment().applicationDocumentsFolder() + "char_" + intToStr(value) + ".png";
 			writeImageToFile(path, dataToSave, sizeToSave, 1, 8, et::ImageFormat::ImageFormat_PNG, true);
-		#endif
+#endif
 
 			vec2i downsampledSize = sizeToSave / 2;
 			auto downsampled = downsample(dataToSave, sizeToSave);
@@ -135,12 +137,12 @@ const CharDescriptor& CharacterGenerator::generateCharacter(wchar_t value, Chara
 					static_cast<char>(result.value), static_cast<wchar_t>(result.value));
 			}
 		}
-		
+
 		result.originalSize = vector2ToFloat(charSize);
 	}
-						   
+
 	characterGenerated.invoke(value);
-	
+
 	return result;
 }
 
@@ -158,10 +160,10 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
 {
 	CharDescriptorMap& mapToInsert = ((desc.flags & CharacterFlag_Bold) == CharacterFlag_Bold) ? _boldChars : _chars;
 	mapToInsert.insert(std::make_pair(desc.value, desc));
-	
+
 	vec2 size = _texture->sizeFloat() * desc.uvRect.size();
 	vec2 origin = _texture->sizeFloat() * vec2(desc.uvRect.origin().x, 1.0f - desc.uvRect.origin().y);
-	
+
 	_placer.addPlacedRect(recti(static_cast<int>(origin.x), static_cast<int>(origin.y),
 		static_cast<int>(size.x), static_cast<int>(size.y)));
 }
@@ -170,7 +172,7 @@ BinaryDataStorage CharacterGenerator::downsample(BinaryDataStorage& input, const
 {
 	vec2i downsampledSize = size / 2;
 	BinaryDataStorage result(downsampledSize.square(), 0);
-	
+
 	uint32_t k = 0;
 	for (int32_t y = 0; y < downsampledSize.y; ++y)
 	{
@@ -187,7 +189,7 @@ BinaryDataStorage CharacterGenerator::downsample(BinaryDataStorage& input, const
 			result[k++] = (input[in00] + input[in01] + input[in10] + input[in11]) / 4;
 		}
 	}
-	
+
 	return result;
 }
 
@@ -217,10 +219,10 @@ void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 		for (int32_t x = 1; x < g.w - 1; ++x)
 		{
 			vec2i p = sdf_get(g, x, y);
-			internal_sdf_compare(g, p, x, y, -1,  0);
-			internal_sdf_compare(g, p, x, y,  0, -1);
+			internal_sdf_compare(g, p, x, y, -1, 0);
+			internal_sdf_compare(g, p, x, y, 0, -1);
 			internal_sdf_compare(g, p, x, y, -1, -1);
-			internal_sdf_compare(g, p, x, y,  1, -1);
+			internal_sdf_compare(g, p, x, y, 1, -1);
 			sdf_put(g, x, y, p);
 		}
 		for (int32_t x = g.w - 2; x > 0; --x)
@@ -236,10 +238,10 @@ void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 		for (int32_t x = g.w - 2; x > 0; --x)
 		{
 			vec2i p = sdf_get(g, x, y);
-			internal_sdf_compare(g, p, x, y,  1,  0);
-			internal_sdf_compare(g, p, x, y,  0,  1);
-			internal_sdf_compare(g, p, x, y, -1,  1);
-			internal_sdf_compare(g, p, x, y,  1,  1);
+			internal_sdf_compare(g, p, x, y, 1, 0);
+			internal_sdf_compare(g, p, x, y, 0, 1);
+			internal_sdf_compare(g, p, x, y, -1, 1);
+			internal_sdf_compare(g, p, x, y, 1, 1);
 			sdf_put(g, x, y, p);
 		}
 		for (int32_t x = 1; x < g.w - 1; ++x)
@@ -257,7 +259,7 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 	uint32_t providedSize = static_cast<uint32_t>(sizeof(sdf::Grid::grid));
 	if (requiredSize > providedSize)
 	{
-		ET_FAIL_FMT("Insufficient storage for SDF generator. Required: %d (%d x %d), provided: %d", 
+		ET_FAIL_FMT("Insufficient storage for SDF generator. Required: %d (%d x %d), provided: %d",
 			requiredSize, w, h, providedSize);
 	}
 
@@ -290,10 +292,10 @@ void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, in
 			sdf_put(targetGrid, x, y, pointOutside);
 		}
 	}
-	
+
 	generateSignedDistanceFieldOnGrid(_grid0);
 	generateSignedDistanceFieldOnGrid(_grid1);
-	
+
 	for (int32_t y = 1; y < h - 1; ++y)
 	{
 		for (int32_t x = 1; x < w - 1; ++x)

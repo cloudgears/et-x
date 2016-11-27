@@ -11,46 +11,46 @@
 
 namespace et
 {
-	namespace s2d
+namespace s2d
+{
+class Line : public Element2d
+{
+public:
+	ET_DECLARE_POINTER(Line);
+
+	enum Type
 	{
-		class Line : public Element2d
-		{
-		public:
-			ET_DECLARE_POINTER(Line);
-			
-			enum Type
-			{
-				Type_Linear,
-				Type_QuadraticBezier
-			};
-			
-		public:
-			Line(const vec2&, const vec2&, Element2d*);
-			
-			void setType(Type);
-			void setControlPoint(size_t index, const vec2&);
-			void setWidth(float);
-			
-			void setGradientColors(const vec4&, const vec4&);
-			
-			void setShadowColor(const vec4&);
-			void setShadowOffset(const vec2&);
-			
-		private:
-			void addToRenderQueue(RenderContext*, SceneRenderer&);
-			void buildVertices(SceneRenderer&);
-			
-			void buildLine(const vec2&, const vec2&, const vec4&, const vec4&, const vec4&, const mat4&);
-			
-		private:
-			std::vector<vec2> _controlPoints;
-			SceneVertexList _vertices;
-			vec4 _startColor = vec4(1.0f);
-			vec4 _endColor = vec4(1.0f);
-			vec4 _shadowColor = vec4(0.0f);
-			vec2 _shadowOffset = vec2(0.0f);
-			float _width = 1.0f;
-			Type _type = Type_Linear;
-		};
-	}
+		Type_Linear,
+		Type_QuadraticBezier
+	};
+
+public:
+	Line(const vec2&, const vec2&, Element2d*);
+
+	void setType(Type);
+	void setControlPoint(size_t index, const vec2&);
+	void setWidth(float);
+
+	void setGradientColors(const vec4&, const vec4&);
+
+	void setShadowColor(const vec4&);
+	void setShadowOffset(const vec2&);
+
+private:
+	void addToRenderQueue(RenderContext*, SceneRenderer&);
+	void buildVertices(SceneRenderer&);
+
+	void buildLine(const vec2&, const vec2&, const vec4&, const vec4&, const vec4&, const mat4&);
+
+private:
+	std::vector<vec2> _controlPoints;
+	SceneVertexList _vertices;
+	vec4 _startColor = vec4(1.0f);
+	vec4 _endColor = vec4(1.0f);
+	vec4 _shadowColor = vec4(0.0f);
+	vec2 _shadowOffset = vec2(0.0f);
+	float _width = 1.0f;
+	Type _type = Type_Linear;
+};
+}
 }

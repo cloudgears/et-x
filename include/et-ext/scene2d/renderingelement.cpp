@@ -8,8 +8,10 @@
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/renderingelement.h>
 
-namespace et {
-namespace s2d {
+namespace et
+{
+namespace s2d
+{
 
 #define ET_RENDER_CHUNK_USE_MAP_BUFFER	1
 
@@ -29,22 +31,22 @@ RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity)
 {
 	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat::Format_16bit, capacity, PrimitiveType::Triangles);
 	indexArray->linearize(capacity);
-	
+
 	VertexDeclaration decl;
 	decl.push_back(VertexAttributeUsage::Position, DataType::Vec4);
 	decl.push_back(VertexAttributeUsage::Color, DataType::Vec4);
 	decl.push_back(VertexAttributeUsage::TexCoord0, DataType::Vec4);
 	dataSize = decl.sizeInBytes() * capacity;
-	
+
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)
 	vertexData = sharedBlockAllocator().alloc(dataSize);
 #endif
-	
+
 	Buffer::Pointer sharedIndexBuffer = rc->renderer()->createIndexBuffer("dynamic-buffer-ib", indexArray, Buffer::Location::Device);
-	VertexStorage::Pointer sharedVertexStorage = VertexStorage::Pointer::create(decl, capacity);	
+	VertexStorage::Pointer sharedVertexStorage = VertexStorage::Pointer::create(decl, capacity);
 	for (uint32_t i = 0; i < VertexBuffersCount; ++i)
 	{
-		char nameId[128] = { };
+		char nameId[128] = {};
 		sprintf(nameId, "dynamic-buffer-%u-ib", i);
 		Buffer::Pointer vb = rc->renderer()->createVertexBuffer(nameId, sharedVertexStorage, Buffer::Location::Host);
 
@@ -72,7 +74,7 @@ void RenderingElement::startAllocatingVertices()
 {
 	currentBufferIndex = (currentBufferIndex + 1) % VertexBuffersCount;
 	clear();
-	
+
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	vertexData = vertices[currentBufferIndex]->vertexBuffer()->map(0, dataSize);
 #endif

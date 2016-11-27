@@ -6,23 +6,22 @@
 //  Copyright (c) 2015 Cheetek. All rights reserved.
 //
 
-#include <et/input/input.h>
+#include <et/core/et.h>
+#include <et/core/hardware.h>
 #include <et/core/conversion.h>
+#include <et/core/json.h>
+#include <et/input/input.h>
 #include <et/rendering/rendercontext.h>
-#include <et/json/json.h>
 #include "MainController.h"
 
-using namespace et;
-using namespace demo;
-
-void MainController::setApplicationParameters(et::ApplicationParameters& params)
+namespace et
 {
-//	params.windowSize = WindowSize::FillWorkarea;
-}
-
-void MainController::setRenderContextParameters(et::RenderContextParameters& params)
+namespace demo
 {
-	vec2i contextSize(1024, 768);
+
+void MainController::setApplicationParameters(ApplicationParameters& params)
+{
+	vec2i contextSize = 4 * currentScreen().availableFrame.size() / 5;
 
 	auto optionsFileName = "data/options.json";
 	if (!fileExists(optionsFileName))
@@ -32,9 +31,9 @@ void MainController::setRenderContextParameters(et::RenderContextParameters& par
 
 	if (fileExists(optionsFileName))
 	{
-		ValueClass vc = ValueClass_Invalid;
+		VariantClass vc = VariantClass::Invalid;
 		auto obj = json::deserialize(loadTextFile(optionsFileName), vc);
-		if (vc == ValueClass_Dictionary)
+		if (vc == VariantClass::Dictionary)
 		{
 			Dictionary options = obj;
 			if (options.hasKey("context-size"))
@@ -44,13 +43,16 @@ void MainController::setRenderContextParameters(et::RenderContextParameters& par
 		}
 	}
 
-	params.contextSize = contextSize;
-	params.contextBaseSize = params.contextSize;
+	params.context.size = contextSize;
+}
+
+void MainController::setRenderContextParameters(RenderContextParameters& params)
+{
 	params.multisamplingQuality = MultisamplingQuality::None;
 	params.swapInterval = 0;
 }
 
-void MainController::applicationDidLoad(et::RenderContext* rc)
+void MainController::applicationDidLoad(RenderContext* rc)
 {
 #if (ET_PLATFORM_WIN)
 	application().pushRelativeSearchPath("..");
@@ -67,18 +69,18 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 	application().pushSearchPath("/Volumes/Development/SDK/Models/");
 #endif
 
+	/*
 	rc->renderState().setClearColor(vec4(0.25f, 0.0f));
-	
-	rc->renderingInfoUpdated.connect([this](const et::RenderingInfo& info)
-	{
+	rc->renderingInfoUpdated.connect([this](const RenderingInfo& info) {
 		log::info("Rendering stats: %lu fps, %lu polys, %lu draw calls", info.averageFramePerSecond,
 			info.averagePolygonsPerSecond, info.averageDIPPerSecond);
 	});
-	
+	*/
+
 	_loader.init(rc);
 	_renderer.init(rc);
 	_cameraController.init(rc);
-	
+
 	auto loadedScene = _loader.loadFromFile(application().resolveFileName("models/sibenik/sibenik-updated.obj"));
 	_renderer.setScene(loadedScene);
 
@@ -97,7 +99,7 @@ void MainController::connectInputEvents()
 		_cameraController.handlePressedKey(key);
 		_renderer.handlePressedKey(key);
 	});
-	
+
 	_gestures.drag.connect([this](const GesturesRecognizer::DragGesture& gesture)
 	{
 		if (!_uiCaptured)
@@ -133,20 +135,28 @@ void MainController::connectInputEvents()
 
 }
 
- void MainController::applicationWillResizeContext(const et::vec2i& sz)
+void MainController::applicationWillResizeContext(const vec2i& sz)
 {
 	_cameraController.adjustCameraToNextContextSize(vector2ToFloat(sz));
 	_ui->layout(vector2ToFloat(sz));
 }
 
-void MainController::render(et::RenderContext* rc)
+void MainController::render(RenderContext* rc)
 {
 	_renderer.render(_cameraController.camera(), _mainUI->aoParameters(), false);
 	_ui->render(rc);
 }
 
-et::IApplicationDelegate* et::Application::initApplicationDelegate()
-	{ return sharedObjectFactory().createObject<MainController>(); }
+ApplicationIdentifier MainController::applicationIdentifier() const
+{
+	return ApplicationIdentifier("com.cheetek.aodemo", "Cheetek", "Ambient Occlusion Demo");
+}
 
-et::ApplicationIdentifier MainController::applicationIdentifier() const
-	{ return ApplicationIdentifier("com.cheetek.aodemo", "Cheetek", "Ambient Occlusion Demo"); }
+}
+
+IApplicationDelegate* Application::initApplicationDelegate()
+{
+	return sharedObjectFactory().createObject<demo::MainController>();
+}
+
+}

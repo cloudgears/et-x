@@ -10,8 +10,10 @@
 #include <et/rendering/rendercontext.h>
 #include <et/core/hardware.h>
 
-namespace et {
-namespace s2d {
+namespace et
+{
+namespace s2d
+{
 
 Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Element2d* p, const std::string& name)
 	: TextElement(p, f, fsz, ET_S2D_PASS_NAME_TO_BASE_CLASS)
@@ -21,19 +23,19 @@ Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Elem
 {
 	_currentTitle.setKey(title);
 	_currentTextSize = font()->measureStringSize(_currentTitle.cachedText, fontSize(), fontSmoothing());
-	
+
 	_nextTitle = _currentTitle;
 	_maxTextSize = _currentTextSize;
 	_currentTitleCharacters = font()->buildString(_currentTitle.cachedText, fontSize(), fontSmoothing());
-	
+
 	setSize(sizeForText(title));
-    setTextAlignment(s2d::Alignment::Alignment_Center, s2d::Alignment::Alignment_Center);
-	
+	setTextAlignment(s2d::Alignment::Center, s2d::Alignment::Center);
+
 	_backgroundTintAnimator.updated.connect<s2d::Button>(this, &Button::invalidateContent);
 	_commonBackgroundTintAnimator.updated.connect<s2d::Button>(this, &Button::invalidateContent);
-	
+
 	_titleAnimator.updated.connect<Button>(this, &Button::invalidateContent);
-	
+
 	_titleAnimator.finished.connect([this]() mutable
 	{
 		_currentTitle = _nextTitle;
@@ -48,7 +50,7 @@ Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Elem
 void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
 	validateMaterialInstance(r);
-	
+
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 
@@ -65,26 +67,26 @@ void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 void Button::buildVertices(RenderContext*, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
-	
+
 	vec2 frameSize = size();
-	
+
 	_imageSize = absv(_image[_state].descriptor.size);
-	
+
 	float contentGap = (_imageSize.x > 0.0f) && ((_currentTextSize.x > 0.0f) || (_nextTextSize.x > 0.0f)) ?
 		(5.0f * currentScreen().scaleFactor) : 0.0f;
-	
+
 	if (_imageSize.dotSelf() > 0.0f)
 	{
 		size_t sizeMode = _contentMode & 0x0000ffff;
 		if (sizeMode == ContentMode_Fit)
 		{
 			vec2 containerSize;
-			
+
 			if (_maxTextSize.dotSelf() > 0.0f)
 				containerSize = frameSize - _maxTextSize - vec2(3.0f * contentGap);
 			else
 				containerSize = frameSize - vec2(2.0f * contentGap);
-			
+
 			if ((_imageLayout == ImageLayout_Right) || (_imageLayout == ImageLayout_Left))
 				_imageSize *= std::min(1.0f, containerSize.x / _imageSize.x);
 			else
@@ -107,7 +109,7 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	if (_imageLayout == ImageLayout_Right)
 	{
 		_textOrigin = aFactor * (frameSize - vec2(contentSize.x, _maxTextSize.y));
-				
+
 		_imageOrigin.x = _textOrigin.x + contentGap + _maxTextSize.x;
 		_imageOrigin.y = aFactor.y * (frameSize.y - _imageSize.y);
 	}
@@ -129,25 +131,25 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 		_textOrigin.x = _imageOrigin.x + contentGap + _imageSize.x;
 		_textOrigin.y = aFactor.y * (frameSize.y - _maxTextSize.y);
 	}
-	
+
 	_imageOrigin += _contentOffset;
 	_textOrigin += _contentOffset;
-	
+
 	_bgVertices.setOffset(0);
 	_textVertices.setOffset(0);
 	_imageVertices.setOffset(0);
-	
+
 	bool isPressed = ((_state == State_Pressed) || (_state == State_SelectedPressed));
-	
+
 	vec4 finalColorValue = finalColor();
 	vec4 alphaScale = vec4(1.0f, finalAlpha());
 	vec4 backgroundScale = (_adjustPressedBackground && isPressed) ? _pressedColor * alphaScale : alphaScale;
-	
+
 	if (_backgroundColor.w > 0.0f)
 	{
 		buildColorVertices(_bgVertices, rectf(vec2(0.0f), size()), _backgroundColor * backgroundScale, transform);
 	}
-	
+
 	if (_commonBackground.texture.valid())
 	{
 		buildImageVertices(_bgVertices, _commonBackground.texture, _commonBackground.descriptor,
@@ -164,19 +166,19 @@ void Button::buildVertices(RenderContext*, SceneRenderer&)
 	if (currentTextColor.w > 0.0f)
 	{
 		vec4 currentAlphaScale = alphaScale;
-		
+
 		currentAlphaScale.w = alphaScale.w * (1.0f - _titleAnimator.value());
 		if (!_currentTitleCharacters.empty())
 		{
-			buildStringVertices(_textVertices, _currentTitleCharacters, Alignment_Center,
-				Alignment_Center, _textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
+			buildStringVertices(_textVertices, _currentTitleCharacters, Alignment::Center,
+				Alignment::Center, _textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
 		}
-		
+
 		currentAlphaScale.w = alphaScale.w * _titleAnimator.value();
 		if (_titleAnimator.running())
 		{
-			buildStringVertices(_textVertices, _nextTitleCharacters, Alignment_Center,
-				Alignment_Center, _textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
+			buildStringVertices(_textVertices, _nextTitleCharacters, Alignment::Center,
+				Alignment::Center, _textOrigin + 0.5f * _maxTextSize, currentTextColor * currentAlphaScale, transform);
 		}
 	}
 
@@ -195,7 +197,7 @@ void Button::setBackground(const Image& img)
 {
 	for (uint32_t i = 0; i < State_max; ++i)
 		_background[i] = img;
-	
+
 	invalidateContent();
 }
 
@@ -217,7 +219,7 @@ bool Button::pointerPressed(const PointerInputInfo& p)
 
 	_pressed = true;
 	setCurrentState(_selected ? State_SelectedPressed : State_Pressed);
-	
+
 	pressed.invoke(this);
 	return true;
 }
@@ -225,7 +227,7 @@ bool Button::pointerPressed(const PointerInputInfo& p)
 bool Button::pointerReleased(const PointerInputInfo& p)
 {
 	if ((p.type != PointerTypeMask::General) || !_pressed) return false;
-	
+
 	_pressed = false;
 	released.invoke(this);
 
@@ -247,7 +249,7 @@ bool Button::pointerReleased(const PointerInputInfo& p)
 bool Button::pointerCancelled(const PointerInputInfo&)
 {
 	_pressed = false;
-	
+
 	setCurrentState(_selected ? State_Selected : State_Default);
 	cancelled.invoke(this);
 	return true;
@@ -288,10 +290,10 @@ void Button::performClick()
 	if (currentTime > _lastClickTime + _clickTreshold)
 	{
 		_lastClickTime = currentTime;
-		
+
 		if (_type == Type_CheckButton)
 			setSelected(!_selected);
-	
+
 		if (_shouldInvokeClickInRunLoop)
 			clicked.invokeInMainRunLoop(this);
 		else
@@ -302,12 +304,12 @@ void Button::performClick()
 void Button::setTitle(const std::string& t, float duration)
 {
 	_nextTitle.setKey(t);
-	
+
 	_nextTextSize = font()->measureStringSize(_nextTitle.cachedText, fontSize(), fontSmoothing());
 	_maxTextSize = maxv(_currentTextSize, _nextTextSize);
-	
+
 	_titleAnimator.animate(0.0f, 1.0f, duration);
-		
+
 	invalidateText();
 }
 
@@ -342,16 +344,16 @@ void Button::adjustSizeForText(const std::string& text, float duration, bool ver
 {
 	vec2 currentSize = size();
 	vec2 newSize = sizeForText(text);
-	
+
 	newSize.x += _image[0].descriptor.size.x;
 	newSize.y = std::max(newSize.y, _image[0].descriptor.size.y);
-	
+
 	if (horizontal)
 		currentSize.x = newSize.x;
-	
+
 	if (vertical)
 		currentSize.y = newSize.y;
-	
+
 	setSize(currentSize, duration);
 }
 
@@ -426,7 +428,7 @@ const vec4& Button::backgroundColor() const
 void Button::setCommonBackgroundTintColor(const vec4& clr, float duration)
 {
 	_commonBackgroundTintAnimator.cancelUpdates();
-	
+
 	if (duration == 0.0f)
 	{
 		_commonBackgroundTintColor = clr;
@@ -446,7 +448,7 @@ const vec4& Button::commonBackgroundTintColor() const
 void Button::setBackgroundTintColor(const vec4& clr, float duration)
 {
 	_backgroundTintAnimator.cancelUpdates();
-	
+
 	if (duration == 0.0f)
 	{
 		_backgroundTintColor = clr;
@@ -494,7 +496,7 @@ const vec4& Button::pressedColor() const
 bool Button::processMessage(const Message& msg)
 {
 	bool result = TextElement::processMessage(msg);
-	
+
 	if (msg.type == Message::Type_SetText)
 	{
 		setTitle(msg.text, msg.duration);
@@ -510,7 +512,7 @@ bool Button::processMessage(const Message& msg)
 		clicked.invoke(this);
 		result = true;
 	}
-	
+
 	return result;
 }
 

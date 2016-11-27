@@ -19,10 +19,10 @@ ParticlesElement::ParticlesElement(uint32_t amount, Element2d* parent, const std
 {
 	setLocationInParent(s2d::Location_Center);
 	setFlag(s2d::Flag_DynamicRendering | s2d::Flag_TransparentForPointer);
-	
+
 	particles::PointSprite baseParticle;
 	particles::PointSprite variationParticle;
-	
+
 	baseParticle.position = vec3(0.0f);
 	baseParticle.velocity = vec3(0.0f, 0.0f, 0.0f);
 	baseParticle.acceleration = vec3(0.0f);
@@ -30,7 +30,7 @@ ParticlesElement::ParticlesElement(uint32_t amount, Element2d* parent, const std
 	baseParticle.size = 3.0;
 	baseParticle.emitTime = actualTime();
 	baseParticle.lifeTime = 3.0f;
-	
+
 	variationParticle.position = vec3(5.0f, 5.0f, 0.0f);
 	variationParticle.velocity = vec3(15.0f, 15.0f, 0.0f);
 	variationParticle.acceleration = vec3(0.0f);
@@ -40,7 +40,7 @@ ParticlesElement::ParticlesElement(uint32_t amount, Element2d* parent, const std
 
 	_particles.setBase(baseParticle);
 	_particles.setVariation(variationParticle);
-	
+
 	_updateTimer.expired.connect([this](NotifyTimer* timer)
 	{
 		_particles.update(timer->actualTime());
@@ -57,7 +57,7 @@ void ParticlesElement::setBaseAndVariationParticles(const particles::PointSprite
 void ParticlesElement::start()
 {
 	_particles.emitMissingParticles(_updateTimer.actualTime());
-	
+
 	_updateTimer.start(timerPool(), 0.0f, NotifyTimer::RepeatForever);
 	invalidateContent();
 }
@@ -76,7 +76,7 @@ void ParticlesElement::pause()
 void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
 	validateMaterialInstance(r);
-	
+
 	if (_defaultTexture.invalid())
 	{
 		TextureDescription::Pointer desc = TextureDescription::Pointer::create();
@@ -88,11 +88,11 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		if (_texture.invalid())
 			_texture = _defaultTexture;
 	}
-	
+
 	if (_particles.activeParticlesCount() > 0)
 	{
 		vec4 fc = finalColor();
-		
+
 		if (!contentValid())
 		{
 			for (uint32_t i = 0; i < _particles.activeParticlesCount(); ++i)
@@ -104,7 +104,7 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 			_vertices.setOffset(_particles.activeParticlesCount());
 			setContentValid();
 		}
-		
+
 		r.addVertices(_vertices, _texture, materialInstance(), this, PrimitiveType::Points);
 	}
 }

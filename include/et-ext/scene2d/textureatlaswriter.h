@@ -21,8 +21,10 @@ public:
 		TextureDescription::Pointer image;
 		s2d::ImageDescriptor place;
 
-		ImageItem(TextureDescription::Pointer t, const s2d::ImageDescriptor& p) : 
-			image(t), place(p) { }
+		ImageItem(TextureDescription::Pointer t, const s2d::ImageDescriptor& p) :
+			image(t), place(p)
+		{
+		}
 	};
 
 	typedef std::vector<ImageItem> ImageItemList;
@@ -39,13 +41,17 @@ public:
 
 public:
 	TextureAtlasWriter(bool addSpace = true) :
-		_addSpace(addSpace) { }
-	
+		_addSpace(addSpace)
+	{
+	}
+
 	TextureAtlasItem& addItem(const vec2i& textureSize);
 	bool placeImage(TextureDescription::Pointer image, TextureAtlasItem& item);
 
-	const TextureAtlasItemList& items() const 
-		{ return _items; }
+	const TextureAtlasItemList& items() const
+	{
+		return _items;
+	}
 
 	void writeToFile(const std::string& fileName, const char* textureNamePattern = "texture_%d.png");
 

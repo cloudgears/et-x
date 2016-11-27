@@ -8,20 +8,22 @@
 #include <et/app/application.h>
 #include <et-ext/scene2d/scene.h>
 
-namespace et {
-namespace s2d {
+namespace et
+{
+namespace s2d
+{
 
 Scene::Scene(RenderContext* rc) : _rc(rc), _renderer(rc),
-	_renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
-	_renderingElementOverlay(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
-	_background(Image(), nullptr), _overlay(Image(), nullptr)
+_renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
+_renderingElementOverlay(sharedObjectFactory().createObject<RenderingElement>(rc, 256)),
+_background(Image(), nullptr), _overlay(Image(), nullptr)
 {
 	_background.setPivotPoint(vec2(0.5f));
 	_background.setContentMode(ImageView::ContentMode_Fill);
-	
+
 	_overlay.setPivotPoint(vec2(0.5f));
 	_overlay.setContentMode(ImageView::ContentMode_Fill);
-	
+
 	layout(vector2ToFloat(rc->size()));
 }
 
@@ -29,13 +31,13 @@ bool Scene::pointerPressed(const et::PointerInputInfo& p)
 {
 	if (animatingTransition())
 		return true;
-	
+
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerPressed(p))
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -43,7 +45,7 @@ bool Scene::pointerMoved(const et::PointerInputInfo& p)
 {
 	if (animatingTransition())
 		return true;
-	
+
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerMoved(p))
@@ -57,7 +59,7 @@ bool Scene::pointerReleased(const et::PointerInputInfo& p)
 {
 	if (animatingTransition())
 		return true;
-	
+
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerReleased(p))
@@ -71,7 +73,7 @@ bool Scene::pointerCancelled(const et::PointerInputInfo& p)
 {
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 		(*i)->layout->pointerCancelled(p);
-	
+
 	return false;
 }
 
@@ -79,7 +81,7 @@ bool Scene::pointerScrolled(const et::PointerInputInfo& p)
 {
 	if (animatingTransition())
 		return true;
-	
+
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 	{
 		if ((*i)->layout->pointerScrolled(p))
@@ -95,7 +97,7 @@ bool Scene::keyPressed(size_t key)
 	{
 		return _keyboardFocusedElement->processMessage(Message(Message::Type_TextFieldControl, key));
 	}
-	
+
 	if ((key == ET_KEY_RETURN) || (key == ET_KEY_ESCAPE))
 	{
 		Message msg(Message::Type_PerformAction);
@@ -117,7 +119,7 @@ bool Scene::keyPressed(size_t key)
 				return true;
 		}
 	}
-	
+
 	return false;
 }
 
@@ -127,16 +129,16 @@ bool Scene::charactersEntered(std::string p)
 	{
 		return _keyboardFocusedElement->processMessage(Message(Message::Type_TextInput, p));
 	}
-	
+
 	return false;
 }
 
 void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout)
 {
 	ET_ASSERT(element.valid());
-	
+
 	_renderer.setRenderingElement(element);
-	
+
 	if (!layout->valid())
 	{
 		element->startAllocatingVertices();
@@ -148,7 +150,7 @@ void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer ele
 void Scene::buildBackgroundVertices(RenderContext* rc)
 {
 	_renderer.setRenderingElement(_renderingElementBackground);
-	
+
 	if (!_background.contentValid())
 	{
 		_renderingElementBackground->startAllocatingVertices();
@@ -160,7 +162,7 @@ void Scene::buildBackgroundVertices(RenderContext* rc)
 void Scene::buildOverlayVertices(RenderContext* rc)
 {
 	_renderer.setRenderingElement(_renderingElementOverlay);
-	
+
 	if (!_overlay.contentValid())
 	{
 		_renderingElementOverlay->startAllocatingVertices();
@@ -173,13 +175,13 @@ void Scene::layout(const vec2& size, float duration)
 {
 	_screenSize = size;
 	_renderer.setProjectionMatrices(size);
-	
+
 	_background.setPosition(0.5f * size);
 	_background.setSize(size);
 
 	_overlay.setPosition(0.5f * size);
 	_overlay.setSize(size);
-	
+
 	for (auto& i : _layouts)
 		i->layout->autoLayout(size, duration);
 }
@@ -187,7 +189,7 @@ void Scene::layout(const vec2& size, float duration)
 void Scene::render(RenderContext* rc)
 {
 	_prerenderElements.clear();
-	
+
 	for (auto& obj : _layouts)
 		obj->layout->collectPreRenderingObjects(obj->layout, _prerenderElements);
 
@@ -196,16 +198,16 @@ void Scene::render(RenderContext* rc)
 		/*
 		 * TODO : render
 		 */
-		// auto currentBuffer = rc->renderState().boundFramebuffer();
-		// auto viewportSize = rc->renderState().viewportSize();
-		
+		 // auto currentBuffer = rc->renderState().boundFramebuffer();
+		 // auto viewportSize = rc->renderState().viewportSize();
+
 		for (auto e : _prerenderElements)
 			e->preRender(rc);
-		
+
 		// rc->renderState().bindFramebuffer(currentBuffer);
 		// rc->renderState().setViewportSize(viewportSize);
 	}
-	
+
 	_renderer.beginRender(rc);
 
 	if (_background.texture().valid())
@@ -224,14 +226,14 @@ void Scene::render(RenderContext* rc)
 			_renderer.render(rc);
 		}
 	}
-	
+
 	if (_overlay.texture().valid())
 	{
 		_renderer.setAdditionalOffsetAndAlpha(vec3(0.0f, 0.0f, 1.0f));
 		buildOverlayVertices(rc);
 		_renderer.render(rc);
 	}
-	
+
 	_renderer.endRender(rc);
 }
 
@@ -304,16 +306,18 @@ void Scene::internal_replaceTopmostLayout(Layout::Pointer newLayout, AnimationDe
 void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 {
 	auto i = std::find_if(_layouts.begin(), _layouts.end(), [l](const LayoutEntry::Pointer& entry)
-		{ return entry->layout == l.oldLayout; });
+	{
+		return entry->layout == l.oldLayout;
+	});
 
 	if (i == _layouts.end())
 	{
 		internal_pushLayout(l.newLayout, desc);
 	}
-	else 
+	else
 	{
 		LayoutEntry::Pointer layoutToShow(entryForLayout(l.newLayout));
-		
+
 		if (layoutToShow.invalid())
 		{
 			layoutToShow = LayoutEntry::Pointer::create(this, _rc, l.newLayout);
@@ -323,10 +327,10 @@ void Scene::internal_replaceLayout(LayoutPair l, AnimationDescriptor desc)
 			_layouts.erase(std::find_if(_layouts.begin(), _layouts.end(),
 				[layoutToShow](const LayoutEntry::Pointer& lp) { return (lp.pointer() == layoutToShow.pointer()); }));
 		}
-		
+
 		_layouts.insert(i, layoutToShow);
 		validateTopLevelLayout();
-		
+
 		animateLayoutAppearing(l.newLayout, layoutToShow.pointer(), desc.flags, desc.duration);
 	}
 
@@ -339,13 +343,13 @@ void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor
 	if (entry == nullptr) return;
 
 	layoutWillDisappear.invoke(oldLayout);
-	
+
 	if (oldLayout->hasFlag(Flag_RequiresKeyboard))
 		onKeyboardResigned(oldLayout.pointer());
 
 	oldLayout->cancelInteractions();
 	oldLayout->willDisappear();
-	
+
 	oldLayout->layoutDoesntNeedKeyboard.disconnect(this);
 	oldLayout->layoutRequiresKeyboard.disconnect(this);
 
@@ -354,7 +358,7 @@ void Scene::internal_removeLayout(Layout::Pointer oldLayout, AnimationDescriptor
 		oldLayout->didDisappear();
 		removeLayoutEntryFromList(entry);
 	}
-	else 
+	else
 	{
 		vec3 destOffsetAlpha;
 		getAnimationParams(desc.flags, 0, 0, &destOffsetAlpha);
@@ -371,7 +375,7 @@ void Scene::internal_pushLayout(Layout::Pointer newLayout, AnimationDescriptor d
 
 	_layouts.push_back(LayoutEntry::Pointer::create(this, _rc, newLayout));
 	validateTopLevelLayout();
-	
+
 	animateLayoutAppearing(newLayout, _layouts.back().pointer(), desc.flags, desc.duration);
 }
 
@@ -384,9 +388,9 @@ void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntry* newEn
 	newLayout->willAppear();
 
 	ET_CONNECT_EVENT(newLayout->layoutRequiresKeyboard, Scene::onKeyboardNeeded)
-	ET_CONNECT_EVENT(newLayout->layoutDoesntNeedKeyboard, Scene::onKeyboardResigned)
+		ET_CONNECT_EVENT(newLayout->layoutDoesntNeedKeyboard, Scene::onKeyboardResigned)
 
-	bool smallDuration = std::abs(duration) < std::numeric_limits<float>::epsilon();
+		bool smallDuration = std::abs(duration) < std::numeric_limits<float>::epsilon();
 	if ((animationFlags == AnimationFlag_None) || smallDuration)
 	{
 		newLayout->didAppear();
@@ -396,7 +400,7 @@ void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntry* newEn
 
 		layoutDidAppear.invoke(newLayout);
 	}
-	else 
+	else
 	{
 		vec3 destOffsetAlpha;
 		getAnimationParams(animationFlags, &newEntry->offsetAlpha, &destOffsetAlpha, 0);
@@ -428,7 +432,7 @@ void Scene::layoutEntryTransitionFinished(LayoutEntry* l)
 		}
 		removeLayoutEntryFromList(l);
 	}
-	else 
+	else
 	{
 		layoutDidAppear.invoke(l->layout);
 		l->layout->didAppear();
@@ -443,7 +447,7 @@ void Scene::layoutEntryTransitionFinished(LayoutEntry* l)
 bool Scene::hasLayout(Layout::Pointer aLayout)
 {
 	if (aLayout.invalid()) return false;
-	
+
 	for (auto& i : _layouts)
 	{
 		if (i->layout == aLayout)
@@ -474,7 +478,7 @@ bool Scene::animatingTransition()
 		if (i.pointer()->state != Scene::LayoutEntry::State_Still)
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -552,8 +556,10 @@ void Scene::validateTopLevelLayout()
 	if (_layouts.size() > 1)
 	{
 		auto topLevel = std::find_if(_layouts.begin(), _layouts.end(), [this](const LayoutEntry::Pointer& le)
-			{ return (le->layout == _topLayout); });
-		
+		{
+			return (le->layout == _topLayout);
+		});
+
 		if (topLevel != _layouts.end())
 			_layouts.splice(_layouts.end(), _layouts, topLevel);
 	}

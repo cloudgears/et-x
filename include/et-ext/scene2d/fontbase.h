@@ -17,32 +17,35 @@
 
 namespace et
 {
-	namespace s2d
-	{
-		enum CharacterFlags : uint32_t
-		{
-			CharacterFlag_Default = 0x0000,
-			CharacterFlag_Bold = 0x0001
-		};
+namespace s2d
+{
+enum CharacterFlags : uint32_t
+{
+	CharacterFlag_Default = 0x0000,
+	CharacterFlag_Bold = 0x0001
+};
 
-		struct CharDescriptor
-		{
-			uint32_t value = 0;
-			uint32_t flags = CharacterFlag_Default;
-			
-			vec4 color = vec4(1.0f);
-			vec2 originalSize = vec2(0.0f);
-			rectf contentRect;
-			rectf uvRect;
-			vec4 parameters = vec4(0.0f);
-			
-			CharDescriptor()
-				{ }
-			
-			CharDescriptor(int v) :
-				value(v) { }
-		};
-        using CharDescriptorList = Vector<CharDescriptor>;
-        using CharDescriptorMap = Map<int, CharDescriptor>;
+struct CharDescriptor
+{
+	uint32_t value = 0;
+	uint32_t flags = CharacterFlag_Default;
+
+	vec4 color = vec4(1.0f);
+	vec2 originalSize = vec2(0.0f);
+	rectf contentRect;
+	rectf uvRect;
+	vec4 parameters = vec4(0.0f);
+
+	CharDescriptor()
+	{
 	}
+
+	CharDescriptor(int v) :
+		value(v)
+	{
+	}
+};
+using CharDescriptorList = Vector<CharDescriptor>;
+using CharDescriptorMap = Map<int, CharDescriptor>;
+}
 }

@@ -34,7 +34,7 @@ ImageView::ImageView(const Texture::Pointer& texture, const ImageDescriptor& i, 
 	setSize(_descriptor.value().size, 0.0f);
 }
 
-ImageView::ImageView(const Image& img, Element2d* parent, const std::string& name) : 
+ImageView::ImageView(const Image& img, Element2d* parent, const std::string& name) :
 	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _texture(img.texture),
 	_descriptor(img.descriptor, timerPool()), _backgroundColorAnimator(timerPool()),
 	_contentMode(ImageView::ContentMode_Stretch)
@@ -45,14 +45,14 @@ ImageView::ImageView(const Image& img, Element2d* parent, const std::string& nam
 
 void ImageView::connectEvents()
 {
-	_descriptor.updated.connect([this](){ invalidateContent(); });
+	_descriptor.updated.connect([this]() { invalidateContent(); });
 	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
 }
 
 void ImageView::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
 	validateMaterialInstance(r);
-	
+
 	if (!contentValid() || !transformValid())
 		buildVertices(rc, r);
 
@@ -64,14 +64,14 @@ void ImageView::buildVertices(RenderContext*, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	_vertices.setOffset(0);
-	
+
 	vec4 alphaScale = vec4(1.0f, finalAlpha());
-	
+
 	if (_backgroundColor.w > 0.0f)
 	{
 		buildColorVertices(_vertices, rectf(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
 	}
-	
+
 	if (_texture.valid() && (std::abs(_descriptor.value().size.square()) > 0.0f))
 	{
 		if (_contentMode == ContentMode_Tile)
@@ -122,7 +122,7 @@ void ImageView::setContentMode(ImageView::ContentMode cm)
 void ImageView::setTexture(const Texture::Pointer& t, bool updateDescriptor)
 {
 	_texture = t;
-	
+
 	if (updateDescriptor)
 		_descriptor.animate(ImageDescriptor(t), 0.0f);
 	else
@@ -154,59 +154,59 @@ ImageDescriptor ImageView::calculateImageFrame()
 
 	switch (_contentMode)
 	{
-		case ContentMode_Center:
+	case ContentMode_Center:
+	{
+		_actualImageSize = absv(desc.size);
+		_actualImageOrigin = 0.5f * (size() - desc.size);
+		break;
+	}
+
+	case ContentMode_Fit:
+	case ContentMode_FitAnyway:
+	case ContentMode_Fill:
+	{
+		vec2 frameSize = size();
+		vec2 descSize = absv(desc.size);
+
+		if (_contentMode == ContentMode_Fill)
 		{
-			_actualImageSize = absv(desc.size);
-			_actualImageOrigin = 0.5f * (size() - desc.size);
-			break;
+			vec2 sizeAspect = frameSize / descSize;
+			float minScale = std::max(sizeAspect.x, sizeAspect.y);
+			frameSize = descSize * minScale;
+		}
+		else
+		{
+			vec2 sizeAspect = frameSize / descSize;
+			float minScale = std::min(sizeAspect.x, sizeAspect.y);
+
+			if (_contentMode == ContentMode_Fit)
+				minScale = std::min(minScale, 1.0f);
+
+			frameSize = descSize * minScale;
 		}
 
-		case ContentMode_Fit:
-		case ContentMode_FitAnyway:
-		case ContentMode_Fill:
-		{
-			vec2 frameSize = size();
-			vec2 descSize = absv(desc.size);
-				
-			if (_contentMode == ContentMode_Fill)
-			{
-				vec2 sizeAspect = frameSize / descSize;
-				float minScale = std::max(sizeAspect.x, sizeAspect.y);
-				frameSize = descSize * minScale;
-			}
-			else
-			{
-				vec2 sizeAspect = frameSize / descSize;
-				float minScale = std::min(sizeAspect.x, sizeAspect.y);
-				
-				if (_contentMode == ContentMode_Fit)
-					minScale = std::min(minScale, 1.0f);
-				
-				frameSize = descSize * minScale;
-			}
-				
-			_actualImageSize = frameSize;
-			_actualImageOrigin = 0.5f * (size() - _actualImageSize);
-			break;
-		}
+		_actualImageSize = frameSize;
+		_actualImageOrigin = 0.5f * (size() - _actualImageSize);
+		break;
+	}
 
-		case ContentMode_Crop:
-		{
-			vec2 dSize = desc.size;
-			desc.size.x = size().x < desc.size.x ? size().x : dSize.x;
-			desc.size.y = size().y < desc.size.y ? size().y : dSize.y;
-			vec2 cropped = dSize - desc.size;
-			desc.origin += cropped * pivotPoint();
-			_actualImageSize = desc.size;
-			_actualImageOrigin = vec2(0.0f);
-			break;
-		}
+	case ContentMode_Crop:
+	{
+		vec2 dSize = desc.size;
+		desc.size.x = size().x < desc.size.x ? size().x : dSize.x;
+		desc.size.y = size().y < desc.size.y ? size().y : dSize.y;
+		vec2 cropped = dSize - desc.size;
+		desc.origin += cropped * pivotPoint();
+		_actualImageSize = desc.size;
+		_actualImageOrigin = vec2(0.0f);
+		break;
+	}
 
-		default:
-		{
-			_actualImageSize = size();
-			_actualImageOrigin = vec2(0.0f);
-		}
+	default:
+	{
+		_actualImageSize = size();
+		_actualImageOrigin = vec2(0.0f);
+	}
 	}
 
 	return desc;

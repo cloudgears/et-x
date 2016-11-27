@@ -27,164 +27,172 @@
 
 namespace et
 {
-	namespace s2d
+namespace s2d
+{
+class Scene : public ObjectLoader, public EventReceiver
+{
+public:
+	ET_DECLARE_POINTER(Scene);
+
+public:
+	Scene(RenderContext* rc);
+
+	void layout(const vec2& size, float duration = 0.0);
+	void render(RenderContext* rc);
+
+	SceneRenderer& renderer()
 	{
-		class Scene : public ObjectLoader, public EventReceiver
+		return _renderer;
+	}
+
+	ObjectsCache& sharedCache()
+	{
+		return _sharedCache;
+	}
+
+	Layout::Pointer topmostLayout() const
+	{
+		return _layouts.size() ? _layouts.back()->layout : Layout::Pointer();
+	}
+
+	bool hasLayout(Layout::Pointer aLayout);
+
+	void replaceTopmostLayout(Layout::Pointer newLayout,
+		size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+
+	void popTopmostLayout(size_t animationFlags = AnimationFlag_None,
+		float duration = 0.3f);
+
+	void replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout,
+		size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
+
+	void removeLayout(Layout::Pointer oldLayout, size_t animationFlags = AnimationFlag_None,
+		float duration = 0.3f);
+
+	void pushLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None,
+		float duration = 0.3f);
+
+	void setTopLevelLayout(Layout::Pointer);
+
+	ImageView& backgroundImageView();
+	const ImageView& backgroundImageView() const;
+	void setBackgroundImage(const Image& img);
+
+	ImageView& overlayImageView();
+	const ImageView& overlayImageView() const;
+	void setOverlayImage(const Image& img);
+
+	bool pointerPressed(const et::PointerInputInfo&);
+	bool pointerMoved(const et::PointerInputInfo&);
+	bool pointerReleased(const et::PointerInputInfo&);
+	bool pointerCancelled(const et::PointerInputInfo&);
+	bool pointerScrolled(const et::PointerInputInfo&);
+
+	bool keyPressed(size_t);
+	bool charactersEntered(std::string);
+
+	void broadcastMessage(const Message&);
+
+	void removeAllLayouts();
+
+	ET_DECLARE_EVENT1(layoutDidAppear, Layout::Pointer)
+		ET_DECLARE_EVENT1(layoutDidDisappear, Layout::Pointer)
+		ET_DECLARE_EVENT1(layoutWillAppear, Layout::Pointer)
+		ET_DECLARE_EVENT1(layoutWillDisappear, Layout::Pointer)
+
+private:
+	class LayoutEntry;
+
+	struct LayoutPair
+	{
+		Layout::Pointer oldLayout;
+		Layout::Pointer newLayout;
+
+		LayoutPair(Layout::Pointer o, Layout::Pointer n) :
+			oldLayout(o), newLayout(n)
 		{
-		public:
-			ET_DECLARE_POINTER(Scene);
+		}
+	};
 
-		public:
-			Scene(RenderContext* rc);
-			
-			void layout(const vec2& size, float duration = 0.0);
-			void render(RenderContext* rc);
+	void buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element,
+		Layout::Pointer layout);
 
-			SceneRenderer& renderer() 
-				{ return _renderer; }
-			
-			ObjectsCache& sharedCache()
-				{ return _sharedCache; }
+	void buildBackgroundVertices(RenderContext* rc);
+	void buildOverlayVertices(RenderContext* rc);
 
-			Layout::Pointer topmostLayout() const
-				{ return _layouts.size() ? _layouts.back()->layout : Layout::Pointer(); }
+	void onKeyboardNeeded(Layout* l, Element2d* e);
+	void onKeyboardResigned(Layout* l);
 
-			bool hasLayout(Layout::Pointer aLayout);
-			
-			void replaceTopmostLayout(Layout::Pointer newLayout,
-				size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
-			
-			void popTopmostLayout(size_t animationFlags = AnimationFlag_None,
-				float duration = 0.3f);
-			
-			void replaceLayout(Layout::Pointer oldLayout, Layout::Pointer newLayout,
-				size_t animationFlags = AnimationFlag_None, float duration = 0.3f);
-			
-			void removeLayout(Layout::Pointer oldLayout, size_t animationFlags = AnimationFlag_None,
-				float duration = 0.3f);
-			
-			void pushLayout(Layout::Pointer newLayout, size_t animationFlags = AnimationFlag_None,
-				float duration = 0.3f);
-			
-			void setTopLevelLayout(Layout::Pointer);
+	void getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst);
 
-			ImageView& backgroundImageView();
-			const ImageView& backgroundImageView() const;
-			void setBackgroundImage(const Image& img);
+	void removeLayoutEntryFromList(LayoutEntry*);
+	void layoutEntryTransitionFinished(LayoutEntry*);
 
-			ImageView& overlayImageView();
-			const ImageView& overlayImageView() const;
-			void setOverlayImage(const Image& img);
-			
-			bool pointerPressed(const et::PointerInputInfo&);
-			bool pointerMoved(const et::PointerInputInfo&);
-			bool pointerReleased(const et::PointerInputInfo&);
-			bool pointerCancelled(const et::PointerInputInfo&);
-			bool pointerScrolled(const et::PointerInputInfo&);
-			
-			bool keyPressed(size_t);
-			bool charactersEntered(std::string);
-			
-			void broadcastMessage(const Message&);
+	LayoutEntry* entryForLayout(Layout::Pointer);
+	bool animatingTransition();
 
-			void removeAllLayouts();
-			
-			ET_DECLARE_EVENT1(layoutDidAppear, Layout::Pointer)
-			ET_DECLARE_EVENT1(layoutDidDisappear, Layout::Pointer)
-			ET_DECLARE_EVENT1(layoutWillAppear, Layout::Pointer)
-			ET_DECLARE_EVENT1(layoutWillDisappear, Layout::Pointer)
+	void animateLayoutAppearing(Layout::Pointer, LayoutEntry* newEntry,
+		size_t animationFlags, float duration);
 
-		private:
-			class LayoutEntry;
-			
-			struct LayoutPair
-			{
-				Layout::Pointer oldLayout;
-				Layout::Pointer newLayout;
-				
-				LayoutPair(Layout::Pointer o, Layout::Pointer n) :
-					oldLayout(o), newLayout(n) { }
-			};
+	void internal_replaceTopmostLayout(Layout::Pointer, AnimationDescriptor);
+	void internal_popTopmostLayout(AnimationDescriptor desc);
+	void internal_replaceLayout(LayoutPair, AnimationDescriptor);
+	void internal_removeLayout(Layout::Pointer, AnimationDescriptor);
+	void internal_pushLayout(Layout::Pointer, AnimationDescriptor);
 
-			void buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element,
-				Layout::Pointer layout);
-			
-			void buildBackgroundVertices(RenderContext* rc);
-			void buildOverlayVertices(RenderContext* rc);
+	void validateTopLevelLayout();
 
-			void onKeyboardNeeded(Layout* l, Element2d* e);
-			void onKeyboardResigned(Layout* l);
+	void reloadObject(LoadableObject::Pointer, ObjectsCache&);
 
-			void getAnimationParams(size_t flags, vec3* nextSrc, vec3* nextDst, vec3* currDst);
+private:
+	class LayoutEntry : public Shared
+	{
+	public:
+		ET_DECLARE_POINTER(LayoutEntry);
 
-			void removeLayoutEntryFromList(LayoutEntry*);
-			void layoutEntryTransitionFinished(LayoutEntry*);
-			
-			LayoutEntry* entryForLayout(Layout::Pointer);
-			bool animatingTransition();
-			
-			void animateLayoutAppearing(Layout::Pointer, LayoutEntry* newEntry,
-				size_t animationFlags, float duration);
-			
-			void internal_replaceTopmostLayout(Layout::Pointer, AnimationDescriptor);
-			void internal_popTopmostLayout(AnimationDescriptor desc);
-			void internal_replaceLayout(LayoutPair, AnimationDescriptor);
-			void internal_removeLayout(Layout::Pointer, AnimationDescriptor);
-			void internal_pushLayout(Layout::Pointer, AnimationDescriptor);
-			
-			void validateTopLevelLayout();
-
-			void reloadObject(LoadableObject::Pointer, ObjectsCache&);
-			
-		private:
-			class LayoutEntry : public Shared
-			{
-			public:
-				ET_DECLARE_POINTER(LayoutEntry);
-				
-			public:
-				enum State
-				{
-					State_Still,
-					State_Appear,
-					State_Disappear,
-				};
-
-			public:
-				LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l);
-				~LayoutEntry();
-				
-				void animateTo(const vec3& oa, float duration, State s);
-				
-			private:
-				ET_DENY_COPY(LayoutEntry);
-				
-			public:
-				Layout::Pointer layout;
-				Vector3Animator animator;
-				vec3 offsetAlpha;
-				State state;
-			};
-			
-			typedef std::list<LayoutEntry::Pointer> LayoutEntryList;
-
-		private:
-			RenderContext* _rc = nullptr;
-			SceneRenderer _renderer;
-			ObjectsCache _sharedCache;
-
-			RenderingElement::Pointer _renderingElementBackground;
-			RenderingElement::Pointer _renderingElementOverlay;
-			ImageView _background;
-			ImageView _overlay;
-			
-			Element2d::Pointer _keyboardFocusedElement;
-			Element2d::List _prerenderElements;
-
-			LayoutEntryList _layouts;
-			Layout::Pointer _topLayout;
-			vec2 _screenSize;
+	public:
+		enum State
+		{
+			State_Still,
+			State_Appear,
+			State_Disappear,
 		};
 
-	}
+	public:
+		LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l);
+		~LayoutEntry();
+
+		void animateTo(const vec3& oa, float duration, State s);
+
+	private:
+		ET_DENY_COPY(LayoutEntry);
+
+	public:
+		Layout::Pointer layout;
+		Vector3Animator animator;
+		vec3 offsetAlpha;
+		State state;
+	};
+
+	typedef std::list<LayoutEntry::Pointer> LayoutEntryList;
+
+private:
+	RenderContext* _rc = nullptr;
+	SceneRenderer _renderer;
+	ObjectsCache _sharedCache;
+
+	RenderingElement::Pointer _renderingElementBackground;
+	RenderingElement::Pointer _renderingElementOverlay;
+	ImageView _background;
+	ImageView _overlay;
+
+	Element2d::Pointer _keyboardFocusedElement;
+	Element2d::List _prerenderElements;
+
+	LayoutEntryList _layouts;
+	Layout::Pointer _topLayout;
+	vec2 _screenSize;
+};
+
+}
 }
