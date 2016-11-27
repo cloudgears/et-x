@@ -126,7 +126,7 @@ bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, Objec
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	Texture::Pointer tex = rc->textureFactory().loadTexture(actualName, cache);
+	Texture::Pointer tex = rc->renderer()->loadTexture(actualName, cache);
 	if (tex.invalid())
 	{
 		log::error("Unable to load texture for font %s. Missing file: %s",

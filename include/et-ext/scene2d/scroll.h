@@ -64,7 +64,7 @@ public:
 	ET_DECLARE_EVENT0(manualScrollStarted);
 	ET_DECLARE_EVENT2(manualScroll, vec2, vec2);
 	ET_DECLARE_EVENT0(manualScrollEnded);
-	ET_DECLARE_EVENT0(scrollEnded)
+	ET_DECLARE_EVENT0(scrollEnded);
 
 protected:
 	virtual void setOffsetDirectly(const vec2& o);

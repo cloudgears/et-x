@@ -95,10 +95,10 @@ public:
 
 	void removeAllLayouts();
 
-	ET_DECLARE_EVENT1(layoutDidAppear, Layout::Pointer)
-		ET_DECLARE_EVENT1(layoutDidDisappear, Layout::Pointer)
-		ET_DECLARE_EVENT1(layoutWillAppear, Layout::Pointer)
-		ET_DECLARE_EVENT1(layoutWillDisappear, Layout::Pointer)
+	ET_DECLARE_EVENT1(layoutDidAppear, Layout::Pointer);
+	ET_DECLARE_EVENT1(layoutDidDisappear, Layout::Pointer);
+	ET_DECLARE_EVENT1(layoutWillAppear, Layout::Pointer);
+	ET_DECLARE_EVENT1(layoutWillDisappear, Layout::Pointer);
 
 private:
 	class LayoutEntry;

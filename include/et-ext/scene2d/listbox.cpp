@@ -177,7 +177,7 @@ Listbox::Listbox(const Font::Pointer& f, float fsz, Element2d* parent, const std
 	_popup = etCreateObject<Popup>(this);
 	_popup->setVisible(false);
 
-	ET_CONNECT_EVENT(_popup->elementAnimationFinished, Listbox::onPopupAnimationFinished)
+	ET_CONNECT_EVENT(_popup->elementAnimationFinished, Listbox::onPopupAnimationFinished);
 }
 
 void Listbox::setImage(const Image& img, ListboxState state)

@@ -268,16 +268,16 @@ public:
 	/*
 	 * Events
 	 */
-	ET_DECLARE_EVENT2(dragStarted, Element2d*, const ElementDragInfo&)
-		ET_DECLARE_EVENT2(dragged, Element2d*, const ElementDragInfo&)
-		ET_DECLARE_EVENT2(dragFinished, Element2d*, const ElementDragInfo&)
+	ET_DECLARE_EVENT2(dragStarted, Element2d*, const ElementDragInfo&);
+	ET_DECLARE_EVENT2(dragged, Element2d*, const ElementDragInfo&);
+	ET_DECLARE_EVENT2(dragFinished, Element2d*, const ElementDragInfo&);
 
-		ET_DECLARE_EVENT1(hoverStarted, Element2d*)
-		ET_DECLARE_EVENT1(hoverEnded, Element2d*)
+	ET_DECLARE_EVENT1(hoverStarted, Element2d*);
+	ET_DECLARE_EVENT1(hoverEnded, Element2d*);
 
-		ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, AnimatedPropery)
+	ET_DECLARE_EVENT2(elementAnimationFinished, Element2d*, AnimatedPropery);
 
-		ET_DECLARE_EVENT1(onPointerPressed, const PointerInputInfo&);
+	ET_DECLARE_EVENT1(onPointerPressed, const PointerInputInfo&);
 	ET_DECLARE_EVENT1(onPointerMoved, const PointerInputInfo&);
 	ET_DECLARE_EVENT1(onPointerReleased, const PointerInputInfo&);
 	ET_DECLARE_EVENT1(onPointerCancelled, const PointerInputInfo&);

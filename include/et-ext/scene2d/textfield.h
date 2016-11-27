@@ -54,10 +54,10 @@ public:
 	void setFocus() override;
 	void resignFocus(Element2d*) override;
 
-	ET_DECLARE_EVENT1(editingStarted, TextField*)
-		ET_DECLARE_EVENT1(textChanged, TextField*)
-		ET_DECLARE_EVENT1(returnReceived, TextField*)
-		ET_DECLARE_EVENT1(editingFinished, TextField*)
+	ET_DECLARE_EVENT1(editingStarted, TextField*);
+	ET_DECLARE_EVENT1(textChanged, TextField*);
+	ET_DECLARE_EVENT1(returnReceived, TextField*);
+	ET_DECLARE_EVENT1(editingFinished, TextField*);
 
 private:
 	void addToRenderQueue(RenderContext*, SceneRenderer&) override;

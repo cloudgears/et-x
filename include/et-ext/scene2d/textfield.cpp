@@ -22,7 +22,7 @@ TextField::TextField(const Font::Pointer& f, float fsz, Element2d* parent, const
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	setTextAlignment(et::s2d::Alignment::Near, et::s2d::Alignment::Center);
-	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
+	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired);
 }
 
 TextField::TextField(const std::string& text, const Font::Pointer& f, float fsz, Element2d* parent, const std::string& name) :
@@ -32,7 +32,7 @@ TextField::TextField(const std::string& text, const Font::Pointer& f, float fsz,
 	setEditingFlags(EditingFlag_ResignFocusOnReturn);
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	setTextAlignment(et::s2d::Alignment::Near, et::s2d::Alignment::Center);
-	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
+	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired);
 }
 
 TextField::TextField(const Image& background, const std::string& text, const Font::Pointer& f, float fsz,
@@ -46,7 +46,7 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 	setFlag(Flag_RequiresKeyboard | Flag_ClipToBounds);
 	setTextAlignment(et::s2d::Alignment::Near, et::s2d::Alignment::Center);
 
-	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired)
+	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired);
 }
 
 void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)

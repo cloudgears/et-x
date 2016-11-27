@@ -387,10 +387,10 @@ void Scene::animateLayoutAppearing(Layout::Pointer newLayout, LayoutEntry* newEn
 	layoutWillAppear.invoke(newLayout);
 	newLayout->willAppear();
 
-	ET_CONNECT_EVENT(newLayout->layoutRequiresKeyboard, Scene::onKeyboardNeeded)
-		ET_CONNECT_EVENT(newLayout->layoutDoesntNeedKeyboard, Scene::onKeyboardResigned)
+	ET_CONNECT_EVENT(newLayout->layoutRequiresKeyboard, Scene::onKeyboardNeeded);
+	ET_CONNECT_EVENT(newLayout->layoutDoesntNeedKeyboard, Scene::onKeyboardResigned);
 
-		bool smallDuration = std::abs(duration) < std::numeric_limits<float>::epsilon();
+	bool smallDuration = std::abs(duration) < std::numeric_limits<float>::epsilon();
 	if ((animationFlags == AnimationFlag_None) || smallDuration)
 	{
 		newLayout->didAppear();

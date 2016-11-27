@@ -32,10 +32,10 @@ public:
 	void cancelDragging(float returnDuration = 0.0f);
 	void cancelInteractions();
 
-	ET_DECLARE_EVENT2(layoutRequiresKeyboard, Layout*, Element2d*)
-		ET_DECLARE_EVENT1(layoutDoesntNeedKeyboard, Layout*)
+	ET_DECLARE_EVENT2(layoutRequiresKeyboard, Layout*, Element2d*);
+	ET_DECLARE_EVENT1(layoutDoesntNeedKeyboard, Layout*);
 
-		vec2 contentSize();
+	vec2 contentSize();
 
 	template <typename F>
 	void setPositionInterpolationFunction(F func)

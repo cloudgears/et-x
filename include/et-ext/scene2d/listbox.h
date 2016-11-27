@@ -79,7 +79,7 @@ public:
 		return _values;
 	}
 
-	ET_DECLARE_EVENT1(valueSelected, size_t)
+	ET_DECLARE_EVENT1(valueSelected, size_t);
 
 private:
 	void addToRenderQueue(RenderContext*, SceneRenderer&) override;

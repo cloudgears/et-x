@@ -59,14 +59,14 @@ public:
 
 	void setContentMode(ContentMode);
 
-	ET_DECLARE_EVENT1(clicked, Button*)
-		ET_DECLARE_EVENT1(pressed, Button*)
-		ET_DECLARE_EVENT1(released, Button*)
-		ET_DECLARE_EVENT1(releasedInside, Button*)
-		ET_DECLARE_EVENT1(releasedOutside, Button*)
-		ET_DECLARE_EVENT1(cancelled, Button*)
+	ET_DECLARE_EVENT1(clicked, Button*);
+	ET_DECLARE_EVENT1(pressed, Button*);
+	ET_DECLARE_EVENT1(released, Button*);
+	ET_DECLARE_EVENT1(releasedInside, Button*);
+	ET_DECLARE_EVENT1(releasedOutside, Button*);
+	ET_DECLARE_EVENT1(cancelled, Button*);
 
-		const Image& backgroundForState(State state) const
+	const Image& backgroundForState(State state) const
 	{
 		return _background[state];
 	}

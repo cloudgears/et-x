@@ -1,6 +1,6 @@
 /*
  * This file is part of `et engine`
- * Copyright 2009-2013 by Sergey Reznik
+ * Copyright 2009-2016 by Sergey Reznik
  * Please, do not modify content without approval.
  *
  */
@@ -71,9 +71,9 @@ public:
 	float value() const;
 	float normalizedValue() const;
 
-	ET_DECLARE_EVENT1(changed, Slider*)
-		ET_DECLARE_EVENT1(valueChanged, float)
-		ET_DECLARE_EVENT0(draggingFinished)
+	ET_DECLARE_EVENT1(changed, Slider*);
+	ET_DECLARE_EVENT1(valueChanged, float);
+	ET_DECLARE_EVENT0(draggingFinished);
 
 private:
 	void addToRenderQueue(RenderContext*, SceneRenderer&);
