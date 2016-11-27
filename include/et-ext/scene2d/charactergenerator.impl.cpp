@@ -66,7 +66,12 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
 	if (fileExists(face))
 	{
-		FT_New_Face(library, face.c_str(), FT_Long(faceIndex), &regularFont);
+		FT_Error err = FT_New_Face(library, face.c_str(), FT_Long(faceIndex), &regularFont);
+		if (regularFont == nullptr)
+		{
+			log::error("Failed to load FreeType font: %s [%u], error: %d (0x%08x)", 
+				face.c_str(), faceIndex, err, err);
+		}
 	}
 	else
 	{
@@ -101,8 +106,13 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
 			if (GetFontData(commonDC, 0, 0, regularFontData.data(), DWORD(regularFontData.size())) != GDI_ERROR)
 			{
-				FT_New_Memory_Face(library, regularFontData.data(),
+				FT_Error err = FT_New_Memory_Face(library, regularFontData.data(),
 					FT_Long(regularFontData.size()), FT_Long(faceIndex), &regularFont);
+				if (regularFont == nullptr)
+				{
+					log::error("Failed to create FreeType font: %s [%u], error: %d (0x%08x)",
+						face.c_str(), faceIndex, err, err);
+				}
 			}
 		}
 
@@ -116,7 +126,12 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 	 */
 	if (fileExists(boldFace))
 	{
-		FT_New_Face(library, boldFace.c_str(), FT_Long(boldFaceIndex), &boldFont);
+		FT_Error err = FT_New_Face(library, boldFace.c_str(), FT_Long(boldFaceIndex), &boldFont);
+		if (boldFont == nullptr)
+		{
+			log::error("Failed to load bold FreeType font: %s [%u], error: %d (0x%08x)",
+				boldFace.c_str(), boldFaceIndex, err, err);
+		}
 	}
 	else
 	{
@@ -154,8 +169,13 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
 			if (GetFontData(commonDC, 0, 0, boldFontData.data(), DWORD(boldFontData.size())) != GDI_ERROR)
 			{
-				FT_New_Memory_Face(library, boldFontData.data(), FT_Long(boldFontData.size()),
+				FT_Error err = FT_New_Memory_Face(library, boldFontData.data(), FT_Long(boldFontData.size()),
 					FT_Long(boldFaceIndex), &boldFont);
+				if (boldFont == nullptr)
+				{
+					log::error("Failed to create bold FreeType font: %s [%u], error: %d (0x%08x)",
+						boldFace.c_str(), boldFaceIndex, err, err);
+				}
 			}
 		}
 

@@ -55,7 +55,6 @@ private:
 	RenderContext* _rc = nullptr;
 	RenderingElement::Pointer _renderingElement;
 	RenderPass::Pointer _renderPass;
-	Camera::Pointer _sceneCamera = Camera::Pointer::create();
 	Material::Pointer _defaultMaterial;
 	Material::Pointer _fontMaterial;
 	Texture::Pointer _whiteTexture;

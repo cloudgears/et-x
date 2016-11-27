@@ -651,7 +651,12 @@ void Element2d::fillParent()
 	setAutolayoutRelativeToParent(vec2(0.0f), vec2(1.0f), vec2(0.0f));
 }
 
-MaterialInstance::Pointer Element2d::materialInstance() const
+MaterialInstance::Pointer& Element2d::materialInstance()
+{
+	return _material;
+}
+
+const MaterialInstance::Pointer& Element2d::materialInstance() const
 {
 	return _material;
 }

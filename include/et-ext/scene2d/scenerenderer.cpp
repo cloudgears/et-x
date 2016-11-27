@@ -28,7 +28,8 @@ SceneRenderer::SceneRenderer(RenderContext* rc, const RenderPass::ConstructionIn
 	desc->data = BinaryDataStorage(4, 255);
 	_whiteTexture = rc->renderer()->createTexture(desc);
 
-	desc->data.fill(0);
+	// TODO : make transparent
+	// desc->data.fill(0);
 	_transparentTexture = rc->renderer()->createTexture(desc);
 
 	application().pushSearchPath(etExtWorkingFolder);
@@ -40,12 +41,13 @@ SceneRenderer::SceneRenderer(RenderContext* rc, const RenderPass::ConstructionIn
 
 	_defaultMaterial = Material::Pointer::create(rc->renderer().pointer());
 	_defaultMaterial->loadFromJson(loadTextFile(scene2dMaterial), getFilePath(scene2dMaterial));
-	_defaultMaterial->setTexture(MaterialTexture::Albedo, _whiteTexture);
+	// _defaultMaterial->setTexture(MaterialTexture::Albedo, _whiteTexture);
 
 	_fontMaterial = Material::Pointer::create(rc->renderer().pointer());
 	_fontMaterial->loadFromJson(loadTextFile(fontMaterial), getFilePath(fontMaterial));
 
 	_renderPass = rc->renderer()->allocateRenderPass(passInfo);
+	_renderPass->setCamera(Camera::Pointer::create());
 
 	setProjectionMatrices(vector2ToFloat(rc->size()));
 }
@@ -98,7 +100,7 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 	transform[3][0] = -1.0f;
 	transform[3][1] = Camera::renderingOriginTransform;
 	transform[3][3] = 1.0f;
-	_sceneCamera->setProjectionMatrix(transform);
+	_renderPass->camera()->setProjectionMatrix(transform);
 }
 
 SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Texture::Pointer,

@@ -287,7 +287,8 @@ protected:
 	void buildFinalTransform();
 	mat4 buildFinalTransform(const vec2& aOffset, float aAngle, const vec2& aScale, const vec2& aPosition);
 
-	MaterialInstance::Pointer materialInstance() const;
+	MaterialInstance::Pointer& materialInstance();
+	const MaterialInstance::Pointer& materialInstance() const;
 	virtual void validateMaterialInstance(SceneRenderer& renderer);
 	virtual MaterialInstance::Pointer allocateMaterial(SceneRenderer&);
 

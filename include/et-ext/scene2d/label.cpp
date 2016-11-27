@@ -35,10 +35,15 @@ void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 		buildVertices(rc, r);
 
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, Texture::Pointer(), materialInstance(), this);
+	{
+		materialInstance()->setTexture(MaterialTexture::Albedo, r.whiteTexture());
+		r.addVertices(_backgroundVertices, r.whiteTexture(), materialInstance(), this);
+	}
 
 	if (_vertices.lastElementIndex() > 0)
+	{
 		r.addVertices(_vertices, font()->generator()->texture(), textMaterial(r), this);
+	}
 }
 
 void Label::buildVertices(RenderContext*, SceneRenderer&)
