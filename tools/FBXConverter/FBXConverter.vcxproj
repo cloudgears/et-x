@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -11,147 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\et\src\app\appevironment.cpp" />
-    <ClCompile Include="..\..\..\et\src\app\application.cpp" />
-    <ClCompile Include="..\..\..\et\src\app\backgroundthread.cpp" />
-    <ClCompile Include="..\..\..\et\src\app\events.cpp" />
-    <ClCompile Include="..\..\..\et\src\app\invocation.cpp" />
-    <ClCompile Include="..\..\..\et\src\app\pathresolver.cpp" />
-    <ClCompile Include="..\..\..\et\src\app\runloop.cpp" />
-    <ClCompile Include="..\..\..\et\src\camera\camera.cpp" />
-    <ClCompile Include="..\..\..\et\src\camera\frustum.cpp" />
-    <ClCompile Include="..\..\..\et\src\collision\collision.cpp" />
-    <ClCompile Include="..\..\..\et\src\core\base64.cpp" />
-    <ClCompile Include="..\..\..\et\src\core\conversion.cpp" />
-    <ClCompile Include="..\..\..\et\src\core\dictionary.cpp" />
-    <ClCompile Include="..\..\..\et\src\core\et.cpp" />
-    <ClCompile Include="..\..\..\et\src\core\memoryallocator.cpp" />
-    <ClCompile Include="..\..\..\et\src\core\objectscache.cpp" />
-    <ClCompile Include="..\..\..\et\src\core\stream.cpp" />
-    <ClCompile Include="..\..\..\et\src\core\tools.cpp" />
-    <ClCompile Include="..\..\..\et\src\core\transformable.cpp" />
-    <ClCompile Include="..\..\..\et\src\geometry\geometry.cpp" />
-    <ClCompile Include="..\..\..\et\src\geometry\rectplacer.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\bmploader.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\ddsloader.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\hdrloader.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\imageoperations.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\imagewriter.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\jpegloader.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\pngloader.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\pvrdecompressor.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\pvrloader.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\textureloader.cpp" />
-    <ClCompile Include="..\..\..\et\src\imaging\tgaloader.cpp" />
-    <ClCompile Include="..\..\..\et\src\input\gestures.cpp" />
-    <ClCompile Include="..\..\..\et\src\input\input.cpp" />
-    <ClCompile Include="..\..\..\et\src\json\json.cpp" />
-    <ClCompile Include="..\..\..\et\src\locale\locale.cpp" />
-    <ClCompile Include="..\..\..\et\src\models\fbxloader.cpp" />
-    <ClCompile Include="..\..\..\et\src\models\objLoader.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\capabilities.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\framebuffer.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\indexbuffer.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\opengl.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\program.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\programfactory.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\renderer.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\renderstate.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\texture.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\vertexarrayobject.cpp" />
-    <ClCompile Include="..\..\..\et\src\opengl\vertexbuffer.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\application.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\atomiccounter.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\criticalsection.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\input.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\locale.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\log.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\memory.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\mutex.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\opengl.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\rendercontext.win-directx.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\rendercontext.win-opengl.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\sound.openal.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\thread.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\threading.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\tools.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\platform-win\videocapture.win.cpp" />
-    <ClCompile Include="..\..\..\et\src\primitives\primitives.cpp" />
-    <ClCompile Include="..\..\..\et\src\rendering\framebufferfactory.cpp" />
-    <ClCompile Include="..\..\..\et\src\rendering\rendercontext.cpp" />
-    <ClCompile Include="..\..\..\et\src\rendering\rendering.cpp" />
-    <ClCompile Include="..\..\..\et\src\rendering\texturefactory.cpp" />
-    <ClCompile Include="..\..\..\et\src\rendering\textureloadingthread.cpp" />
-    <ClCompile Include="..\..\..\et\src\rendering\vertexbufferfactory.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\animation.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\baseelement.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\cameraelement.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\lightelement.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\material.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\mesh.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\particlesystem.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\renderableelement.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\scene3d.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\serialization.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\storage.cpp" />
-    <ClCompile Include="..\..\..\et\src\scene3d\supportmesh.cpp" />
-    <ClCompile Include="..\..\..\et\src\tasks\taskpool.cpp" />
-    <ClCompile Include="..\..\..\et\src\timers\notifytimer.cpp" />
-    <ClCompile Include="..\..\..\et\src\timers\sequence.cpp" />
-    <ClCompile Include="..\..\..\et\src\timers\timedobject.cpp" />
-    <ClCompile Include="..\..\..\et\src\timers\timerpool.cpp" />
-    <ClCompile Include="..\..\..\et\src\vertexbuffer\indexarray.cpp" />
-    <ClCompile Include="..\..\..\et\src\vertexbuffer\vertexarray.cpp" />
-    <ClCompile Include="..\..\..\et\src\vertexbuffer\vertexdatachunk.cpp" />
-    <ClCompile Include="..\..\..\et\src\vertexbuffer\vertexdeclaration.cpp" />
-    <ClCompile Include="..\..\..\et\src\vertexbuffer\vertexstorage.cpp" />
-    <ClCompile Include="..\..\src\scene2d\button.cpp" />
-    <ClCompile Include="..\..\src\scene2d\charactergenerator.cpp" />
-    <ClCompile Include="..\..\src\scene2d\charactergenerator.impl.cpp" />
-    <ClCompile Include="..\..\src\scene2d\element2d.cpp" />
-    <ClCompile Include="..\..\src\scene2d\font.cpp" />
-    <ClCompile Include="..\..\src\scene2d\fullscreenelement.cpp" />
-    <ClCompile Include="..\..\src\scene2d\imageview.cpp" />
-    <ClCompile Include="..\..\src\scene2d\label.cpp" />
-    <ClCompile Include="..\..\src\scene2d\layout.cpp" />
-    <ClCompile Include="..\..\src\scene2d\line.cpp" />
-    <ClCompile Include="..\..\src\scene2d\listbox.cpp" />
-    <ClCompile Include="..\..\src\scene2d\particleselement.cpp" />
-    <ClCompile Include="..\..\src\scene2d\renderingelement.cpp" />
-    <ClCompile Include="..\..\src\scene2d\scene.cpp" />
-    <ClCompile Include="..\..\src\scene2d\scenerenderer.cpp" />
-    <ClCompile Include="..\..\src\scene2d\scroll.cpp" />
-    <ClCompile Include="..\..\src\scene2d\slider.cpp" />
-    <ClCompile Include="..\..\src\scene2d\table.cpp" />
-    <ClCompile Include="..\..\src\scene2d\textelement.cpp" />
-    <ClCompile Include="..\..\src\scene2d\textfield.cpp" />
-    <ClCompile Include="..\..\src\scene2d\textureatlas.cpp" />
-    <ClCompile Include="..\..\src\scene2d\textureatlaswriter.cpp" />
-    <ClCompile Include="..\..\src\scene2d\vertexbuilder.cpp" />
+    <ClCompile Include="..\..\..\et\include\et-ext\formats\fbxloader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="source\converter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\et\include\et\models\fbxloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\models\modelloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\models\objloader.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\animation.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\elementcontainer.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\renderableelement.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\base.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\baseelement.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\cameraelement.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\lightelement.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\material.deprecated.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\material.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\material.parameters.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\mesh.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\particlesystem.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\scene3d.deprecated.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\scene3d.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\serialization.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\storage.h" />
-    <ClInclude Include="..\..\..\et\include\et\scene3d\supportmesh.h" />
+    <ClInclude Include="..\..\..\et\include\et-ext\formats\fbxloader.h" />
     <ClInclude Include="source\converter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals" />
@@ -159,18 +24,19 @@
     <ProjectGuid>{B4DCB303-8D7F-444B-AEB8-8ADF2E9A204D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>FBXConverter</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -187,12 +53,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>..\..\..\et\include;..\..\include\external\freetype;..\..\include;Q:\SDK\FBX\include;$(IncludePath)</IncludePath>
-    <LibraryPath>Q:\SDK\FBX\lib\vs2013\x64\debug;..\..\..\et\lib\win\x64;..\..\lib\win\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>Q:\SDK\FBX\lib\vs2015\x64\debug;..\..\..\et\lib\vs2015;..\..\lib\vs2015;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>..\..\..\et\include;..\..\include\external\freetype;..\..\include;Q:\SDK\FBX\include;$(IncludePath)</IncludePath>
-    <LibraryPath>Q:\SDK\FBX\lib\vs2013\x64\release;..\..\..\et\lib\win\x64;..\..\lib\win\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>Q:\SDK\FBX\lib\vs2015\x64\release;..\..\..\et\lib\vs2015;..\..\lib\vs2015;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\bin\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -209,7 +77,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;libfbxsdk-mt.lib;wininet.lib;psapi.lib;png.lib;z.lib;jansson.lib;jpeg.lib;freetype.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>et-$(Configuration).lib;et-ext-$(Configuration).lib;libfbxsdk-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
@@ -232,7 +100,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>opengl32.lib;libfbxsdk-mt.lib;wininet.lib;psapi.lib;png.lib;z.lib;jansson.lib;jpeg.lib;freetype.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>et-$(Configuration).lib;et-ext-$(Configuration).lib;libfbxsdk-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>

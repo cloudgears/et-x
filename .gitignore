@@ -9,3 +9,4 @@ tools/envmapblur/windows/x64/
 projects/x64/
 *.db
 *.opendb
+tools/bin/

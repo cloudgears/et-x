@@ -138,7 +138,7 @@ void MainController::applicationDidLoad(et::RenderContext* rc)
 	if (fileExists(fileToLoad))
 		_mainUi->fileSelected.invokeInMainRunLoop(fileToLoad);
 	
-	_ui = s2d::Scene::Pointer::create(rc);
+	_ui = s2d::Scene::Pointer::create(rc, passInfo);
 	_ui->pushLayout(_mainUi);
 	
 	_cameraAngles.setTargetValue(vec2(0.0f, 0.0f));
