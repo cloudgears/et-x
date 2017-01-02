@@ -66,25 +66,25 @@ void Slider::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, _background.texture);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _background.texture);
 		r.addVertices(_backgroundVertices, _background.texture, materialInstance(), this);
 	}
 
 	if (_sliderLeftVertices.lastElementIndex() > 0)
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, _sliderLeft.texture);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _sliderLeft.texture);
 		r.addVertices(_sliderLeftVertices, _sliderLeft.texture, materialInstance(), this);
 	}
 
 	if (_sliderRightVertices.lastElementIndex() > 0)
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, _sliderRight.texture);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _sliderRight.texture);
 		r.addVertices(_sliderRightVertices, _sliderRight.texture, materialInstance(), this);
 	}
 
 	if (_handleVertices.lastElementIndex() > 0)
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, _handle[_state].texture);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _handle[_state].texture);
 		r.addVertices(_handleVertices, _handle[_state].texture, materialInstance(), this);
 	}
 }

@@ -41,7 +41,7 @@ SceneRenderer::SceneRenderer(RenderContext* rc, const RenderPass::ConstructionIn
 
 	_defaultMaterial = Material::Pointer::create(rc->renderer().pointer());
 	_defaultMaterial->loadFromJson(loadTextFile(scene2dMaterial), getFilePath(scene2dMaterial));
-	// _defaultMaterial->setTexture(MaterialTexture::Albedo, _whiteTexture);
+	// _defaultMaterial->setTexture(MaterialTexture::BaseColor, _whiteTexture);
 
 	_fontMaterial = Material::Pointer::create(rc->renderer().pointer());
 	_fontMaterial->loadFromJson(loadTextFile(fontMaterial), getFilePath(fontMaterial));

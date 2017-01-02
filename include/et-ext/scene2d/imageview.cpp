@@ -58,7 +58,7 @@ void ImageView::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 
 	if (_vertices.lastElementIndex())
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, _texture);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _texture);
 		r.addVertices(_vertices, _texture, materialInstance(), this);
 	}
 }

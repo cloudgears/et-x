@@ -58,19 +58,19 @@ void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, _background.texture);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _background.texture);
 		r.addVertices(_backgroundVertices, _background.texture, materialInstance(), this);
 	}
 
 	if (_imageVertices.lastElementIndex() > 0)
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, _background.texture);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _background.texture);
 		r.addVertices(_imageVertices, _background.texture, materialInstance(), this);
 	}
 
 	if (_textVertices.lastElementIndex() > 0)
 	{
-		textMaterial(r)->setTexture(MaterialTexture::Albedo, font()->generator()->texture());
+		textMaterial(r)->setTexture(MaterialTexture::BaseColor, font()->generator()->texture());
 		r.addVertices(_textVertices, font()->generator()->texture(), textMaterial(r), this);
 	}
 }

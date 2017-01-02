@@ -32,7 +32,7 @@ void TextElement::setFont(const Font::Pointer& f)
 	_font = f;
 	if (_font.valid() && _textMaterial.valid())
 	{
-		_textMaterial->setTexture(MaterialTexture::Albedo, _font->generator()->texture());
+		_textMaterial->setTexture(MaterialTexture::BaseColor, _font->generator()->texture());
 	}
 	invalidateText();
 }
@@ -141,7 +141,7 @@ MaterialInstance::Pointer TextElement::textMaterial(SceneRenderer& r)
 		_textMaterial = r.fontMaterial()->instance();
 		if (_font.valid())
 		{
-			_textMaterial->setTexture(MaterialTexture::Albedo, _font->generator()->texture());
+			_textMaterial->setTexture(MaterialTexture::BaseColor, _font->generator()->texture());
 		}
 	}
 	return _textMaterial;

@@ -56,19 +56,19 @@ void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 
 	if (_bgVertices.lastElementIndex() > 0)
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, _background[_state].texture);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _background[_state].texture);
 		r.addVertices(_bgVertices, _background[_state].texture, materialInstance(), this);
 	}
 
 	if (_textVertices.lastElementIndex() > 0)
 	{
-		textMaterial(r)->setTexture(MaterialTexture::Albedo, font()->generator()->texture());
+		textMaterial(r)->setTexture(MaterialTexture::BaseColor, font()->generator()->texture());
 		r.addVertices(_textVertices, font()->generator()->texture(), textMaterial(r), this);
 	}
 
 	if (_imageVertices.lastElementIndex() > 0)
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, _image[_state].texture);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _image[_state].texture);
 		r.addVertices(_imageVertices, _image[_state].texture, materialInstance(), this);
 	}
 }

@@ -36,7 +36,7 @@ void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
-		materialInstance()->setTexture(MaterialTexture::Albedo, r.whiteTexture());
+		materialInstance()->setTexture(MaterialTexture::BaseColor, r.whiteTexture());
 		r.addVertices(_backgroundVertices, r.whiteTexture(), materialInstance(), this);
 	}
 

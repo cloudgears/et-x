@@ -51,7 +51,7 @@ void Line::addToRenderQueue(RenderContext*, SceneRenderer& r)
 	if (!contentValid())
 		buildVertices(r);
 
-	materialInstance()->setTexture(MaterialTexture::Albedo, r.whiteTexture());
+	materialInstance()->setTexture(MaterialTexture::BaseColor, r.whiteTexture());
 	r.addVertices(_vertices, r.whiteTexture(), materialInstance(), this);
 }
 

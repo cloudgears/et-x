@@ -50,6 +50,7 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_scene->mainCamera()->perspectiveProjection(QUARTER_PI, vector2ToFloat(rc->size()).aspect(), 1.0f, 2048.0f);
 	_scene->mainCamera()->lookAt(fromSpherical(_vAngle.value().x, _vAngle.value().y) * _vDistance.value());
 	_cameraController = CameraMovingController::Pointer::create(_scene->mainCamera(), true);
+	_cameraController->setIntepolationRate(10.0f);
 
 	_sceneRenderer = s3d::Renderer::Pointer::create();
 
@@ -59,7 +60,7 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	RenderPass::ConstructionInfo passInfo;
 	passInfo.color[0].loadOperation = FramebufferOperation::Load;
 	passInfo.color[0].enabled = true;
-	passInfo.depth.enabled = true;
+	passInfo.depth.enabled = false;
 
 	_gui = s2d::Scene::Pointer::create(rc, passInfo);
 	_mainLayout = MainLayout::Pointer::create();
@@ -409,11 +410,26 @@ void Converter::performLoading(std::string path)
 		}
 	}
 
+	vec3 sceneMaxVector(1.0f);
+	vec3 sceneMinVector(-1.0f);
+	s3d::BaseElement::Collection meshes = _scene->childrenOfType(s3d::ElementType::Mesh);
+	for (s3d::Mesh::Pointer mesh : meshes)
+	{
+		const BoundingBox& bbox = mesh->tranformedBoundingBox();
+		sceneMaxVector = maxv(sceneMaxVector, bbox.maxVertex());
+		sceneMinVector = minv(sceneMinVector, bbox.minVertex());
+	}
+	vec3 sceneCenter = 0.5f * (sceneMinVector + sceneMaxVector);
+	float sceneRadius = (sceneMaxVector - sceneMinVector).length();
+
 	// printStructureRecursive(_scene, "|");
 
+	_scene->mainCamera()->lookAt(fromSpherical(QUARTER_PI, QUARTER_PI) * sceneRadius * SQRT_2, sceneCenter);
 	_scene->storage().flush();
 	_scene->animateRecursive();
 	_labStatus->setText("Completed.");
+	
+	_cameraController->synchronize(_scene->mainCamera());
 }
 
 void Converter::performBinarySaving(std::string path)
