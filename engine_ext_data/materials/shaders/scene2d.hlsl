@@ -4,8 +4,8 @@
 struct VSOutput 
 {
 	float4 position : SV_Position;
-	float4 color : COLOR;
-	float4 texCoord0 : TEXCOORD0;
+	float4 color;
+	float4 texCoord0;
 };
 
 VSOutput vertexMain(VSInput vsIn)
@@ -13,7 +13,7 @@ VSOutput vertexMain(VSInput vsIn)
 	VSOutput vsOut;
 	vsOut.texCoord0 = vsIn.texCoord0;
 	vsOut.color = vsIn.color;
-	vsOut.position = mul(passVariables.projection, vsIn.position);
+	vsOut.position = mul(vsIn.position, passVariables.projection);
 	return vsOut;
 }
 
