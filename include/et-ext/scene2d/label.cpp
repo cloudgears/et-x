@@ -29,20 +29,16 @@ Label::Label(const std::string& text, const Font::Pointer& f, float fsz, Element
 
 void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	validateMaterialInstance(r);
-
-	if (!contentValid() || !transformValid())
-		buildVertices(rc, r);
-
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, r.whiteTexture());
-		r.addVertices(_backgroundVertices, r.whiteTexture(), materialInstance(), this);
+		r.addVertices(_backgroundVertices, materialInstance(), this);
 	}
 
 	if (_vertices.lastElementIndex() > 0)
 	{
-		r.addVertices(_vertices, font()->generator()->texture(), textMaterial(r), this);
+		textMaterial(r)->setTexture(MaterialTexture::BaseColor, font()->generator()->texture());
+		r.addVertices(_vertices, textMaterial(r), this);
 	}
 }
 

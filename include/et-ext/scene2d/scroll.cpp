@@ -37,22 +37,20 @@ Scroll::Scroll(Element2d* parent, const std::string& name) :
 
 void Scroll::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	validateMaterialInstance(r);
-
-	if (!contentValid())
-		buildVertices(rc, r);
-
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, r.transparentTexture(), materialInstance(), this);
+	{
+		materialInstance()->setTexture(MaterialTexture::BaseColor, r.transparentTexture());
+		r.addVertices(_backgroundVertices, materialInstance(), this);
+	}
 }
 
 void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	if (!contentValid())
-		buildVertices(rc, r);
-
 	if (_overlayVertices.lastElementIndex() > 0)
-		r.addVertices(_overlayVertices, r.transparentTexture(), materialInstance(), this);
+	{
+		materialInstance()->setTexture(MaterialTexture::BaseColor, r.transparentTexture());
+		r.addVertices(_overlayVertices, materialInstance(), this);
+	}
 }
 
 void Scroll::buildVertices(RenderContext*, SceneRenderer&)

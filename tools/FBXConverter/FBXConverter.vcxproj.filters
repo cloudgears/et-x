@@ -10,6 +10,9 @@
     <Filter Include="et-ext\formats">
       <UniqueIdentifier>{892c35f9-26f7-4771-8f96-8f2a36867987}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\ui">
+      <UniqueIdentifier>{c34ad175-16d1-4d94-b8db-5378b5834404}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\converter.cpp">
@@ -21,6 +24,9 @@
     <ClCompile Include="..\..\..\et\include\et-ext\formats\fbxloader.cpp">
       <Filter>et-ext\formats</Filter>
     </ClCompile>
+    <ClCompile Include="source\ui\mainlayout.cpp">
+      <Filter>source\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\converter.h">
@@ -28,6 +34,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\et\include\et-ext\formats\fbxloader.h">
       <Filter>et-ext\formats</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ui\mainlayout.h">
+      <Filter>source\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

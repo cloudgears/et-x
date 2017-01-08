@@ -39,6 +39,10 @@ void Layout::addElementToRenderQueue(Element2d::Pointer& element, RenderContext*
 			vec2i(static_cast<int>(eSize.x), static_cast<int>(eSize.y))));
 	}
 
+	element->validateMaterialInstance(gr);
+	if (!element->contentValid() || !element->transformValid())
+		element->buildVertices(rc, gr);
+
 	element->addToRenderQueue(rc, gr);
 	for (auto& c : element->children())
 	{

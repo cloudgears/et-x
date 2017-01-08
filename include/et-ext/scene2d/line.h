@@ -37,8 +37,8 @@ public:
 	void setShadowOffset(const vec2&);
 
 private:
-	void addToRenderQueue(RenderContext*, SceneRenderer&);
-	void buildVertices(SceneRenderer&);
+	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
+	void buildVertices(RenderContext*, SceneRenderer&) override;
 
 	void buildLine(const vec2&, const vec2&, const vec4&, const vec4&, const vec4&, const mat4&);
 

@@ -30,7 +30,7 @@ Scene::Scene(RenderContext* rc, const RenderPass::ConstructionInfo& passInfo)
 	layout(vector2ToFloat(rc->size()));
 }
 
-bool Scene::pointerPressed(const et::PointerInputInfo& p)
+bool Scene::pointerPressed(et::PointerInputInfo p)
 {
 	if (animatingTransition())
 		return true;
@@ -44,7 +44,7 @@ bool Scene::pointerPressed(const et::PointerInputInfo& p)
 	return false;
 }
 
-bool Scene::pointerMoved(const et::PointerInputInfo& p)
+bool Scene::pointerMoved(et::PointerInputInfo p)
 {
 	if (animatingTransition())
 		return true;
@@ -58,7 +58,7 @@ bool Scene::pointerMoved(const et::PointerInputInfo& p)
 	return false;
 }
 
-bool Scene::pointerReleased(const et::PointerInputInfo& p)
+bool Scene::pointerReleased(et::PointerInputInfo p)
 {
 	if (animatingTransition())
 		return true;
@@ -72,7 +72,7 @@ bool Scene::pointerReleased(const et::PointerInputInfo& p)
 	return false;
 }
 
-bool Scene::pointerCancelled(const et::PointerInputInfo& p)
+bool Scene::pointerCancelled(et::PointerInputInfo p)
 {
 	for (auto i = _layouts.rbegin(), e = _layouts.rend(); i != e; ++i)
 		(*i)->layout->pointerCancelled(p);
@@ -80,7 +80,7 @@ bool Scene::pointerCancelled(const et::PointerInputInfo& p)
 	return false;
 }
 
-bool Scene::pointerScrolled(const et::PointerInputInfo& p)
+bool Scene::pointerScrolled(et::PointerInputInfo p)
 {
 	if (animatingTransition())
 		return true;

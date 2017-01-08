@@ -103,6 +103,7 @@ public:
 		return false;
 	}
 
+	virtual void buildVertices(RenderContext*, SceneRenderer&) {}
 	virtual void addToRenderQueue(RenderContext*, SceneRenderer&) {}
 	virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) {}
 	virtual void preRender(RenderContext*) {}
@@ -262,6 +263,7 @@ public:
 	}
 
 	void invalidateTransform();
+	virtual void validateMaterialInstance(SceneRenderer& renderer);
 
 	virtual void reloadFromFile(const std::string&) {}
 
@@ -289,7 +291,6 @@ protected:
 
 	MaterialInstance::Pointer& materialInstance();
 	const MaterialInstance::Pointer& materialInstance() const;
-	virtual void validateMaterialInstance(SceneRenderer& renderer);
 	virtual MaterialInstance::Pointer allocateMaterial(SceneRenderer&);
 
 	/*

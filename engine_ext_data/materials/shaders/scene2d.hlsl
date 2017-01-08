@@ -1,31 +1,27 @@
 #include <et>
+#include <inputdefines>
 #include <inputlayout>
+
+Texture2D<float4> baseColorTexture : CONSTANT_LOCATION(t, BaseColorTextureBinding, TexturesSetIndex);
+SamplerState baseColorSampler : CONSTANT_LOCATION(s, BaseColorSamplerBinding, TexturesSetIndex);;
 
 struct VSOutput 
 {
 	float4 position : SV_Position;
-	float4 color;
-	float4 texCoord0;
+	float4 color : COLOR0;
+	float2 texCoord0 : TEXCOORD0;
 };
 
 VSOutput vertexMain(VSInput vsIn)
 {
 	VSOutput vsOut;
-	vsOut.texCoord0 = vsIn.texCoord0;
+	vsOut.texCoord0 = vsIn.texCoord0.xy;
 	vsOut.color = vsIn.color;
-	vsOut.position = mul(vsIn.position, passVariables.projection);
+	vsOut.position = mul(vsIn.position, projection);
 	return vsOut;
 }
 
-struct FSOutput 
+float4 fragmentMain(VSOutput fsIn) : SV_Target0
 {
-	float4 color0 : SV_Target0;
-};
-
-FSOutput fragmentMain(VSOutput fsIn)
-{
-	FSOutput fsOut;
-	fsOut.color0 = /* texture(albedoTexture, fsIn.texCoord0.xy) */ fsIn.color;
-	return fsOut;
+	return fsIn.color * baseColorTexture.Sample(baseColorSampler, fsIn.texCoord0);
 }
-

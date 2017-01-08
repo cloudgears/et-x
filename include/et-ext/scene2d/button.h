@@ -171,7 +171,7 @@ protected:
 	bool respondsToMessage(const Message&) const override;
 
 private:
-	void buildVertices(RenderContext* rc, SceneRenderer& gr);
+	void buildVertices(RenderContext* rc, SceneRenderer& gr) override;
 	void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer) override;
 
 	void setCurrentState(State s);

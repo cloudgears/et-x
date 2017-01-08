@@ -35,8 +35,7 @@ public:
 	void setProjectionMatrices(const vec2& contextSize);
 	void setRenderingElement(const RenderingElement::Pointer& r);
 
-	void addVertices(const SceneVertexList&, const Texture::Pointer, const MaterialInstance::Pointer&,
-		Element2d*, PrimitiveType = PrimitiveType::Triangles);
+	void addVertices(const SceneVertexList&, const MaterialInstance::Pointer&, Element2d*, PrimitiveType = PrimitiveType::Triangles);
 
 	void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 
@@ -48,8 +47,7 @@ public:
 private:
 	ET_DENY_COPY(SceneRenderer);
 
-	SceneVertex* allocateVertices(uint32_t, const Texture::Pointer, const MaterialInstance::Pointer&,
-		Element2d*, PrimitiveType);
+	SceneVertex* allocateVertices(uint32_t, const MaterialInstance::Pointer&, Element2d*, PrimitiveType);
 
 private:
 	RenderContext* _rc = nullptr;

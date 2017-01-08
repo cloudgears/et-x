@@ -61,7 +61,7 @@ public:
 
 private:
 	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
-	void buildVertices(RenderContext*, SceneRenderer&);
+	void buildVertices(RenderContext*, SceneRenderer&) override;
 
 	bool processMessage(const Message& msg) override;
 	void onCreateBlinkTimerExpired(NotifyTimer* t);

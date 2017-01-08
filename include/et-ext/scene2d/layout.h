@@ -93,7 +93,7 @@ private:
 	void setHoveredElement(const PointerInputInfo& p, Element2d::Pointer e);
 	void performDragging(const PointerInputInfo&);
 
-	void addToRenderQueue(RenderContext* rc, SceneRenderer& gr);
+	void addToRenderQueue(RenderContext* rc, SceneRenderer& gr) override;
 	void addElementToRenderQueue(Element2d::Pointer& element, RenderContext* rc, SceneRenderer& gr);
 
 private:

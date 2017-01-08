@@ -56,7 +56,7 @@ public:
 
 private:
 	void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer) override;
-	void buildVertices(RenderContext* rc, SceneRenderer& renderer);
+	void buildVertices(RenderContext* rc, SceneRenderer& renderer) override;
 
 	void update(float t) override;
 	void invalidateText() override;

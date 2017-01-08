@@ -41,7 +41,6 @@
   <ItemGroup>
     <ClCompile Include="..\include\et-ext\atmosphere\atmosphere.cpp" />
     <ClCompile Include="..\include\et-ext\compile_packs\scene2d.pack.cxx" />
-    <ClCompile Include="et_ext_info.cpp" />
     <ClInclude Include="..\include\et-ext\scene2d\button.cpp" />
     <ClInclude Include="..\include\et-ext\scene2d\charactergenerator.cpp" />
     <ClInclude Include="..\include\et-ext\scene2d\charactergenerator.impl.cpp" />
@@ -129,17 +128,7 @@
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <AdditionalDependencies>freetype.lib</AdditionalDependencies>
     </Lib>
-    <PreBuildEvent>
-      <Command>echo #pragma once &gt; et_ext_info.cpp
-echo. &gt;&gt; et_ext_info.cpp
-echo namespace et  &gt;&gt; et_ext_info.cpp
-echo { &gt;&gt; et_ext_info.cpp
-echo const char* etExtWorkingFolder = R"($(ProjectDir)..\)"; &gt;&gt; et_ext_info.cpp
-git log -1 --pretty=format:"const char* etExtCommit = \"%%h\";" &gt;&gt; et_ext_info.cpp
-echo. &gt;&gt; et_ext_info.cpp
-echo } &gt;&gt; et_ext_info.cpp
-</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -162,17 +151,7 @@ echo } &gt;&gt; et_ext_info.cpp
     <Lib>
       <AdditionalDependencies>freetype.lib</AdditionalDependencies>
     </Lib>
-    <PreBuildEvent>
-      <Command>echo #pragma once &gt; et_ext_info.cpp
-echo. &gt;&gt; et_ext_info.cpp
-echo namespace et  &gt;&gt; et_ext_info.cpp
-echo { &gt;&gt; et_ext_info.cpp
-echo const char* etExtWorkingFolder = R"($(ProjectDir)..\)"; &gt;&gt; et_ext_info.cpp
-git log -1 --pretty=format:"const char* etExtCommit = \"%%h\";" &gt;&gt; et_ext_info.cpp
-echo. &gt;&gt; et_ext_info.cpp
-echo } &gt;&gt; et_ext_info.cpp
-</Command>
-    </PreBuildEvent>
+    <PreBuildEvent />
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

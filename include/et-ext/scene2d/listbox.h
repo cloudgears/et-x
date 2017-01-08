@@ -83,7 +83,7 @@ public:
 
 private:
 	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
-	void buildVertices(SceneRenderer& gr);
+	void buildVertices(RenderContext*, SceneRenderer& gr) override;
 
 	void didChangeFrame() override;
 

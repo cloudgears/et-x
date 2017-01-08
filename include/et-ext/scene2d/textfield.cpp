@@ -51,27 +51,22 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 
 void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	validateMaterialInstance(r);
-
-	if (!contentValid() || !transformValid())
-		buildVertices(rc, r);
-
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, _background.texture);
-		r.addVertices(_backgroundVertices, _background.texture, materialInstance(), this);
+		r.addVertices(_backgroundVertices, materialInstance(), this);
 	}
 
 	if (_imageVertices.lastElementIndex() > 0)
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, _background.texture);
-		r.addVertices(_imageVertices, _background.texture, materialInstance(), this);
+		r.addVertices(_imageVertices, materialInstance(), this);
 	}
 
 	if (_textVertices.lastElementIndex() > 0)
 	{
 		textMaterial(r)->setTexture(MaterialTexture::BaseColor, font()->generator()->texture());
-		r.addVertices(_textVertices, font()->generator()->texture(), textMaterial(r), this);
+		r.addVertices(_textVertices, textMaterial(r), this);
 	}
 }
 

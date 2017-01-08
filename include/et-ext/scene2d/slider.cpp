@@ -59,33 +59,28 @@ float Slider::normalizedValue() const
 
 void Slider::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	validateMaterialInstance(r);
-
-	if (!contentValid() || !transformValid())
-		buildVertices(rc, r);
-
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, _background.texture);
-		r.addVertices(_backgroundVertices, _background.texture, materialInstance(), this);
+		r.addVertices(_backgroundVertices, materialInstance(), this);
 	}
 
 	if (_sliderLeftVertices.lastElementIndex() > 0)
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, _sliderLeft.texture);
-		r.addVertices(_sliderLeftVertices, _sliderLeft.texture, materialInstance(), this);
+		r.addVertices(_sliderLeftVertices, materialInstance(), this);
 	}
 
 	if (_sliderRightVertices.lastElementIndex() > 0)
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, _sliderRight.texture);
-		r.addVertices(_sliderRightVertices, _sliderRight.texture, materialInstance(), this);
+		r.addVertices(_sliderRightVertices, materialInstance(), this);
 	}
 
 	if (_handleVertices.lastElementIndex() > 0)
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, _handle[_state].texture);
-		r.addVertices(_handleVertices, _handle[_state].texture, materialInstance(), this);
+		r.addVertices(_handleVertices, materialInstance(), this);
 	}
 }
 

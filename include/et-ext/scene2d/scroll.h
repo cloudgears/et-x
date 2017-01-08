@@ -79,10 +79,9 @@ protected:
 	bool pointerScrolled(const PointerInputInfo&);
 
 private:
-	void buildVertices(RenderContext* rc, SceneRenderer& r);
-
-	void addToRenderQueue(RenderContext*, SceneRenderer&);
-	void addToOverlayRenderQueue(RenderContext*, SceneRenderer&);
+	void buildVertices(RenderContext* rc, SceneRenderer& r) override;
+	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
+	void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) override;
 
 	const mat4& finalTransform();
 	const mat4& finalInverseTransform();

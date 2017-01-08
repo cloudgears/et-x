@@ -34,7 +34,7 @@ public:
 	void hideText();
 	void revealText();
 	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
-	void buildVertices(SceneRenderer& gr);
+	void buildVertices(RenderContext*, SceneRenderer& gr) override;
 
 private:
 	Listbox* _owner = nullptr;
@@ -51,7 +51,7 @@ Listbox::Popup::Popup(Listbox* owner, const std::string& name) :
 	setFlag(Flag_RenderTopmost);
 }
 
-void Listbox::Popup::buildVertices(SceneRenderer&)
+void Listbox::Popup::buildVertices(RenderContext*, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	_backgroundVertices.setOffset(0);
@@ -116,19 +116,23 @@ void Listbox::Popup::hideText()
 
 void Listbox::Popup::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
-	validateMaterialInstance(r);
-
-	if (!contentValid() || !transformValid())
-		buildVertices(r);
-
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, _owner->_background.texture, materialInstance(), this);
+	{
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _owner->_background.texture);
+		r.addVertices(_backgroundVertices, materialInstance(), this);
+	}
 
 	if (_selectionVertices.lastElementIndex() > 0)
-		r.addVertices(_selectionVertices, _owner->_selection.texture, materialInstance(), this);
-
+	{
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _owner->_selection.texture);
+		r.addVertices(_selectionVertices, materialInstance(), this);
+	}
+	
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, _owner->font()->generator()->texture(), _owner->textMaterial(r), this);
+	{
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _owner->font()->generator()->texture());
+		r.addVertices(_textVertices, _owner->textMaterial(r), this);
+	}
 }
 
 bool Listbox::Popup::pointerPressed(const PointerInputInfo&)
@@ -204,7 +208,7 @@ void Listbox::setSelectionImage(const Image& img)
 	invalidateContent();
 }
 
-void Listbox::buildVertices(SceneRenderer&)
+void Listbox::buildVertices(RenderContext*, SceneRenderer&)
 {
 	_backgroundVertices.setOffset(0);
 	_textVertices.setOffset(0);
@@ -232,16 +236,17 @@ void Listbox::buildVertices(SceneRenderer&)
 
 void Listbox::addToRenderQueue(RenderContext*, SceneRenderer& r)
 {
-	validateMaterialInstance(r);
-
-	if (!contentValid())
-		buildVertices(r);
-
 	if (_backgroundVertices.lastElementIndex() > 0)
-		r.addVertices(_backgroundVertices, _images[_state].texture, materialInstance(), this);
+	{
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _images[_state].texture);
+		r.addVertices(_backgroundVertices, materialInstance(), this);
+	}
 
 	if (_textVertices.lastElementIndex() > 0)
-		r.addVertices(_textVertices, font()->generator()->texture(), textMaterial(r), this);
+	{
+		materialInstance()->setTexture(MaterialTexture::BaseColor, font()->generator()->texture());
+		r.addVertices(_textVertices, textMaterial(r), this);
+	}
 }
 
 bool Listbox::shouldDrawText()

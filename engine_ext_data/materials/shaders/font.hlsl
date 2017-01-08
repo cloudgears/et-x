@@ -1,11 +1,16 @@
 #include <et>
+#include <inputdefines>
 #include <inputlayout>
 
-struct VSOutput {
+Texture2D<float> baseColorTexture : CONSTANT_LOCATION(t, BaseColorTextureBinding, TexturesSetIndex);
+SamplerState baseColorSampler : CONSTANT_LOCATION(s, BaseColorSamplerBinding, TexturesSetIndex);
+
+struct VSOutput 
+{
 	float4 position : SV_Position;
-	float4 color;
-	float2 texCoord0;
-	float2 params;
+	float4 color : COLOR;
+	float2 texCoord0 : TEXCOORD0;
+	float2 params : TEXCOORD1;
 };
 
 VSOutput vertexMain(VSInput vsIn)
@@ -16,22 +21,16 @@ VSOutput vertexMain(VSInput vsIn)
 	vsOut.texCoord0 = vsIn.texCoord0.xy;
 	vsOut.params.x = vsIn.texCoord0.z - vsIn.texCoord0.w;
 	vsOut.params.y = vsIn.texCoord0.z + vsIn.texCoord0.w;
-	vsOut.position = mul(vsIn.position, passVariables.projection);
+	vsOut.position = mul(vsIn.position, projection);
 	return vsOut;
 }
-
-// layout (set = TexturesSetIndex, binding = AlbedoTextureBinding) uniform sampler2D albedoTexture;
-
-struct FSOutput
-{
-	float4 color0 : SV_Target0;
-};
 	
-FSOutput fragmentMain(VSOutput fsIn)
+float4 fragmentMain(VSOutput fsIn) : SV_Target0
 {
-	FSOutput fsOut;
-	float alpha = 1.0; // texture(albedoTexture, fsIn.texCoord0.xy).x;
-	fsOut.color0 = fsIn.color;
-	fsOut.color0.w *= smoothstep(fsIn.params.x, fsIn.params.y, alpha);
-	return fsOut;
+	float alpha = baseColorTexture.Sample(baseColorSampler, fsIn.texCoord0.xy);
+
+	float4 color = fsIn.color;
+	color.w *= smoothstep(fsIn.params.x, fsIn.params.y, alpha);
+
+	return color;
 }

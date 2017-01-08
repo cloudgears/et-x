@@ -75,8 +75,6 @@ void ParticlesElement::pause()
 
 void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	validateMaterialInstance(r);
-
 	if (_defaultTexture.invalid())
 	{
 		TextureDescription::Pointer desc = TextureDescription::Pointer::create();
@@ -105,7 +103,8 @@ void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 			setContentValid();
 		}
 
-		r.addVertices(_vertices, _texture, materialInstance(), this, PrimitiveType::Points);
+		materialInstance()->setTexture(MaterialTexture::BaseColor, _texture);
+		r.addVertices(_vertices, materialInstance(), this, PrimitiveType::Points);
 	}
 }
 

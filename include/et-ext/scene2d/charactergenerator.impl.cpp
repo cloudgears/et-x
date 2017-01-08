@@ -46,12 +46,12 @@ private:
 CharacterGeneratorImplementation::CharacterGeneratorImplementation(const std::string& face, const std::string& boldFace,
 	uint32_t faceIndex, uint32_t boldFaceIndex)
 {
-	ET_PIMPL_INIT(CharacterGeneratorImplementation, face, boldFace, faceIndex, boldFaceIndex)
+	ET_PIMPL_INIT(CharacterGeneratorImplementation, face, boldFace, faceIndex, boldFaceIndex);
 }
 
 CharacterGeneratorImplementation::~CharacterGeneratorImplementation()
 {
-	ET_PIMPL_FINALIZE(CharacterGeneratorImplementation)
+	ET_PIMPL_FINALIZE(CharacterGeneratorImplementation);
 }
 
 bool CharacterGeneratorImplementation::processCharacter(const CharDescriptor& a, vec2i& b, vec2i& c, BinaryDataStorage& d)

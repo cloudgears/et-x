@@ -51,15 +51,10 @@ void ImageView::connectEvents()
 
 void ImageView::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	validateMaterialInstance(r);
-
-	if (!contentValid() || !transformValid())
-		buildVertices(rc, r);
-
 	if (_vertices.lastElementIndex())
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, _texture);
-		r.addVertices(_vertices, _texture, materialInstance(), this);
+		r.addVertices(_vertices, materialInstance(), this);
 	}
 }
 

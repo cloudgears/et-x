@@ -11,8 +11,6 @@
 namespace et
 {
 
-extern const char* etExtWorkingFolder;
-
 namespace s2d
 {
 
@@ -32,19 +30,16 @@ SceneRenderer::SceneRenderer(RenderContext* rc, const RenderPass::ConstructionIn
 	// desc->data.fill(0);
 	_transparentTexture = rc->renderer()->createTexture(desc);
 
-	application().pushSearchPath(etExtWorkingFolder);
 	std::string scene2dMaterial = application().resolveFileName("engine_ext_data/materials/scene2d.json");
 	ET_ASSERT(fileExists(scene2dMaterial));
+
 	std::string fontMaterial = application().resolveFileName("engine_ext_data/materials/font.json");
 	ET_ASSERT(fileExists(fontMaterial));
-	application().popSearchPaths();
+	
+	_defaultMaterial = rc->renderer()->sharedMaterialLibrary().loadMaterial(scene2dMaterial);
+	_defaultMaterial->setTexture(MaterialTexture::BaseColor, _whiteTexture);
 
-	_defaultMaterial = Material::Pointer::create(rc->renderer().pointer());
-	_defaultMaterial->loadFromJson(loadTextFile(scene2dMaterial), getFilePath(scene2dMaterial));
-	// _defaultMaterial->setTexture(MaterialTexture::BaseColor, _whiteTexture);
-
-	_fontMaterial = Material::Pointer::create(rc->renderer().pointer());
-	_fontMaterial->loadFromJson(loadTextFile(fontMaterial), getFilePath(fontMaterial));
+	_fontMaterial = rc->renderer()->sharedMaterialLibrary().loadMaterial(fontMaterial);
 
 	_renderPass = rc->renderer()->allocateRenderPass(passInfo);
 	_renderPass->setCamera(Camera::Pointer::create());
@@ -103,31 +98,27 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize)
 	_renderPass->camera()->setProjectionMatrix(transform);
 }
 
-SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Texture::Pointer,
-	const MaterialInstance::Pointer& inMaterial, Element2d* object, PrimitiveType pt)
+SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const MaterialInstance::Pointer& inMaterial, 
+	Element2d* object, PrimitiveType pt)
 {
 	ET_ASSERT(inMaterial.valid());
 	ET_ASSERT(_renderingElement.valid());
 
-	if (object && !object->hasFlag(Flag_DynamicRendering))
+	if ((object != nullptr) && !object->hasFlag(Flag_DynamicRendering))
 		object = nullptr;
 
-	bool isDynamicObject = (object != nullptr) && (object->hasFlag(Flag_DynamicRendering));
-	bool shouldAdd = isDynamicObject || _renderingElement->chunks.empty();
-	if ((shouldAdd == false) && _renderingElement->chunks.size())
+	bool addedToLastChunk = false;
+	if ((object == nullptr) && !_renderingElement->chunks.empty())
 	{
 		RenderChunk& lastChunk = _renderingElement->chunks.back();
-
-		bool sameConfiguration = (lastChunk.clip == _clip.top()) &&
-			(lastChunk.material == inMaterial) && (lastChunk.primitiveType == pt);
-
-		if (sameConfiguration)
+		if ((lastChunk.clip == _clip.top()) && (lastChunk.material == inMaterial) && (lastChunk.primitiveType == pt))
+		{
 			lastChunk.count += count;
-		else
-			shouldAdd = true;
+			addedToLastChunk = true;
+		}
 	}
 
-	if (shouldAdd)
+	if (!addedToLastChunk)
 	{
 		_renderingElement->chunks.emplace_back(_renderingElement->allocatedVertices, count, _clip.top(), inMaterial, object, pt);
 	}
@@ -135,13 +126,13 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Texture:
 	return _renderingElement->allocateVertices(count);
 }
 
-void SceneRenderer::addVertices(const SceneVertexList& vertices, const Texture::Pointer texture,
-	const MaterialInstance::Pointer& material, Element2d* owner, PrimitiveType pt)
+void SceneRenderer::addVertices(const SceneVertexList& vertices, const MaterialInstance::Pointer& material, 
+	Element2d* owner, PrimitiveType pt)
 {
 	uint32_t count = vertices.lastElementIndex();
 	ET_ASSERT((count > 0) && _renderingElement.valid() && material.valid());
 
-	SceneVertex* target = allocateVertices(count, texture, material, owner, pt);
+	SceneVertex* target = allocateVertices(count, material, owner, pt);
 	for (const SceneVertex& v : vertices)
 		*target++ = v;
 }
@@ -170,40 +161,16 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 {
 	ET_ASSERT(_renderingElement.valid());
 
+	/*
+	 * TODO : refactor rendering
+	 * use _additionalOffsetAndAlpha 
+	 * don't use pass projection matrix
+	 * use clipping
+	 * implement dynamic parameters
+	 */
 	VertexStream::Pointer vs = _renderingElement->vertexStream();
 	for (const RenderChunk& chunk : _renderingElement->chunks)
-	{
-		// TODO : use _additionalOffsetAndAlpha
 		_renderPass->pushRenderBatch(RenderBatch::Pointer::create(chunk.material, vs, identityMatrix, chunk.first, chunk.count));
-	}
-
-	/*
-	 * TODO : render something
-	 *
-	RenderState& rs = rc->renderState();
-	Renderer* renderer = rc->renderer();
-	const IndexBuffer::Pointer& indexBuffer = _renderingElement->VertexStream()->indexBuffer();
-
-	Program::Pointer lastBoundProgram;
-	for (auto& i : _renderingElement->chunks)
-	{
-		if (lastBoundProgram != i.program.program)
-		{
-			lastBoundProgram = i.program.program;
-			rs.bindProgram(lastBoundProgram);
-			lastBoundProgram->setUniform(i.program.additionalOffsetAndAlpha, _additionalOffsetAndAlpha);
-			lastBoundProgram->setTransformMatrix(transform);
-		}
-
-		if (i.object != nullptr)
-			i.object->setProgramParameters(rc, lastBoundProgram);
-
-		rs.bindTexture(0, i.texture);
-		rs.setScissor(true, i.clip + _additionalWindowOffset);
-
-		renderer->drawElements(i.primitiveType, indexBuffer, i.first, i.count);
-	}
-	*/
 }
 
 void SceneRenderer::endRender(RenderContext* rc)

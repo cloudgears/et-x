@@ -14,10 +14,12 @@
     <ClCompile Include="..\..\..\et\include\et-ext\formats\fbxloader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="source\converter.cpp" />
+    <ClCompile Include="source\ui\mainlayout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\et\include\et-ext\formats\fbxloader.h" />
     <ClInclude Include="source\converter.h" />
+    <ClInclude Include="source\ui\mainlayout.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals" />
   <PropertyGroup Label="Globals">

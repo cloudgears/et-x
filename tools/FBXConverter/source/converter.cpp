@@ -1,6 +1,5 @@
 #include <et/core/json.h>
 #include <et/core/hardware.h>
-#include <et/platform/platformtools.h>
 #include <et/rendering/base/primitives.h>
 #include <et/scene3d/objloader.h>
 #include <et-ext/formats/fbxloader.h>
@@ -8,13 +7,6 @@
 
 namespace et
 {
-
-#if (ET_DEBUG)
-const float invocationDelayTime = 0.5f;
-#else
-const float invocationDelayTime = 0.0f;
-#endif
-
 void Converter::setApplicationParameters(ApplicationParameters& p)
 {
 	auto screens = availableScreens();
@@ -35,22 +27,18 @@ void Converter::applicationDidLoad(RenderContext* rc)
 
 	_rc = rc;
 
-	_gestures.pointerPressed.connect(this, &Converter::onPointerPressed);
-	_gestures.pointerMoved.connect(this, &Converter::onPointerMoved);
-	_gestures.pointerReleased.connect(this, &Converter::onPointerReleased);
-	_gestures.scroll.connect(this, &Converter::onScroll);
-	_gestures.zoom.connect(this, &Converter::onZoom);
-	_gestures.drag.connect(this, &Converter::onDrag);
-
 	/*
 	 * Create 3D scene and renderer
 	 */
 	_scene = s3d::Scene::Pointer::create();
 	_scene->setMainCamera(Camera::Pointer::create());
-	_scene->mainCamera()->perspectiveProjection(QUARTER_PI, vector2ToFloat(rc->size()).aspect(), 1.0f, 2048.0f);
-	_scene->mainCamera()->lookAt(fromSpherical(_vAngle.value().x, _vAngle.value().y) * _vDistance.value());
+	_scene->mainCamera()->perspectiveProjection(DEG_60, vector2ToFloat(rc->size()).aspect(), 1.0f, 2048.0f);
+	_scene->mainCamera()->lookAt(50.0f * fromSpherical(QUARTER_PI, QUARTER_PI));
+
 	_cameraController = CameraMovingController::Pointer::create(_scene->mainCamera(), true);
 	_cameraController->setIntepolationRate(10.0f);
+	_cameraController->setMovementSpeed(vec3(25.0f));
+	_cameraController->startUpdates();
 
 	_sceneRenderer = s3d::Renderer::Pointer::create();
 
@@ -62,113 +50,37 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	passInfo.color[0].enabled = true;
 	passInfo.depth.enabled = false;
 
-	_gui = s2d::Scene::Pointer::create(rc, passInfo);
-	_mainLayout = MainLayout::Pointer::create();
-	_gui->pushLayout(_mainLayout);
-
-#if (ET_PLATFORM_WIN)
-	s2d::CharacterGenerator::Pointer defaultCharacters =
-		s2d::CharacterGenerator::Pointer::create(rc, "Tahoma", "Tahoma");
-#else
-	s2d::CharacterGenerator::Pointer defaultCharacters =
-		s2d::CharacterGenerator::Pointer::create(rc, "Helvetica", "Helvetica");
-#endif
-	_mainFont = s2d::Font::Pointer::create(defaultCharacters);
-	_mainFont->loadFromFile(rc, application().resolveFileName("engine_ext_data/fonts/tahoma.font"), localCache);
-
-	vec4 defaultBackgroundColor = vec4(1.0f, 0.5f, 0.25f, 1.0f);
-	float defaultFontSize = 16.0f;
-	float defaultButtonSize = 0.15f;
-	float defaultButtonOffset = 0.16f;
-	float defaultButtonGap = 0.005f;
-
-	s2d::Button::Pointer btnOpen = s2d::Button::Pointer::create("Open", _mainFont, defaultFontSize, _mainLayout.pointer());
-	btnOpen->setFontSmoothing(2.25f);
-	btnOpen->setAutolayoutRelativeToParent(vec2(defaultButtonGap), vec2(defaultButtonSize, 0.05f), vec2(0.0f));
-	btnOpen->setBackgroundColor(defaultBackgroundColor);
-	btnOpen->setTextPressedColor(vec4(1.0f));
-	btnOpen->clicked.connect(this, &Converter::onBtnOpenClick);
-
-	s2d::Button::Pointer btnExport = s2d::Button::Pointer::create("Export", _mainFont, defaultFontSize, _mainLayout.pointer());
-	btnExport->setFontSmoothing(2.25f);
-	btnExport->setAutolayoutRelativeToParent(vec2(1.0f - defaultButtonGap, defaultButtonGap),
-		vec2(defaultButtonSize, 0.05f), vec2(1.0f, 0.0f));
-	btnExport->setBackgroundColor(defaultBackgroundColor);
-	btnExport->setTextPressedColor(vec4(1.0f));
-	btnExport->clicked.connect(this, &Converter::onBtnSaveClick);
-
-	_btnDrawNormalMeshes = s2d::Button::Pointer::create("Normal", _mainFont, defaultFontSize, _mainLayout.pointer());
-	_btnDrawNormalMeshes->setAutolayoutRelativeToParent(vec2(defaultButtonGap, 1.0f - defaultButtonGap),
-		vec2(defaultButtonSize, 0.05f), vec2(0.0f, 1.0f));
-	_btnDrawNormalMeshes->setBackgroundColor(defaultBackgroundColor);
-	_btnDrawNormalMeshes->setTextPressedColor(vec4(1.0f));
-	_btnDrawNormalMeshes->setType(s2d::Button::Type_CheckButton);
-	_btnDrawNormalMeshes->setSelected(true);
-	_btnDrawNormalMeshes->setFontSmoothing(2.25f);
-
-	_btnDrawSupportMeshes = s2d::Button::Pointer::create("Support", _mainFont, defaultFontSize, _mainLayout.pointer());
-	_btnDrawSupportMeshes->setAutolayoutRelativeToParent(vec2(defaultButtonOffset, 1.0f - defaultButtonGap),
-		vec2(defaultButtonSize, 0.05f), vec2(0.0f, 1.0f));
-	_btnDrawSupportMeshes->setBackgroundColor(defaultBackgroundColor);
-	_btnDrawSupportMeshes->setTextPressedColor(vec4(1.0f));
-	_btnDrawSupportMeshes->setType(s2d::Button::Type_CheckButton);
-	_btnDrawSupportMeshes->setSelected(true);
-	_btnDrawSupportMeshes->setFontSmoothing(2.25f);
-
-	_btnWireframe = s2d::Button::Pointer::create("Wireframe", _mainFont, defaultFontSize, _mainLayout.pointer());
-	_btnWireframe->setAutolayoutRelativeToParent(vec2(2.0f * defaultButtonOffset, 1.0f - defaultButtonGap),
-		vec2(defaultButtonSize, 0.05f), vec2(0.0f, 1.0f));
-	_btnWireframe->setBackgroundColor(defaultBackgroundColor);
-	_btnWireframe->setTextPressedColor(vec4(1.0f));
-	_btnWireframe->setType(s2d::Button::Type_CheckButton);
-	_btnWireframe->setSelected(false);
-	_btnWireframe->setFontSmoothing(2.25f);
-
-	_vDistance.setTargetValue(300.0f);
-	_vDistance.updated.connect(this, &Converter::onCameraUpdated);
-	_vDistance.finishInterpolation();
-	_vDistance.run();
-
-	_vAngle.setTargetValue(vec2(QUARTER_PI));
-	_vAngle.updated.connect(this, &Converter::onCameraUpdated);
-	_vAngle.finishInterpolation();
-	_vAngle.run();
-
-	_labStatus = s2d::Label::Pointer::create("Ready", _mainFont, defaultFontSize, _mainLayout.pointer());
-	_labStatus->setAutolayoutRelativeToParent(vec2(1.0f - defaultButtonGap), vec2(0.0f), vec2(1.0f));
-	_labStatus->setTextAlignment(s2d::Alignment::Far, s2d::Alignment::Far);
-	_labStatus->setFontSmoothing(2.25f);
-
-	/*/ TODO : load materials
-	_skinnedProgram = rc->programFactory().loadProgram("data/shaders/skinned.program", localCache);
-	_skinnedProgram->setPrimaryLightPosition(500.0f * vec3(0.0f, 1.0f, 0.0f));
-	_skinnedProgram->setUniform("diffuseMap", 0);
-	_skinnedProgram->setUniform("specularMap", 1);
-	_skinnedProgram->setUniform("normalMap", 2);
-
-	_transformedProgram = rc->programFactory().loadProgram("data/shaders/transformed.program", localCache);
-	_transformedProgram->setPrimaryLightPosition(500.0f * vec3(0.0f, 1.0f, 0.0f));
-	_transformedProgram->setUniform("diffuseMap", 0);
-	_transformedProgram->setUniform("specularMap", 1);
-	_transformedProgram->setUniform("normalMap", 2);
-	// */
-
-	buildSupportMeshes(rc);
-
-	/*/ TODO : move to render passes
-	rc->renderState().setClearColor(vec4(0.25f));
-	rc->renderState().setDepthTest(true);
-	rc->renderState().setDepthMask(true);
-	rc->renderState().setBlend(false, BlendState::Default);
-	// */
-
 	const StringList& lp = application().launchParameters();
 	if ((lp.size() > 1) && fileExists(lp.at(1)))
 	{
 		Invocation1 i;
 		i.setTarget(this, &Converter::performLoading, lp.at(1));
-		i.invokeInMainRunLoop(invocationDelayTime);
+		i.invokeInMainRunLoop();
 	}
+
+	_gui = s2d::Scene::Pointer::create(rc, passInfo);
+	_mainLayout = MainLayout::Pointer::create(_rc);
+
+	_mainLayout->openSelected.connect([this](std::string name)
+	{
+		_scene->clear();
+		performLoading(name);
+	});
+	
+	_mainLayout->saveSelected.connect([](std::string name)
+	{
+		Dictionary serialized;// = _scene->serialize(fileName);		
+		std::string serializedString = json::serialize(serialized);
+
+		StringDataStorage data(static_cast<uint32_t>(serializedString.size() + 1, 0));
+		memcpy(data.binary(), serializedString.data(), serializedString.length());
+		data.writeToFile(replaceFileExt(name, ".json"));
+	});
+
+	_gui->pushLayout(_mainLayout);
+	_gestures.pointerPressed.connect(_gui.pointer(), &s2d::Scene::pointerPressed);
+	_gestures.pointerMoved.connect(_gui.pointer(), &s2d::Scene::pointerMoved);
+	_gestures.pointerReleased.connect(_gui.pointer(), &s2d::Scene::pointerReleased);
 }
 
 void Converter::renderMeshList(RenderContext* rc, const s3d::BaseElement::List& meshes)
@@ -282,90 +194,6 @@ void Converter::render(RenderContext* rc)
 	_gui->render(rc);
 }
 
-void Converter::onPointerPressed(PointerInputInfo p)
-{
-	_vDistance.cancelInterpolation();
-	_vAngle.cancelInterpolation();
-
-	_gui->pointerPressed(p);
-}
-
-void Converter::onPointerMoved(PointerInputInfo p)
-{
-	_gui->pointerMoved(p);
-}
-
-void Converter::onPointerReleased(PointerInputInfo p)
-{
-	_gui->pointerReleased(p);
-}
-
-void Converter::onZoom(float z)
-{
-	_vDistance.addTargetValue(z);
-}
-
-void Converter::onDrag(const GesturesRecognizer::DragGesture& gest)
-{
-	_vAngle.addTargetValue(0.25f * vec2(-gest.delta.y, gest.delta.x));
-}
-
-void Converter::onScroll(vec2 s, PointerOrigin o)
-{
-	onZoom(s.y * ((o == PointerOrigin::Mouse) ? 1.0f : 100.0f));
-}
-
-void Converter::onBtnOpenClick(s2d::Button*)
-{
-	std::string fileName = selectFile({ "fbx", "json", "etmx" }, SelectFileMode::Open, std::string());
-
-	if (fileExists(fileName))
-	{
-		_scene->clear();
-
-		Invocation1 i;
-		i.setTarget(this, &Converter::performLoading, fileName);
-		i.invokeInMainRunLoop(invocationDelayTime);
-
-		_labStatus->setText("Loading...");
-	}
-	else
-	{
-		_labStatus->setText("No file selected or unable to locate selected file");
-	}
-}
-
-void Converter::onBtnSaveClick(s2d::Button* b)
-{
-	_labStatus->setText("Saving...");
-
-	Invocation([this]()
-	{
-		std::string fileName = selectFile(StringList(), SelectFileMode::Save, _scene->name());
-
-		fileName = replaceFileExt(fileName, ".json");
-		{
-			Dictionary serialized;// = _scene->serialize(fileName);
-			auto serializedString = json::serialize(serialized, json::SerializationFlag_ReadableFormat);
-			StringDataStorage data(static_cast<uint32_t>(serializedString.size() + 1, 0));
-			memcpy(data.binary(), serializedString.data(), serializedString.length());
-			data.writeToFile(fileName);
-		}
-
-		fileName = replaceFileExt(fileName, ".etmx");
-		{
-			Dictionary serialized;// = _scene->serialize(fileName);
-			auto serializedString = json::serialize(serialized);
-			StringDataStorage data(static_cast<uint32_t>(serializedString.size() + 1, 0));
-			memcpy(data.binary(), serializedString.data(), serializedString.length());
-			data.writeToFile(fileName);
-		}
-
-		_labStatus->setText("Saving completed.");
-
-	}).invokeInMainRunLoop();
-}
-
 void Converter::performLoading(std::string path)
 {
 	lowercase(path);
@@ -383,7 +211,7 @@ void Converter::performLoading(std::string path)
 		}
 		else
 		{
-			_labStatus->setText("Failed to parse file " + getFileName(path));
+			_mainLayout->setStatus("Failed to parse file " + getFileName(path));
 			return;
 		}
 	}
@@ -427,7 +255,7 @@ void Converter::performLoading(std::string path)
 	_scene->mainCamera()->lookAt(fromSpherical(QUARTER_PI, QUARTER_PI) * sceneRadius * SQRT_2, sceneCenter);
 	_scene->storage().flush();
 	_scene->animateRecursive();
-	_labStatus->setText("Completed.");
+	_mainLayout->setStatus("Loading complete");
 	
 	_cameraController->synchronize(_scene->mainCamera());
 }
@@ -438,7 +266,7 @@ void Converter::performBinarySaving(std::string path)
 		path += ".etm";
 
 	// _scene->serialize(path)
-	_labStatus->setText("Completed.");
+	_mainLayout->setStatus("Saving complete");
 }
 
 void Converter::performBinaryWithReadableMaterialsSaving(std::string path)
@@ -447,42 +275,7 @@ void Converter::performBinaryWithReadableMaterialsSaving(std::string path)
 		path += ".etm";
 
 	// _scene->serialize(path);
-	_labStatus->setText("Completed.");
-}
-
-void Converter::onCameraUpdated()
-{
-	_scene->mainCamera()->lookAt(fromSpherical(_vAngle.value().x, _vAngle.value().y) * _vDistance.value());
-}
-
-void Converter::buildSupportMeshes(RenderContext* rc)
-{
-	VertexDeclaration decl(true, VertexAttributeUsage::Position, DataType::Vec3);
-	decl.push_back(VertexAttributeUsage::Normal, DataType::Vec3);
-	decl.push_back(VertexAttributeUsage::TexCoord0, DataType::Vec2);
-
-	{
-		vec2i sphereDensity(4);
-		VertexStorage::Pointer va = VertexStorage::Pointer::create(decl, 0);
-		primitives::createSphere(va, 0.05f, sphereDensity);
-		IndexArray::Pointer ia = IndexArray::Pointer::create(IndexArrayFormat::Format_16bit,
-			primitives::indexCountForRegularMesh(sphereDensity, PrimitiveType::TriangleStrips),
-			PrimitiveType::TriangleStrips);
-		primitives::buildTriangleStripIndexes(ia, sphereDensity, 0, 0);
-		_sphereVao = VertexStream::Pointer::create();
-		_sphereVao->setIndexBuffer(rc->renderer()->createIndexBuffer("sphere-ib", ia, Buffer::Location::Device), ia->format(), ia->primitiveType());
-		_sphereVao->setVertexBuffer(rc->renderer()->createVertexBuffer("sphere-vb", va, Buffer::Location::Device), va->declaration());
-	}
-	{
-		IndexArray::Pointer ia = IndexArray::Pointer::create(IndexArrayFormat::Format_8bit, 2, PrimitiveType::Lines);
-		ia->setIndex(0, 0);
-		ia->setIndex(1, 1);
-		VertexStorage::Pointer va = VertexStorage::Pointer::create(decl, 2);
-
-		_lineVao = VertexStream::Pointer::create();
-		_lineVao->setIndexBuffer(rc->renderer()->createIndexBuffer("line-ib", ia, Buffer::Location::Device), ia->format(), ia->primitiveType());
-		_lineVao->setVertexBuffer(rc->renderer()->createVertexBuffer("line-vb", va, Buffer::Location::Device), va->declaration());
-	}
+	_mainLayout->setStatus("Saving complete");
 }
 
 void Converter::printStructureRecursive(s3d::BaseElement::Pointer e, const std::string& tag)
@@ -491,7 +284,6 @@ void Converter::printStructureRecursive(s3d::BaseElement::Pointer e, const std::
 	for (auto c : e->children())
 		printStructureRecursive(c, tag + "--|");
 }
-
 
 ApplicationIdentifier Converter::applicationIdentifier() const
 {

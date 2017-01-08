@@ -85,12 +85,12 @@ public:
 	}
 
 public:
-	void addToRenderQueue(RenderContext*, SceneRenderer&);
+	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
 
 private:
 	void connectEvents();
 
-	void buildVertices(RenderContext*, SceneRenderer&);
+	void buildVertices(RenderContext*, SceneRenderer&) override;
 
 private:
 	Texture::Pointer _texture;

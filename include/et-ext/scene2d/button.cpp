@@ -49,33 +49,28 @@ Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Elem
 
 void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 {
-	validateMaterialInstance(r);
-
-	if (!contentValid() || !transformValid())
-		buildVertices(rc, r);
-
 	if (_bgVertices.lastElementIndex() > 0)
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, _background[_state].texture);
-		r.addVertices(_bgVertices, _background[_state].texture, materialInstance(), this);
+		r.addVertices(_bgVertices, materialInstance(), this);
 	}
 
 	if (_textVertices.lastElementIndex() > 0)
 	{
 		textMaterial(r)->setTexture(MaterialTexture::BaseColor, font()->generator()->texture());
-		r.addVertices(_textVertices, font()->generator()->texture(), textMaterial(r), this);
+		r.addVertices(_textVertices, textMaterial(r), this);
 	}
 
 	if (_imageVertices.lastElementIndex() > 0)
 	{
 		materialInstance()->setTexture(MaterialTexture::BaseColor, _image[_state].texture);
-		r.addVertices(_imageVertices, _image[_state].texture, materialInstance(), this);
+		r.addVertices(_imageVertices, materialInstance(), this);
 	}
 }
 
 void Button::buildVertices(RenderContext*, SceneRenderer&)
 {
-	mat4 transform = finalTransform();
+	const mat4& transform = finalTransform();
 
 	vec2 frameSize = size();
 

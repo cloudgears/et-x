@@ -167,7 +167,6 @@
     <ClCompile Include="..\include\et-ext\compile_packs\scene2d.pack.cxx">
       <Filter>Source\compile_packs</Filter>
     </ClCompile>
-    <ClCompile Include="et_ext_info.cpp" />
     <ClCompile Include="..\include\et-ext\atmosphere\atmosphere.cpp">
       <Filter>Source\atmosphere</Filter>
     </ClCompile>

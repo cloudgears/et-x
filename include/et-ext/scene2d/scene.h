@@ -82,11 +82,11 @@ public:
 	const ImageView& overlayImageView() const;
 	void setOverlayImage(const Image& img);
 
-	bool pointerPressed(const et::PointerInputInfo&);
-	bool pointerMoved(const et::PointerInputInfo&);
-	bool pointerReleased(const et::PointerInputInfo&);
-	bool pointerCancelled(const et::PointerInputInfo&);
-	bool pointerScrolled(const et::PointerInputInfo&);
+	bool pointerPressed(et::PointerInputInfo);
+	bool pointerMoved(et::PointerInputInfo);
+	bool pointerReleased(et::PointerInputInfo);
+	bool pointerCancelled(et::PointerInputInfo);
+	bool pointerScrolled(et::PointerInputInfo);
 
 	bool keyPressed(size_t);
 	bool charactersEntered(std::string);

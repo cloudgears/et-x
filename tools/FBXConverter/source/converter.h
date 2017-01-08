@@ -4,16 +4,10 @@
 #include <et/core/interpolationvalue.h>
 #include <et/input/gestures.h>
 #include <et/camera/cameramovingcontroller.h>
-#include <et-ext/scene2d/scene.h>
+#include "ui/mainlayout.h"
 
 namespace et
 {
-class MainLayout : public et::s2d::Layout
-{
-public:
-	ET_DECLARE_POINTER(MainLayout);
-};
-
 class Converter : public et::IApplicationDelegate, public et::EventReceiver
 {
 private:
@@ -25,16 +19,6 @@ private:
 	void render(et::RenderContext*);
 
 private:
-	void buildSupportMeshes(et::RenderContext*);
-
-	void onPointerPressed(et::PointerInputInfo);
-	void onPointerMoved(et::PointerInputInfo);
-	void onPointerReleased(et::PointerInputInfo);
-	void onZoom(float);
-	void onDrag(const et::GesturesRecognizer::DragGesture& gest);
-	void onScroll(et::vec2, et::PointerOrigin);
-	void onCameraUpdated();
-
 	void onBtnOpenClick(et::s2d::Button*);
 	void onBtnSaveClick(et::s2d::Button*);
 	void performLoading(std::string);
@@ -53,24 +37,9 @@ private:
 	et::GesturesRecognizer _gestures;
 	et::s3d::Scene::Pointer _scene;
 	et::s3d::Renderer::Pointer _sceneRenderer;
-	et::Program::Pointer _skinnedProgram;
-	et::Program::Pointer _transformedProgram;
-
 	et::CameraMovingController::Pointer _cameraController;
 
-	MainLayout::Pointer _mainLayout;
-
 	et::s2d::Scene::Pointer _gui;
-	et::s2d::Font::Pointer _mainFont;
-	et::s2d::Label::Pointer _labStatus;
-	et::s2d::Button::Pointer _btnDrawNormalMeshes;
-	et::s2d::Button::Pointer _btnDrawSupportMeshes;
-	et::s2d::Button::Pointer _btnWireframe;
-
-	et::InterpolationValue<float> _vDistance;
-	et::InterpolationValue<et::vec2> _vAngle;
-
-	et::VertexStream::Pointer _sphereVao;
-	et::VertexStream::Pointer _lineVao;
+	MainLayout::Pointer _mainLayout;
 };
 }
