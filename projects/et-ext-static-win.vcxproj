@@ -102,13 +102,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)..\lib\vs2015\</OutDir>
     <TargetName>et-ext-$(Configuration)</TargetName>
-    <IncludePath>$(ProjectDir)..\include;$(ProjectDir)..\..\et\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\include;$(ProjectDir)..\..\et\include;$(ProjectDir)..\..\et-engine\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\lib\vs2015;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>et-ext-$(Configuration)</TargetName>
     <OutDir>$(ProjectDir)..\lib\vs2015\</OutDir>
-    <IncludePath>$(ProjectDir)..\include;$(ProjectDir)..\..\et\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)..\include;$(ProjectDir)..\..\et\include;$(ProjectDir)..\..\et-engine\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)..\lib\vs2015;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

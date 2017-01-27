@@ -10,3 +10,4 @@ projects/x64/
 *.db
 *.opendb
 tools/bin/
+lib/vs2015/et-ext-Debug.lib
