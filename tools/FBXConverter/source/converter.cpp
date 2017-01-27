@@ -34,11 +34,7 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_scene->setMainCamera(Camera::Pointer::create());
 	_scene->mainCamera()->perspectiveProjection(DEG_60, vector2ToFloat(rc->size()).aspect(), 1.0f, 2048.0f);
 	_scene->mainCamera()->lookAt(50.0f * fromSpherical(QUARTER_PI, QUARTER_PI));
-
-	_cameraController = CameraMovingController::Pointer::create(_scene->mainCamera(), true);
-	_cameraController->setIntepolationRate(10.0f);
-	_cameraController->setMovementSpeed(vec3(25.0f));
-	_cameraController->startUpdates();
+	updateCamera();
 
 	_sceneRenderer = s3d::Renderer::Pointer::create();
 
@@ -83,109 +79,16 @@ void Converter::applicationDidLoad(RenderContext* rc)
 	_gestures.pointerReleased.connect(_gui.pointer(), &s2d::Scene::pointerReleased);
 }
 
-void Converter::renderMeshList(RenderContext* rc, const s3d::BaseElement::List& meshes)
+void Converter::updateCamera()
 {
-	/*/ TODO : render
-	for (auto i = meshes.begin(), e = meshes.end(); i != e; ++i)
-	{
-		s3d::Mesh::Pointer mesh = *i;
-		if (mesh->vertexBuffer().invalid()) continue;
+	Camera::Pointer newCamera = Camera::Pointer::create();
+	newCamera->getValuesFromCamera(_scene->mainCamera().reference());
+	_scene->setMainCamera(newCamera);
 
-		Program::Pointer programToUse = _transformedProgram;
-		if (mesh->vertexBuffer()->declaration().has(VertexAttributeUsage::BlendIndices))
-			programToUse = _skinnedProgram;
-
-		rc->renderState().bindProgram(programToUse);
-
-		s3d::Material::Pointer m = mesh->material();
-		const auto& bones = mesh->deformationMatrices();
-
-		programToUse->setUniform<mat4>("bones[0]", bones.data(), bones.size());
-		programToUse->setUniform("ambientColor", m->getVector(MaterialParameter_AmbientColor));
-		programToUse->setUniform("diffuseColor", m->getVector(MaterialParameter_DiffuseColor));
-		programToUse->setUniform("specularColor", m->getVector(MaterialParameter_SpecularColor));
-		programToUse->setUniform("roughness", m->getFloat(MaterialParameter_Roughness));
-		programToUse->setUniform("mTransform", mesh->finalTransform());
-
-		rc->renderState().bindTexture(0, mesh->material()->getTexture(MaterialParameter_DiffuseMap));
-		rc->renderState().bindTexture(1, mesh->material()->getTexture(MaterialParameter_SpecularMap));
-		rc->renderState().bindTexture(2, mesh->material()->getTexture(MaterialParameter_NormalMap));
-
-		rc->renderState().bindVertexArray(mesh->vertexArrayObject());
-		rc->renderer()->drawElements(mesh->indexBuffer(), mesh->startIndex(), mesh->numIndexes());
-	}
-	// */
-}
-
-void Converter::renderSkeleton(RenderContext* rc, const s3d::BaseElement::List& bones)
-{
-	/*/ TODO : render using debug renderer
-	_rc->renderState().setWireframeRendering(true);
-	_rc->renderState().setDepthTest(false);
-	_rc->renderState().setBlend(false);
-	_rc->renderState().bindProgram(_transformedProgram);
-
-	if (_testVao.valid())
-	{
-		_rc->renderState().bindVertexArray(_testVao);
-		_transformedProgram->setTransformMatrix(identityMatrix);
-		_rc->renderer()->drawAllElements(_testVao->indexBuffer());
-	}
-
-	_rc->renderState().bindVertexArray(_sphereVao);
-	for (auto c : bones)
-	{
-		_transformedProgram->setTransformMatrix(c->finalTransform());
-		_rc->renderer()->drawAllElements(_sphereVao->indexBuffer());
-	}
-
-	_rc->renderState().bindVertexArray(_lineVao);
-	_transformedProgram->setTransformMatrix(identityMatrix);
-	for (auto c : bones)
-	{
-		if ((c->parent() != nullptr) && (c->parent()->type() == s3d::ElementType::Skeleton))
-		{
-			vec3* lineData = reinterpret_cast<vec3*>(
-				_lineVao->vertexBuffer()->map(0, 2 * sizeof(vec3), MapBufferMode::WriteOnly));
-			vec3 parentPos = c->parent()->finalTransform()[3].xyz();
-			vec3 bonePos = c->finalTransform()[3].xyz();
-			lineData[0] = parentPos;
-			lineData[1] = parentPos.normalized();
-			lineData[2] = bonePos;
-			lineData[3] = bonePos.normalized();
-			_lineVao->vertexBuffer()->unmap();
-			_rc->renderer()->drawAllElements(_lineVao->indexBuffer());
-		}
-	}
-
-	_rc->renderState().setBlend(false);
-	_rc->renderState().setDepthTest(true);
-	_rc->renderState().setWireframeRendering(false);
-	// */
-}
-
-void Converter::performSceneRendering()
-{
-	/*/ TODO : render using scene renderer
-	_rc->renderState().setSampleAlphaToCoverage(true);
-
-	_rc->renderState().bindProgram(_transformedProgram);
-	_transformedProgram->setCameraProperties(_camera);
-	_rc->renderState().bindProgram(_skinnedProgram);
-	_skinnedProgram->setCameraProperties(_camera);
-
-	_rc->renderState().setWireframeRendering(_btnWireframe->selected());
-
-	if (_btnDrawNormalMeshes->selected())
-		renderMeshList(_rc, _scene->childrenOfType(s3d::ElementType::Mesh));
-
-	if (_btnDrawSupportMeshes->selected())
-		renderMeshList(_rc, _scene->childrenOfType(s3d::ElementType::SupportMesh));
-
-	renderSkeleton(_rc, _scene->childrenOfType(s3d::ElementType::Skeleton));
-
-	_rc->renderState().setSampleAlphaToCoverage(false);
-	// */
+	_cameraController = CameraMovingController::Pointer::create(_scene->mainCamera(), true);
+	_cameraController->setIntepolationRate(10.0f);
+	_cameraController->setMovementSpeed(vec3(25.0f));
+	_cameraController->startUpdates();
 }
 
 void Converter::render(RenderContext* rc)
@@ -257,7 +160,7 @@ void Converter::performLoading(std::string path)
 	_scene->animateRecursive();
 	_mainLayout->setStatus("Loading complete");
 	
-	_cameraController->synchronize(_scene->mainCamera());
+	updateCamera();
 }
 
 void Converter::performBinarySaving(std::string path)

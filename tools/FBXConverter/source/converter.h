@@ -28,6 +28,7 @@ private:
 	void renderMeshList(et::RenderContext* rc, const et::s3d::BaseElement::List& meshes);
 	void renderSkeleton(et::RenderContext* rc, const et::s3d::BaseElement::List& bones);
 	void performSceneRendering();
+	void updateCamera();
 
 	void printStructureRecursive(et::s3d::BaseElement::Pointer, const std::string&);
 
