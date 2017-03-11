@@ -6,6 +6,7 @@
  */
 
 #define ET_SHOULD_SAVE_GENERATED_CHARS 0
+#define ET_DISABLE_SDF_GENERATION 0
 
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/charactergenerator.h>
@@ -125,10 +126,10 @@ const CharDescriptor& CharacterGenerator::generateCharacter(wchar_t value, Chara
 			recti textureRect;
 			if (_placer.place(downsampledSize, textureRect))
 			{
-				vec2i invPos(textureRect.left, _texture->size().y - textureRect.top - downsampledSize.y - 1);
-				vec2 fOrigin = _texture->getTexCoord(vector2ToFloat(textureRect.origin()));
+				vec2i invPos(textureRect.left, _texture->size(0).y - textureRect.top - downsampledSize.y - 1);
+				vec2 fOrigin = _texture->getTexCoord(vector2ToFloat(textureRect.origin()), 0);
 				result.contentRect = rectf(vector2ToFloat(topLeftOffset - charactersRenderingExtent / 2), vector2ToFloat(sizeToSave));
-				result.uvRect = rectf(fOrigin, vector2ToFloat(textureRect.size()) / vector2ToFloat(_texture->size()));
+				result.uvRect = rectf(fOrigin, vector2ToFloat(textureRect.size()) / vector2ToFloat(_texture->size(0)));
 				updateTexture(invPos, downsampledSize, downsampled);
 			}
 			else
@@ -161,8 +162,8 @@ void CharacterGenerator::pushCharacter(const et::s2d::CharDescriptor& desc)
 	CharDescriptorMap& mapToInsert = ((desc.flags & CharacterFlag_Bold) == CharacterFlag_Bold) ? _boldChars : _chars;
 	mapToInsert.insert(std::make_pair(desc.value, desc));
 
-	vec2 size = _texture->sizeFloat() * desc.uvRect.size();
-	vec2 origin = _texture->sizeFloat() * vec2(desc.uvRect.origin().x, 1.0f - desc.uvRect.origin().y);
+	vec2 size = _texture->sizeFloat(0) * desc.uvRect.size();
+	vec2 origin = _texture->sizeFloat(0) * vec2(desc.uvRect.origin().x, 1.0f - desc.uvRect.origin().y);
 
 	_placer.addPlacedRect(recti(static_cast<int>(origin.x), static_cast<int>(origin.y),
 		static_cast<int>(size.x), static_cast<int>(size.y)));
@@ -214,6 +215,10 @@ inline void internal_sdf_compare(const sdf::Grid& g, vec2i& p, int32_t x, int32_
 
 void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 {
+#if (ET_DISABLE_SDF_GENERATION)
+	return;
+#endif
+	
 	for (int32_t y = 1; y < g.h - 1; ++y)
 	{
 		for (int32_t x = 1; x < g.w - 1; ++x)

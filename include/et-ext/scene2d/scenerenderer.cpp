@@ -144,17 +144,7 @@ void s2d::SceneRenderer::setRenderingElement(const RenderingElement::Pointer& r)
 
 void s2d::SceneRenderer::beginRender(RenderContext* rc)
 {
-	/*
-	 * TODO : beginrender
-	 *
-	auto& rs = rc->renderState();
-	_lastBlendState = rs.actualState().blend;
-	_lastDepthState = rs.actualState().depth;
-	_lastRasterizerState = rs.actualState().rasterizer;
-	rc->renderState().setDepthState({false, false});
-	rc->renderState().setBlendConfiguration(BlendConfiguration::AlphaBlend);
-	// */
-	_renderPass->begin();
+	_renderPass->begin({ 0, 0 });
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)

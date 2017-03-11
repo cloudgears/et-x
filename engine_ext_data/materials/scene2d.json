@@ -1,7 +1,7 @@
 {
 	"name" : "scene-2d-material",
 
-	"forward" : 
+	"ui" : 
 	{
 		"input-layout" : {
 			"position" : 4,

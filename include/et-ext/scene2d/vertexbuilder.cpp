@@ -168,22 +168,22 @@ void buildImageVertices(SceneVertexList& vertices, const Texture::Pointer& tex, 
 	vec2 bottomCenterBottomRigth = (topLeft + vec2(width - desc.contentOffset.right, height));
 	vec2 rightCenterBottomRigth = (topLeft + vec2(width, height - desc.contentOffset.bottom));
 
-	vec2 topLeftUV = tex->getTexCoord(desc.origin);
-	vec2 topRightUV = tex->getTexCoord(desc.origin + vec2(desc.size.x, 0.0f));
-	vec2 bottomLeftUV = tex->getTexCoord(desc.origin + vec2(0.0f, desc.size.y));
-	vec2 bottomRightUV = tex->getTexCoord(desc.origin + desc.size);
-	vec2 centerTopLeftUV = tex->getTexCoord(desc.centerPartTopLeft());
-	vec2 centerBottomLeftUV = tex->getTexCoord(desc.centerPartBottomLeft());
-	vec2 centerTopRightUV = tex->getTexCoord(desc.centerPartTopRight());
-	vec2 centerBottomRightUV = tex->getTexCoord(desc.centerPartBottomRight());
-	vec2 topCenterTopLeftUV = tex->getTexCoord(desc.origin + vec2(desc.contentOffset.left, 0));
-	vec2 topCenterTopRightUV = tex->getTexCoord(desc.origin + vec2(desc.size.x - desc.contentOffset.right, 0));
-	vec2 leftCenterTopLeftUV = tex->getTexCoord(desc.origin + vec2(0, desc.contentOffset.top));
-	vec2 rightCenterTopRightUV = tex->getTexCoord(desc.origin + vec2(desc.size.x, desc.contentOffset.top));
-	vec2 leftCenterBottomLeftUV = tex->getTexCoord(desc.origin + vec2(0, desc.size.y - desc.contentOffset.bottom));
-	vec2 bottomCenterBottomLeftUV = tex->getTexCoord(desc.origin + vec2(desc.contentOffset.left, desc.size.y));
-	vec2 bottomCenterBottomRigthUV = tex->getTexCoord(desc.origin + vec2(desc.size.x - desc.contentOffset.right, desc.size.y));
-	vec2 rightCenterBottomRigthUV = tex->getTexCoord(desc.origin + vec2(desc.size.x, desc.size.y - desc.contentOffset.bottom));
+	vec2 topLeftUV = tex->getTexCoord(desc.origin, 0);
+	vec2 topRightUV = tex->getTexCoord(desc.origin + vec2(desc.size.x, 0.0f), 0);
+	vec2 bottomLeftUV = tex->getTexCoord(desc.origin + vec2(0.0f, desc.size.y), 0);
+	vec2 bottomRightUV = tex->getTexCoord(desc.origin + desc.size, 0);
+	vec2 centerTopLeftUV = tex->getTexCoord(desc.centerPartTopLeft(), 0);
+	vec2 centerBottomLeftUV = tex->getTexCoord(desc.centerPartBottomLeft(), 0);
+	vec2 centerTopRightUV = tex->getTexCoord(desc.centerPartTopRight(), 0);
+	vec2 centerBottomRightUV = tex->getTexCoord(desc.centerPartBottomRight(), 0);
+	vec2 topCenterTopLeftUV = tex->getTexCoord(desc.origin + vec2(desc.contentOffset.left, 0), 0);
+	vec2 topCenterTopRightUV = tex->getTexCoord(desc.origin + vec2(desc.size.x - desc.contentOffset.right, 0), 0);
+	vec2 leftCenterTopLeftUV = tex->getTexCoord(desc.origin + vec2(0, desc.contentOffset.top), 0);
+	vec2 rightCenterTopRightUV = tex->getTexCoord(desc.origin + vec2(desc.size.x, desc.contentOffset.top), 0);
+	vec2 leftCenterBottomLeftUV = tex->getTexCoord(desc.origin + vec2(0, desc.size.y - desc.contentOffset.bottom), 0);
+	vec2 bottomCenterBottomLeftUV = tex->getTexCoord(desc.origin + vec2(desc.contentOffset.left, desc.size.y), 0);
+	vec2 bottomCenterBottomRigthUV = tex->getTexCoord(desc.origin + vec2(desc.size.x - desc.contentOffset.right, desc.size.y), 0);
+	vec2 rightCenterBottomRigthUV = tex->getTexCoord(desc.origin + vec2(desc.size.x, desc.size.y - desc.contentOffset.bottom), 0);
 
 	buildQuad(vertices,
 		SceneVertex(transform * centerTopLeft, vec4(centerTopLeftUV, mask), color),

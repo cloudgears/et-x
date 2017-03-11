@@ -1,7 +1,7 @@
 {
 	"name" : "font-material",
 
-	"forward" : 
+	"ui" : 
 	{
 		"input-layout" : {
 			"position" : 4,

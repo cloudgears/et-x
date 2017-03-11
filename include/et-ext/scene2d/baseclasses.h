@@ -114,12 +114,12 @@ struct ImageDescriptor
 	}
 
 	ImageDescriptor(const Texture::Pointer& tex) :
-		origin(0.0f), size(tex.valid() ? tex->sizeFloat() : vec2(0.0f))
+		origin(0.0f), size(tex.valid() ? tex->sizeFloat(0) : vec2(0.0f))
 	{
 	}
 
 	ImageDescriptor(const Texture::Pointer& tex, const ContentOffset& offset) :
-		origin(0.0f), size(tex.valid() ? tex->sizeFloat() : vec2(0.0f)), contentOffset(offset)
+		origin(0.0f), size(tex.valid() ? tex->sizeFloat(0) : vec2(0.0f)), contentOffset(offset)
 	{
 	}
 
@@ -314,7 +314,8 @@ struct LocalizedText
 
 	void setKey(const std::string& aKey)
 	{
-		key = aKey; updateCache();
+		key = aKey;
+		updateCache();
 	}
 
 	void updateCache()
@@ -324,7 +325,8 @@ struct LocalizedText
 
 	void clear()
 	{
-		key.clear(); cachedText.clear();
+		key.clear();
+		cachedText.clear();
 	}
 };
 

@@ -200,9 +200,9 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 	// */
 }
 
+/*
 void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
 {
-	/*/ TODO : do stuff
 	ET_ASSERT(framebuffer->isCubemap());
 	
 	static const vec3 lookDirections[] =
@@ -264,8 +264,8 @@ void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
 	rs.setSeparateBlend(blendEnabled, lastColorBlendState, lastAlphaBlendState);
 	rs.setCulling(cullingEnabled, lastCullState);
 	rs.setDepthMask(depthMaskEnabled);
-	// */
 }
+// */
 
 void Atmosphere::setLightDirection(const vec3& l)
 {

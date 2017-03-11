@@ -31,7 +31,7 @@ public:
 		return _cameraPosition;
 	}
 
-	void generateCubemap(et::Framebuffer::Pointer);
+	// void generateCubemap(et::Framebuffer::Pointer);
 
 	Program::Pointer planetProgram();
 
