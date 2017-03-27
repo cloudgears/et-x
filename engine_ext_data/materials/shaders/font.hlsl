@@ -2,8 +2,13 @@
 #include <inputdefines>
 #include <inputlayout>
 
-Texture2D<float> baseColorTexture : CONSTANT_LOCATION(t, BaseColorTextureBinding, TexturesSetIndex);
-SamplerState baseColorSampler : CONSTANT_LOCATION(s, BaseColorSamplerBinding, TexturesSetIndex);
+Texture2D<float> baseColorTexture : DECL_TEXTURE(BaseColor);
+SamplerState baseColorSampler : DECL_SAMPLER(BaseColor);
+
+cbuffer ObjectVariables : DECL_BUFFER(Object)
+{
+	row_major float4x4 projectionTransform;
+};
 
 struct VSOutput 
 {
@@ -21,7 +26,7 @@ VSOutput vertexMain(VSInput vsIn)
 	vsOut.texCoord0 = vsIn.texCoord0.xy;
 	vsOut.params.x = vsIn.texCoord0.z - vsIn.texCoord0.w;
 	vsOut.params.y = vsIn.texCoord0.z + vsIn.texCoord0.w;
-	vsOut.position = mul(vsIn.position, projection);
+	vsOut.position = mul(vsIn.position, projectionTransform);
 	return vsOut;
 }
 	
