@@ -2,7 +2,7 @@
 #include <inputdefines>
 #include <inputlayout>
 
-Texture2D<float> baseColorTexture : DECL_TEXTURE(BaseColor);
+Texture2D<float4> baseColorTexture : DECL_TEXTURE(BaseColor);
 SamplerState baseColorSampler : DECL_SAMPLER(BaseColor);
 
 cbuffer ObjectVariables : DECL_BUFFER(Object)

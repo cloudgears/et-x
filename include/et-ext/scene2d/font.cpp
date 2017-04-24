@@ -34,7 +34,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 {
 	/*
 	 * TODO : save to file
-	 *
+	 */
 	std::ofstream fOut(fileName, std::ios::out);
 	if (fOut.fail())
 	{
@@ -84,53 +84,30 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	fOut.flush();
 	fOut.close();
 
-	auto fbo = rc->framebufferFactory().createFramebuffer(_generator->texture()->size(),
-		"rgba-buffer", TextureFormat::RGBA, TextureFormat::RGBA, DataFormat::UnsignedChar, TextureFormat::Invalid);
-
-	BinaryDataStorage imageData;
-	auto blendState = rc->renderState().blendState();
-	auto currentBuffer = rc->renderState().boundFramebuffer();
-	{
-		rc->renderState().bindFramebuffer(fbo);
-		rc->renderState().setBlendConfiguration(BlendConfiguration::Disabled);
-		rc->renderer()->renderFullscreenTexture(_generator->texture());
-		rc->renderer()->readFramebufferData(fbo->size(), TextureFormat::RGBA, DataFormat::UnsignedChar, imageData);
-	}
-	rc->renderState().bindFramebuffer(currentBuffer);
-	rc->renderState().setBlendState(blendState);
-
-	auto ptr = imageData.begin();
-	auto off = imageData.begin();
-	auto end = imageData.end();
-	while (off != end)
-	{
-		*ptr++ = *off;
-		off += 4;
-	}
-
 	setCompressionLevelForImageFormat(ImageFormat_PNG, 1.0f / 9.0f);
 
-	writeImageToFile(getFilePath(fileName) + textureFile, imageData, _generator->texture()->size(),
-		1, 8, ImageFormat_PNG, true);
-	*/
+	Texture::Pointer tex = _generator->texture();
+	uint32_t dataSize = _generator->texture()->description().dataSizeForMipLevel(0);
+	BinaryDataStorage imageData(tex->map(0, 0, Texture::MapOptions::Readable), dataSize);
+	writeImageToFile(getFilePath(fileName) + textureFile, imageData, tex->size(0), 1, 8, ImageFormat_PNG, true);
+	tex->unmap();
 }
 
 bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, ObjectsCache& cache,
 	const std::string& baseFileName)
 {
-	/*
-	 * TODO : load
-	 *
 	std::string fontFileDir = getFilePath(baseFileName);
 	std::string textureFile = object.stringForKey("texture-file")->content;
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	Texture::Pointer tex = rc->renderer()->loadTexture(actualName, cache);
+	Texture::Pointer tex = rc->renderer()->loadTexture(actualName, cache, [](TextureDescription::Pointer desc) {
+		desc->flags |= Texture::Flags::Readback;
+	});
+	
 	if (tex.invalid())
 	{
-		log::error("Unable to load texture for font %s. Missing file: %s",
-			baseFileName.c_str(), textureFile.c_str());
+		log::error("Unable to load texture for font %s. Missing file: %s", baseFileName.c_str(), textureFile.c_str());
 		return false;
 	}
 
@@ -149,7 +126,7 @@ bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, Objec
 		desc.parameters = arrayToVec4(character.arrayForKey("parameters"));
 		_generator->pushCharacter(desc);
 	}
-	*/
+
 	return false;
 }
 
@@ -184,7 +161,10 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	Texture::Pointer tex = rc->renderer()->loadTexture(actualName, cache);
+	Texture::Pointer tex = rc->renderer()->loadTexture(actualName, cache, [](TextureDescription::Pointer desc) {
+		desc->flags |= Texture::Flags::Readback;
+	});
+	
 	if (tex.invalid())
 	{
 		log::error("Unable to load texture for font %s. Missing file: %s", fileName.c_str(), textureFile.c_str());
