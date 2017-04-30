@@ -140,7 +140,7 @@ void s2d::SceneRenderer::setRenderingElement(const RenderingElement::Pointer& r)
 
 void s2d::SceneRenderer::beginRender(RenderContext* rc)
 {
-	_renderPass->begin({ 0, 0 });
+	_renderPass->begin(RenderPassBeginInfo::singlePass);
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)
