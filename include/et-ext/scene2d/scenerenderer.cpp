@@ -156,7 +156,9 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 	 */
 	VertexStream::Pointer vs = _renderingElement->vertexStream();
 	for (const RenderChunk& chunk : _renderingElement->chunks)
-		_renderPass->pushRenderBatch(RenderBatch::Pointer::create(chunk.material, vs, identityMatrix, chunk.first, chunk.count));
+	{
+		_renderPass->pushRenderBatch(RenderBatch::Pointer::create(chunk.material, vs, chunk.first, chunk.count));
+	}
 }
 
 void SceneRenderer::endRender(RenderContext* rc)
