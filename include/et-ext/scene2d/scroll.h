@@ -70,23 +70,23 @@ protected:
 	virtual void setOffsetDirectly(const vec2& o);
 
 protected:
-	void update(float t);
+	void update(float t) override;
 
-	bool pointerPressed(const PointerInputInfo&);
-	bool pointerMoved(const PointerInputInfo&);
-	bool pointerReleased(const PointerInputInfo&);
-	bool pointerCancelled(const PointerInputInfo&);
-	bool pointerScrolled(const PointerInputInfo&);
+	bool pointerPressed(const PointerInputInfo&) override;
+	bool pointerMoved(const PointerInputInfo&) override;
+	bool pointerReleased(const PointerInputInfo&) override;
+	bool pointerCancelled(const PointerInputInfo&) override;
+	bool pointerScrolled(const PointerInputInfo&) override;
 
 private:
 	void buildVertices(RenderContext* rc, SceneRenderer& r) override;
 	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
 	void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) override;
 
-	const mat4& finalTransform();
-	const mat4& finalInverseTransform();
+	const mat4& finalTransform() override;
+	const mat4& finalInverseTransform() override;
 
-	bool containsPoint(const vec2& p, const vec2& np);
+	bool containsPoint(const vec2& p, const vec2& np) override;
 
 	void invalidateChildren();
 	void broadcastPressed(const PointerInputInfo&);

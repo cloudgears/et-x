@@ -6,6 +6,7 @@
  */
 
 #include <sstream>
+#include <et/core/et.h>
 #include <et/core/conversion.h>
 #include <et/app/application.h>
 #include <et/rendering/rendercontext.h>

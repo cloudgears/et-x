@@ -6,6 +6,7 @@
  */
 
 #include <stack>
+#include <et/core/et.h>
 #include <et/core/conversion.h>
 #include <et/core/serialization.h>
 #include <et/app/application.h>
