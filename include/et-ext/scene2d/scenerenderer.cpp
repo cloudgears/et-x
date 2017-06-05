@@ -6,6 +6,7 @@
  */
 
 #include <et/rendering/rendercontext.h>
+#include <et/app/application.h>
 #include <et-ext/scene2d/scenerenderer.h>
 
 namespace et

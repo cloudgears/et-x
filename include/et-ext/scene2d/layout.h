@@ -27,7 +27,7 @@ public:
 		return _valid;
 	}
 
-	void update(float);
+	void update(float) override;
 
 	void cancelDragging(float returnDuration = 0.0f);
 	void cancelInteractions();
@@ -64,11 +64,11 @@ protected:
 
 	void initRenderingElement(RenderContext* rc);
 
-	bool pointerPressed(const PointerInputInfo&);
-	bool pointerMoved(const PointerInputInfo&);
-	bool pointerReleased(const PointerInputInfo&);
-	bool pointerCancelled(const PointerInputInfo&);
-	bool pointerScrolled(const PointerInputInfo&);
+	bool pointerPressed(const PointerInputInfo&) override;
+	bool pointerMoved(const PointerInputInfo&) override;
+	bool pointerReleased(const PointerInputInfo&) override;
+	bool pointerCancelled(const PointerInputInfo&) override;
+	bool pointerScrolled(const PointerInputInfo&) override;
 
 	bool elementIsBeingDragged(Element2d::Pointer);
 
@@ -77,12 +77,12 @@ protected:
 	Element2d::Pointer findFirstResponderStartingFrom(Element2d::Pointer, const Message&);
 
 private:
-	Layout* owner()
+	Layout* owner() override
 	{
 		return this;
 	}
 
-	void setInvalid();
+	void setInvalid() override;
 	void collectTopmostElements(Element2d::Pointer);
 
 	void collectPreRenderingObjects(Element2d::Pointer, Element2d::Collection&);

@@ -79,10 +79,10 @@ private:
 	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
 	void buildVertices(RenderContext*, SceneRenderer& renderer) override;
 
-	bool pointerPressed(const PointerInputInfo&);
-	bool pointerMoved(const PointerInputInfo&);
-	bool pointerReleased(const PointerInputInfo&);
-	bool pointerCancelled(const PointerInputInfo&);
+	bool pointerPressed(const PointerInputInfo&) override;
+	bool pointerMoved(const PointerInputInfo&) override;
+	bool pointerReleased(const PointerInputInfo&) override;
+	bool pointerCancelled(const PointerInputInfo&) override;
 
 	void updateValue(float);
 

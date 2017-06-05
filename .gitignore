@@ -13,3 +13,4 @@ tools/bin/
 lib/vs2015/et-ext-Debug.lib
 x64/
 lib/vs2015/et-ext-Release.lib
+xcschememanagement.plist

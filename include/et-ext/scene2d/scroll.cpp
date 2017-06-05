@@ -6,6 +6,7 @@
  */
 
 #include <et/core/tools.h>
+#include <et/core/hardware.h>
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/layout.h>
 #include <et-ext/scene2d/scenerenderer.h>

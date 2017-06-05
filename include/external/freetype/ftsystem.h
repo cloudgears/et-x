@@ -202,7 +202,7 @@ FT_BEGIN_HEADER
 
   /*************************************************************************
    *
-   * @struct:
+   * @union:
    *   FT_StreamDesc
    *
    * @description:

@@ -5,6 +5,7 @@
  *
  */
 
+#include <et/core/et.h>
 #include <et/geometry/geometry.h>
 #include <et-ext/scene2d/element2d.h>
 #include <et-ext/scene2d/vertexbuilder.h>
