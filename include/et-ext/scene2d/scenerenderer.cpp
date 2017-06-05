@@ -140,7 +140,7 @@ void s2d::SceneRenderer::setRenderingElement(const RenderingElement::Pointer& r)
 
 void s2d::SceneRenderer::beginRender(RenderContext* rc)
 {
-	_renderPass->begin(RenderPassBeginInfo::singlePass);
+	_renderPass->begin(RenderPassBeginInfo::singlePass());
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)
@@ -149,16 +149,14 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 
 	/*
 	 * TODO : refactor rendering
-	 * use _additionalOffsetAndAlpha 
-	 * don't use pass projection matrix
 	 * use clipping
 	 * implement dynamic parameters
 	 */
+	_renderPass->setSharedVariable(ObjectVariable::Viewport, vec4(_additionalOffsetAndAlpha, 0.0f));
+
 	VertexStream::Pointer vs = _renderingElement->vertexStream();
 	for (const RenderChunk& chunk : _renderingElement->chunks)
-	{
 		_renderPass->pushRenderBatch(RenderBatch::Pointer::create(chunk.material, vs, chunk.first, chunk.count));
-	}
 }
 
 void SceneRenderer::endRender(RenderContext* rc)

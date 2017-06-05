@@ -8,6 +8,7 @@ SamplerState baseColorSampler : DECL_SAMPLER(BaseColor);
 cbuffer ObjectVariables : DECL_BUFFER(Object)
 {
 	row_major float4x4 projectionTransform;
+	float4 viewport; // x,y - viewport transform, z - viewport alpha
 };
 
 struct VSOutput 
@@ -26,7 +27,7 @@ VSOutput vertexMain(VSInput vsIn)
 	vsOut.texCoord0 = vsIn.texCoord0.xy;
 	vsOut.params.x = vsIn.texCoord0.z - vsIn.texCoord0.w;
 	vsOut.params.y = vsIn.texCoord0.z + vsIn.texCoord0.w;
-	vsOut.position = mul(vsIn.position, projectionTransform);
+	vsOut.position = mul(vsIn.position, projectionTransform) + float4(viewport.xy, 0.0, 0.0);;
 	return vsOut;
 }
 	
@@ -35,7 +36,7 @@ float4 fragmentMain(VSOutput fsIn) : SV_Target0
 	float alpha = baseColorTexture.Sample(baseColorSampler, fsIn.texCoord0.xy);
 
 	float4 color = fsIn.color;
-	color.w *= smoothstep(fsIn.params.x, fsIn.params.y, alpha);
+	color.w *= viewport.z * smoothstep(fsIn.params.x, fsIn.params.y, alpha);
 
 	return color;
 }
