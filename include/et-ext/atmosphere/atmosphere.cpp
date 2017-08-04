@@ -61,6 +61,7 @@ Dictionary Atmosphere::defaultParameters()
 
 void Atmosphere::setProgramParameters(Program::Pointer prog)
 {
+	/*
 	if (_skyParametersValid) return;
 	
 	float fRayleighScaleDepth = _parameters.floatForKey(kRayleighScaleDepth)->content;
@@ -81,7 +82,6 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 	float fKr4PI = fKr * 4.0f * PI;
 	float fKm4PI = fKm * 4.0f * PI;
 	
-	/*/ TODO : do stuff
 	prog->setUniform("nSamples", numSamples);
 	prog->setUniform("fSamples", static_cast<float>(numSamples));
 	prog->setUniform("vInvWavelength", waveLength);

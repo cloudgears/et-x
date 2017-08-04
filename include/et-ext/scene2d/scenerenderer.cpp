@@ -142,6 +142,7 @@ void s2d::SceneRenderer::setRenderingElement(const RenderingElement::Pointer& r)
 void s2d::SceneRenderer::beginRender(RenderContext* rc)
 {
 	_renderPass->begin(RenderPassBeginInfo::singlePass());
+	_renderPass->nextSubpass();
 }
 
 void s2d::SceneRenderer::render(RenderContext* rc)
@@ -162,6 +163,7 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 
 void SceneRenderer::endRender(RenderContext* rc)
 {
+	_renderPass->endSubpass();
 	_renderPass->end();
 	rc->renderer()->submitRenderPass(_renderPass);
 }
