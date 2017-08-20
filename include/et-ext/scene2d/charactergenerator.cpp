@@ -217,9 +217,8 @@ inline void internal_sdf_compare(const sdf::Grid& g, vec2i& p, int32_t x, int32_
 void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 {
 #if (ET_DISABLE_SDF_GENERATION)
-	return;
-#endif
-	
+	// do nothing
+#else
 	for (int32_t y = 1; y < g.h - 1; ++y)
 	{
 		for (int32_t x = 1; x < g.w - 1; ++x)
@@ -257,6 +256,7 @@ void CharacterGenerator::generateSignedDistanceFieldOnGrid(sdf::Grid &g)
 			sdf_put(g, x, y, p);
 		}
 	}
+#endif
 }
 
 void CharacterGenerator::generateSignedDistanceField(BinaryDataStorage& data, int32_t w, int32_t h)
