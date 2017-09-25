@@ -243,7 +243,8 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 
 	float globalScale = size / CharacterGenerator::baseFontSize;
 
-	CharDescriptorList result(s.size());
+	CharDescriptorList result;
+	result.reserve(s.size() + 1);
 
 	static const wchar_t* boldTagStart = L"<b>";
 	static const wchar_t* boldTagEnd = L"</b>";
@@ -260,12 +261,17 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 	size_t resultSize = 0;
 
 	size_t boldTags = 0;
-	std::stack<vec4> colorsStack;
-	std::stack<float> scaleStack;
-	std::stack<float> offsetStack;
-	colorsStack.push(vec4(1.0f));
-	scaleStack.push(1.0f);
-	offsetStack.push(0.0f);
+	std::vector<vec4> colorsStack;
+	colorsStack.reserve(s.size() + 1);
+	colorsStack.emplace_back(1.0f);
+
+	std::vector<float> scaleStack;
+	scaleStack.reserve(s.size() + 1);
+	scaleStack.emplace_back(1.0f);
+	
+	std::vector<float> offsetStack;
+	offsetStack.reserve(s.size() + 1);
+	offsetStack.emplace_back(0.0f);
 
 	auto* b = s.data();
 	auto* e = b + s.size();
@@ -289,7 +295,7 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 		else if (textBeginsFrom(b, colorTagStart))
 		{
 			auto closingBracket = findClosingBracket(b);
-			colorsStack.push(colorTagToColor(subString(b, closingBracket)));
+			colorsStack.emplace_back(colorTagToColor(subString(b, closingBracket)));
 			b = closingBracket + 1;
 			if (b >= e)
 				break;
@@ -297,7 +303,8 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 		else if (textBeginsFrom(b, colorTagEnd))
 		{
 			if (colorsStack.size() > 1)
-				colorsStack.pop();
+				colorsStack.pop_back();
+
 			b += textLength(colorTagEnd);
 			if (b >= e)
 				break;
@@ -305,7 +312,7 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 		else if (textBeginsFrom(b, scaleTagStart))
 		{
 			auto closingBracket = findClosingBracket(b);
-			scaleStack.push(std::wcstof(b + textLength(scaleTagStart), nullptr));
+			scaleStack.emplace_back(std::wcstof(b + textLength(scaleTagStart), nullptr));
 			b = closingBracket + 1;
 			if (b >= e)
 				break;
@@ -313,7 +320,8 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 		else if (textBeginsFrom(b, scaleTagEnd))
 		{
 			if (scaleStack.size() > 1)
-				scaleStack.pop();
+				scaleStack.pop_back();
+
 			b += textLength(scaleTagEnd);
 			if (b >= e)
 				break;
@@ -321,7 +329,7 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 		else if (textBeginsFrom(b, offsetTagStart))
 		{
 			auto closingBracket = findClosingBracket(b);
-			offsetStack.push(std::wcstof(b + textLength(offsetTagStart), nullptr));
+			offsetStack.emplace_back(std::wcstof(b + textLength(offsetTagStart), nullptr));
 			b = closingBracket + 1;
 			if (b >= e)
 				break;
@@ -329,33 +337,35 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
 		else if (textBeginsFrom(b, offsetTagEnd))
 		{
 			if (offsetStack.size() > 1)
-				offsetStack.pop();
+				offsetStack.pop_back();
+
 			b += textLength(offsetTagEnd);
 			if (b >= e)
 				break;
 		}
 		else
 		{
-			CharDescriptor cd = (boldTags > 0) ? _generator->boldCharDescription(*b) : _generator->charDescription(*b);
+			result.emplace_back();
+			CharDescriptor& cd = result.back();
+			
+			cd = (boldTags > 0) ? _generator->boldCharDescription(*b) : _generator->charDescription(*b);
 
-			float localScale = scaleStack.top();
-			float localOffset = offsetStack.top();
+			float localScale = scaleStack.back();
+			float localOffset = offsetStack.back();
 			float finalScale = globalScale * localScale;
 			float smoothScale = 0.03f / std::pow(finalScale, 2.0f / 2.5f);
 
 			cd.contentRect *= finalScale;
 			cd.originalSize *= finalScale;
-			cd.color = colorsStack.top();
+			cd.color = colorsStack.back();
 			cd.parameters = vec4(0.5f, smoothing * smoothScale, 0.0f, 0.0f);
-
 			cd.contentRect.top += localOffset;
 
-			result[resultSize++] = cd;
+			++resultSize;
 			++b;
 		}
 	}
 
-	result.shrink_to_fit();
 	return result;
 }
 
@@ -371,6 +381,7 @@ bool textBeginsFrom(const wchar_t* text, const wchar_t* entry)
 		++text;
 	}
 	while (*(++entry));
+
 	return true;
 }
 

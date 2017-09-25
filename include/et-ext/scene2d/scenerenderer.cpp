@@ -156,9 +156,9 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 	 */
 	_renderPass->setSharedVariable(ObjectVariable::Viewport, vec4(_additionalOffsetAndAlpha, 0.0f));
 
-	VertexStream::Pointer vs = _renderingElement->vertexStream();
+	const VertexStream::Pointer& vs = _renderingElement->vertexStream();
 	for (const RenderChunk& chunk : _renderingElement->chunks)
-		_renderPass->pushRenderBatch(RenderBatch::Pointer::create(chunk.material, vs, chunk.first, chunk.count));
+		_renderPass->pushRenderBatch(chunk.material, vs, chunk.first, chunk.count);
 }
 
 void SceneRenderer::endRender(RenderContext* rc)

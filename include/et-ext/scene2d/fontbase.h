@@ -36,14 +36,10 @@ struct CharDescriptor
 	rectf uvRect;
 	vec4 parameters = vec4(0.0f);
 
-	CharDescriptor()
-	{
-	}
+	CharDescriptor() = default;
 
 	CharDescriptor(int v) :
-		value(v)
-	{
-	}
+		value(v) { }
 };
 using CharDescriptorList = Vector<CharDescriptor>;
 using CharDescriptorMap = Map<int, CharDescriptor>;

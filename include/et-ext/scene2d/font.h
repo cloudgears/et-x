@@ -23,14 +23,10 @@ public:
 	Font(const CharacterGenerator::Pointer& generator);
 
 	CharacterGenerator::Pointer& generator()
-	{
-		return _generator;
-	}
+		{ return _generator; }
 
 	const CharacterGenerator::Pointer& generator() const
-	{
-		return _generator;
-	}
+		{ return _generator; }
 
 	bool loadFromDictionary(RenderContext*, const Dictionary&, ObjectsCache&, const std::string&);
 	bool loadFromFile(RenderContext*, const std::string&, ObjectsCache&);

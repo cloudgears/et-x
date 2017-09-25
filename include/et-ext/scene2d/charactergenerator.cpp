@@ -94,10 +94,10 @@ bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharac
 	return true;
 }
 
-const CharDescriptor& CharacterGenerator::generateCharacter(wchar_t value, CharacterFlags flags)
+void CharacterGenerator::generateCharacter(wchar_t value, CharacterFlags flags, CharDescriptor& result)
 {
-	CharDescriptorMap& mapToInsert = ((flags & CharacterFlag_Bold) == CharacterFlag_Bold) ? _boldChars : _chars;
-	CharDescriptor& result = mapToInsert[value];
+	ET_ASSERT(value != 0);
+
 	result.value = value;
 	result.flags = flags;
 
@@ -144,8 +144,6 @@ const CharDescriptor& CharacterGenerator::generateCharacter(wchar_t value, Chara
 	}
 
 	characterGenerated.invoke(value);
-
-	return result;
 }
 
 void CharacterGenerator::updateTexture(const vec2i& position, const vec2i& size, BinaryDataStorage& data)

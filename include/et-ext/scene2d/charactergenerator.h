@@ -68,7 +68,7 @@ public:
 	ET_DECLARE_EVENT1(characterGenerated, int);
 
 private:
-	const CharDescriptor& generateCharacter(wchar_t, CharacterFlags);
+	void generateCharacter(wchar_t, CharacterFlags, CharDescriptor&);
 
 	void generateSignedDistanceField(BinaryDataStorage&, int32_t, int32_t);
 	void generateSignedDistanceFieldOnGrid(sdf::Grid&);
@@ -114,14 +114,22 @@ inline uint32_t CharacterGenerator::charactersCount() const
 
 inline const CharDescriptor& CharacterGenerator::charDescription(wchar_t c)
 {
-	auto i = _chars.find(c);
-	return (i != _chars.end()) ? i->second : generateCharacter(c, CharacterFlag_Default);
+	auto& result = _chars[c];
+	
+	if (result.value == 0)
+		generateCharacter(c, CharacterFlag_Default, result);
+
+	return result;
 }
 
 inline const CharDescriptor& CharacterGenerator::boldCharDescription(wchar_t c)
 {
-	auto i = _boldChars.find(c);
-	return (i != _boldChars.end()) ? i->second : generateCharacter(c, CharacterFlag_Bold);
+	auto& result = _boldChars[c];
+
+	if (result.value == 0)
+		generateCharacter(c, CharacterFlag_Bold, result);
+
+	return result;
 }
 
 inline const CharDescriptorMap& CharacterGenerator::characters() const

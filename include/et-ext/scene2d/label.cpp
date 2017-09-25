@@ -140,8 +140,20 @@ void Label::setText(const std::string& aText, float duration)
 		_textFadeDuration = duration;
 	}
 
-	invalidateText();
-	adjustSize();
+	_charListText = font()->buildString(_text.cachedText, fontSize(), fontSmoothing());
+	_textSize = font()->measureStringSize(_charListText);
+
+	if (_animatingText)
+	{
+		_charListNextText = font()->buildString(_nextText.cachedText, fontSize(), fontSmoothing());
+		_nextTextSize = font()->measureStringSize(_charListNextText);
+		_textSize = maxv(_textSize, _nextTextSize);
+	}
+
+	if (_autoAdjustSize)
+		setSize(_textSize);
+
+	invalidateContent();
 }
 
 vec2 Label::textSize()
