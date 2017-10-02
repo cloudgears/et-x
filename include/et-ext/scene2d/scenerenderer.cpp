@@ -126,7 +126,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Material
 void SceneRenderer::addVertices(const SceneVertexList& vertices, const MaterialInstance::Pointer& material, 
 	Element2d* owner, PrimitiveType pt)
 {
-	uint32_t count = vertices.lastElementIndex();
+	uint32_t count = static_cast<uint32_t>(vertices.lastElementIndex());
 	ET_ASSERT((count > 0) && _renderingElement.valid() && material.valid());
 
 	SceneVertex* target = allocateVertices(count, material, owner, pt);

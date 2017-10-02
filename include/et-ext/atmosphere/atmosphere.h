@@ -4,7 +4,7 @@
 
 namespace et
 {
-class Atmosphere : public Shared
+class Atmosphere : public Object
 {
 public:
 	ET_DECLARE_POINTER(Atmosphere);

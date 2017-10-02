@@ -145,7 +145,7 @@ private:
 	void reloadObject(LoadableObject::Pointer, ObjectsCache&);
 
 private:
-	class LayoutEntry : public Shared
+	class LayoutEntry : public Object
 	{
 	public:
 		ET_DECLARE_POINTER(LayoutEntry);

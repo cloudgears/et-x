@@ -117,7 +117,7 @@ void Atmosphere::generateGeometry(RenderContext* rc)
 		va = primitives::buildLinearIndexArray(va, ia);
 	}
 	
-	RawDataAcessor<vec3> pos = va->chunk(VertexAttributeUsage::Position).accessData<vec3>(0);
+	RawDataAcessor<vec3> pos = accessData<vec3>(va->chunk(VertexAttributeUsage::Position), 0);
 	for (uint32_t i = 0, e = va->size(); i < e; ++i)
 		pos[i] = normalize(pos[i]);
 	

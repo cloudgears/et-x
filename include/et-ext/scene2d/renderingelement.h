@@ -27,7 +27,7 @@ struct RenderChunk
 		const MaterialInstance::Pointer& aMaterial, Element2d* aObject, PrimitiveType pt);
 };
 
-class RenderingElement : public Shared
+class RenderingElement : public Object
 {
 public:
 	ET_DECLARE_POINTER(RenderingElement);
