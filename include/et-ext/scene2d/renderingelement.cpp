@@ -51,8 +51,9 @@ RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity)
 		Buffer::Pointer vb = rc->renderer()->createVertexBuffer(nameId, sharedVertexStorage, Buffer::Location::Host);
 
 		vertices[i] = VertexStream::Pointer::create();
-		vertices[i]->setIndexBuffer(sharedIndexBuffer, indexArray->format(), indexArray->primitiveType());
 		vertices[i]->setVertexBuffer(vb, sharedVertexStorage->declaration());
+		vertices[i]->setIndexBuffer(sharedIndexBuffer, indexArray->format());
+		vertices[i]->setPrimitiveType(indexArray->primitiveType());
 	}
 	currentBufferIndex = 0;
 }
