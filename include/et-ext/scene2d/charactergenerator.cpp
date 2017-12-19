@@ -42,7 +42,7 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	desc->format = TextureFormat::R8;
 	desc->size = vec2i(defaultTextureSize);
 	desc->data = BinaryDataStorage(desc->size.square(), 0);
-	desc->flags = Texture::Flags::Readback;
+	desc->flags = Texture::Flags::ShaderResource | Texture::Flags::Readback;
 	_texture = rc->renderer()->createTexture(desc);
 }
 
