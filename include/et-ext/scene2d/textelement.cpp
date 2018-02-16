@@ -8,16 +8,13 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/textelement.h>
 
-namespace et
-{
-namespace s2d
-{
+namespace et {
+namespace s2d {
 
 const float maxShadowDistance = 1.0f;
 
 TextElement::TextElement(Element2d* parent, const Font::Pointer& f, float fsz, const std::string& name) :
-	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(f), _fontSize(timerPool()), _fontSmoothing(timerPool())
-{
+	Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _font(f), _fontSize(timerPool()), _fontSmoothing(timerPool()) {
 	_fontSize.setValue(fsz);
 	_fontSize.updated.connect(this, &TextElement::invalidateText);
 
@@ -27,8 +24,7 @@ TextElement::TextElement(Element2d* parent, const Font::Pointer& f, float fsz, c
 	setFlag(s2d::Flag_DynamicRendering);
 }
 
-void TextElement::setFont(const Font::Pointer& f)
-{
+void TextElement::setFont(const Font::Pointer& f) {
 	_font = f;
 	if (_font.valid() && _textMaterial.valid())
 	{
@@ -37,18 +33,15 @@ void TextElement::setFont(const Font::Pointer& f)
 	invalidateText();
 }
 
-void TextElement::setFontSize(float fsz, float duration)
-{
+void TextElement::setFontSize(float fsz, float duration) {
 	_fontSize.animate(fsz, duration);
 }
 
-void TextElement::setFontSmoothing(float fsm, float duration)
-{
+void TextElement::setFontSmoothing(float fsm, float duration) {
 	_fontSmoothing.animate(fsm, duration);
 }
 
-bool TextElement::processMessage(const Message& msg)
-{
+bool TextElement::processMessage(const Message& msg) {
 	if (msg.type == Message::Type_SetFontSmoothing)
 	{
 		setFontSmoothing(msg.paramf);
@@ -58,8 +51,7 @@ bool TextElement::processMessage(const Message& msg)
 	return false;
 }
 
-void TextElement::loadProperties(const Dictionary& d)
-{
+void TextElement::loadProperties(const Dictionary& d) {
 	if (d.hasKey("font_size"))
 	{
 		auto obj = d.objectForKey("font_size");
@@ -90,8 +82,7 @@ void TextElement::loadProperties(const Dictionary& d)
 	}
 }
 
-void TextElement::setTextStyle(TextStyle style)
-{
+void TextElement::setTextStyle(TextStyle style) {
 	if (style != _textStyle)
 	{
 		_textStyle = style;
@@ -99,8 +90,7 @@ void TextElement::setTextStyle(TextStyle style)
 	}
 }
 
-void TextElement::setShadowOffset(const vec2& o)
-{
+void TextElement::setShadowOffset(const vec2& o) {
 	_shadowOffset.x = +(std::abs(o.x) > maxShadowDistance ? maxShadowDistance : o.x);
 	_shadowOffset.y = -(std::abs(o.y) > maxShadowDistance ? maxShadowDistance : o.y);
 }
@@ -108,34 +98,30 @@ void TextElement::setShadowOffset(const vec2& o)
 /*
  * TODO : text parameters here
  *
-void TextElement::setProgramParameters(et::RenderContext*, et::Program::Pointer& p)
+void TextElement::setProgramParameters(RenderInterface::Pointer&, et::Program::Pointer& p)
 {
 	if ((_textStyle == TextStyle::SignedDistanceFieldShadow) && (p == _textProgram.program))
 		p->setUniform(_shadowUniform, _shadowOffset * _font->generator()->texture()->texel());
 }
 // */
 
-void TextElement::setTextHorizontalAlignment(Alignment a)
-{
+void TextElement::setTextHorizontalAlignment(Alignment a) {
 	_horizontalAlignment = a;
 	invalidateContent();
 }
 
-void TextElement::setTextVerticalAlignment(Alignment a)
-{
+void TextElement::setTextVerticalAlignment(Alignment a) {
 	_verticalAlignment = a;
 	invalidateContent();
 }
 
-void TextElement::setTextAlignment(Alignment h, Alignment v)
-{
+void TextElement::setTextAlignment(Alignment h, Alignment v) {
 	_horizontalAlignment = h;
 	_verticalAlignment = v;
 	invalidateContent();
 }
 
-MaterialInstance::Pointer TextElement::textMaterial(SceneRenderer& r)
-{
+MaterialInstance::Pointer TextElement::textMaterial(SceneRenderer& r) {
 	if (_textMaterial.invalid())
 	{
 		_textMaterial = r.fontMaterial()->instance();

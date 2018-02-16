@@ -10,7 +10,7 @@ public:
 	ET_DECLARE_POINTER(Atmosphere);
 
 public:
-	Atmosphere(RenderContext*);
+	Atmosphere(RenderInterface::Pointer&);
 
 	void setLightDirection(const vec3&);
 	void setParameters(const Dictionary&);
@@ -56,11 +56,11 @@ public:
 	static const std::string kHeightAboveSurface;
 
 private:
-	void generateGeometry(RenderContext*);
+	void generateGeometry(RenderInterface::Pointer&);
 	void setProgramParameters(Program::Pointer p);
 
 private:
-	RenderContext* _rc;
+	RenderInterface::Pointer _rc;
 
 	VertexStream::Pointer _atmosphereVAO;
 	VertexStream::Pointer _gridVAO;

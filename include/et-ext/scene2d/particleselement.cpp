@@ -9,14 +9,11 @@
 #include <et-ext/scene2d/scenerenderer.h>
 #include <et-ext/scene2d/particleselement.h>
 
-namespace et
-{
-namespace s2d
-{
+namespace et {
+namespace s2d {
 
 ParticlesElement::ParticlesElement(uint32_t amount, Element2d* parent, const std::string& name) :
-	s2d::Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _vertices(amount, 0), _particles(amount)
-{
+	s2d::Element2d(parent, ET_S2D_PASS_NAME_TO_BASE_CLASS), _vertices(amount, 0), _particles(amount) {
 	setLocationInParent(s2d::Location_Center);
 	setFlag(s2d::Flag_DynamicRendering | s2d::Flag_TransparentForPointer);
 
@@ -41,47 +38,41 @@ ParticlesElement::ParticlesElement(uint32_t amount, Element2d* parent, const std
 	_particles.setBase(baseParticle);
 	_particles.setVariation(variationParticle);
 
-	_updateTimer.expired.connect([this](NotifyTimer* timer)
-	{
+	_updateTimer.expired.connect([this](NotifyTimer* timer) {
 		_particles.update(timer->actualTime());
 		invalidateContent();
 	});
 }
 
-void ParticlesElement::setBaseAndVariationParticles(const particles::PointSprite& b, const particles::PointSprite& v)
-{
+void ParticlesElement::setBaseAndVariationParticles(const particles::PointSprite& b, const particles::PointSprite& v) {
 	_particles.setBase(b);
 	_particles.setVariation(v);
 }
 
-void ParticlesElement::start()
-{
+void ParticlesElement::start() {
 	_particles.emitMissingParticles(_updateTimer.actualTime());
 
 	_updateTimer.start(timerPool(), 0.0f, NotifyTimer::RepeatForever);
 	invalidateContent();
 }
 
-void ParticlesElement::stop()
-{
+void ParticlesElement::stop() {
 	_particles.clear();
 	_updateTimer.cancelUpdates();
 }
 
-void ParticlesElement::pause()
-{
+void ParticlesElement::pause() {
 	_updateTimer.cancelUpdates();
 }
 
-void ParticlesElement::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
-{
+void ParticlesElement::addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& r) {
 	if (_defaultTexture.invalid())
 	{
 		TextureDescription::Pointer desc = TextureDescription::Pointer::create();
 		desc->size = vec2i(1);
 		desc->format = TextureFormat::RGBA8;
 		desc->data = BinaryDataStorage(4, 255);
-		_defaultTexture = rc->renderer()->createTexture(desc);
+		_defaultTexture = rc->createTexture(desc);
 
 		if (_texture.invalid())
 			_texture = _defaultTexture;
@@ -124,15 +115,14 @@ et::s2d::SceneProgram ParticlesElement::initProgram(et::s2d::SceneRenderer& r)
 	return _program;
 }
 
-void ParticlesElement::setProgramParameters(et::RenderContext*, et::Program::Pointer& p)
+void ParticlesElement::setProgramParameters(RenderInterface::Pointer&, et::Program::Pointer& p)
 {
 	// TODO : set parameter
 	// p->setUniform("finalTransform", finalTransform());
 }
 */
 
-void ParticlesElement::setTexture(const et::Texture::Pointer& t)
-{
+void ParticlesElement::setTexture(const et::Texture::Pointer& t) {
 	_texture = t.invalid() ? _defaultTexture : t;
 }
 

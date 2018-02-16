@@ -171,8 +171,8 @@ protected:
 	bool respondsToMessage(const Message&) const override;
 
 private:
-	void buildVertices(RenderContext* rc, SceneRenderer& gr) override;
-	void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer) override;
+	void buildVertices(RenderInterface::Pointer& rc, SceneRenderer& gr) override;
+	void addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& renderer) override;
 
 	void setCurrentState(State s);
 

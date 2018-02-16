@@ -31,7 +31,7 @@ enum GridProperies : int
 const float CharacterGenerator::baseFontSize = static_cast<float>(baseFontIntegerSize);
 const vec2i CharacterGenerator::charactersRenderingExtent = vec2i(128);
 
-CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& face, const std::string& boldFace,
+CharacterGenerator::CharacterGenerator(RenderInterface::Pointer& rc, const std::string& face, const std::string& boldFace,
 	uint32_t faceIndex, uint32_t boldFaceIndex) : _impl(face, boldFace, faceIndex, boldFaceIndex),
 	_fontFace(face), _fontBoldFace(boldFace), _placer(vec2i(static_cast<int>(defaultTextureSize)), true)
 {
@@ -43,7 +43,7 @@ CharacterGenerator::CharacterGenerator(RenderContext* rc, const std::string& fac
 	desc->size = vec2i(defaultTextureSize);
 	desc->data = BinaryDataStorage(desc->size.square(), 0);
 	desc->flags = Texture::Flags::ShaderResource | Texture::Flags::Readback;
-	_texture = rc->renderer()->createTexture(desc);
+	_texture = rc->createTexture(desc);
 }
 
 bool CharacterGenerator::performCropping(const BinaryDataStorage& renderedCharacterData, const vec2i& canvasSize,

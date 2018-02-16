@@ -76,8 +76,8 @@ public:
 	ET_DECLARE_EVENT0(draggingFinished);
 
 private:
-	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
-	void buildVertices(RenderContext*, SceneRenderer& renderer) override;
+	void addToRenderQueue(RenderInterface::Pointer&, SceneRenderer&) override;
+	void buildVertices(RenderInterface::Pointer&, SceneRenderer& renderer) override;
 
 	bool pointerPressed(const PointerInputInfo&) override;
 	bool pointerMoved(const PointerInputInfo&) override;

@@ -49,7 +49,7 @@ void ImageView::connectEvents()
 	_backgroundColorAnimator.updated.connect([this]() { invalidateContent(); });
 }
 
-void ImageView::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
+void ImageView::addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& r)
 {
 	if (_vertices.lastElementIndex())
 	{
@@ -58,7 +58,7 @@ void ImageView::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 	}
 }
 
-void ImageView::buildVertices(RenderContext*, SceneRenderer&)
+void ImageView::buildVertices(RenderInterface::Pointer&, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	_vertices.setOffset(0);

@@ -36,7 +36,7 @@ Scroll::Scroll(Element2d* parent, const std::string& name) :
 	startUpdates();
 }
 
-void Scroll::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
+void Scroll::addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& r)
 {
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
@@ -45,7 +45,7 @@ void Scroll::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 	}
 }
 
-void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
+void Scroll::addToOverlayRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& r)
 {
 	if (_overlayVertices.lastElementIndex() > 0)
 	{
@@ -54,7 +54,7 @@ void Scroll::addToOverlayRenderQueue(RenderContext* rc, SceneRenderer& r)
 	}
 }
 
-void Scroll::buildVertices(RenderContext*, SceneRenderer&)
+void Scroll::buildVertices(RenderInterface::Pointer&, SceneRenderer&)
 {
 	_backgroundVertices.setOffset(0);
 	_overlayVertices.setOffset(0);

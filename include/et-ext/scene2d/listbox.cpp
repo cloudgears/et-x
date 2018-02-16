@@ -33,8 +33,8 @@ public:
 	void pointerLeaved(const PointerInputInfo&) override;
 	void hideText();
 	void revealText();
-	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
-	void buildVertices(RenderContext*, SceneRenderer& gr) override;
+	void addToRenderQueue(RenderInterface::Pointer&, SceneRenderer&) override;
+	void buildVertices(RenderInterface::Pointer&, SceneRenderer& gr) override;
 
 private:
 	Listbox* _owner = nullptr;
@@ -51,7 +51,7 @@ Listbox::Popup::Popup(Listbox* owner, const std::string& name) :
 	setFlag(Flag_RenderTopmost);
 }
 
-void Listbox::Popup::buildVertices(RenderContext*, SceneRenderer&)
+void Listbox::Popup::buildVertices(RenderInterface::Pointer&, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	_backgroundVertices.setOffset(0);
@@ -114,7 +114,7 @@ void Listbox::Popup::hideText()
 	invalidateContent();
 }
 
-void Listbox::Popup::addToRenderQueue(RenderContext*, SceneRenderer& r)
+void Listbox::Popup::addToRenderQueue(RenderInterface::Pointer&, SceneRenderer& r)
 {
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
@@ -208,7 +208,7 @@ void Listbox::setSelectionImage(const Image& img)
 	invalidateContent();
 }
 
-void Listbox::buildVertices(RenderContext*, SceneRenderer&)
+void Listbox::buildVertices(RenderInterface::Pointer&, SceneRenderer&)
 {
 	_backgroundVertices.setOffset(0);
 	_textVertices.setOffset(0);
@@ -234,7 +234,7 @@ void Listbox::buildVertices(RenderContext*, SceneRenderer&)
 	setContentValid();
 }
 
-void Listbox::addToRenderQueue(RenderContext*, SceneRenderer& r)
+void Listbox::addToRenderQueue(RenderInterface::Pointer&, SceneRenderer& r)
 {
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{

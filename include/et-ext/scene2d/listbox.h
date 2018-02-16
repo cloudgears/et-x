@@ -82,8 +82,8 @@ public:
 	ET_DECLARE_EVENT1(valueSelected, size_t);
 
 private:
-	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
-	void buildVertices(RenderContext*, SceneRenderer& gr) override;
+	void addToRenderQueue(RenderInterface::Pointer&, SceneRenderer&) override;
+	void buildVertices(RenderInterface::Pointer&, SceneRenderer& gr) override;
 
 	void didChangeFrame() override;
 

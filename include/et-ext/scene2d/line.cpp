@@ -44,7 +44,7 @@ void Line::setWidth(float w)
 	invalidateContent();
 }
 
-void Line::addToRenderQueue(RenderContext*, SceneRenderer& r)
+void Line::addToRenderQueue(RenderInterface::Pointer&, SceneRenderer& r)
 {
 	materialInstance()->setTexture(MaterialTexture::BaseColor, r.whiteTexture());
 	r.addVertices(_vertices, materialInstance(), this);
@@ -60,7 +60,7 @@ void Line::buildLine(const vec2& p1, const vec2& p2, const vec4& tc, const vec4&
 	buildQuad(_vertices, tl, tr, bl, br);
 }
 
-void Line::buildVertices(RenderContext*, SceneRenderer&)
+void Line::buildVertices(RenderInterface::Pointer&, SceneRenderer&)
 {
 	_vertices.setOffset(0);
 

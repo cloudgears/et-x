@@ -10,10 +10,8 @@
 #include <et/rendering/base/vertexstream.h>
 #include <et-ext/scene2d/element2d.h>
 
-namespace et
-{
-namespace s2d
-{
+namespace et {
+namespace s2d {
 struct RenderChunk
 {
 	uint32_t first = 0;
@@ -38,7 +36,7 @@ public:
 	};
 
 public:
-	RenderingElement(RenderContext* rc, uint32_t capacity);
+	RenderingElement(RenderInterface::Pointer& rc, uint32_t capacity);
 	~RenderingElement();
 
 	void startAllocatingVertices();

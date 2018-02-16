@@ -16,7 +16,7 @@ extern const std::string planetPerVertexFS;
 
 #define ET_ATMOSPHERE_DRAW_WIREFRAME_OVERLAY	0
 
-Atmosphere::Atmosphere(RenderContext* rc) :
+Atmosphere::Atmosphere(RenderInterface::Pointer& rc) :
 	_rc(rc)
 {
 	setParameters(defaultParameters());
@@ -24,7 +24,7 @@ Atmosphere::Atmosphere(RenderContext* rc) :
 	ObjectsCache localCache;
 	
 	/*/ TODO : do stuff
-	_atmospherePerVertexProgram = rc->programFactory().genProgram("et~atmosphere~per-vertex~program",
+	_atmospherePerVertexProgram = rc.programFactory().genProgram("et~atmosphere~per-vertex~program",
 		atmospherePerVertexVS, atmospherePerVertexFS);
 	setProgramParameters(_atmospherePerVertexProgram);
 	setPlanetFragmentShader(defaultPlanetFragmentShader());
@@ -103,7 +103,7 @@ void Atmosphere::setProgramParameters(Program::Pointer prog)
 	// */
 }
 
-void Atmosphere::generateGeometry(RenderContext* rc)
+void Atmosphere::generateGeometry(RenderInterface::Pointer& rc)
 {
 	auto va = VertexArray::Pointer::create(VertexDeclaration(true, VertexAttributeUsage::Position, DataType::Vec3), 0);
 	auto ia = IndexArray::Pointer::create(IndexArrayFormat::Format_32bit, 0, PrimitiveType::Triangles);
@@ -122,7 +122,7 @@ void Atmosphere::generateGeometry(RenderContext* rc)
 		pos[i] = normalize(pos[i]);
 	
 	/*/ TODO : do stuff
-	_atmosphereVAO = rc->vertexBufferFactory().createVertexArrayObject("et~sky-sphere", va,
+	_atmosphereVAO = rc.vertexBufferFactory().createVertexArrayObject("et~sky-sphere", va,
 		BufferDrawType::Static, ia, BufferDrawType::Static);
 	// */
 }
@@ -156,13 +156,13 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 		
 		_planetPerVertexProgram->setPrimaryLightPosition(_lightDirection);
 		_planetPerVertexProgram->setCameraProperties(adjustedCamera);
-		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		_rc->drawAllElements(_atmosphereVAO->indexBuffer());
 		
 #	if (ET_ATMOSPHERE_DRAW_WIREFRAME_OVERLAY)
 		rs.setDepthFunc(DepthFunc_LessOrEqual);
 		rs.setBlend(true, BlendState_Additive);
 		rs.setWireframeRendering(true);
-		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		_rc->drawAllElements(_atmosphereVAO->indexBuffer());
 		rs.setWireframeRendering(false);
 		rs.setDepthFunc(DepthFunc_Less);
 #	endif
@@ -184,11 +184,11 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
 		setProgramParameters(_atmospherePerVertexProgram);
 		_atmospherePerVertexProgram->setCameraProperties(adjustedCamera);
 		_atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
-		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		_rc->drawAllElements(_atmosphereVAO->indexBuffer());
 		
 #	if (ET_ATMOSPHERE_DRAW_WIREFRAME_OVERLAY)
 		rs.setWireframeRendering(true);
-		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		_rc->drawAllElements(_atmosphereVAO->indexBuffer());
 		rs.setWireframeRendering(false);
 		rs.setDepthFunc(DepthFunc_Less);
 #	endif
@@ -255,9 +255,9 @@ void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
 		cubemapCamera.lookAt(vec3(0.0f), lookDirections[i], upVectors[i]);
 		cubemapCamera.setPosition(_cameraPosition);
 		
-		_rc->renderer()->clear(true, false);
+		_rc->clear(true, false);
 		_atmospherePerVertexProgram->setCameraProperties(cubemapCamera);
-		_rc->renderer()->drawAllElements(_atmosphereVAO->indexBuffer());
+		_rc->drawAllElements(_atmosphereVAO->indexBuffer());
 	}
 	
 	rs.setDepthTest(depthTestEnabled);

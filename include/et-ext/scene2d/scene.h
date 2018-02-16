@@ -35,10 +35,10 @@ public:
 	ET_DECLARE_POINTER(Scene);
 
 public:
-	Scene(RenderContext*, const RenderPass::ConstructionInfo&);
+	Scene(RenderInterface::Pointer&, const RenderPass::ConstructionInfo&);
 
 	void layout(const vec2& size, float duration = 0.0);
-	void render(RenderContext* rc);
+	void render(RenderInterface::Pointer& rc);
 
 	SceneRenderer& renderer()
 	{
@@ -114,11 +114,11 @@ private:
 		}
 	};
 
-	void buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element,
+	void buildLayoutVertices(RenderInterface::Pointer& rc, RenderingElement::Pointer element,
 		Layout::Pointer layout);
 
-	void buildBackgroundVertices(RenderContext* rc);
-	void buildOverlayVertices(RenderContext* rc);
+	void buildBackgroundVertices(RenderInterface::Pointer& rc);
+	void buildOverlayVertices(RenderInterface::Pointer& rc);
 
 	void onKeyboardNeeded(Layout* l, Element2d* e);
 	void onKeyboardResigned(Layout* l);
@@ -159,7 +159,7 @@ private:
 		};
 
 	public:
-		LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l);
+		LayoutEntry(Scene* own, RenderInterface::Pointer& r, Layout::Pointer l);
 		~LayoutEntry();
 
 		void animateTo(const vec3& oa, float duration, State s);
@@ -177,7 +177,7 @@ private:
 	typedef std::list<LayoutEntry::Pointer> LayoutEntryList;
 
 private:
-	RenderContext* _rc = nullptr;
+	RenderInterface::Pointer _rc;
 	SceneRenderer _renderer;
 	ObjectsCache _sharedCache;
 

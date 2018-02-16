@@ -60,8 +60,8 @@ public:
 	ET_DECLARE_EVENT1(editingFinished, TextField*);
 
 private:
-	void addToRenderQueue(RenderContext*, SceneRenderer&) override;
-	void buildVertices(RenderContext*, SceneRenderer&) override;
+	void addToRenderQueue(RenderInterface::Pointer&, SceneRenderer&) override;
+	void buildVertices(RenderInterface::Pointer&, SceneRenderer&) override;
 
 	bool processMessage(const Message& msg) override;
 	void onCreateBlinkTimerExpired(NotifyTimer* t);

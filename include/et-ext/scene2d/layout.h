@@ -62,7 +62,7 @@ protected:
 		return _renderingElement;
 	}
 
-	void initRenderingElement(RenderContext* rc);
+	void initRenderingElement(RenderInterface::Pointer& rc);
 
 	bool pointerPressed(const PointerInputInfo&) override;
 	bool pointerMoved(const PointerInputInfo&) override;
@@ -93,8 +93,8 @@ private:
 	void setHoveredElement(const PointerInputInfo& p, Element2d::Pointer e);
 	void performDragging(const PointerInputInfo&);
 
-	void addToRenderQueue(RenderContext* rc, SceneRenderer& gr) override;
-	void addElementToRenderQueue(Element2d::Pointer& element, RenderContext* rc, SceneRenderer& gr);
+	void addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& gr) override;
+	void addElementToRenderQueue(Element2d::Pointer& element, RenderInterface::Pointer& rc, SceneRenderer& gr);
 
 private:
 	RenderingElement::Pointer _renderingElement;

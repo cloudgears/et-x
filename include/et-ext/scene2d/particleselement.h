@@ -43,7 +43,7 @@ public:
 	void pause();
 
 private:
-	void addToRenderQueue(RenderContext*, SceneRenderer&);
+	void addToRenderQueue(RenderInterface::Pointer&, SceneRenderer&);
 
 private:
 	Texture::Pointer _texture;

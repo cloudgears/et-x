@@ -103,10 +103,10 @@ public:
 		return false;
 	}
 
-	virtual void buildVertices(RenderContext*, SceneRenderer&) {}
-	virtual void addToRenderQueue(RenderContext*, SceneRenderer&) {}
-	virtual void addToOverlayRenderQueue(RenderContext*, SceneRenderer&) {}
-	virtual void preRender(RenderContext*) {}
+	virtual void buildVertices(RenderInterface::Pointer&, SceneRenderer&) {}
+	virtual void addToRenderQueue(RenderInterface::Pointer&, SceneRenderer&) {}
+	virtual void addToOverlayRenderQueue(RenderInterface::Pointer&, SceneRenderer&) {}
+	virtual void preRender(RenderInterface::Pointer&) {}
 
 	virtual bool pointerPressed(const PointerInputInfo& info)
 	{

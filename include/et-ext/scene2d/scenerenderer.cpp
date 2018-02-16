@@ -15,7 +15,7 @@ namespace et
 namespace s2d
 {
 
-SceneRenderer::SceneRenderer(RenderContext* rc, const RenderPass::ConstructionInfo& passInfo) :
+SceneRenderer::SceneRenderer(RenderInterface::Pointer& rc, const RenderPass::ConstructionInfo& passInfo) :
 	_rc(rc), _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f)
 {
 	_clip.emplace(); // default clip, which would be replaced with correct later
@@ -25,11 +25,11 @@ SceneRenderer::SceneRenderer(RenderContext* rc, const RenderPass::ConstructionIn
 	desc->format = TextureFormat::RGBA8;
 
 	desc->data = BinaryDataStorage(4, 255);
-	_whiteTexture = rc->renderer()->createTexture(desc);
+	_whiteTexture = rc->createTexture(desc);
 
 	// TODO : make transparent
 	// desc->data.fill(0);
-	_transparentTexture = rc->renderer()->createTexture(desc);
+	_transparentTexture = rc->createTexture(desc);
 
 	std::string scene2dMaterial = application().resolveFileName("engine_ext_data/materials/scene2d.json");
 	ET_ASSERT(fileExists(scene2dMaterial));
@@ -37,11 +37,11 @@ SceneRenderer::SceneRenderer(RenderContext* rc, const RenderPass::ConstructionIn
 	std::string fontMaterial = application().resolveFileName("engine_ext_data/materials/font.json");
 	ET_ASSERT(fileExists(fontMaterial));
 	
-	_defaultMaterial = rc->renderer()->sharedMaterialLibrary().loadMaterial(scene2dMaterial);
+	_defaultMaterial = rc->sharedMaterialLibrary().loadMaterial(scene2dMaterial);
 	_defaultMaterial->setTexture(MaterialTexture::BaseColor, _whiteTexture);
-	_fontMaterial = rc->renderer()->sharedMaterialLibrary().loadMaterial(fontMaterial);
-	_renderPass = rc->renderer()->allocateRenderPass(passInfo);
-	setProjectionMatrices(vector2ToFloat(rc->size()));
+	_fontMaterial = rc->sharedMaterialLibrary().loadMaterial(fontMaterial);
+	_renderPass = rc->allocateRenderPass(passInfo);
+	setProjectionMatrices(vector2ToFloat(rc->contextSize()));
 }
 
 SceneRenderer::~SceneRenderer()
@@ -139,13 +139,13 @@ void s2d::SceneRenderer::setRenderingElement(const RenderingElement::Pointer& r)
 	_renderingElement = r;
 }
 
-void s2d::SceneRenderer::beginRender(RenderContext* rc)
+void s2d::SceneRenderer::beginRender(RenderInterface::Pointer& rc)
 {
 	_renderPass->begin(RenderPassBeginInfo::singlePass());
 	_renderPass->nextSubpass();
 }
 
-void s2d::SceneRenderer::render(RenderContext* rc)
+void s2d::SceneRenderer::render(RenderInterface::Pointer& rc)
 {
 	ET_ASSERT(_renderingElement.valid());
 
@@ -161,18 +161,18 @@ void s2d::SceneRenderer::render(RenderContext* rc)
 		_renderPass->pushRenderBatch(chunk.material, vs, chunk.first, chunk.count);
 }
 
-void SceneRenderer::endRender(RenderContext* rc)
+void SceneRenderer::endRender(RenderInterface::Pointer& rc)
 {
 	_renderPass->endSubpass();
 	_renderPass->end();
-	rc->renderer()->submitRenderPass(_renderPass);
+	rc->submitRenderPass(_renderPass);
 }
 
 void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha)
 {
 	_additionalOffsetAndAlpha = vec3(2.0f * offsetAndAlpha.xy(), offsetAndAlpha.z);
-	_additionalWindowOffset.left = static_cast<int>(offsetAndAlpha.x * _rc->size().x);
-	_additionalWindowOffset.top = static_cast<int>(offsetAndAlpha.y * _rc->size().y);
+	_additionalWindowOffset.left = static_cast<int>(offsetAndAlpha.x * _rc->contextSize().x);
+	_additionalWindowOffset.top = static_cast<int>(offsetAndAlpha.y * _rc->contextSize().y);
 }
 
 /*

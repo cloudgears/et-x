@@ -21,12 +21,12 @@ namespace s2d
 class SceneRenderer
 {
 public:
-	SceneRenderer(RenderContext* rc, const RenderPass::ConstructionInfo&);
+	SceneRenderer(RenderInterface::Pointer& rc, const RenderPass::ConstructionInfo&);
 	~SceneRenderer();
 
-	void beginRender(RenderContext* rc);
-	void render(RenderContext* rc);
-	void endRender(RenderContext* rc);
+	void beginRender(RenderInterface::Pointer& rc);
+	void render(RenderInterface::Pointer& rc);
+	void endRender(RenderInterface::Pointer& rc);
 
 	void resetClipRect();
 	void pushClipRect(const recti&);
@@ -50,7 +50,7 @@ private:
 	SceneVertex* allocateVertices(uint32_t, const MaterialInstance::Pointer&, Element2d*, PrimitiveType);
 
 private:
-	RenderContext* _rc = nullptr;
+	RenderInterface::Pointer _rc;
 	RenderingElement::Pointer _renderingElement;
 	RenderPass::Pointer _renderPass;
 	Material::Pointer _defaultMaterial;

@@ -49,7 +49,7 @@ TextField::TextField(const Image& background, const std::string& text, const Fon
 	ET_CONNECT_EVENT(_caretBlinkTimer.expired, TextField::onCreateBlinkTimerExpired);
 }
 
-void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
+void TextField::addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& r)
 {
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
@@ -70,7 +70,7 @@ void TextField::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 	}
 }
 
-void TextField::buildVertices(RenderContext*, SceneRenderer&)
+void TextField::buildVertices(RenderInterface::Pointer&, SceneRenderer&)
 {
 	vec4 alphaScale = vec4(1.0f, finalAlpha());
 	mat4 transform = finalTransform();

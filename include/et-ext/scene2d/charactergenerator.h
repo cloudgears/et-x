@@ -51,7 +51,7 @@ public:
 	static const vec2i charactersRenderingExtent;
 
 public:
-	CharacterGenerator(RenderContext*, const std::string& face, const std::string& boldFace,
+	CharacterGenerator(RenderInterface::Pointer&, const std::string& face, const std::string& boldFace,
 		uint32_t faceIndex = 0, uint32_t boldFaceIndex = 0);
 
 	const Texture::Pointer& texture() const;

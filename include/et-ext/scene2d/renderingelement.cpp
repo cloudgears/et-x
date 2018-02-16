@@ -8,10 +8,8 @@
 #include <et/rendering/rendercontext.h>
 #include <et-ext/scene2d/renderingelement.h>
 
-namespace et
-{
-namespace s2d
-{
+namespace et {
+namespace s2d {
 
 #define ET_RENDER_CHUNK_USE_MAP_BUFFER	1
 
@@ -20,15 +18,13 @@ namespace s2d
  */
 RenderChunk::RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip,
 	const MaterialInstance::Pointer& aMaterial, Element2d* aObject, PrimitiveType pt) :
-	first(aFirst), count(aCount), primitiveType(pt), clip(aClip), material(aMaterial), object(aObject)
-{
+	first(aFirst), count(aCount), primitiveType(pt), clip(aClip), material(aMaterial), object(aObject) {
 }
 
 /*
  * Rendering element
  */
-RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity)
-{
+RenderingElement::RenderingElement(RenderInterface::Pointer& rc, uint32_t capacity) {
 	auto indexArray = IndexArray::Pointer::create(IndexArrayFormat::Format_16bit, capacity, PrimitiveType::Triangles);
 	indexArray->linearize(capacity);
 
@@ -42,13 +38,13 @@ RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity)
 	vertexData = sharedBlockAllocator().alloc(dataSize);
 #endif
 
-	Buffer::Pointer sharedIndexBuffer = rc->renderer()->createIndexBuffer("dynamic-buffer-ib", indexArray, Buffer::Location::Device);
+	Buffer::Pointer sharedIndexBuffer = rc->createIndexBuffer("dynamic-buffer-ib", indexArray, Buffer::Location::Device);
 	VertexStorage::Pointer sharedVertexStorage = VertexStorage::Pointer::create(decl, capacity);
 	for (uint32_t i = 0; i < VertexBuffersCount; ++i)
 	{
 		char nameId[128] = {};
 		sprintf(nameId, "dynamic-buffer-%u-ib", i);
-		Buffer::Pointer vb = rc->renderer()->createVertexBuffer(nameId, sharedVertexStorage, Buffer::Location::Host);
+		Buffer::Pointer vb = rc->createVertexBuffer(nameId, sharedVertexStorage, Buffer::Location::Host);
 
 		vertices[i] = VertexStream::Pointer::create();
 		vertices[i]->setVertexBuffer(vb, sharedVertexStorage->declaration());
@@ -58,21 +54,18 @@ RenderingElement::RenderingElement(RenderContext* rc, uint32_t capacity)
 	currentBufferIndex = 0;
 }
 
-RenderingElement::~RenderingElement()
-{
+RenderingElement::~RenderingElement() {
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER == 0)
 	sharedBlockAllocator().free(vertexData);
 #endif
 }
 
-void RenderingElement::clear()
-{
+void RenderingElement::clear() {
 	chunks.clear();
 	allocatedVertices = 0;
 }
 
-void RenderingElement::startAllocatingVertices()
-{
+void RenderingElement::startAllocatingVertices() {
 	currentBufferIndex = (currentBufferIndex + 1) % VertexBuffersCount;
 	clear();
 
@@ -81,15 +74,13 @@ void RenderingElement::startAllocatingVertices()
 #endif
 }
 
-SceneVertex* RenderingElement::allocateVertices(uint32_t n)
-{
+SceneVertex* RenderingElement::allocateVertices(uint32_t n) {
 	auto result = mappedVertices + allocatedVertices;
 	allocatedVertices += n;
 	return result;
 }
 
-void RenderingElement::commitAllocatedVertices()
-{
+void RenderingElement::commitAllocatedVertices() {
 	VertexStream::Pointer vao = vertices[currentBufferIndex];
 	uint32_t modifiedRange = sizeof(SceneVertex) * allocatedVertices;
 
@@ -101,8 +92,7 @@ void RenderingElement::commitAllocatedVertices()
 #endif
 }
 
-const VertexStream::Pointer& RenderingElement::vertexStream()
-{
+const VertexStream::Pointer& RenderingElement::vertexStream() {
 	const auto& vao = vertices[currentBufferIndex];
 #if (ET_RENDER_CHUNK_USE_MAP_BUFFER)
 	ET_ASSERT(!vao->vertexBuffer()->mapped());

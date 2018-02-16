@@ -13,7 +13,7 @@ namespace et
 namespace s2d
 {
 
-Scene::Scene(RenderContext* rc, const RenderPass::ConstructionInfo& passInfo) 
+Scene::Scene(RenderInterface::Pointer& rc, const RenderPass::ConstructionInfo& passInfo) 
 	: _rc(rc)
 	, _renderer(rc, passInfo)
 	, _renderingElementBackground(sharedObjectFactory().createObject<RenderingElement>(rc, 256))
@@ -27,7 +27,7 @@ Scene::Scene(RenderContext* rc, const RenderPass::ConstructionInfo& passInfo)
 	_overlay.setPivotPoint(vec2(0.5f));
 	_overlay.setContentMode(ImageView::ContentMode_Fill);
 
-	layout(vector2ToFloat(rc->size()));
+	layout(vector2ToFloat(rc->contextSize()));
 }
 
 bool Scene::pointerPressed(et::PointerInputInfo p)
@@ -136,7 +136,7 @@ bool Scene::charactersEntered(std::string p)
 	return false;
 }
 
-void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer element, Layout::Pointer layout)
+void Scene::buildLayoutVertices(RenderInterface::Pointer& rc, RenderingElement::Pointer element, Layout::Pointer layout)
 {
 	ET_ASSERT(element.valid());
 
@@ -150,7 +150,7 @@ void Scene::buildLayoutVertices(RenderContext* rc, RenderingElement::Pointer ele
 	}
 }
 
-void Scene::buildBackgroundVertices(RenderContext* rc)
+void Scene::buildBackgroundVertices(RenderInterface::Pointer& rc)
 {
 	_renderer.setRenderingElement(_renderingElementBackground);
 
@@ -162,7 +162,7 @@ void Scene::buildBackgroundVertices(RenderContext* rc)
 	}
 }
 
-void Scene::buildOverlayVertices(RenderContext* rc)
+void Scene::buildOverlayVertices(RenderInterface::Pointer& rc)
 {
 	_renderer.setRenderingElement(_renderingElementOverlay);
 
@@ -189,7 +189,7 @@ void Scene::layout(const vec2& size, float duration)
 		i->layout->autoLayout(size, duration);
 }
 
-void Scene::render(RenderContext* rc)
+void Scene::render(RenderInterface::Pointer& rc)
 {
 	_prerenderElements.clear();
 
@@ -201,14 +201,14 @@ void Scene::render(RenderContext* rc)
 		/*
 		 * TODO : render
 		 */
-		 // auto currentBuffer = rc->renderState().boundFramebuffer();
-		 // auto viewportSize = rc->renderState().viewportSize();
+		 // auto currentBuffer = rc.renderState().boundFramebuffer();
+		 // auto viewportSize = rc.renderState().viewportSize();
 
 		for (auto e : _prerenderElements)
 			e->preRender(rc);
 
-		// rc->renderState().bindFramebuffer(currentBuffer);
-		// rc->renderState().setViewportSize(viewportSize);
+		// rc.renderState().bindFramebuffer(currentBuffer);
+		// rc.renderState().setViewportSize(viewportSize);
 	}
 
 	_renderer.beginRender(rc);
@@ -531,7 +531,7 @@ void Scene::reloadObject(LoadableObject::Pointer obj, ObjectsCache&)
 	Element2d::Pointer l = obj;
 	l->reloadFromFile(obj->origin());
 	l->autoLayoutFromFile(obj->origin());
-	l->autoLayout(vector2ToFloat(_rc->size()), 0.0f);
+	l->autoLayout(vector2ToFloat(_rc->contextSize()), 0.0f);
 }
 
 void Scene::broadcastMessage(const Message& msg)
@@ -572,7 +572,7 @@ void Scene::validateTopLevelLayout()
  * Layout Entry
  */
 
-Scene::LayoutEntry::LayoutEntry(Scene* own, RenderContext* rc, Layout::Pointer l) :
+Scene::LayoutEntry::LayoutEntry(Scene* own, RenderInterface::Pointer& rc, Layout::Pointer l) :
 	layout(l), animator(l->timerPool()), offsetAlpha(0.0f, 0.0f, 1.0f),
 	state(Scene::LayoutEntry::State_Still)
 {

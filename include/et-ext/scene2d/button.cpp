@@ -47,7 +47,7 @@ Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Elem
 	});
 }
 
-void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
+void Button::addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& r)
 {
 	if (_bgVertices.lastElementIndex() > 0)
 	{
@@ -68,7 +68,7 @@ void Button::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 	}
 }
 
-void Button::buildVertices(RenderContext*, SceneRenderer&)
+void Button::buildVertices(RenderInterface::Pointer&, SceneRenderer&)
 {
 	const mat4& transform = finalTransform();
 

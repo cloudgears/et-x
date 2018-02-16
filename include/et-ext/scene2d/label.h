@@ -55,8 +55,8 @@ public:
 	bool processMessage(const Message&) override;
 
 private:
-	void addToRenderQueue(RenderContext* rc, SceneRenderer& renderer) override;
-	void buildVertices(RenderContext* rc, SceneRenderer& renderer) override;
+	void addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& renderer) override;
+	void buildVertices(RenderInterface::Pointer& rc, SceneRenderer& renderer) override;
 
 	void update(float t) override;
 	void invalidateText() override;

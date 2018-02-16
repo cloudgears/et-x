@@ -57,7 +57,7 @@ float Slider::normalizedValue() const
 	return (_value.value() - _min) / (_max - _min);
 }
 
-void Slider::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
+void Slider::addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& r)
 {
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
@@ -84,7 +84,7 @@ void Slider::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 	}
 }
 
-void Slider::buildVertices(RenderContext*, SceneRenderer&)
+void Slider::buildVertices(RenderInterface::Pointer&, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	rectf mainRect(vec2(0.0f), size());

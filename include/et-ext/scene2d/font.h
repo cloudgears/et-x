@@ -10,10 +10,8 @@
 #include <et/rendering/interface/texture.h>
 #include <et-ext/scene2d/charactergenerator.h>
 
-namespace et
-{
-namespace s2d
-{
+namespace et {
+namespace s2d {
 class Font : public Object
 {
 public:
@@ -22,16 +20,18 @@ public:
 public:
 	Font(const CharacterGenerator::Pointer& generator);
 
-	CharacterGenerator::Pointer& generator()
-		{ return _generator; }
+	CharacterGenerator::Pointer& generator() {
+		return _generator;
+	}
 
-	const CharacterGenerator::Pointer& generator() const
-		{ return _generator; }
+	const CharacterGenerator::Pointer& generator() const {
+		return _generator;
+	}
 
-	bool loadFromDictionary(RenderContext*, const Dictionary&, ObjectsCache&, const std::string&);
-	bool loadFromFile(RenderContext*, const std::string&, ObjectsCache&);
+	bool loadFromDictionary(RenderInterface::Pointer&, const Dictionary&, ObjectsCache&, const std::string&);
+	bool loadFromFile(RenderInterface::Pointer&, const std::string&, ObjectsCache&);
 
-	void saveToFile(RenderContext*, const std::string&);
+	void saveToFile(RenderInterface::Pointer&, const std::string&);
 
 	CharDescriptorList buildString(const std::string&, float, float = 1.0f);
 	CharDescriptorList buildString(const std::wstring&, float, float = 1.0f);

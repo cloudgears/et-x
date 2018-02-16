@@ -31,7 +31,7 @@ Font::Font(const CharacterGenerator::Pointer& generator) :
 {
 }
 
-void Font::saveToFile(RenderContext* rc, const std::string& fileName)
+void Font::saveToFile(RenderInterface::Pointer& rc, const std::string& fileName)
 {
 	/*
 	 * TODO : save to file
@@ -94,7 +94,7 @@ void Font::saveToFile(RenderContext* rc, const std::string& fileName)
 	tex->unmap();
 }
 
-bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, ObjectsCache& cache,
+bool Font::loadFromDictionary(RenderInterface::Pointer& rc, const Dictionary& object, ObjectsCache& cache,
 	const std::string& baseFileName)
 {
 	std::string fontFileDir = getFilePath(baseFileName);
@@ -102,7 +102,7 @@ bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, Objec
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	Texture::Pointer tex = rc->renderer()->loadTexture(actualName, cache, [](TextureDescription::Pointer desc) {
+	Texture::Pointer tex = rc->loadTexture(actualName, cache, [](TextureDescription::Pointer desc) {
 		desc->flags |= Texture::Flags::Readback;
 	});
 	
@@ -131,7 +131,7 @@ bool Font::loadFromDictionary(RenderContext* rc, const Dictionary& object, Objec
 	return false;
 }
 
-bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsCache& cache)
+bool Font::loadFromFile(RenderInterface::Pointer& rc, const std::string& fileName, ObjectsCache& cache)
 {
 	std::string resolvedFileName = application().resolveFileName(fileName);
 
@@ -162,7 +162,7 @@ bool Font::loadFromFile(RenderContext* rc, const std::string& fileName, ObjectsC
 	std::string textureFileName = fontFileDir + textureFile;
 	std::string actualName = fileExists(textureFileName) ? textureFileName : textureFile;
 
-	Texture::Pointer tex = rc->renderer()->loadTexture(actualName, cache, [](TextureDescription::Pointer desc) {
+	Texture::Pointer tex = rc->loadTexture(actualName, cache, [](TextureDescription::Pointer desc) {
 		desc->flags |= Texture::Flags::Readback;
 	});
 	

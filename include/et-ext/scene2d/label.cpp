@@ -27,7 +27,7 @@ Label::Label(const std::string& text, const Font::Pointer& f, float fsz, Element
 	adjustSize();
 }
 
-void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
+void Label::addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& r)
 {
 	if (_backgroundVertices.lastElementIndex() > 0)
 	{
@@ -42,7 +42,7 @@ void Label::addToRenderQueue(RenderContext* rc, SceneRenderer& r)
 	}
 }
 
-void Label::buildVertices(RenderContext*, SceneRenderer&)
+void Label::buildVertices(RenderInterface::Pointer&, SceneRenderer&)
 {
 	mat4 transform = finalTransform();
 	vec2 alignment = vec2(alignmentFactor(textHorizontalAlignment()), alignmentFactor(textVerticalAlignment()));

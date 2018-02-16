@@ -25,13 +25,13 @@ namespace helper
 rectf parseRectString(std::string& s);
 }
 
-TextureAtlas::TextureAtlas(RenderContext* rc, const std::string& filename, ObjectsCache& cache) :
+TextureAtlas::TextureAtlas(RenderInterface::Pointer& rc, const std::string& filename, ObjectsCache& cache) :
 	_loaded(false)
 {
 	loadFromFile(rc, filename, cache);
 }
 
-void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, ObjectsCache& cache, bool async)
+void TextureAtlas::loadFromFile(RenderInterface::Pointer& rc, const std::string& filename, ObjectsCache& cache, bool async)
 {
 	std::string resolvedFileName = application().resolveFileName(filename);
 	if (!fileExists(resolvedFileName))
@@ -52,7 +52,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 		{
 			auto textureId = tex.stringForKey("id")->content;
 			auto textureFile = application().resolveFileName(tex.stringForKey("filename")->content);
-			_textures[textureId] = rc->renderer()->loadTexture(textureFile, cache);
+			_textures[textureId] = rc->loadTexture(textureFile, cache);
 			if (_textures[textureId].valid())
 			{
 				// TODO : use sampler!!!
@@ -92,7 +92,7 @@ void TextureAtlas::loadFromFile(RenderContext* rc, const std::string& filename, 
 					if (!fileExists(textureName))
 						textureName = application().resolveFileName(textureId);
 
-					_textures[textureId] = rc->renderer()->loadTexture(textureName, cache);
+					_textures[textureId] = rc->loadTexture(textureName, cache);
 
 					if (_textures[textureId].valid())
 					{
