@@ -422,6 +422,7 @@ vec2 Layout::contentSize() {
 }
 
 void Layout::cancelInteractions() {
+	InstusivePointerScope<Element2d> scope(this);
 	cancelInteractionsInElement(Element2d::Pointer(this), PointerInputInfo());
 }
 
@@ -433,6 +434,7 @@ void Layout::cancelInteractionsInElement(Element2d::Pointer e, const PointerInpu
 }
 
 Element2d::Pointer Layout::findFirstResponder(const Message& msg) {
+	InstusivePointerScope<Element2d> scope(this);
 	return findFirstResponderStartingFrom(Element2d::Pointer(this), msg);
 }
 

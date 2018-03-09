@@ -322,6 +322,7 @@ void Listbox::showPopup()
 
 void Listbox::hidePopup()
 {
+	InstusivePointerScope<Element2d> scope(this);
 	setState(_mouseIn ? ListboxState_Highlighted : ListboxState_Default);
 	_popup->setVisible(false);
 	owner()->setFocusedElement(s2d::Element2d::Pointer(this));
