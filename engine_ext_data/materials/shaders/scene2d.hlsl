@@ -2,10 +2,9 @@
 #include <inputdefines>
 #include <inputlayout>
 
-Texture2D<float4> baseColorTexture : DECL_TEXTURE(BaseColor);
-SamplerState baseColorSampler : DECL_SAMPLER(BaseColor);
+Texture2D<float4> baseColor : DECLARE_TEXTURE;
 
-cbuffer ObjectVariables : DECL_BUFFER(Object)
+cbuffer ObjectVariables : DECL_OBJECTS_BUFFER
 {
 	row_major float4x4 projectionTransform;
 	float4 viewport; // x,y - viewport transform, z - viewport alpha
@@ -29,7 +28,7 @@ VSOutput vertexMain(VSInput vsIn)
 
 float4 fragmentMain(VSOutput fsIn) : SV_Target0
 {
-	float4 result = fsIn.color * baseColorTexture.Sample(baseColorSampler, fsIn.texCoord0);
+	float4 result = fsIn.color * baseColor.Sample(LinearClamp, fsIn.texCoord0);
 	result.w *= viewport.z;
 	return result;
 }
