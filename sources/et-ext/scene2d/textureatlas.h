@@ -9,40 +9,36 @@
 
 #include <et-ext/scene2d/element2d.h>
 
-namespace et
-{
-namespace s2d
-{
-class TextureAtlas
-{
-public:
-	TextureAtlas() = default;
-	TextureAtlas(RenderInterface::Pointer& rc, const std::string& filename, ObjectsCache& cache);
+namespace et {
+namespace s2d {
+class TextureAtlas {
+ public:
+  TextureAtlas() = default;
+  TextureAtlas(RenderInterface::Pointer& rc, const std::string& filename, ObjectsCache& cache);
 
-	bool loaded() const
-	{
-		return _loaded;
-	}
+  bool loaded() const {
+    return _loaded;
+  }
 
-	void loadFromFile(RenderInterface::Pointer& rc, const std::string& filename, ObjectsCache& cache, bool async = false);
-	void unload();
+  void loadFromFile(RenderInterface::Pointer& rc, const std::string& filename, ObjectsCache& cache, bool async = false);
+  void unload();
 
-	bool hasImage(const std::string& key) const;
+  bool hasImage(const std::string& key) const;
 
-	const s2d::Image& image(const std::string& key) const;
+  const s2d::Image& image(const std::string& key) const;
 
-	std::vector<Image> imagesForTexture(const Texture::Pointer& t) const;
+  std::vector<Image> imagesForTexture(const Texture::Pointer& t) const;
 
-	const Texture::Pointer& firstTexture() const;
+  const Texture::Pointer& firstTexture() const;
 
-private:
-	typedef std::map<std::string, Texture::Pointer> TextureMap;
-	typedef std::map<std::string, Image> ImageMap;
+ private:
+  typedef std::map<std::string, Texture::Pointer> TextureMap;
+  typedef std::map<std::string, Image> ImageMap;
 
-	TextureMap _textures;
-	ImageMap _images;
+  TextureMap _textures;
+  ImageMap _images;
 
-	bool _loaded = false;
+  bool _loaded = false;
 };
-}
-}
+}  // namespace s2d
+}  // namespace et

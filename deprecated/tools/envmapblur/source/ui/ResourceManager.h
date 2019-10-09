@@ -10,23 +10,20 @@
 
 #include <et-ext/scene2d/scene.h>
 
-namespace et
-{
-class ResourceManager
-{
-public:
-	void load(RenderContext*);
+namespace et {
+class ResourceManager {
+ public:
+  void load(RenderContext*);
 
-	s2d::Label::Pointer label(const std::string&, s2d::Element2d*);
-	s2d::Button::Pointer button(const std::string&, s2d::Element2d*);
+  s2d::Label::Pointer label(const std::string&, s2d::Element2d*);
+  s2d::Button::Pointer button(const std::string&, s2d::Element2d*);
 
-private:
-	struct
-	{
-		s2d::Font::Pointer main;
-	} fonts;
+ private:
+  struct {
+    s2d::Font::Pointer main;
+  } fonts;
 
-private:
-	RenderContext* _rc = nullptr;
+ private:
+  RenderContext* _rc = nullptr;
 };
-}
+}  // namespace et

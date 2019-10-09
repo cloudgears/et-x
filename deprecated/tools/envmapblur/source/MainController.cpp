@@ -1,10 +1,10 @@
-#include <et/rendering/base/primitives.h>
-#include <et/imaging/imagewriter.h>
-#include <et/core/hardware.h>
 #include "maincontroller.h"
 
-namespace et
-{
+#include <et/core/hardware.h>
+#include <et/imaging/imagewriter.h>
+#include <et/rendering/base/primitives.h>
+
+namespace et {
 
 extern const char* etExtWorkingFolder;
 
@@ -16,374 +16,350 @@ extern const std::string previewFragmentShader;
 
 const vec3 lightPosition = normalize(vec3(1.0f, 1.0f, 1.0f));
 
-void MainController::setApplicationParameters(et::ApplicationParameters& p)
-{
-	p.context.size = 4 * currentScreen().availableFrame.size() / 5;
+void MainController::setApplicationParameters(et::ApplicationParameters& p) {
+  p.context.size = 4 * currentScreen().availableFrame.size() / 5;
 }
 
-void MainController::setRenderContextParameters(et::RenderContextParameters& p)
-{
-	p.multisamplingQuality = MultisamplingQuality::None;
-	p.supportedInterfaceOrientations = InterfaceOrientation_AnyLandscape;
+void MainController::setRenderContextParameters(et::RenderContextParameters& p) {
+  p.multisamplingQuality = MultisamplingQuality::None;
+  p.supportedInterfaceOrientations = InterfaceOrientation_AnyLandscape;
 
-	_gestures.pointerPressed.connect([this](PointerInputInfo p)
-	{
-		_ui->pointerPressed(p);
-		_cameraAngles.cancelInterpolation();
-	});
-	
-	_gestures.pointerReleased.connect([this](PointerInputInfo p) { _ui->pointerReleased(p); });
-	_gestures.pointerMoved.connect([this](PointerInputInfo p) { _ui->pointerMoved(p); });
-	_gestures.pointerCancelled.connect([this](PointerInputInfo p) { _ui->pointerCancelled(p); });
-	
-	_gestures.drag.connect(this, &MainController::onDrag);
+  _gestures.pointerPressed.connect([this](PointerInputInfo p) {
+    _ui->pointerPressed(p);
+    _cameraAngles.cancelInterpolation();
+  });
+
+  _gestures.pointerReleased.connect([this](PointerInputInfo p) { _ui->pointerReleased(p); });
+  _gestures.pointerMoved.connect([this](PointerInputInfo p) { _ui->pointerMoved(p); });
+  _gestures.pointerCancelled.connect([this](PointerInputInfo p) { _ui->pointerCancelled(p); });
+
+  _gestures.drag.connect(this, &MainController::onDrag);
 }
 
-void MainController::applicationDidLoad(et::RenderContext* rc)
-{
-	_rc = rc;
+void MainController::applicationDidLoad(et::RenderContext* rc) {
+  _rc = rc;
 
-	application().pushSearchPath(etExtWorkingFolder);
-	loadPrograms();
-	loadGeometry();
+  application().pushSearchPath(etExtWorkingFolder);
+  loadPrograms();
+  loadGeometry();
 
-	_camera = Camera::Pointer::create();
+  _camera = Camera::Pointer::create();
 
-	RenderPass::ConstructionInfo passInfo;
-	passInfo.color[0].clearValue = vec4(0.5f, 0.25f, 0.5f, 1.0f);
-	passInfo.color[0].enabled = true;
-	passInfo.depth.enabled = true;
-	passInfo.camera = _camera;
-	_mainPass = rc->renderer()->allocateRenderPass(passInfo);
-	
-	size_t verticalSamples = 12;
-	size_t horizontalSamples = 12;
-	size_t numSamples = horizontalSamples * verticalSamples;
-	
-	_offsetAndScales.reserve(numSamples);
-	
-	vec2 scale(1.0f / static_cast<float>(horizontalSamples), 1.0f / static_cast<float>(verticalSamples));
-	
-	vec2 realOffset;
-	realOffset.y = -scale.y * static_cast<float>(verticalSamples - 1);
-	for (size_t y = 0; y < verticalSamples; ++y)
-	{
-		realOffset.x = -scale.x * static_cast<float>(horizontalSamples - 1);
-		for (size_t x = 0; x < horizontalSamples; ++x)
-		{
-			_offsetAndScales.push_back(std::make_pair(realOffset, scale));
-			realOffset.x += 2.0f * scale.x;
-		}
-		
-		realOffset.y += 2.0f * scale.y;
-	}
+  RenderPass::ConstructionInfo passInfo;
+  passInfo.color[0].clearValue = vec4(0.5f, 0.25f, 0.5f, 1.0f);
+  passInfo.color[0].enabled = true;
+  passInfo.depth.enabled = true;
+  passInfo.camera = _camera;
+  _mainPass = rc->renderer()->allocateRenderPass(passInfo);
 
-	std::string fileToLoad;
-	size_t numParams = application().launchParameters().size();
-	for (size_t i = 0; i < numParams - 1; ++i)
-	{
-		const auto& param = application().launchParameters().at(i);
-		if (param == "--file")
-		{
-			fileToLoad = application().launchParameters().at(i+1);
-			break;
-		}
-	}
-	
-	_rm.load(rc);
-	_mainUi = MainUI::Pointer::create(_rm);
-	_mainUi->fileSelected.connect([this](std::string name)
-	{
-		/*
-		 * TODO : do stuff
-		 *
-		ObjectsCache localCache;
-		_loadedTexture = _rc->textureFactory().loadTexture(name, localCache);
-		if (_loadedTexture.valid())
-		{
-			_loadedTexture->setWrap(_rc, TextureWrap::Repeat, TextureWrap::ClampToEdge);
+  size_t verticalSamples = 12;
+  size_t horizontalSamples = 12;
+  size_t numSamples = horizontalSamples * verticalSamples;
 
-			_framebuffer = _rc->framebufferFactory().createFramebuffer(_loadedTexture->size(), "framebuffer",
-				TextureFormat::RGB32F, TextureFormat::RGB, DataType::Float, TextureFormat::Invalid);
-			
-			_framebuffer->addSameRendertarget();
+  _offsetAndScales.reserve(numSamples);
 
-			_framebuffer->renderTarget(0)->setWrap(_rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
-			_framebuffer->renderTarget(1)->setWrap(_rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
+  vec2 scale(1.0f / static_cast<float>(horizontalSamples), 1.0f / static_cast<float>(verticalSamples));
 
-			_rc->renderState().bindFramebuffer(_framebuffer);
-			_framebuffer->setCurrentRenderTarget(0);
-			_rc->renderer()->renderFullscreenTexture(_loadedTexture);
-			_rc->renderState().bindDefaultFramebuffer();
-		}
-		else
-		{
-			_framebuffer.reset(nullptr);
-		}
-		_mainUi->setImages(_loadedTexture, _framebuffer->renderTarget(0));
-		*/
-	});
-	_mainUi->processSelected.connect([this]()
-	{
-		_shouldProcessPass1 = true;
-		_shouldProcessPass2 = false;
-		_processingSample = 0;
-	});
-	_mainUi->saveSelected.connect([this](std::string f)
-	{
-		_fileToSave = f;
-		_shouldSaveToFile = true;
-	});
-	
-	if (fileExists(fileToLoad))
-		_mainUi->fileSelected.invokeInMainRunLoop(fileToLoad);
-	
-	_ui = s2d::Scene::Pointer::create(rc, passInfo);
-	_ui->pushLayout(_mainUi);
-	
-	_cameraAngles.setTargetValue(vec2(0.0f, 0.0f));
-	_cameraAngles.finishInterpolation();
-	_cameraAngles.updated.connect(this, &MainController::updateCamera);
-	_cameraAngles.run();
-	
-	updateCamera();
+  vec2 realOffset;
+  realOffset.y = -scale.y * static_cast<float>(verticalSamples - 1);
+  for (size_t y = 0; y < verticalSamples; ++y) {
+    realOffset.x = -scale.x * static_cast<float>(horizontalSamples - 1);
+    for (size_t x = 0; x < horizontalSamples; ++x) {
+      _offsetAndScales.push_back(std::make_pair(realOffset, scale));
+      realOffset.x += 2.0f * scale.x;
+    }
+
+    realOffset.y += 2.0f * scale.y;
+  }
+
+  std::string fileToLoad;
+  size_t numParams = application().launchParameters().size();
+  for (size_t i = 0; i < numParams - 1; ++i) {
+    const auto& param = application().launchParameters().at(i);
+    if (param == "--file") {
+      fileToLoad = application().launchParameters().at(i + 1);
+      break;
+    }
+  }
+
+  _rm.load(rc);
+  _mainUi = MainUI::Pointer::create(_rm);
+  _mainUi->fileSelected.connect([this](std::string name) {
+    /*
+     * TODO : do stuff
+     *
+    ObjectsCache localCache;
+    _loadedTexture = _rc->textureFactory().loadTexture(name, localCache);
+    if (_loadedTexture.valid())
+    {
+      _loadedTexture->setWrap(_rc, TextureWrap::Repeat, TextureWrap::ClampToEdge);
+
+      _framebuffer = _rc->framebufferFactory().createFramebuffer(_loadedTexture->size(), "framebuffer",
+        TextureFormat::RGB32F, TextureFormat::RGB, DataType::Float, TextureFormat::Invalid);
+
+      _framebuffer->addSameRendertarget();
+
+      _framebuffer->renderTarget(0)->setWrap(_rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
+      _framebuffer->renderTarget(1)->setWrap(_rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
+
+      _rc->renderState().bindFramebuffer(_framebuffer);
+      _framebuffer->setCurrentRenderTarget(0);
+      _rc->renderer()->renderFullscreenTexture(_loadedTexture);
+      _rc->renderState().bindDefaultFramebuffer();
+    }
+    else
+    {
+      _framebuffer.reset(nullptr);
+    }
+    _mainUi->setImages(_loadedTexture, _framebuffer->renderTarget(0));
+    */
+  });
+  _mainUi->processSelected.connect([this]() {
+    _shouldProcessPass1 = true;
+    _shouldProcessPass2 = false;
+    _processingSample = 0;
+  });
+  _mainUi->saveSelected.connect([this](std::string f) {
+    _fileToSave = f;
+    _shouldSaveToFile = true;
+  });
+
+  if (fileExists(fileToLoad)) _mainUi->fileSelected.invokeInMainRunLoop(fileToLoad);
+
+  _ui = s2d::Scene::Pointer::create(rc, passInfo);
+  _ui->pushLayout(_mainUi);
+
+  _cameraAngles.setTargetValue(vec2(0.0f, 0.0f));
+  _cameraAngles.finishInterpolation();
+  _cameraAngles.updated.connect(this, &MainController::updateCamera);
+  _cameraAngles.run();
+
+  updateCamera();
 }
 
-void MainController::updateCamera()
-{
-	_camera->lookAt(5.0f * fromSpherical(_cameraAngles.value().y, _cameraAngles.value().x));
+void MainController::updateCamera() {
+  _camera->lookAt(5.0f * fromSpherical(_cameraAngles.value().y, _cameraAngles.value().x));
 };
 
-void MainController::onDrag(const et::GesturesRecognizer::DragGesture& gest)
-{
-	const float maxTheta = HALF_PI - 10.0f * DEG_1;
-	const vec2 anglesScale(0.125f, -0.25f);
-	
-	vec2 t = _cameraAngles.targetValue() + gest.velocity * anglesScale;
-	
-	if (std::abs(t.y) >= maxTheta)
-		t.y = maxTheta * signOrZero(t.y);
-	
-	_cameraAngles.setTargetValue(t);
+void MainController::onDrag(const et::GesturesRecognizer::DragGesture& gest) {
+  const float maxTheta = HALF_PI - 10.0f * DEG_1;
+  const vec2 anglesScale(0.125f, -0.25f);
+
+  vec2 t = _cameraAngles.targetValue() + gest.velocity * anglesScale;
+
+  if (std::abs(t.y) >= maxTheta) t.y = maxTheta * signOrZero(t.y);
+
+  _cameraAngles.setTargetValue(t);
 }
 
-void MainController::loadPrograms()
-{
-	/*
-	 * TODO : Create program
-	 *
-	programs.gaussianBlur = _rc->programFactory().genProgram("gaussian-blur", fullscreenVertexShader, gaussianBlurShader);
-	programs.gaussianBlur->setUniform("inputTexture", 0);
+void MainController::loadPrograms() {
+  /*
+   * TODO : Create program
+   *
+  programs.gaussianBlur = _rc->programFactory().genProgram("gaussian-blur", fullscreenVertexShader, gaussianBlurShader);
+  programs.gaussianBlur->setUniform("inputTexture", 0);
 
-	programs.cubemap = _rc->programFactory().genProgram("cubemap", fullscreenVertexShader, cubemapFragmentShader);
-	programs.cubemap->setUniform("colorTexture", 0);
-	programs.cubemap->setUniform("vertexOffset", vec2(0.0f));
-	programs.cubemap->setUniform("vertexScale", vec2(1.0f));
+  programs.cubemap = _rc->programFactory().genProgram("cubemap", fullscreenVertexShader, cubemapFragmentShader);
+  programs.cubemap->setUniform("colorTexture", 0);
+  programs.cubemap->setUniform("vertexOffset", vec2(0.0f));
+  programs.cubemap->setUniform("vertexScale", vec2(1.0f));
 
-	programs.preview = _rc->programFactory().genProgram("preview", previewVertexShader, previewFragmentShader);
-	programs.preview->setUniform("colorTexture", 0);
-	*/
+  programs.preview = _rc->programFactory().genProgram("preview", previewVertexShader, previewFragmentShader);
+  programs.preview->setUniform("colorTexture", 0);
+  */
 }
 
-void MainController::loadGeometry()
-{
-	/*
-	 * TODO : create model
-	 *
-	VertexDeclaration decl(false, VertexAttributeUsage::Position, DataType::Vec3);
-	decl.push_back(VertexAttributeUsage::Normal, DataType::Vec3);
-	
-	vec2i gridDensity(100);
-	uint32_t numIndexes = primitives::indexCountForRegularMesh(gridDensity, PrimitiveType::TriangleStrips);
-	
-	 auto va = VertexArray::Pointer::create(decl, 0);
-	primitives::createSphere(va, 1.0f, gridDensity);
+void MainController::loadGeometry() {
+  /*
+   * TODO : create model
+   *
+  VertexDeclaration decl(false, VertexAttributeUsage::Position, DataType::Vec3);
+  decl.push_back(VertexAttributeUsage::Normal, DataType::Vec3);
 
-	auto ia = IndexArray::Pointer::create(IndexArrayFormat::Format_32bit, numIndexes, PrimitiveType::TriangleStrips);
-	primitives::buildTriangleStripIndexes(ia, gridDensity, 0, 0);
+  vec2i gridDensity(100);
+  uint32_t numIndexes = primitives::indexCountForRegularMesh(gridDensity, PrimitiveType::TriangleStrips);
 
-	_vaoSphere = _rc->vertexBufferFactory().createVertexStream("sphere", va, BufferDrawType::Static,
-		ia, BufferDrawType::Static);
-	*/
+   auto va = VertexArray::Pointer::create(decl, 0);
+  primitives::createSphere(va, 1.0f, gridDensity);
+
+  auto ia = IndexArray::Pointer::create(IndexArrayFormat::Format_32bit, numIndexes, PrimitiveType::TriangleStrips);
+  primitives::buildTriangleStripIndexes(ia, gridDensity, 0, 0);
+
+  _vaoSphere = _rc->vertexBufferFactory().createVertexStream("sphere", va, BufferDrawType::Static,
+    ia, BufferDrawType::Static);
+  */
 }
 
-void MainController::applicationWillResizeContext(const et::vec2i& sz)
-{
-	vec2 fSize = vector2ToFloat(sz);
-	_camera->perspectiveProjection(QUARTER_PI, fSize.aspect(), 1.0f, 100.0f);
-	_ui->layout(fSize);
+void MainController::applicationWillResizeContext(const et::vec2i& sz) {
+  vec2 fSize = vector2ToFloat(sz);
+  _camera->perspectiveProjection(QUARTER_PI, fSize.aspect(), 1.0f, 100.0f);
+  _ui->layout(fSize);
 }
 
-void MainController::render(et::RenderContext* rc)
-{
-	_mainPass->begin();
-	_mainPass->end();
-	rc->renderer()->submitRenderPass(_mainPass);
-	/*
-	 * TODO : render something ^_^
-	 *
-	if (_shouldProcessPass1)
-		processImage_Pass1();
-	else if (_shouldProcessPass2)
-		processImage_Pass2();
-	
-	_rc->renderState().setClearColor(vec4(0.25f, 0.25f, 0.25f, 1.0f));
-	_rc->renderState().setColorMask(ColorMask::RGBA);
-	_rc->renderState().setDepthMask(true);
-	
-	rc->renderState().bindDefaultFramebuffer();
-	rc->renderer()->clear(true, true);
-	
-	renderPreview();
+void MainController::render(et::RenderContext* rc) {
+  _mainPass->begin();
+  _mainPass->end();
+  rc->renderer()->submitRenderPass(_mainPass);
+  /*
+   * TODO : render something ^_^
+   *
+  if (_shouldProcessPass1)
+    processImage_Pass1();
+  else if (_shouldProcessPass2)
+    processImage_Pass2();
 
-	if (_shouldSaveToFile && _framebuffer.valid())
-	{
-		Camera cubemapCamera;
-		cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 1.0f, 100.0f);
-		cubemapCamera.setModelViewMatrix(identityMatrix);
-		auto cm = cubemapMatrixProjectionArray(cubemapCamera.modelViewProjectionMatrix(), vec3(0.0f));
-		
-		rc->renderState().bindFramebuffer(_framebuffer);
-		{
-			auto rgbData = _rc->renderer()->readFramebufferData(_framebuffer->size(), TextureFormat::RGB, DataType::UnsignedChar);
-			writeImageToFile(_fileToSave + ".png", rgbData, _framebuffer->size(), 3, 8, ImageFormat_PNG, true);
-		}
-		
-		vec2i textureSize = _framebuffer->renderTarget(0)->size();
-		textureSize = vec2i(static_cast<int>(roundToHighestPowerOfTwo(etMin(textureSize.x, textureSize.y)) / 2));
+  _rc->renderState().setClearColor(vec4(0.25f, 0.25f, 0.25f, 1.0f));
+  _rc->renderState().setColorMask(ColorMask::RGBA);
+  _rc->renderState().setDepthMask(true);
 
-		size_t mipLevel = 0;
-		while (textureSize.x >= 4)
-		{
-			auto fb = rc->framebufferFactory().createCubemapFramebuffer(textureSize.x, "cb",
-				TextureFormat::RGB, TextureFormat::RGB, DataType::UnsignedChar, TextureFormat::Invalid);
-			rc->renderState().bindFramebuffer(fb);
-			rc->renderState().bindProgram(programs.cubemap);
-			rc->renderState().bindTexture(0, _framebuffer->renderTarget(0));
-			programs.cubemap->setUniform("exposure", _mainUi->exposureValue());
-			programs.cubemap->setUniform("expocorrection", _mainUi->expoCorrection());
+  rc->renderState().bindDefaultFramebuffer();
+  rc->renderer()->clear(true, true);
 
-			BinaryDataStorage data(4 * textureSize.square(), 0);
-			for (uint32_t i = 0; i < 6; ++i)
-			{
-				fb->setCurrentCubemapFace(i);
-				rc->renderState().setClearColor(vec4(0.0f));
-				rc->renderer()->clear(true, false);
+  renderPreview();
 
-				programs.cubemap->setMVPMatrix(cm[i].inverse());
-				rc->renderer()->fullscreenPass();
+  if (_shouldSaveToFile && _framebuffer.valid())
+  {
+    Camera cubemapCamera;
+    cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 1.0f, 100.0f);
+    cubemapCamera.setModelViewMatrix(identityMatrix);
+    auto cm = cubemapMatrixProjectionArray(cubemapCamera.modelViewProjectionMatrix(), vec3(0.0f));
 
-				rc->renderer()->readFramebufferData(textureSize, TextureFormat::RGB, DataType::UnsignedChar, data);
-				writeImageToFile(_fileToSave + "~level-" + intToStr(mipLevel) + "~face-" + intToStr(i) + ".png",
-					data, textureSize, 3, 8, ImageFormat_PNG, false);
-			}
+    rc->renderState().bindFramebuffer(_framebuffer);
+    {
+      auto rgbData = _rc->renderer()->readFramebufferData(_framebuffer->size(), TextureFormat::RGB, DataType::UnsignedChar);
+      writeImageToFile(_fileToSave + ".png", rgbData, _framebuffer->size(), 3, 8, ImageFormat_PNG, true);
+    }
 
-			textureSize /= 2;
-			mipLevel++;
-		}
-		rc->renderState().bindDefaultFramebuffer();
-		rc->renderState().setClearColor(vec4(0.5f));
-		_shouldSaveToFile = false;
-	}
-	*/
-	_ui->render(rc);
+    vec2i textureSize = _framebuffer->renderTarget(0)->size();
+    textureSize = vec2i(static_cast<int>(roundToHighestPowerOfTwo(etMin(textureSize.x, textureSize.y)) / 2));
+
+    size_t mipLevel = 0;
+    while (textureSize.x >= 4)
+    {
+      auto fb = rc->framebufferFactory().createCubemapFramebuffer(textureSize.x, "cb",
+        TextureFormat::RGB, TextureFormat::RGB, DataType::UnsignedChar, TextureFormat::Invalid);
+      rc->renderState().bindFramebuffer(fb);
+      rc->renderState().bindProgram(programs.cubemap);
+      rc->renderState().bindTexture(0, _framebuffer->renderTarget(0));
+      programs.cubemap->setUniform("exposure", _mainUi->exposureValue());
+      programs.cubemap->setUniform("expocorrection", _mainUi->expoCorrection());
+
+      BinaryDataStorage data(4 * textureSize.square(), 0);
+      for (uint32_t i = 0; i < 6; ++i)
+      {
+        fb->setCurrentCubemapFace(i);
+        rc->renderState().setClearColor(vec4(0.0f));
+        rc->renderer()->clear(true, false);
+
+        programs.cubemap->setMVPMatrix(cm[i].inverse());
+        rc->renderer()->fullscreenPass();
+
+        rc->renderer()->readFramebufferData(textureSize, TextureFormat::RGB, DataType::UnsignedChar, data);
+        writeImageToFile(_fileToSave + "~level-" + intToStr(mipLevel) + "~face-" + intToStr(i) + ".png",
+          data, textureSize, 3, 8, ImageFormat_PNG, false);
+      }
+
+      textureSize /= 2;
+      mipLevel++;
+    }
+    rc->renderState().bindDefaultFramebuffer();
+    rc->renderState().setClearColor(vec4(0.5f));
+    _shouldSaveToFile = false;
+  }
+  */
+  _ui->render(rc);
 }
 
-void MainController::renderPreview()
-{
-	/*
-	 * TODO : render preview
-	auto& rs = _rc->renderState();
-	
-	rs.setBlend(false);
-	rs.setDepthTest(true);
-	rs.setCulling(true, CullState::Back);
-	rs.bindVertexArray(_vaoSphere);
-	rs.bindTexture(0, _framebuffer.valid() ? _framebuffer->renderTarget(0) : Texture::Pointer());
-	rs.bindProgram(programs.preview);
-	programs.preview->setPrimaryLightPosition(lightPosition);
-	programs.preview->setCameraProperties(_camera);
-	programs.preview->setUniform("exposure", _mainUi->exposureValue());
-	programs.preview->setUniform("expocorrection", _mainUi->expoCorrection());
-	_rc->renderer()->drawAllElements(_vaoSphere->indexBuffer());
-	*/
+void MainController::renderPreview() {
+  /*
+   * TODO : render preview
+  auto& rs = _rc->renderState();
+
+  rs.setBlend(false);
+  rs.setDepthTest(true);
+  rs.setCulling(true, CullState::Back);
+  rs.bindVertexArray(_vaoSphere);
+  rs.bindTexture(0, _framebuffer.valid() ? _framebuffer->renderTarget(0) : Texture::Pointer());
+  rs.bindProgram(programs.preview);
+  programs.preview->setPrimaryLightPosition(lightPosition);
+  programs.preview->setCameraProperties(_camera);
+  programs.preview->setUniform("exposure", _mainUi->exposureValue());
+  programs.preview->setUniform("expocorrection", _mainUi->expoCorrection());
+  _rc->renderer()->drawAllElements(_vaoSphere->indexBuffer());
+  */
 }
 
-void MainController::processImage_Pass1()
-{
-	/*
-	 * TODO : process
-	 *
-	if (_framebuffer.invalid()) return;
-	
-	auto& rs = _rc->renderState();
-	const auto& p = _offsetAndScales.at(_processingSample);
-	
-	rs.bindFramebuffer(_framebuffer);
-	rs.bindProgram(programs.gaussianBlur);
-	
-	programs.gaussianBlur->setUniform("radius", _mainUi->angleValue());
-	programs.gaussianBlur->setUniform("vertexOffset", p.first);
-	programs.gaussianBlur->setUniform("vertexScale", p.second);
-	
-	_framebuffer->setCurrentRenderTarget(1);
-	rs.bindTexture(0, _loadedTexture);
-	programs.gaussianBlur->setUniform("texel", _loadedTexture->texel() * vec2(1.0f, 0.0f));
-	_rc->renderer()->fullscreenPass();
+void MainController::processImage_Pass1() {
+  /*
+   * TODO : process
+   *
+  if (_framebuffer.invalid()) return;
 
-	_framebuffer->setCurrentRenderTarget(0);
-	_rc->renderer()->renderFullscreenTexture(_framebuffer->renderTarget(1));
-	
-	_processingSample++;
-	if (_processingSample >= _offsetAndScales.size())
-	{
-		_shouldProcessPass1 = false;
-		_shouldProcessPass2 = true;
-		_processingSample = 0;
-	}
-	*/
+  auto& rs = _rc->renderState();
+  const auto& p = _offsetAndScales.at(_processingSample);
+
+  rs.bindFramebuffer(_framebuffer);
+  rs.bindProgram(programs.gaussianBlur);
+
+  programs.gaussianBlur->setUniform("radius", _mainUi->angleValue());
+  programs.gaussianBlur->setUniform("vertexOffset", p.first);
+  programs.gaussianBlur->setUniform("vertexScale", p.second);
+
+  _framebuffer->setCurrentRenderTarget(1);
+  rs.bindTexture(0, _loadedTexture);
+  programs.gaussianBlur->setUniform("texel", _loadedTexture->texel() * vec2(1.0f, 0.0f));
+  _rc->renderer()->fullscreenPass();
+
+  _framebuffer->setCurrentRenderTarget(0);
+  _rc->renderer()->renderFullscreenTexture(_framebuffer->renderTarget(1));
+
+  _processingSample++;
+  if (_processingSample >= _offsetAndScales.size())
+  {
+    _shouldProcessPass1 = false;
+    _shouldProcessPass2 = true;
+    _processingSample = 0;
+  }
+  */
 }
 
-void MainController::processImage_Pass2()
-{
-	/*
-	 * TODO : process
-	 *
-	auto& rs = _rc->renderState();
-	const auto& p = _offsetAndScales.at(_processingSample);
-	
-	rs.bindFramebuffer(_framebuffer);
-	rs.bindProgram(programs.gaussianBlur);
-	programs.gaussianBlur->setUniform("radius", _mainUi->angleValue());
-	programs.gaussianBlur->setUniform("vertexOffset", p.first);
-	programs.gaussianBlur->setUniform("vertexScale", p.second);
-	
-	_framebuffer->setCurrentRenderTarget(0);
-	rs.bindTexture(0, _framebuffer->renderTarget(1));
-	programs.gaussianBlur->setUniform("texel", _framebuffer->renderTarget(0)->texel() * vec2(0.0f, 1.0f));
-	_rc->renderer()->fullscreenPass();
-	
-	_processingSample++;
-	if (_processingSample >= _offsetAndScales.size())
-	{
-		_shouldProcessPass1 = false;
-		_shouldProcessPass2 = false;
-		_processingSample = 0;
-	}
-	*/ 
+void MainController::processImage_Pass2() {
+  /*
+   * TODO : process
+   *
+  auto& rs = _rc->renderState();
+  const auto& p = _offsetAndScales.at(_processingSample);
+
+  rs.bindFramebuffer(_framebuffer);
+  rs.bindProgram(programs.gaussianBlur);
+  programs.gaussianBlur->setUniform("radius", _mainUi->angleValue());
+  programs.gaussianBlur->setUniform("vertexOffset", p.first);
+  programs.gaussianBlur->setUniform("vertexScale", p.second);
+
+  _framebuffer->setCurrentRenderTarget(0);
+  rs.bindTexture(0, _framebuffer->renderTarget(1));
+  programs.gaussianBlur->setUniform("texel", _framebuffer->renderTarget(0)->texel() * vec2(0.0f, 1.0f));
+  _rc->renderer()->fullscreenPass();
+
+  _processingSample++;
+  if (_processingSample >= _offsetAndScales.size())
+  {
+    _shouldProcessPass1 = false;
+    _shouldProcessPass2 = false;
+    _processingSample = 0;
+  }
+  */
 }
 
-ApplicationIdentifier MainController::applicationIdentifier() const
-{
-	return ApplicationIdentifier(applicationIdentifierForCurrentProject(), "Cheetek", "EnvMapBlur");
+ApplicationIdentifier MainController::applicationIdentifier() const {
+  return ApplicationIdentifier(applicationIdentifierForCurrentProject(), "Cheetek", "EnvMapBlur");
 }
 
-IApplicationDelegate* Application::initApplicationDelegate()
-{
-	return sharedObjectFactory().createObject<MainController>();
+IApplicationDelegate* Application::initApplicationDelegate() {
+  return sharedObjectFactory().createObject<MainController>();
 }
 
-}
+}  // namespace et
 
 const std::string fullscreenVertexShader = R"(
 	uniform vec2 vertexScale;

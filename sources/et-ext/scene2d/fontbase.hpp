@@ -8,6 +8,8 @@
 #pragma once
 
 #include <et/core/containers.hpp>
+#include <et/geometry/vector4.hpp>
+#include <et/geometry/rect.hpp>
 
 #define FONT_VERSION_1 0x0001
 #define FONT_VERSION_2 0x0002
@@ -17,7 +19,11 @@
 
 namespace et {
 namespace s2d {
-enum CharacterFlags : uint32_t { CharacterFlag_Default = 0x0000, CharacterFlag_Bold = 0x0001 };
+
+enum CharacterFlags : uint32_t {
+  CharacterFlag_Default = 0x0000,
+  CharacterFlag_Bold = 0x0001,
+};
 
 struct CharDescriptor {
   uint32_t value = 0;
@@ -34,7 +40,9 @@ struct CharDescriptor {
   CharDescriptor(int v)
     : value(v) {}
 };
+
 using CharDescriptorList = Vector<CharDescriptor>;
 using CharDescriptorMap = Map<int, CharDescriptor>;
+
 }  // namespace s2d
 }  // namespace et

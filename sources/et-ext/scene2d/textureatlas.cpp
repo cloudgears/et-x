@@ -5,12 +5,12 @@
  *
  */
 
+#include <et-ext/scene2d/textureatlas.hpp>
 #include <et/app/application.hpp>
 #include <et/core/conversion.hpp>
 #include <et/core/json.hpp>
 #include <et/core/stream.hpp>
 #include <et/rendering/rendercontext.hpp>
-#include <et-ext/scene2d/textureatlas.hpp>
 #include <sstream>
 
 namespace et {

@@ -9,17 +9,14 @@
 
 #include <et-ext/scene2d/element2d.h>
 
-namespace et
-{
-	namespace s2d
-	{
-		class FullscreenElement : public Element2d
-		{
-		public:
-			ET_DECLARE_POINTER(FullscreenElement);
+namespace et {
+namespace s2d {
+class FullscreenElement : public Element2d {
+ public:
+  ET_DECLARE_POINTER(FullscreenElement);
 
-		public:
-			FullscreenElement(Element2d* parent, const std::string& name = emptyString);
-		};
-	}
-}
+ public:
+  FullscreenElement(Element2d* parent, const std::string& name = emptyString);
+};
+}  // namespace s2d
+}  // namespace et

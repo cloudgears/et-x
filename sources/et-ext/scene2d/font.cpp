@@ -5,6 +5,7 @@
  *
  */
 
+#include <et-ext/scene2d/font.hpp>
 #include <et/app/application.hpp>
 #include <et/core/conversion.hpp>
 #include <et/core/et.hpp>
@@ -13,7 +14,6 @@
 #include <et/core/stream.hpp>
 #include <et/imaging/imagewriter.hpp>
 #include <et/rendering/rendercontext.hpp>
-#include <et-ext/scene2d/font.hpp>
 #include <stack>
 
 namespace et {

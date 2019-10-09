@@ -5,8 +5,8 @@
  *
  */
 
-#include <et/rendering/rendercontext.hpp>
 #include <et-ext/scene2d/renderingelement.hpp>
+#include <et/rendering/rendercontext.hpp>
 
 namespace et {
 namespace s2d {

@@ -8,9 +8,9 @@
 #define ET_SHOULD_SAVE_GENERATED_CHARS 0
 #define ET_DISABLE_SDF_GENERATION 0
 
+#include <et-ext/scene2d/charactergenerator.hpp>
 #include <et/core/filesystem.hpp>
 #include <et/rendering/rendercontext.hpp>
-#include <et-ext/scene2d/charactergenerator.hpp>
 
 #if (ET_SHOULD_SAVE_GENERATED_CHARS)
 #include <et/app/application.hpp>

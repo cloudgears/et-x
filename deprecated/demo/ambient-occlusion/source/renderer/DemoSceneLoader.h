@@ -10,24 +10,21 @@
 
 #include <et/scene3d/scene3d.h>
 
-namespace et
-{
-namespace demo
-{
+namespace et {
+namespace demo {
 
-class SceneLoader
-{
-public:
-	void init(RenderContext*);
+class SceneLoader {
+ public:
+  void init(RenderContext*);
 
-	s3d::Scene::Pointer loadFromFile(const std::string&);
+  s3d::Scene::Pointer loadFromFile(const std::string&);
 
-private:
-	void loadObjFile(const std::string&, s3d::Scene::Pointer);
+ private:
+  void loadObjFile(const std::string&, s3d::Scene::Pointer);
 
-private:
-	RenderContext* _rc = nullptr;
+ private:
+  RenderContext* _rc = nullptr;
 };
 
-}
-}
+}  // namespace demo
+}  // namespace et

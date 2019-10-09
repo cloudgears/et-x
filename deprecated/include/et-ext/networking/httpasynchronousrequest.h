@@ -9,30 +9,28 @@
 
 #include <et-ext/networking/httprequest.h>
 
-namespace et
-{
-	class HTTPAsynchronousRequest : public HTTPRequest
-	{
-	public:
-		ET_DECLARE_POINTER(HTTPAsynchronousRequest)
-		
-	public:
-		HTTPAsynchronousRequest(const std::string& url) :
-			HTTPRequest(url) { }
-		
-		template <typename F>
-		void perform(F callback)
-		{
-			HTTPAsynchronousRequest::Pointer holder(this);
-			Invocation([this, callback, holder]() mutable
-			{
-				perform();
-				callback(response());
-				holder.reset(nullptr);
-			}).invokeInRunLoop(sharedHTTPRequestsThread().runLoop());
-		}
-		
-	private:
-		void perform() { HTTPRequest::perform(); }
-	};
-}
+namespace et {
+class HTTPAsynchronousRequest : public HTTPRequest {
+ public:
+  ET_DECLARE_POINTER(HTTPAsynchronousRequest)
+
+ public:
+  HTTPAsynchronousRequest(const std::string& url)
+    : HTTPRequest(url) {}
+
+  template <typename F>
+  void perform(F callback) {
+    HTTPAsynchronousRequest::Pointer holder(this);
+    Invocation([this, callback, holder]() mutable {
+      perform();
+      callback(response());
+      holder.reset(nullptr);
+    }).invokeInRunLoop(sharedHTTPRequestsThread().runLoop());
+  }
+
+ private:
+  void perform() {
+    HTTPRequest::perform();
+  }
+};
+}  // namespace et

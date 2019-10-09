@@ -5,10 +5,10 @@
  *
  */
 
-#include <et/core/et.hpp>
-#include <et/geometry/geometry.hpp>
 #include <et-ext/scene2d/element2d.hpp>
 #include <et-ext/scene2d/vertexbuilder.hpp>
+#include <et/core/et.hpp>
+#include <et/geometry/geometry.hpp>
 
 namespace et {
 namespace s2d {

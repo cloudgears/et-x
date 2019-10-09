@@ -5,9 +5,9 @@
  *
  */
 
+#include <et-ext/scene2d/scenerenderer.hpp>
 #include <et/app/application.hpp>
 #include <et/rendering/rendercontext.hpp>
-#include <et-ext/scene2d/scenerenderer.hpp>
 
 namespace et {
 

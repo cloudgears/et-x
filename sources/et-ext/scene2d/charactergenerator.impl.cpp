@@ -7,10 +7,10 @@
 
 #include <external/freetype/include/ft2build.h>
 
+#include <et-ext/scene2d/charactergenerator.hpp>
 #include <et/core/filesystem.hpp>
 #include <et/core/platform.hpp>
 #include <et/rendering/rendercontext.hpp>
-#include <et-ext/scene2d/charactergenerator.hpp>
 
 #include FT_FREETYPE_H
 

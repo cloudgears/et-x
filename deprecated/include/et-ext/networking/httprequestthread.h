@@ -11,41 +11,39 @@
 #include <et/tasks/tasks.h>
 #include <et/threading/thread.h>
 
-namespace et
-{
-	class HTTPRequestsThread;
-	
-	class HTTPRequestsRunLoop : public RunLoop
-	{
-	private:
-		HTTPRequestsRunLoop();
-		
-		void setOwner(HTTPRequestsThread* owner);
-		void addTask(Task* t, float);
-		
-	private:
-		friend class HTTPRequestsThread;
-		HTTPRequestsThread* _owner;
-	};
-	
-	class HTTPRequestsThread : public Thread
-	{
-	public:
-		HTTPRequestsThread();
-		~HTTPRequestsThread();
-		
-		RunLoop& runLoop()
-			{ return _runLoop; }
-		
-	private:
-		ThreadResult main();
-		
-	private:
-		HTTPRequestsRunLoop _runLoop;
-	};
-	
-	HTTPRequestsThread& sharedHTTPRequestsThread();
-	
-	bool shouldTerminateHTTPRequests();
-	void terminateHTTPRequests();
-}
+namespace et {
+class HTTPRequestsThread;
+
+class HTTPRequestsRunLoop : public RunLoop {
+ private:
+  HTTPRequestsRunLoop();
+
+  void setOwner(HTTPRequestsThread* owner);
+  void addTask(Task* t, float);
+
+ private:
+  friend class HTTPRequestsThread;
+  HTTPRequestsThread* _owner;
+};
+
+class HTTPRequestsThread : public Thread {
+ public:
+  HTTPRequestsThread();
+  ~HTTPRequestsThread();
+
+  RunLoop& runLoop() {
+    return _runLoop;
+  }
+
+ private:
+  ThreadResult main();
+
+ private:
+  HTTPRequestsRunLoop _runLoop;
+};
+
+HTTPRequestsThread& sharedHTTPRequestsThread();
+
+bool shouldTerminateHTTPRequests();
+void terminateHTTPRequests();
+}  // namespace et

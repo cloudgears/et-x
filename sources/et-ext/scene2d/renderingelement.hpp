@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <et/rendering/base/vertexstream.hpp>
 #include <et-ext/scene2d/element2d.hpp>
+#include <et/rendering/base/vertexstream.hpp>
 
 namespace et {
 namespace s2d {

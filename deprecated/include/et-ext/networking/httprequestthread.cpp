@@ -5,68 +5,58 @@
  *
  */
 
-#include <et/core/tools.h>
 #include <et-ext/networking/httprequestthread.h>
+#include <et/core/tools.h>
 
 using namespace et;
 
 static bool _shouldTerminateRequests = false;
 
-HTTPRequestsThread& et::sharedHTTPRequestsThread()
-{
-	static HTTPRequestsThread _thread;
-	return _thread;
+HTTPRequestsThread& et::sharedHTTPRequestsThread() {
+  static HTTPRequestsThread _thread;
+  return _thread;
 }
 
-bool et::shouldTerminateHTTPRequests()
-{
-	return _shouldTerminateRequests;
+bool et::shouldTerminateHTTPRequests() {
+  return _shouldTerminateRequests;
 }
 
-void et::terminateHTTPRequests()
-{
-	_shouldTerminateRequests = true;
+void et::terminateHTTPRequests() {
+  _shouldTerminateRequests = true;
 }
 
-HTTPRequestsRunLoop::HTTPRequestsRunLoop() :
-	_owner(nullptr) { }
+HTTPRequestsRunLoop::HTTPRequestsRunLoop()
+  : _owner(nullptr) {}
 
-void HTTPRequestsRunLoop::setOwner(HTTPRequestsThread* owner)
-	{ _owner = owner; }
-
-void HTTPRequestsRunLoop::addTask(Task* t, float delay)
-{
-	updateTime(queryContiniousTimeInMilliSeconds());
-	RunLoop::addTask(t, delay);
-	_owner->resume();
+void HTTPRequestsRunLoop::setOwner(HTTPRequestsThread* owner) {
+  _owner = owner;
 }
 
-HTTPRequestsThread::HTTPRequestsThread() :
-	Thread(true)
-{
-	_runLoop.setOwner(this);
+void HTTPRequestsRunLoop::addTask(Task* t, float delay) {
+  updateTime(queryContiniousTimeInMilliSeconds());
+  RunLoop::addTask(t, delay);
+  _owner->resume();
 }
 
-HTTPRequestsThread::~HTTPRequestsThread()
-{
-	terminateHTTPRequests();
-	stopAndWaitForTermination();
+HTTPRequestsThread::HTTPRequestsThread()
+  : Thread(true) {
+  _runLoop.setOwner(this);
 }
 
-ThreadResult HTTPRequestsThread::main()
-{
-	while (running())
-	{
-		if (_runLoop.hasTasks() || _runLoop.firstTimerPool()->hasObjects())
-		{
-			_runLoop.update(queryContiniousTimeInMilliSeconds());
-			Thread::sleepMSec(25);
-		}
-		else
-		{
-			suspend();
-		}
-	}
-	
-	return 0;
+HTTPRequestsThread::~HTTPRequestsThread() {
+  terminateHTTPRequests();
+  stopAndWaitForTermination();
+}
+
+ThreadResult HTTPRequestsThread::main() {
+  while (running()) {
+    if (_runLoop.hasTasks() || _runLoop.firstTimerPool()->hasObjects()) {
+      _runLoop.update(queryContiniousTimeInMilliSeconds());
+      Thread::sleepMSec(25);
+    } else {
+      suspend();
+    }
+  }
+
+  return 0;
 }

@@ -10,17 +10,15 @@
 
 #include <et-ext/scene2d/scene.h>
 
-namespace demo
-{
-	class MainLayout : public et::s2d::Layout
-	{
-	public:
-		ET_DECLARE_POINTER(MainLayout)
-		
-		ET_DECLARE_EVENT1(timeChanged, float)
-		
-	public:
-		MainLayout();
-	};
-		
-}
+namespace demo {
+class MainLayout : public et::s2d::Layout {
+ public:
+  ET_DECLARE_POINTER(MainLayout)
+
+  ET_DECLARE_EVENT1(timeChanged, float)
+
+ public:
+  MainLayout();
+};
+
+}  // namespace demo

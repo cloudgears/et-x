@@ -7,67 +7,73 @@
 
 #pragma once
 
-#include <stack>
-#include <et/core/objectscache.h>
-#include <et/core/containers.h>
-#include <et/camera/camera.h>
 #include <et-ext/scene2d/renderingelement.h>
 #include <et-ext/scene2d/vertexbuilder.h>
+#include <et/camera/camera.h>
+#include <et/core/containers.h>
+#include <et/core/objectscache.h>
 
-namespace et
-{
-namespace s2d
-{
-class SceneRenderer
-{
-public:
-	SceneRenderer(RenderInterface::Pointer& rc, const RenderPass::ConstructionInfo&);
-	~SceneRenderer();
+#include <stack>
 
-	void beginRender(RenderInterface::Pointer& rc);
-	void render(RenderInterface::Pointer& rc);
-	void endRender(RenderInterface::Pointer& rc);
+namespace et {
+namespace s2d {
+class SceneRenderer {
+ public:
+  SceneRenderer(RenderInterface::Pointer& rc, const RenderPass::ConstructionInfo&);
+  ~SceneRenderer();
 
-	void resetClipRect();
-	void pushClipRect(const recti&);
-	void popClipRect();
+  void beginRender(RenderInterface::Pointer& rc);
+  void render(RenderInterface::Pointer& rc);
+  void endRender(RenderInterface::Pointer& rc);
 
-	void setProjectionMatrices(const vec2& contextSize);
-	void setRenderingElement(const RenderingElement::Pointer& r);
+  void resetClipRect();
+  void pushClipRect(const recti&);
+  void popClipRect();
 
-	void addVertices(const SceneVertexList&, const MaterialInstance::Pointer&, Element2d*, PrimitiveType = PrimitiveType::Triangles);
+  void setProjectionMatrices(const vec2& contextSize);
+  void setRenderingElement(const RenderingElement::Pointer& r);
 
-	void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
+  void addVertices(const SceneVertexList&, const MaterialInstance::Pointer&, Element2d*, PrimitiveType = PrimitiveType::Triangles);
 
-	Texture::Pointer whiteTexture();
-	Texture::Pointer transparentTexture();
-	Material::Pointer defaultMaterial();
-	Material::Pointer fontMaterial();
+  void setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha);
 
-private:
-	ET_DENY_COPY(SceneRenderer);
+  Texture::Pointer whiteTexture();
+  Texture::Pointer transparentTexture();
+  Material::Pointer defaultMaterial();
+  Material::Pointer fontMaterial();
 
-	SceneVertex* allocateVertices(uint32_t, const MaterialInstance::Pointer&, Element2d*, PrimitiveType);
+ private:
+  ET_DENY_COPY(SceneRenderer);
 
-private:
-	RenderInterface::Pointer _rc;
-	RenderingElement::Pointer _renderingElement;
-	RenderPass::Pointer _renderPass;
-	Material::Pointer _defaultMaterial;
-	Material::Pointer _fontMaterial;
-	Texture::Pointer _whiteTexture;
-	Texture::Pointer _transparentTexture;
-	std::stack<recti> _clip;
+  SceneVertex* allocateVertices(uint32_t, const MaterialInstance::Pointer&, Element2d*, PrimitiveType);
 
-	// mat4 _defaultTransform;
-	vec3 _additionalOffsetAndAlpha;
-	recti _additionalWindowOffset;
+ private:
+  RenderInterface::Pointer _rc;
+  RenderingElement::Pointer _renderingElement;
+  RenderPass::Pointer _renderPass;
+  Material::Pointer _defaultMaterial;
+  Material::Pointer _fontMaterial;
+  Texture::Pointer _whiteTexture;
+  Texture::Pointer _transparentTexture;
+  std::stack<recti> _clip;
+
+  // mat4 _defaultTransform;
+  vec3 _additionalOffsetAndAlpha;
+  recti _additionalWindowOffset;
 };
 
-inline Texture::Pointer SceneRenderer::whiteTexture() { return _whiteTexture; }
-inline Texture::Pointer SceneRenderer::transparentTexture() { return _transparentTexture; }
-inline Material::Pointer SceneRenderer::defaultMaterial() { return _defaultMaterial; }
-inline Material::Pointer SceneRenderer::fontMaterial() { return _fontMaterial; }
+inline Texture::Pointer SceneRenderer::whiteTexture() {
+  return _whiteTexture;
+}
+inline Texture::Pointer SceneRenderer::transparentTexture() {
+  return _transparentTexture;
+}
+inline Material::Pointer SceneRenderer::defaultMaterial() {
+  return _defaultMaterial;
+}
+inline Material::Pointer SceneRenderer::fontMaterial() {
+  return _fontMaterial;
+}
 
-}
-}
+}  // namespace s2d
+}  // namespace et
