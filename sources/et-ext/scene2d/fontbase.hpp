@@ -8,8 +8,8 @@
 #pragma once
 
 #include <et/core/containers.hpp>
-#include <et/geometry/vector4.hpp>
 #include <et/geometry/rect.hpp>
+#include <et/geometry/vector4.hpp>
 
 #define FONT_VERSION_1 0x0001
 #define FONT_VERSION_2 0x0002
