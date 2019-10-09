@@ -13,4 +13,4 @@ target_include_directories(scene2d PUBLIC "${et_root}/sources/external/freetype/
 target_compile_options(scene2d PRIVATE -DNOMINMAX)
 set_property(TARGET scene2d PROPERTY FOLDER "et-ext")
 
-link_precompiled(scene2d freetype "d")
+link_precompiled(scene2d freetype "")
