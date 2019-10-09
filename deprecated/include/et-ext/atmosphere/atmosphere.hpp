@@ -1,6 +1,6 @@
 #pragma once
 
-#include <et/rendering/rendercontext.h>
+#include <et/rendering/rendercontext.hpp>
 
 namespace et {
 class Atmosphere : public Object {
@@ -27,7 +27,7 @@ class Atmosphere : public Object {
     return _cameraPosition;
   }
 
-  // void generateCubemap(et::Framebuffer::Pointer);
+  // void generateCubemap(Framebuffer::Pointer);
 
   Program::Pointer planetProgram();
 
@@ -66,7 +66,7 @@ class Atmosphere : public Object {
   Program::Pointer _planetPerVertexProgram;
 
   Dictionary _parameters;
-  vec3 _lightDirection = unitY;
+  vec3 _lightDirection = {0.0f, 1.0f, 0.0f};
   vec3 _cameraPosition;
 
   bool _skyParametersValid = false;

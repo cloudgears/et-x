@@ -7,11 +7,12 @@
 
 #pragma once
 
-#include <et/app/runloop.h>
-#include <et/tasks/tasks.h>
-#include <et/threading/thread.h>
+#include <et/app/runloop.hpp>
+#include <et/core/tasks.hpp>
+#include <et/core/thread.hpp>
 
 namespace et {
+
 class HTTPRequestsThread;
 
 class HTTPRequestsRunLoop : public RunLoop {
@@ -36,7 +37,7 @@ class HTTPRequestsThread : public Thread {
   }
 
  private:
-  ThreadResult main();
+  void main() override;
 
  private:
   HTTPRequestsRunLoop _runLoop;

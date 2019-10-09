@@ -5,23 +5,23 @@
  *
  */
 
-#include <et-ext/networking/httprequestthread.h>
-#include <et/core/tools.h>
+#include <et/core/tools.hpp>
+#include <et/networking/httprequestthread.hpp>
 
-using namespace et;
+namespace et {
 
 static bool _shouldTerminateRequests = false;
 
-HTTPRequestsThread& et::sharedHTTPRequestsThread() {
+HTTPRequestsThread& sharedHTTPRequestsThread() {
   static HTTPRequestsThread _thread;
   return _thread;
 }
 
-bool et::shouldTerminateHTTPRequests() {
+bool shouldTerminateHTTPRequests() {
   return _shouldTerminateRequests;
 }
 
-void et::terminateHTTPRequests() {
+void terminateHTTPRequests() {
   _shouldTerminateRequests = true;
 }
 
@@ -33,30 +33,31 @@ void HTTPRequestsRunLoop::setOwner(HTTPRequestsThread* owner) {
 }
 
 void HTTPRequestsRunLoop::addTask(Task* t, float delay) {
-  updateTime(queryContiniousTimeInMilliSeconds());
+  updateTime(queryContinuousTimeInMilliSeconds());
   RunLoop::addTask(t, delay);
   _owner->resume();
 }
 
 HTTPRequestsThread::HTTPRequestsThread()
-  : Thread(true) {
+  : Thread() {
   _runLoop.setOwner(this);
 }
 
 HTTPRequestsThread::~HTTPRequestsThread() {
   terminateHTTPRequests();
-  stopAndWaitForTermination();
+  stop();
+  join();
 }
 
-ThreadResult HTTPRequestsThread::main() {
+void HTTPRequestsThread::main() {
   while (running()) {
-    if (_runLoop.hasTasks() || _runLoop.firstTimerPool()->hasObjects()) {
-      _runLoop.update(queryContiniousTimeInMilliSeconds());
-      Thread::sleepMSec(25);
+    if (_runLoop.hasTasks() || _runLoop.mainTimerPool()->hasObjects()) {
+      _runLoop.update(queryContinuousTimeInMilliSeconds());
+      std::this_thread::sleep_for(std::chrono::milliseconds(25));
     } else {
       suspend();
     }
   }
-
-  return 0;
 }
+
+}  // namespace et

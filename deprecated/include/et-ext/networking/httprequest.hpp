@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <et-ext/networking/httprequestthread.h>
-#include <et/app/events.h>
-#include <et/core/containers.h>
+#include <et/app/events.hpp>
+#include <et/core/containers.hpp>
+#include <et/networking/httprequestthread.hpp>
 
 namespace et {
 class HTTPRequestResponse;
@@ -18,9 +18,11 @@ typedef IntrusivePtr<HTTPRequestResponse> HTTPRequestResponsePointer;
 class HTTPRequestPrivate;
 class HTTPRequest : public Shared {
  public:
-  ET_DECLARE_POINTER(HTTPRequest)
+  ET_DECLARE_POINTER(HTTPRequest);
 
-  enum { ResponseSuccessful = 200 };
+  enum {
+    ResponseSuccessful = 200,
+  };
 
  public:
   HTTPRequest(const std::string& url);
@@ -45,17 +47,17 @@ class HTTPRequest : public Shared {
   void setTimeoutInSeconds(uint64_t);
   void setConnectionTimeoutInSeconds(uint64_t);
 
-  ET_DECLARE_EVENT2(downloadProgress, int64_t, int64_t)
-  ET_DECLARE_EVENT2(uploadProgress, int64_t, int64_t)
+  ET_DECLARE_EVENT2(downloadProgress, int64_t, int64_t);
+  ET_DECLARE_EVENT2(uploadProgress, int64_t, int64_t);
 
  private:
   friend int HTTPRequestProgressFunction(HTTPRequest*, double, double, double, double);
-  ET_DECLARE_PIMPL(HTTPRequest, 256)
+  ET_DECLARE_PIMPL(HTTPRequest, 256);
 };
 
 class HTTPRequestResponse : public Shared {
  public:
-  ET_DECLARE_POINTER(HTTPRequestResponse)
+  ET_DECLARE_POINTER(HTTPRequestResponse);
 
  public:
   const BinaryDataStorage& data() const {

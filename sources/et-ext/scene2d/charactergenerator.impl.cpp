@@ -14,14 +14,7 @@
 
 #include FT_FREETYPE_H
 
-#if (ET_PLATFORM_APPLE)
-#include <CoreFoundation/CFString.hpp>
-#include <CoreFoundation/CFURL.hpp>
-#include <CoreText/CTFontDescriptor.hpp>
-#include <et/platform-apple/apple.hpp>
-#elif (ET_PLATFORM_WIN)
 #include <Windows.h>
-#endif
 
 namespace et {
 namespace s2d {
@@ -63,21 +56,6 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
       log::error("Failed to load FreeType font: %s [%u], error: %d (0x%08x)", face.c_str(), faceIndex, err, err);
     }
   } else {
-#if (ET_PLATFORM_APPLE)
-    StaticDataStorage<unsigned char, 1024> fontPath(0);
-    CFStringRef faceString = CFStringCreateWithCString(kCFAllocatorDefault, face.c_str(), kCFStringEncodingUTF8);
-    CTFontDescriptorRef fontRef = CTFontDescriptorCreateWithNameAndSize(faceString, 10.0f);
-    if (fontRef) {
-      CFURLRef url = (CFURLRef)CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute);
-      if (url) {
-        CFURLGetFileSystemRepresentation(url, 1, fontPath.data, fontPath.size());
-        CFRelease(url);
-      }
-      CFRelease(fontRef);
-    }
-    CFRelease(faceString);
-    FT_New_Face(library, fontPath.binary(), faceIndex, &regularFont);
-#elif (ET_PLATFORM_WIN)
     auto commonDC = CreateCompatibleDC(nullptr);
 
     HFONT font = CreateFontA(-12, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLIP_EMBEDDED, PROOF_QUALITY, FF_DONTCARE, face.c_str());
@@ -98,7 +76,6 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
     DeleteObject(font);
     DeleteDC(commonDC);
-#endif
   }
 
   /*
@@ -110,24 +87,6 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
       log::error("Failed to load bold FreeType font: %s [%u], error: %d (0x%08x)", boldFace.c_str(), boldFaceIndex, err, err);
     }
   } else {
-#if (ET_PLATFORM_APPLE)
-
-    StaticDataStorage<unsigned char, 1024> fontPath(0);
-    CFStringRef faceString = CFStringCreateWithCString(kCFAllocatorDefault, boldFace.c_str(), kCFStringEncodingUTF8);
-    CTFontDescriptorRef fontRef = CTFontDescriptorCreateWithNameAndSize(faceString, 10.0f);
-    if (fontRef) {
-      CFURLRef url = (CFURLRef)CTFontDescriptorCopyAttribute(fontRef, kCTFontURLAttribute);
-      if (url) {
-        CFURLGetFileSystemRepresentation(url, 1, fontPath.data, fontPath.size());
-        CFRelease(url);
-      }
-      CFRelease(fontRef);
-    }
-    FT_New_Face(library, fontPath.binary(), boldFaceIndex, &boldFont);
-    CFRelease(faceString);
-
-#elif (ET_PLATFORM_WIN)
-
     auto commonDC = CreateCompatibleDC(nullptr);
 
     HFONT font = CreateFontA(-12, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLIP_EMBEDDED, PROOF_QUALITY, FF_DONTCARE, boldFace.c_str());
@@ -148,8 +107,6 @@ CharacterGeneratorImplementationPrivate::CharacterGeneratorImplementationPrivate
 
     DeleteObject(font);
     DeleteDC(commonDC);
-
-#endif
   }
 
   auto charSize = static_cast<int>(CharacterGenerator::baseFontSize) << 6;

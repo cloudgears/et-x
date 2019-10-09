@@ -5,15 +5,16 @@
  *
  */
 
-#include <et-ext/networking/httprequest.h>
-#include <et/json/json.h>
 #include <external/libcurl/curl.h>
 
-using namespace et;
+#include <et/core/json.hpp>
+#include <et/networking/httprequest.hpp>
 
-static AtomicBool shouldInitCurl = true;
+namespace et {
 
-class et::HTTPRequestPrivate {
+static std::atomic_bool shouldInitCurl = true;
+
+class HTTPRequestPrivate {
  public:
   std::string url;
   std::string login;
@@ -34,13 +35,13 @@ class et::HTTPRequestPrivate {
   }
 };
 
-size_t et::HTTPRequestWriteFunction(const void* data, size_t chunks, size_t chunkSize, HTTPRequestPrivate* req) {
+size_t HTTPRequestWriteFunction(const void* data, size_t chunks, size_t chunkSize, HTTPRequestPrivate* req) {
   size_t dataSize = chunks * chunkSize;
   req->response->_data.appendData(data, dataSize);
   return shouldTerminateHTTPRequests() ? 0 : dataSize;
 }
 
-int et::HTTPRequestProgressFunction(HTTPRequest* req, double downloadSize, double downloaded, double uploadSize, double uploaded) {
+int HTTPRequestProgressFunction(HTTPRequest* req, double downloadSize, double downloaded, double uploadSize, double uploaded) {
   if ((downloaded > 0.0) || (downloadSize > 0.0)) req->downloadProgress.invokeInMainRunLoop(static_cast<int64_t>(downloaded), static_cast<int64_t>(downloadSize));
 
   if ((uploaded > 0.0) || (uploadSize > 0.0)) req->uploadProgress.invokeInMainRunLoop(static_cast<int64_t>(uploaded), static_cast<int64_t>(uploadSize));
@@ -49,7 +50,7 @@ int et::HTTPRequestProgressFunction(HTTPRequest* req, double downloadSize, doubl
 }
 
 HTTPRequest::HTTPRequest(const std::string& url) {
-  ET_PIMPL_INIT(HTTPRequest, url)
+  ET_PIMPL_INIT(HTTPRequest, url);
 
   if (shouldInitCurl) {
     curl_global_init(CURL_GLOBAL_ALL);
@@ -58,7 +59,7 @@ HTTPRequest::HTTPRequest(const std::string& url) {
 }
 
 HTTPRequest::~HTTPRequest() {
-  ET_PIMPL_FINALIZE(HTTPRequest)
+  ET_PIMPL_FINALIZE(HTTPRequest);
 }
 
 void HTTPRequest::setCredentials(const std::string& login, const std::string& password) {
@@ -170,3 +171,5 @@ void HTTPRequest::setConnectionTimeoutInSeconds(uint64_t t) {
 void HTTPRequest::setTimeoutInSeconds(uint64_t t) {
   _private->timeout = t;
 }
+
+}  // namespace et

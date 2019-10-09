@@ -1,9 +1,9 @@
-#include <et-ext/atmosphere/atmosphere.h>
-#include <et/camera/camera.h>
-#include <et/core/tools.h>
-#include <et/geometry/geometry.h>
-#include <et/imaging/imagewriter.h>
-#include <et/rendering/base/primitives.h>
+#include <et/atmosphere/atmosphere.hpp>
+#include <et/camera/camera.hpp>
+#include <et/core/tools.hpp>
+#include <et/geometry/geometry.hpp>
+#include <et/imaging/imagewriter.hpp>
+#include <et/rendering/base/primitives.hpp>
 
 using namespace et;
 
@@ -24,7 +24,7 @@ Atmosphere::Atmosphere(RenderInterface::Pointer& rc)
 
   /*/ TODO : do stuff
   _atmospherePerVertexProgram = rc.programFactory().genProgram("et~atmosphere~per-vertex~program",
-    atmospherePerVertexVS, atmospherePerVertexFS);
+      atmospherePerVertexVS, atmospherePerVertexFS);
   setProgramParameters(_atmospherePerVertexProgram);
   setPlanetFragmentShader(defaultPlanetFragmentShader());
   // */
@@ -71,8 +71,8 @@ void Atmosphere::setProgramParameters(Program::Pointer prog) {
   float outerRadius = innerRadius + atmosphereHeight;
 
   vec3 waveLength(1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "0"})->content, 4.0f),
-    1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "1"})->content, 4.0f),
-    1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "2"})->content, 4.0f));
+      1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "1"})->content, 4.0f),
+      1.0f / std::pow(_parameters.floatForKeyPath({kWaveLength, "2"})->content, 4.0f));
 
   int numSamples = _parameters.integerForKey(kIterationCount)->content & 0xffffffff;
 
@@ -117,7 +117,7 @@ void Atmosphere::generateGeometry(RenderInterface::Pointer& rc) {
 
   /*/ TODO : do stuff
   _atmosphereVAO = rc.vertexBufferFactory().createVertexArrayObject("et~sky-sphere", va,
-    BufferDrawType::Static, ia, BufferDrawType::Static);
+      BufferDrawType::Static, ia, BufferDrawType::Static);
   // */
 }
 
@@ -133,130 +133,130 @@ void Atmosphere::renderAtmosphereWithGeometry(const Camera& baseCamera, bool dra
   rs.bindVertexArray(_atmosphereVAO);
 
   bool shouldDrawPlanet = drawPlanet &&
-    adjustedCamera.frustum().containsSphere(Sphere(vec3(0.0f), _parameters.floatForKey(kPlanetRadius)->content));
+      adjustedCamera.frustum().containsSphere(Sphere(vec3(0.0f), _parameters.floatForKey(kPlanetRadius)->content));
 
   if (shouldDrawPlanet)
   {
-    rs.setBlend(false);
-    rs.setCulling(true, CullState::Back);
-    rs.bindProgram(_planetPerVertexProgram);
+      rs.setBlend(false);
+      rs.setCulling(true, CullState::Back);
+      rs.bindProgram(_planetPerVertexProgram);
 
-    if (!_groundParametersValid)
-    {
-      setProgramParameters(_planetPerVertexProgram);
-      _groundParametersValid = true;
-    }
+      if (!_groundParametersValid)
+      {
+          setProgramParameters(_planetPerVertexProgram);
+          _groundParametersValid = true;
+      }
 
-    _planetPerVertexProgram->setPrimaryLightPosition(_lightDirection);
-    _planetPerVertexProgram->setCameraProperties(adjustedCamera);
-    _rc->drawAllElements(_atmosphereVAO->indexBuffer());
+      _planetPerVertexProgram->setPrimaryLightPosition(_lightDirection);
+      _planetPerVertexProgram->setCameraProperties(adjustedCamera);
+      _rc->drawAllElements(_atmosphereVAO->indexBuffer());
 
 #	if (ET_ATMOSPHERE_DRAW_WIREFRAME_OVERLAY)
-    rs.setDepthFunc(DepthFunc_LessOrEqual);
-    rs.setBlend(true, BlendState_Additive);
-    rs.setWireframeRendering(true);
-    _rc->drawAllElements(_atmosphereVAO->indexBuffer());
-    rs.setWireframeRendering(false);
-    rs.setDepthFunc(DepthFunc_Less);
+      rs.setDepthFunc(DepthFunc_LessOrEqual);
+      rs.setBlend(true, BlendState_Additive);
+      rs.setWireframeRendering(true);
+      _rc->drawAllElements(_atmosphereVAO->indexBuffer());
+      rs.setWireframeRendering(false);
+      rs.setDepthFunc(DepthFunc_Less);
 #	endif
   }
 
   if (drawSky)
   {
+      CullState lastCullState = rs.cullState();
+      BlendState lastColorBlendState = rs.blendStateForColor();
+      BlendState lastAlphaBlendState = rs.blendStateForAlpha();
+      bool cullingEnabled = rs.cullEnabled();
+      bool depthMaskEnabled = rs.depthMask();
+      bool blendEnabled = rs.blendEnabled();
+
+      rs.setDepthMask(false);
+      rs.setBlend(true, BlendState::Additive);
+      rs.setCulling(true, CullState::Front);
+      rs.bindProgram(_atmospherePerVertexProgram);
+      setProgramParameters(_atmospherePerVertexProgram);
+      _atmospherePerVertexProgram->setCameraProperties(adjustedCamera);
+      _atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
+      _rc->drawAllElements(_atmosphereVAO->indexBuffer());
+
+#	if (ET_ATMOSPHERE_DRAW_WIREFRAME_OVERLAY)
+      rs.setWireframeRendering(true);
+      _rc->drawAllElements(_atmosphereVAO->indexBuffer());
+      rs.setWireframeRendering(false);
+      rs.setDepthFunc(DepthFunc_Less);
+#	endif
+
+      rs.setSeparateBlend(blendEnabled, lastColorBlendState, lastAlphaBlendState);
+      rs.setCulling(cullingEnabled, lastCullState);
+      rs.setDepthMask(depthMaskEnabled);
+  }
+  // */
+}
+
+/*
+void Atmosphere::generateCubemap(Framebuffer::Pointer framebuffer)
+{
+    ET_ASSERT(framebuffer->isCubemap());
+
+    static const vec3 lookDirections[] =
+    {
+        vec3(+1.0f, 0.0f, 0.0f),
+        vec3(-1.0f, 0.0f, 0.0f),
+        vec3(0.0f, +1.0f, 0.0f),
+        vec3(0.0f, -1.0f, 0.0f),
+        vec3(0.0f, 0.0f, +1.0f),
+        vec3(0.0f, 0.0f, -1.0f),
+    };
+
+    static const vec3 upVectors[] =
+    {
+        vec3(0.0f, -1.0f, 0.0f),
+        vec3(0.0f, -1.0f, 0.0f),
+        vec3(0.0f, 0.0f, +1.0f),
+        vec3(0.0f, 0.0f, -1.0f),
+        vec3(0.0f, -1.0f, 0.0f),
+        vec3(0.0f, -1.0f, 0.0f),
+    };
+
+    Camera cubemapCamera;
+    cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 1.0f, _cameraPosition.dotSelf());
+
+    auto& rs = _rc->renderState();
+
     CullState lastCullState = rs.cullState();
     BlendState lastColorBlendState = rs.blendStateForColor();
     BlendState lastAlphaBlendState = rs.blendStateForAlpha();
     bool cullingEnabled = rs.cullEnabled();
     bool depthMaskEnabled = rs.depthMask();
     bool blendEnabled = rs.blendEnabled();
+    bool depthTestEnabled = rs.depthTestEnabled();
 
     rs.setDepthMask(false);
+    rs.setDepthTest(false);
     rs.setBlend(true, BlendState::Additive);
     rs.setCulling(true, CullState::Front);
+
     rs.bindProgram(_atmospherePerVertexProgram);
     setProgramParameters(_atmospherePerVertexProgram);
-    _atmospherePerVertexProgram->setCameraProperties(adjustedCamera);
     _atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
-    _rc->drawAllElements(_atmosphereVAO->indexBuffer());
 
-#	if (ET_ATMOSPHERE_DRAW_WIREFRAME_OVERLAY)
-    rs.setWireframeRendering(true);
-    _rc->drawAllElements(_atmosphereVAO->indexBuffer());
-    rs.setWireframeRendering(false);
-    rs.setDepthFunc(DepthFunc_Less);
-#	endif
+    rs.bindVertexArray(_atmosphereVAO);
+    rs.bindFramebuffer(framebuffer);
+    for (uint32_t i = 0; i < 6; ++i)
+    {
+        framebuffer->setCurrentCubemapFace(i);
+        cubemapCamera.lookAt(vec3(0.0f), lookDirections[i], upVectors[i]);
+        cubemapCamera.setPosition(_cameraPosition);
 
+        _rc->clear(true, false);
+        _atmospherePerVertexProgram->setCameraProperties(cubemapCamera);
+        _rc->drawAllElements(_atmosphereVAO->indexBuffer());
+    }
+
+    rs.setDepthTest(depthTestEnabled);
     rs.setSeparateBlend(blendEnabled, lastColorBlendState, lastAlphaBlendState);
     rs.setCulling(cullingEnabled, lastCullState);
     rs.setDepthMask(depthMaskEnabled);
-  }
-  // */
-}
-
-/*
-void Atmosphere::generateCubemap(et::Framebuffer::Pointer framebuffer)
-{
-  ET_ASSERT(framebuffer->isCubemap());
-
-  static const vec3 lookDirections[] =
-  {
-    vec3(+1.0f, 0.0f, 0.0f),
-    vec3(-1.0f, 0.0f, 0.0f),
-    vec3(0.0f, +1.0f, 0.0f),
-    vec3(0.0f, -1.0f, 0.0f),
-    vec3(0.0f, 0.0f, +1.0f),
-    vec3(0.0f, 0.0f, -1.0f),
-  };
-
-  static const vec3 upVectors[] =
-  {
-    vec3(0.0f, -1.0f, 0.0f),
-    vec3(0.0f, -1.0f, 0.0f),
-    vec3(0.0f, 0.0f, +1.0f),
-    vec3(0.0f, 0.0f, -1.0f),
-    vec3(0.0f, -1.0f, 0.0f),
-    vec3(0.0f, -1.0f, 0.0f),
-  };
-
-  Camera cubemapCamera;
-  cubemapCamera.perspectiveProjection(HALF_PI, 1.0f, 1.0f, _cameraPosition.dotSelf());
-
-  auto& rs = _rc->renderState();
-
-  CullState lastCullState = rs.cullState();
-  BlendState lastColorBlendState = rs.blendStateForColor();
-  BlendState lastAlphaBlendState = rs.blendStateForAlpha();
-  bool cullingEnabled = rs.cullEnabled();
-  bool depthMaskEnabled = rs.depthMask();
-  bool blendEnabled = rs.blendEnabled();
-  bool depthTestEnabled = rs.depthTestEnabled();
-
-  rs.setDepthMask(false);
-  rs.setDepthTest(false);
-  rs.setBlend(true, BlendState::Additive);
-  rs.setCulling(true, CullState::Front);
-
-  rs.bindProgram(_atmospherePerVertexProgram);
-  setProgramParameters(_atmospherePerVertexProgram);
-  _atmospherePerVertexProgram->setPrimaryLightPosition(_lightDirection);
-
-  rs.bindVertexArray(_atmosphereVAO);
-  rs.bindFramebuffer(framebuffer);
-  for (uint32_t i = 0; i < 6; ++i)
-  {
-    framebuffer->setCurrentCubemapFace(i);
-    cubemapCamera.lookAt(vec3(0.0f), lookDirections[i], upVectors[i]);
-    cubemapCamera.setPosition(_cameraPosition);
-
-    _rc->clear(true, false);
-    _atmospherePerVertexProgram->setCameraProperties(cubemapCamera);
-    _rc->drawAllElements(_atmosphereVAO->indexBuffer());
-  }
-
-  rs.setDepthTest(depthTestEnabled);
-  rs.setSeparateBlend(blendEnabled, lastColorBlendState, lastAlphaBlendState);
-  rs.setCulling(cullingEnabled, lastCullState);
-  rs.setDepthMask(depthMaskEnabled);
 }
 // */
 
@@ -284,7 +284,7 @@ void Atmosphere::setPlanetFragmentShader(const std::string& shader) {
   _groundParametersValid = false;
   /*/ TODO : do stuff
   _planetPerVertexProgram = _rc->programFactory().genProgram("et~planet~per-vertex~program",
-    _computeScatteringOnPlanet ? planetPerVertexVS : planetPerVertexSimpleVS, shader);
+      _computeScatteringOnPlanet ? planetPerVertexVS : planetPerVertexSimpleVS, shader);
   setProgramParameters(_planetPerVertexProgram);
   // */
 }
@@ -306,12 +306,6 @@ void Atmosphere::setShouldComputeScatteringOnPlanet(bool c) {
  * Shaders
  *
  */
-#if (ET_PLATFORM_WIN)
-#define PRECISION_STRING
-#else
-#define PRECISION_STRING precision highp float;
-#endif
-
 #define ATMOSPHERE_UNIFORMS                   \
   uniform etHighp mat4 mModelViewProjection;  \
   uniform etHighp vec3 vCamera;               \

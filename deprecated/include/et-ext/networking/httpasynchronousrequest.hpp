@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <et-ext/networking/httprequest.h>
+#include <et/networking/httprequest.hpp>
 
 namespace et {
 class HTTPAsynchronousRequest : public HTTPRequest {
