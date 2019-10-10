@@ -417,6 +417,5 @@ bool CharacterGeneratorImplementationPrivate::startWithCharacter(const CharDescr
   return true;
 }
 
-
 }  // namespace s2d
 }  // namespace et
