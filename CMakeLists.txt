@@ -11,8 +11,6 @@ add_library(scene2d ${headers} ${sources})
 target_compile_options(scene2d PRIVATE -DNOMINMAX)
 target_compile_options(scene2d PRIVATE "/Zl")
 
-set_property(TARGET scene2d PROPERTY STATIC_LIBRARY_FLAGS "/NODEFAULTLIB")
-
 target_include_directories(scene2d PUBLIC "${et_root}/include/")
 target_include_directories(scene2d PUBLIC "${et_root}/include/external/freetype/include")
 target_include_directories(scene2d PUBLIC "${et_ext_root}/include/")
