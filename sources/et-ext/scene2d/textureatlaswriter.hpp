@@ -27,8 +27,8 @@ class TextureAtlasWriter {
   struct TextureAtlasItem {
     TextureDescription::Pointer texture;
     ImageItemList images;
-    int maxWidth = 0;
-    int maxHeight = 0;
+    uint32_t maxWidth = 0u;
+    uint32_t maxHeight = 0u;
   };
 
   typedef std::vector<TextureAtlasItem> TextureAtlasItemList;
