@@ -15,6 +15,7 @@
 #include <et/geometry/conversion.hpp>
 #include <et/imaging/imagewriter.hpp>
 #include <et/rendering/rendercontext.hpp>
+#include <fstream>
 #include <stack>
 
 namespace et {
