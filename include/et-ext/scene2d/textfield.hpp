@@ -9,7 +9,7 @@
 
 #include <et-ext/scene2d/font.hpp>
 #include <et-ext/scene2d/textelement.hpp>
-#include <et/core/notifytimer.hpp>
+#include <et/app/notifytimer.hpp>
 
 namespace et {
 namespace s2d {

@@ -7,9 +7,9 @@
 
 #include <et-ext/scene2d/element2d.hpp>
 #include <et-ext/scene2d/scenerenderer.hpp>
-#include <et/core/conversion.hpp>
 #include <et/core/filesystem.hpp>
 #include <et/core/json.hpp>
+#include <et/geometry/conversion.hpp>
 
 namespace et {
 namespace s2d {

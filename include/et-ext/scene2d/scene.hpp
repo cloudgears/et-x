@@ -21,7 +21,7 @@
 #include <et-ext/scene2d/slider.hpp>
 #include <et-ext/scene2d/table.hpp>
 #include <et-ext/scene2d/textfield.hpp>
-#include <et/core/objectscache.hpp>
+#include <et/app/objectscache.hpp>
 #include <et/input/input.hpp>
 #include <et/rendering/rendercontext.hpp>
 

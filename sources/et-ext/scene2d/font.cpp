@@ -7,11 +7,12 @@
 
 #include <et-ext/scene2d/font.hpp>
 #include <et/app/application.hpp>
-#include <et/core/conversion.hpp>
+#include <et/core/conversionbase.hpp>
 #include <et/core/et.hpp>
 #include <et/core/json.hpp>
 #include <et/core/serialization.hpp>
 #include <et/core/stream.hpp>
+#include <et/geometry/conversion.hpp>
 #include <et/imaging/imagewriter.hpp>
 #include <et/rendering/rendercontext.hpp>
 #include <stack>

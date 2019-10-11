@@ -6,9 +6,10 @@
  */
 
 #include <et-ext/scene2d/textureatlaswriter.hpp>
-#include <et/core/conversion.hpp>
+#include <et/core/conversionbase.hpp>
 #include <et/core/filesystem.hpp>
 #include <et/core/json.hpp>
+#include <et/geometry/conversion.hpp>
 #include <et/imaging/imageoperations.hpp>
 #include <et/imaging/imagewriter.hpp>
 #include <et/imaging/pngloader.hpp>
@@ -135,7 +136,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
       TextureDescription image;
       png::loadFromFile(ii.image->origin(), image, true);
 
-      std::string sIndex = intToStr(index);
+      std::string sIndex = std::to_string(index);
 
       if (sIndex.length() < 2) sIndex = "0" + sIndex;
 

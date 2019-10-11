@@ -109,7 +109,7 @@ void CharacterGenerator::generateCharacter(wchar_t value, CharacterFlags flags, 
 
     if (performCropping(renderedCharacterData, canvasSize, dataToSave, sizeToSave, topLeftOffset)) {
 #if (ET_SHOULD_SAVE_GENERATED_CHARS)
-      auto path = application().environment().applicationDocumentsFolder() + "char_" + intToStr(value) + ".png";
+      auto path = application().environment().applicationDocumentsFolder() + "char_" + std::to_string(value) + ".png";
       writeImageToFile(path, dataToSave, sizeToSave, 1, 8, ImageFormat::ImageFormat_PNG, true);
 #endif
 

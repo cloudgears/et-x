@@ -25,14 +25,14 @@ struct ElementClass {
   static std::string uniqueName(const std::string&);
 };
 
-#define ET_DECLARE_SCENE_ELEMENT_CLASS(CLASS)                                            \
-  template <>                                                                            \
-  const std::string s2d::ElementClass<s2d::CLASS*>::className = std::string(#CLASS);     \
-  template <>                                                                            \
-  std::atomic<size_t> s2d::ElementClass<s2d::CLASS*>::instanceConter = {0};              \
-  template <>                                                                            \
-  std::string s2d::ElementClass<s2d::CLASS*>::uniqueName(const std::string& inputName) { \
-    return (inputName.empty()) ? className + intToStr(++instanceConter) : inputName;     \
+#define ET_DECLARE_SCENE_ELEMENT_CLASS(CLASS)                                              \
+  template <>                                                                              \
+  const std::string s2d::ElementClass<s2d::CLASS*>::className = std::string(#CLASS);       \
+  template <>                                                                              \
+  std::atomic<size_t> s2d::ElementClass<s2d::CLASS*>::instanceConter = {0};                \
+  template <>                                                                              \
+  std::string s2d::ElementClass<s2d::CLASS*>::uniqueName(const std::string& inputName) {   \
+    return (inputName.empty()) ? className + std::to_string(++instanceConter) : inputName; \
   }
 
 #define ET_S2D_PASS_NAME_TO_BASE_CLASS name
