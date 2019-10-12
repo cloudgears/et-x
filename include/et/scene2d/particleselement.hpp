@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <et/scene2d/element2d.hpp>
 #include <et/app/notifytimer.hpp>
+#include <et/scene2d/element2d.hpp>
 #include <et/scene3d/particles.hpp>
 
 namespace et {

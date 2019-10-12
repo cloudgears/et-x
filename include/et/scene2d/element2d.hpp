@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <et/scene2d/baseclasses.hpp>
 #include <et/input/input.hpp>
 #include <et/rendering/base/material.hpp>
+#include <et/scene2d/baseclasses.hpp>
 
 namespace et {
 namespace s2d {

@@ -5,10 +5,10 @@
  *
  */
 
-#include <et/scene2d/button.hpp>
-#include <et/scene2d/scenerenderer.hpp>
 #include <et/core/hardware.hpp>
 #include <et/rendering/rendercontext.hpp>
+#include <et/scene2d/button.hpp>
+#include <et/scene2d/scenerenderer.hpp>
 
 namespace et {
 namespace s2d {

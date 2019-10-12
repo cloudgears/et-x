@@ -5,12 +5,12 @@
  *
  */
 
-#include <et/scene2d/layout.hpp>
-#include <et/scene2d/scenerenderer.hpp>
-#include <et/scene2d/scroll.hpp>
 #include <et/core/hardware.hpp>
 #include <et/core/tools.hpp>
 #include <et/rendering/rendercontext.hpp>
+#include <et/scene2d/layout.hpp>
+#include <et/scene2d/scenerenderer.hpp>
+#include <et/scene2d/scroll.hpp>
 
 namespace et {
 namespace s2d {

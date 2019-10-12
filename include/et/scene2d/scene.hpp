@@ -8,6 +8,9 @@
 #pragma once
 
 #include <deque>
+#include <et/app/objectscache.hpp>
+#include <et/input/input.hpp>
+#include <et/rendering/rendercontext.hpp>
 #include <et/scene2d/button.hpp>
 #include <et/scene2d/fullscreenelement.hpp>
 #include <et/scene2d/imageview.hpp>
@@ -21,9 +24,6 @@
 #include <et/scene2d/slider.hpp>
 #include <et/scene2d/table.hpp>
 #include <et/scene2d/textfield.hpp>
-#include <et/app/objectscache.hpp>
-#include <et/input/input.hpp>
-#include <et/rendering/rendercontext.hpp>
 
 namespace et {
 namespace s2d {

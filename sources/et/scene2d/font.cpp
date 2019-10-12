@@ -5,7 +5,6 @@
  *
  */
 
-#include <et/scene2d/font.hpp>
 #include <et/app/application.hpp>
 #include <et/core/conversionbase.hpp>
 #include <et/core/et.hpp>
@@ -15,6 +14,7 @@
 #include <et/geometry/conversion.hpp>
 #include <et/imaging/imagewriter.hpp>
 #include <et/rendering/rendercontext.hpp>
+#include <et/scene2d/font.hpp>
 #include <fstream>
 #include <stack>
 

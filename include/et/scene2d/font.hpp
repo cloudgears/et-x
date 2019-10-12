@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <et/scene2d/charactergenerator.hpp>
 #include <et/rendering/interface/texture.hpp>
+#include <et/scene2d/charactergenerator.hpp>
 
 namespace et {
 namespace s2d {

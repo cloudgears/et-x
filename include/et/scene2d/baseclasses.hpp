@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include <et/scene2d/baseconst.hpp>
 #include <et/core/animator.hpp>
 #include <et/core/locale.hpp>
 #include <et/rendering/interface/pipelinestate.hpp>
 #include <et/rendering/interface/renderer.hpp>
 #include <et/rendering/interface/texture.hpp>
+#include <et/scene2d/baseconst.hpp>
 
 namespace et {
 namespace s2d {

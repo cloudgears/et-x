@@ -5,9 +5,9 @@
  *
  */
 
-#include <et/scene2d/layout.hpp>
 #include <et/core/json.hpp>
 #include <et/rendering/rendercontext.hpp>
+#include <et/scene2d/layout.hpp>
 
 namespace et {
 namespace s2d {

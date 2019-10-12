@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include <et/scene2d/fontbase.hpp>
 #include <et/app/events.hpp>
 #include <et/geometry/rectplacer.hpp>
 #include <et/rendering/interface/renderer.hpp>
 #include <et/rendering/interface/texture.hpp>
+#include <et/scene2d/fontbase.hpp>
 
 namespace et {
 class RenderContext;

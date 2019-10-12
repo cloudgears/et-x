@@ -5,8 +5,8 @@
  *
  */
 
-#include <et/scene2d/scene.hpp>
 #include <et/app/application.hpp>
+#include <et/scene2d/scene.hpp>
 
 namespace et {
 namespace s2d {

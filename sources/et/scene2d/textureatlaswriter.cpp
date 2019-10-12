@@ -5,7 +5,6 @@
  *
  */
 
-#include <et/scene2d/textureatlaswriter.hpp>
 #include <et/core/conversionbase.hpp>
 #include <et/core/filesystem.hpp>
 #include <et/core/json.hpp>
@@ -13,6 +12,7 @@
 #include <et/imaging/imageoperations.hpp>
 #include <et/imaging/imagewriter.hpp>
 #include <et/imaging/pngloader.hpp>
+#include <et/scene2d/textureatlaswriter.hpp>
 #include <fstream>
 
 namespace et {

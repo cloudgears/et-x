@@ -5,9 +5,9 @@
  *
  */
 
+#include <et/core/tools.hpp>
 #include <et/scene2d/label.hpp>
 #include <et/scene2d/scenerenderer.hpp>
-#include <et/core/tools.hpp>
 
 namespace et {
 namespace s2d {

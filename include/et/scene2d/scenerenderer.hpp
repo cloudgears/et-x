@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include <et/scene2d/renderingelement.hpp>
-#include <et/scene2d/vertexbuilder.hpp>
 #include <et/app/objectscache.hpp>
 #include <et/camera/camera.hpp>
 #include <et/core/containers.hpp>
+#include <et/scene2d/renderingelement.hpp>
+#include <et/scene2d/vertexbuilder.hpp>
 #include <stack>
 
 namespace et {

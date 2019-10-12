@@ -7,9 +7,9 @@
 
 #pragma once
 
+#include <et/app/notifytimer.hpp>
 #include <et/scene2d/font.hpp>
 #include <et/scene2d/textelement.hpp>
-#include <et/app/notifytimer.hpp>
 
 namespace et {
 namespace s2d {
