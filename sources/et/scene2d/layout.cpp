@@ -290,7 +290,9 @@ void Layout::cancelDragging(float returnDuration) {
 }
 
 void Layout::setFocusedElement(Element2d::Pointer e) {
-  if (_focusedElement == e) return;
+  if (_focusedElement == e) {
+    return;
+  }
 
   if (is_valid(_focusedElement)) {
     _focusedElement->resignFocus(e);

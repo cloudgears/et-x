@@ -235,8 +235,6 @@ void Font::buildString(const std::wstring& s, float size, float smoothing, CharD
   static const wchar_t* offsetTagStart = L"<offset=";
   static const wchar_t* offsetTagEnd = L"</offset>";
 
-  size_t resultSize = 0;
-
   size_t boldTags = 0;
   std::vector<vec4> colorsStack;
   colorsStack.reserve(s.size() + 1);
@@ -292,23 +290,21 @@ void Font::buildString(const std::wstring& s, float size, float smoothing, CharD
       b += textLength(offsetTagEnd);
       if (b >= e) break;
     } else {
-      char_list.emplace_back();
-      CharDescriptor& cd = char_list.back();
-
-      cd = (boldTags > 0) ? _generator->boldCharDescription(*b) : _generator->charDescription(*b);
-
       float localScale = scaleStack.back();
       float localOffset = offsetStack.back();
       float finalScale = globalScale * localScale;
       float smoothScale = 0.02f / finalScale;
 
+      char_list.emplace_back();
+
+      CharDescriptor& cd = char_list.back();
+      cd = (boldTags > 0) ? _generator->boldCharDescription(*b) : _generator->charDescription(*b);
       cd.contentRect *= finalScale;
       cd.originalSize *= finalScale;
       cd.color = colorsStack.back();
       cd.parameters = vec4(0.5f, smoothing * smoothScale, 0.0f, 0.0f);
       cd.contentRect.top += localOffset;
 
-      ++resultSize;
       ++b;
     }
   }
