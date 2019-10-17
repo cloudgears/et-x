@@ -104,17 +104,17 @@ inline uint32_t CharacterGenerator::charactersCount() const {
 
 inline const CharDescriptor& CharacterGenerator::charDescription(wchar_t c) {
   auto& result = _chars[c];
-
-  if (result.value == 0) generateCharacter(c, CharacterFlag_Default, result);
-
+  if (result.value == 0) {
+    generateCharacter(c, CharacterFlag_Default, result);
+  }
   return result;
 }
 
 inline const CharDescriptor& CharacterGenerator::boldCharDescription(wchar_t c) {
   auto& result = _boldChars[c];
-
-  if (result.value == 0) generateCharacter(c, CharacterFlag_Bold, result);
-
+  if (result.value == 0) {
+    generateCharacter(c, CharacterFlag_Bold, result);
+  }
   return result;
 }
 

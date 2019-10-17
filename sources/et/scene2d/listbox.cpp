@@ -80,8 +80,10 @@ void Listbox::Popup::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
         }
       }
 
-      auto charList = _owner->font()->buildString(i, _owner->fontSize(), _owner->fontSmoothing());
-      auto textSize = _owner->font()->measureStringSize(i, _owner->fontSize());
+      CharDescriptorList charList;
+      _owner->font()->buildString(i, _owner->fontSize(), _owner->fontSmoothing(), charList);
+
+      auto textSize = _owner->font()->measureStringSize(charList);
       auto textPos = rowRect.origin() + 0.5f * (rowRect.size() - textSize);
       buildStringVertices(_textVertices, charList, Alignment::Near, Alignment::Near, textPos, drawColor, transform);
 
@@ -189,9 +191,10 @@ void Listbox::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
   }
 
   if (shouldDrawText()) {
+    CharDescriptorList charList;
     std::string textToDraw = _prefix + _values[_selectedIndex];
     auto textSize = font()->measureStringSize(textToDraw, fontSize());
-    auto charList = font()->buildString(textToDraw, fontSize(), fontSmoothing());
+    font()->buildString(textToDraw, fontSize(), fontSmoothing(), charList);
     vec2 textPos = 0.5f * (size() - textSize);
     buildStringVertices(_textVertices, charList, Alignment::Near, Alignment::Near, textPos, finalColor(), transform);
   }

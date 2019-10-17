@@ -32,8 +32,8 @@ class Font : public Object {
 
   void saveToFile(RenderInterface::Pointer&, const std::string&);
 
-  CharDescriptorList buildString(const std::string&, float, float = 1.0f);
-  CharDescriptorList buildString(const std::wstring&, float, float = 1.0f);
+  void buildString(const std::string&, float, float, CharDescriptorList&);
+  void buildString(const std::wstring&, float, float, CharDescriptorList&);
 
   vec2 measureStringSize(const std::string&, float, float = 1.0f);
   vec2 measureStringSize(const std::wstring&, float, float = 1.0f);

@@ -23,7 +23,7 @@ Button::Button(const std::string& title, const Font::Pointer& f, float fsz, Elem
 
   _nextTitle = _currentTitle;
   _maxTextSize = _currentTextSize;
-  _currentTitleCharacters = font()->buildString(_currentTitle.cachedText, fontSize(), fontSmoothing());
+  font()->buildString(_currentTitle.cachedText, fontSize(), fontSmoothing(), _currentTitleCharacters);
 
   setSize(sizeForText(title));
   setTextAlignment(s2d::Alignment::Center, s2d::Alignment::Center);
@@ -438,8 +438,8 @@ bool Button::respondsToMessage(const Message& msg) const {
 }
 
 void Button::invalidateText() {
-  _nextTitleCharacters = font()->buildString(_nextTitle.cachedText, fontSize(), fontSmoothing());
-  _currentTitleCharacters = font()->buildString(_currentTitle.cachedText, fontSize(), fontSmoothing());
+  font()->buildString(_nextTitle.cachedText, fontSize(), fontSmoothing(), _nextTitleCharacters);
+  font()->buildString(_currentTitle.cachedText, fontSize(), fontSmoothing(), _currentTitleCharacters);
   invalidateContent();
 }
 

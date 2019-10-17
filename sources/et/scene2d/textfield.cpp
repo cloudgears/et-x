@@ -117,9 +117,13 @@ void TextField::setText(const std::string& s) {
   _text = s;
   _actualText = _prefix + _text;
 
-  _textCharacters = _secured ? CharDescriptorList(_actualText.length(), font()->generator()->charDescription(securedChar)) : font()->buildString(_actualText, fontSize(), fontSmoothing());
+  if (_secured) {
+    _textCharacters = CharDescriptorList(_actualText.length(), font()->generator()->charDescription(securedChar));
+  } else {
+    font()->buildString(_actualText, fontSize(), fontSmoothing(), _textCharacters);
+  }
 
-  _caretChar = font()->buildString(caret, fontSize(), fontSmoothing());
+  font()->buildString(caret, fontSize(), fontSmoothing(), _caretChar);
 
   invalidateContent();
 }
@@ -246,8 +250,7 @@ void TextField::setBackgroundImage(const Image& img) {
 
 void TextField::setPlaceholder(const std::string& s) {
   _placeholder.setKey(s);
-  _placeholderCharacters = font()->buildString(_placeholder.cachedText, fontSize(), fontSmoothing());
-
+  font()->buildString(_placeholder.cachedText, fontSize(), fontSmoothing(), _placeholderCharacters);
   invalidateContent();
 }
 

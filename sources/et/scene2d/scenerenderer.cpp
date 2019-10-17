@@ -89,7 +89,9 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Material
   ET_ASSERT(is_valid(inMaterial));
   ET_ASSERT(is_valid(_renderingElement));
 
-  if ((object != nullptr) && !object->hasFlag(Flag_DynamicRendering)) object = nullptr;
+  if ((object != nullptr) && !object->hasFlag(Flag_DynamicRendering)) {
+    object = nullptr;
+  }
 
   bool addedToLastChunk = false;
   if ((object == nullptr) && !_renderingElement->chunks.empty()) {
@@ -112,7 +114,7 @@ void SceneRenderer::addVertices(const SceneVertexList& vertices, const MaterialI
   ET_ASSERT((count > 0) && is_valid(_renderingElement) && is_valid(material));
 
   SceneVertex* target = allocateVertices(count, material, owner, pt);
-  for (const SceneVertex& v : vertices) *target++ = v;
+  memcpy(target, vertices.data(), vertices.size() * sizeof(SceneVertex));
 }
 
 void s2d::SceneRenderer::setRenderingElement(const RenderingElement::Pointer& r) {

@@ -113,11 +113,11 @@ void Label::setText(const std::string& aText, float duration) {
     _textFadeDuration = duration;
   }
 
-  _charListText = font()->buildString(_text.cachedText, fontSize(), fontSmoothing());
+  font()->buildString(_text.cachedText, fontSize(), fontSmoothing(), _charListText);
   _textSize = font()->measureStringSize(_charListText);
 
   if (_animatingText) {
-    _charListNextText = font()->buildString(_nextText.cachedText, fontSize(), fontSmoothing());
+    font()->buildString(_nextText.cachedText, fontSize(), fontSmoothing(), _charListNextText);
     _nextTextSize = font()->measureStringSize(_charListNextText);
     _textSize = maxv(_textSize, _nextTextSize);
   }
@@ -297,8 +297,8 @@ std::string Label::fitStringToWidthWithFont(std::string oldText, Font::Pointer f
 }
 
 void Label::invalidateText() {
-  _charListText = font()->buildString(_text.cachedText, fontSize(), fontSmoothing());
-  _charListNextText = font()->buildString(_nextText.cachedText, fontSize(), fontSmoothing());
+  font()->buildString(_text.cachedText, fontSize(), fontSmoothing(), _charListText);
+  font()->buildString(_nextText.cachedText, fontSize(), fontSmoothing(), _charListNextText);
 
   invalidateContent();
 }

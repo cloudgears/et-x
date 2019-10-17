@@ -197,24 +197,31 @@ vec2 Font::measureStringSize(const CharDescriptorList& s) {
 }
 
 vec2 Font::measureStringSize(const std::string& s, float size, float smoothing) {
-  return measureStringSize(buildString(utf8ToUnicode(s), size, smoothing));
+  CharDescriptorList local;
+  buildString(utf8ToUnicode(s), size, smoothing, local);
+  return measureStringSize(local);
 }
 
 vec2 Font::measureStringSize(const std::wstring& s, float size, float smoothing) {
-  return measureStringSize(buildString(s, size, smoothing));
+  CharDescriptorList local;
+  buildString(s, size, smoothing, local);
+  return measureStringSize(local);
 }
 
-CharDescriptorList Font::buildString(const std::string& s, float size, float smoothing) {
-  return buildString(utf8ToUnicode(s), size, smoothing);
+void Font::buildString(const std::string& s, float size, float smoothing, CharDescriptorList& char_list) {
+  buildString(utf8ToUnicode(s), size, smoothing, char_list);
 }
 
-CharDescriptorList Font::buildString(const std::wstring& s, float size, float smoothing) {
-  if (s.empty()) return CharDescriptorList();
+void Font::buildString(const std::wstring& s, float size, float smoothing, CharDescriptorList& char_list) {
+  char_list.clear();
+
+  if (s.empty()) {
+    return;
+  }
+
+  char_list.reserve(s.size() + 1);
 
   float globalScale = size / CharacterGenerator::baseFontSize;
-
-  CharDescriptorList result;
-  result.reserve(s.size() + 1);
 
   static const wchar_t* boldTagStart = L"<b>";
   static const wchar_t* boldTagEnd = L"</b>";
@@ -285,15 +292,15 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
       b += textLength(offsetTagEnd);
       if (b >= e) break;
     } else {
-      result.emplace_back();
-      CharDescriptor& cd = result.back();
+      char_list.emplace_back();
+      CharDescriptor& cd = char_list.back();
 
       cd = (boldTags > 0) ? _generator->boldCharDescription(*b) : _generator->charDescription(*b);
 
       float localScale = scaleStack.back();
       float localOffset = offsetStack.back();
       float finalScale = globalScale * localScale;
-      float smoothScale = 0.03f / std::pow(finalScale, 2.0f / 2.5f);
+      float smoothScale = 0.02f / finalScale;
 
       cd.contentRect *= finalScale;
       cd.originalSize *= finalScale;
@@ -305,8 +312,6 @@ CharDescriptorList Font::buildString(const std::wstring& s, float size, float sm
       ++b;
     }
   }
-
-  return result;
 }
 
 /*
