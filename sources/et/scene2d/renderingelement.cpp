@@ -28,7 +28,7 @@ RenderChunk::RenderChunk(uint32_t aFirst, uint32_t aCount, const recti& aClip, c
  * Rendering element
  */
 RenderingElement::RenderingElement(RenderInterface::Pointer& rc, uint32_t capacity) {
-  auto indexArray = IndexArray::Pointer::create(IndexArrayFormat::Format_16bit, capacity, PrimitiveType::Triangles);
+  auto indexArray = IndexArray::make_pointer(IndexArrayFormat::Format_16bit, capacity, PrimitiveType::Triangles);
   indexArray->linearize(capacity);
 
   VertexDeclaration decl;
@@ -42,13 +42,13 @@ RenderingElement::RenderingElement(RenderInterface::Pointer& rc, uint32_t capaci
 #endif
 
   Buffer::Pointer sharedIndexBuffer = rc->createIndexBuffer("dynamic-buffer-ib", indexArray, Buffer::Location::Device);
-  VertexStorage::Pointer sharedVertexStorage = VertexStorage::Pointer::create(decl, capacity);
+  VertexStorage::Pointer sharedVertexStorage = VertexStorage::make_pointer(decl, capacity);
   for (uint32_t i = 0; i < VertexBuffersCount; ++i) {
     char nameId[128] = {};
     sprintf(nameId, "dynamic-buffer-%u-ib", i);
     Buffer::Pointer vb = rc->createVertexBuffer(nameId, sharedVertexStorage, Buffer::Location::Host);
 
-    vertices[i] = VertexStream::Pointer::create();
+    vertices[i] = VertexStream::make_pointer();
     vertices[i]->setVertexBuffer(vb, sharedVertexStorage->declaration());
     vertices[i]->setIndexBuffer(sharedIndexBuffer, indexArray->format());
     vertices[i]->setPrimitiveType(indexArray->primitiveType());

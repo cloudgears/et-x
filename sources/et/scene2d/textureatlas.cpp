@@ -46,7 +46,7 @@ void TextureAtlas::loadFromFile(RenderInterface::Pointer& rc, const std::string&
       auto textureId = tex.stringForKey("id")->content;
       auto textureFile = application().resolveFileName(tex.stringForKey("filename")->content);
       _textures[textureId] = rc->loadTexture(textureFile, cache);
-      if (_textures[textureId].valid()) {
+      if (is_valid(_textures[textureId])) {
         // TODO : use sampler!!!
         // _textures[textureId]->setWrap(rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
       }
@@ -79,7 +79,7 @@ void TextureAtlas::loadFromFile(RenderInterface::Pointer& rc, const std::string&
 
           _textures[textureId] = rc->loadTexture(textureName, cache);
 
-          if (_textures[textureId].valid()) {
+          if (is_valid(_textures[textureId])) {
             // TODO : use sampler!!!
             // _textures[textureId]->setWrap(rc, TextureWrap::ClampToEdge, TextureWrap::ClampToEdge);
           }
@@ -168,7 +168,7 @@ void TextureAtlas::unload() {
   _loaded = false;
 }
 
-const Texture::Pointer& TextureAtlas::firstTexture() const {
+Texture::Pointer TextureAtlas::firstTexture() const {
   static const Texture::Pointer emptyTexture = Texture::Pointer();
   return _textures.empty() ? emptyTexture : _textures.begin()->second;
 }

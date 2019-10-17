@@ -113,7 +113,7 @@ bool Scroll::pointerMoved(const PointerInputInfo& p) {
 
   vec2 aOffset = p.pos - _currentPointer.pos;
   if (!_manualScrolling && (aOffset.dotSelf() < sqr(_movementTreshold))) {
-    if (_capturedElement.valid()) broadcastMoved(p);
+    if (is_valid(_capturedElement)) broadcastMoved(p);
 
     return true;
   }
@@ -203,12 +203,12 @@ void Scroll::invalidateChildren() {
 Element2d* Scroll::getActiveElement(const PointerInputInfo& p, Element2d* root) {
   if (root == this) {
     for (auto cI = root->children().rbegin(), cE = root->children().rend(); cI != cE; ++cI) {
-      auto el = getActiveElement(p, cI->pointer());
+      auto el = getActiveElement(p, *cI);
       if (el != nullptr) return el;
     }
   } else if (root->visible() && root->enabled() && root->containsPoint(p.pos, p.normalizedPos) && !root->hasFlag(Flag_TransparentForPointer)) {
     for (auto cI = root->children().rbegin(), cE = root->children().rend(); cI != cE; ++cI) {
-      auto el = getActiveElement(p, cI->pointer());
+      auto el = getActiveElement(p, *cI);
       if (el != nullptr) return el;
     }
     return root;
@@ -222,7 +222,7 @@ void Scroll::broadcastPressed(const PointerInputInfo& p) {
 
   auto active = getActiveElement(globalPos, this);
   if (active) {
-    _capturedElement.reset(active);
+    _capturedElement = active;
 
     PointerInputInfo localPos(p.type, active->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
 
@@ -238,7 +238,7 @@ void Scroll::broadcastMoved(const PointerInputInfo& p) {
 
   Element2d* active = getActiveElement(globalPos, this);
 
-  if (_capturedElement.valid() && (_capturedElement.pointer() != active)) {
+  if (is_valid(_capturedElement) && (_capturedElement != active)) {
     PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
     _capturedElement->pointerMoved(localPos);
   }
@@ -257,10 +257,10 @@ void Scroll::broadcastReleased(const PointerInputInfo& p) {
 
   Element2d* active = getActiveElement(globalPos, this);
 
-  if (_capturedElement.valid() && (_capturedElement.pointer() != active)) {
+  if (is_valid(_capturedElement) && (_capturedElement != active)) {
     PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
     _capturedElement->pointerReleased(localPos);
-    _capturedElement.reset(nullptr);
+    _capturedElement = nullptr;
   }
 
   if (active != nullptr) {
@@ -277,10 +277,10 @@ void Scroll::broadcastCancelled(const PointerInputInfo& p) {
 
   Element2d* active = getActiveElement(globalPos, this);
 
-  if (_capturedElement.valid() && (_capturedElement.pointer() != active)) {
+  if (is_valid(_capturedElement) && (_capturedElement != active)) {
     PointerInputInfo localPos(p.type, _capturedElement->positionInElement(globalPos.pos), globalPos.normalizedPos, p.scroll, p.id, p.timestamp, p.origin);
     _capturedElement->pointerCancelled(localPos);
-    _capturedElement.reset(nullptr);
+    _capturedElement = nullptr;
   }
 
   if (active != nullptr) {
@@ -294,21 +294,21 @@ bool Scroll::containsPoint(const vec2& p, const vec2& np) {
 }
 
 void Scroll::setActiveElement(const PointerInputInfo& p, Element2d* e, bool setFocus) {
-  if (e != _activeElement.pointer()) {
-    if (_activeElement.valid()) {
+  if (e != _activeElement) {
+    if (is_valid(_activeElement)) {
       _activeElement->pointerLeaved(p);
-      _activeElement->hoverEnded.invoke(_activeElement.pointer());
+      _activeElement->hoverEnded.invoke(_activeElement);
     }
 
-    _activeElement.reset(e);
+    _activeElement = e;
 
-    if (_activeElement.valid()) {
+    if (is_valid(_activeElement)) {
       _activeElement->pointerEntered(p);
-      _activeElement->hoverStarted.invoke(_activeElement.pointer());
+      _activeElement->hoverStarted.invoke(_activeElement);
     }
   }
 
-  if (_activeElement.valid() && setFocus) {
+  if (is_valid(_activeElement) && setFocus) {
     owner()->setFocusedElement(_activeElement);
   }
 }

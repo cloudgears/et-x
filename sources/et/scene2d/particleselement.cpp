@@ -68,14 +68,16 @@ void ParticlesElement::pause() {
 }
 
 void ParticlesElement::addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& r) {
-  if (_defaultTexture.invalid()) {
-    TextureDescription::Pointer desc = TextureDescription::Pointer::create();
+  if (is_invalid(_defaultTexture)) {
+    TextureDescription::Pointer desc = TextureDescription::make_pointer();
     desc->size = vec2i(1);
     desc->format = TextureFormat::RGBA8;
     desc->data = BinaryDataStorage(4, 255);
     _defaultTexture = rc->createTexture(desc);
 
-    if (_texture.invalid()) _texture = _defaultTexture;
+    if (is_invalid(_texture)) {
+      _texture = _defaultTexture;
+    }
   }
 
   if (_particles.activeParticlesCount() > 0) {
@@ -96,65 +98,9 @@ void ParticlesElement::addToRenderQueue(RenderInterface::Pointer& rc, SceneRende
   }
 }
 
-/*
-s2d::SceneProgram ParticlesElement::program() const
-{
-    return _program;
-}
-
-s2d::SceneProgram ParticlesElement::initProgram(s2d::SceneRenderer& r)
-{
-    if (_program.invalid())
-    {
-        _program = r.createProgramWithShaders("default-particles-shader", particlesVertexShader, particlesFragmentShader);
-        setDefaultProgram(_program);
-    }
-    return _program;
-}
-
-void ParticlesElement::setProgramParameters(RenderInterface::Pointer&, Program::Pointer& p)
-{
-    // TODO : set parameter
-    // p->setUniform("finalTransform", finalTransform());
-}
-*/
-
 void ParticlesElement::setTexture(const Texture::Pointer& t) {
-  _texture = t.invalid() ? _defaultTexture : t;
+  _texture = is_invalid(t) ? _defaultTexture : t;
 }
 
 }  // namespace s2d
-
 }  // namespace et
-
-/*
-const std::string particlesVertexShader =
-"uniform mat4 matWorld;"
-"uniform mat4 finalTransform;"
-"uniform vec3 additionalOffsetAndAlpha;"
-
-"etVertexIn vec3 Vertex;"
-"etVertexIn vec4 TexCoord0;"
-"etVertexIn vec4 Color;"
-
-"etVertexOut etHighp vec2 texCoord;"
-"etVertexOut etLowp vec4 tintColor;"
-
-"void main()"
-"{"
-"	vec4 vTransformed = matWorld * finalTransform * vec4(Vertex.xy, 0.0, 1.0);"
-"	texCoord = TexCoord0.xy;"
-"	tintColor = Color * vec4(1.0, 1.0, 1.0, additionalOffsetAndAlpha.z);"
-"	gl_PointSize = Vertex.z;"
-"	gl_Position = vTransformed + vec4(vTransformed.w * additionalOffsetAndAlpha.xy, 0.0, 0.0);"
-"}";
-
-const std::string particlesFragmentShader =
-"uniform sampler2D inputTexture;"
-"etFragmentIn etLowp vec4 tintColor;"
-"void main()"
-"{"
-"	etFragmentOut = tintColor * etTexture2D(inputTexture, gl_PointCoord);"
-"}"
-"";
-*/

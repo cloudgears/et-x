@@ -90,7 +90,7 @@ void Slider::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
 
   if (_backgroundColor.w > 0.0f) buildColorVertices(_backgroundVertices, mainRect, _backgroundColor * alphaScale, transform);
 
-  if (_background.texture.valid()) {
+  if (is_valid(_background.texture)) {
     if (_backgroundImageMode == BackgroundImageMode_Stretch) {
       buildImageVertices(_backgroundVertices, _background.texture, _background.descriptor, mainRect, finalColorValue, transform);
     } else if (_backgroundImageMode == BackgroundImageMode_Center) {
@@ -100,7 +100,7 @@ void Slider::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
     }
   }
 
-  if (_sliderLeft.texture.valid()) {
+  if (is_valid(_sliderLeft.texture)) {
     auto desc = _sliderLeft.descriptor;
     if (_sliderImagesMode == SliderImagesMode_Crop) desc.size.x *= valuePoint / mainRect.width;
 
@@ -111,7 +111,7 @@ void Slider::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
     buildColorVertices(_sliderLeftVertices, r, _sliderLeftColor * alphaScale, transform);
   }
 
-  if (_sliderRight.texture.valid()) {
+  if (is_valid(_sliderRight.texture)) {
     auto desc = _sliderRight.descriptor;
     if (_sliderImagesMode == SliderImagesMode_Crop) {
       float aScale = valuePoint / mainRect.width;
@@ -126,7 +126,7 @@ void Slider::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
     buildColorVertices(_sliderLeftVertices, r, _sliderRightColor * alphaScale, transform);
   }
 
-  if (handleImage.texture.valid()) {
+  if (is_valid(handleImage.texture)) {
     rect r(vec2(0.0f), _handleScale[_state] * handleImage.descriptor.size);
     r.top = 0.5f * (mainRect.height - r.height);
     r.left = clamp(valuePoint - halfHw, 0.0f, mainRect.width - hw);
@@ -217,9 +217,13 @@ void Slider::setSliderImageMode(SliderImagesMode mode) {
 }
 
 float Slider::handleWidth() const {
-  if (_handle[_state].texture.valid()) return _handle[_state].descriptor.size.x;
+  if (is_valid(_handle[_state].texture)) {
+    return _handle[_state].descriptor.size.x;
+  }
 
-  if (_handleFillColor.w > 0.0f) return 1.5f * colorPlaceholdersSize * size().y;
+  if (_handleFillColor.w > 0.0f) {
+    return 1.5f * colorPlaceholdersSize * size().y;
+  }
 
   return 0.0f;
 }

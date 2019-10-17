@@ -110,11 +110,11 @@ struct ImageDescriptor {
 
   ImageDescriptor(const Texture::Pointer& tex)
     : origin(0.0f)
-    , size(tex.valid() ? tex->sizeFloat(0) : vec2(0.0f)) {}
+    , size(is_valid(tex) ? tex->sizeFloat(0) : vec2(0.0f)) {}
 
   ImageDescriptor(const Texture::Pointer& tex, const ContentOffset& offset)
     : origin(0.0f)
-    , size(tex.valid() ? tex->sizeFloat(0) : vec2(0.0f))
+    , size(is_valid(tex) ? tex->sizeFloat(0) : vec2(0.0f))
     , contentOffset(offset) {}
 
   ImageDescriptor(const vec2& aOrigin, const vec2& aSize, const ContentOffset& offset = ContentOffset())

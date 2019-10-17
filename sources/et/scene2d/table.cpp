@@ -40,7 +40,7 @@ void Table::layoutChildren(const vec2& ownSize) {
   float x = 0.0f;
 
   for (auto s : _sections) {
-    if (s->header.valid()) {
+    if (is_valid(s->header)) {
       s->header->setPosition(x + s->headerOffset, 0.0f);
       s->header->setSize(s->header->size().x, ownSize.y);
       x += s->header->size().x;
@@ -52,7 +52,7 @@ void Table::layoutChildren(const vec2& ownSize) {
       x += i->size().x;
     }
 
-    if (s->footer.valid()) {
+    if (is_valid(s->footer)) {
       s->footer->setPosition(x + s->footerOffset, 0.0f);
       s->footer->setSize(s->footer->size().x, ownSize.y);
       x += s->footer->size().x;
@@ -64,8 +64,8 @@ void Table::layoutChildren(const vec2& ownSize) {
 
 void Table::validateSections() {
   for (auto section : _sections) {
-    section->headerSize = section->header.valid() ? section->header->size().x : 0.0f;
-    section->footerSize = section->footer.valid() ? section->footer->size().x : 0.0f;
+    section->headerSize = is_valid(section->header) ? section->header->size().x : 0.0f;
+    section->footerSize = is_valid(section->footer) ? section->footer->size().x : 0.0f;
 
     section->itemsSize = 0.0f;
     for (auto i : section->items) section->itemsSize += i->size().x;
@@ -80,16 +80,16 @@ Table::Section* Table::addSection(Element2d::Pointer header, const Element2d::Co
   section->items = items;
   for (auto i : section->items) i->setParent(this);
 
-  if (header.valid()) {
+  if (is_valid(header)) {
     section->header = header;
     section->header->setParent(this);
-    bringToFront(section->header.pointer());
+    bringToFront(section->header);
   }
 
-  if (footer.valid()) {
+  if (is_valid(footer)) {
     section->footer = footer;
     section->footer->setParent(this);
-    bringToFront(section->footer.pointer());
+    bringToFront(section->footer);
   }
 
   _sections.push_back(section);
@@ -119,18 +119,22 @@ void Table::setOffsetDirectly(const vec2& o) {
 
 void Table::clean() {
   for (auto s : _sections) {
-    if (s->header.valid()) s->header->setParent(nullptr);
+    if (is_valid(s->header)) {
+      s->header->setParent(nullptr);
+    }
 
     for (auto& item : s->items) {
       item->setParent(nullptr);
-      item.reset(nullptr);
+      item = nullptr;
     }
 
-    if (s->footer.valid()) s->footer->setParent(nullptr);
+    if (is_valid(s->footer)) {
+      s->footer->setParent(nullptr);
+    }
 
-    s->header.reset(nullptr);
+    s->header = nullptr;
     s->items.clear();
-    s->footer.reset(nullptr);
+    s->footer = nullptr;
 
     sharedObjectFactory().deleteObject(s);
   }

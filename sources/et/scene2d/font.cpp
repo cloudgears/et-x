@@ -97,7 +97,7 @@ bool Font::loadFromDictionary(RenderInterface::Pointer& rc, const Dictionary& ob
 
   Texture::Pointer tex = rc->loadTexture(actualName, cache, [](TextureDescription::Pointer desc) { desc->flags |= Texture::Flags::Readback; });
 
-  if (tex.invalid()) {
+  if (is_invalid(tex)) {
     log::error("Unable to load texture for font %s. Missing file: %s", baseFileName.c_str(), textureFile.c_str());
     return false;
   }
@@ -149,7 +149,7 @@ bool Font::loadFromFile(RenderInterface::Pointer& rc, const std::string& fileNam
 
   Texture::Pointer tex = rc->loadTexture(actualName, cache, [](TextureDescription::Pointer desc) { desc->flags |= Texture::Flags::Readback; });
 
-  if (tex.invalid()) {
+  if (is_invalid(tex)) {
     log::error("Unable to load texture for font %s. Missing file: %s", fileName.c_str(), textureFile.c_str());
     return false;
   }

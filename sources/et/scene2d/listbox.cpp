@@ -60,7 +60,7 @@ void Listbox::Popup::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
   rect wholeRect(vec2(0.0f), size());
   buildColorVertices(_backgroundVertices, wholeRect, vec4(0.25f, 1.0f) * finalColor(), transform);
 
-  if (background.texture.valid()) {
+  if (is_valid(background.texture)) {
     buildImageVertices(_backgroundVertices, background.texture, background.descriptor, wholeRect, finalColor(), transform);
   }
 
@@ -75,7 +75,7 @@ void Listbox::Popup::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
 
       if (_selectedIndex == index) {
         buildColorVertices(_backgroundVertices, rowRect, vec4(0.5f, 1.0f) * drawColor, transform);
-        if (selection.texture.valid()) {
+        if (is_valid(selection.texture)) {
           buildImageVertices(_selectionVertices, selection.texture, selection.descriptor, rowRect, drawColor, transform);
         }
       }
@@ -184,7 +184,7 @@ void Listbox::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
   mat4 transform = finalTransform();
   buildColorVertices(_backgroundVertices, rect(vec2(0.0f), size()), vec4(1.0f, 0.5f), transform);
 
-  if (_images[_state].texture.valid()) {
+  if (is_valid(_images[_state].texture)) {
     buildImageVertices(_backgroundVertices, _images[_state].texture, _images[_state].descriptor, rect(vec2(0.0f), size()), finalColor(), transform);
   }
 

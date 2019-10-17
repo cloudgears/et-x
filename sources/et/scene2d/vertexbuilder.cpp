@@ -107,7 +107,7 @@ uint32_t measuseVertexCountForImageDescriptor(const ImageDescriptor& desc) {
 }
 
 void buildImageVertices(SceneVertexList& vertices, const Texture::Pointer& tex, const ImageDescriptor& desc, const rect& p, const vec4& color, const mat4& transform) {
-  if (!tex.valid()) return;
+  if (is_invalid(tex)) return;
 
   bool hasLeftSafe = desc.contentOffset.left > 0;
   bool hasTopSafe = desc.contentOffset.top > 0;

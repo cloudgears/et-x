@@ -43,7 +43,7 @@ CharacterGenerator::CharacterGenerator(RenderInterface::Pointer& rc, const std::
   _fontFace = fileExists(face) ? getFileName(face) : face;
   _fontBoldFace = fileExists(boldFace) ? getFileName(boldFace) : boldFace;
 
-  TextureDescription::Pointer desc = TextureDescription::Pointer::create();
+  TextureDescription::Pointer desc = TextureDescription::make_pointer();
   desc->format = TextureFormat::R8;
   desc->size = vec2i(defaultTextureSize);
   desc->data = BinaryDataStorage(desc->size.square(), 0);

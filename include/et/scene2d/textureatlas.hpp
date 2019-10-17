@@ -29,7 +29,7 @@ class TextureAtlas {
 
   std::vector<Image> imagesForTexture(const Texture::Pointer& t) const;
 
-  const Texture::Pointer& firstTexture() const;
+  Texture::Pointer firstTexture() const;
 
  private:
   typedef std::map<std::string, Texture::Pointer> TextureMap;

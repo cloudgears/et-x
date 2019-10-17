@@ -63,14 +63,14 @@ void Layout::addToRenderQueue(RenderInterface::Pointer& rc, SceneRenderer& gr) {
 bool Layout::pointerPressed(const PointerInputInfo& p) {
   if (hasFlag(Flag_TransparentForPointer)) return false;
 
-  if (_capturedElement.valid()) {
+  if (is_valid(_capturedElement)) {
     _capturedElement->pointerPressed(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
     return true;
   } else {
     Element2d::Pointer active(activeElement(p));
     setHoveredElement(p, active);
     bool processed = false;
-    if (active.invalid()) {
+    if (is_invalid(active)) {
       setFocusedElement(Element2d::Pointer());
     } else {
       vec2 elementPos = active->positionInElement(p.pos);
@@ -86,7 +86,7 @@ bool Layout::pointerPressed(const PointerInputInfo& p) {
           _dragInitialPosition = active->position();
           _dragInitialOffset = elementPos;
 
-          _capturedElement->dragStarted.invoke(_capturedElement.pointer(), ElementDragInfo(_dragInitialPosition, _dragInitialPosition, p.normalizedPos));
+          _capturedElement->dragStarted.invoke(_capturedElement, ElementDragInfo(_dragInitialPosition, _dragInitialPosition, p.normalizedPos));
 
           if (Input::canGetCurrentPointerInfo()) startUpdates();
 
@@ -109,7 +109,7 @@ bool Layout::pointerPressed(const PointerInputInfo& p) {
 bool Layout::pointerMoved(const PointerInputInfo& p) {
   if (hasFlag(Flag_TransparentForPointer)) return false;
 
-  if (_capturedElement.valid()) {
+  if (is_valid(_capturedElement)) {
     if (!Input::canGetCurrentPointerInfo() && (p.type == PointerTypeMask::General) && _dragging) performDragging(p);
 
     _capturedElement->pointerMoved(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
@@ -120,7 +120,7 @@ bool Layout::pointerMoved(const PointerInputInfo& p) {
   Element2d::Pointer active(activeElement(p));
   setHoveredElement(p, active);
 
-  if (active.invalid()) return false;
+  if (is_invalid(active)) return false;
 
   return active->pointerMoved(PointerInputInfo(p.type, active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 }
@@ -130,19 +130,19 @@ bool Layout::pointerReleased(const PointerInputInfo& p) {
 
   Element2d::Pointer active(activeElement(p));
 
-  if (_capturedElement.valid()) {
+  if (is_valid(_capturedElement)) {
     bool processed = _capturedElement->pointerReleased(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
     if ((p.type == PointerTypeMask::General) && _dragging) {
       if (Input::canGetCurrentPointerInfo()) cancelUpdates();
 
-      _capturedElement->dragFinished.invoke(_capturedElement.pointer(), ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos), _dragInitialPosition, p.normalizedPos));
+      _capturedElement->dragFinished.invoke(_capturedElement, ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos), _dragInitialPosition, p.normalizedPos));
 
       _dragging = false;
-      _capturedElement.reset(nullptr);
+      _capturedElement = nullptr;
       invalidateContent();
     } else if (processed) {
-      _capturedElement.reset(nullptr);
+      _capturedElement = nullptr;
       invalidateContent();
     }
 
@@ -151,7 +151,7 @@ bool Layout::pointerReleased(const PointerInputInfo& p) {
     setHoveredElement(p, active);
     bool processed = false;
 
-    if (active.valid()) {
+    if (is_valid(active)) {
       processed = active->pointerReleased(PointerInputInfo(p.type, active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
     }
 
@@ -161,19 +161,19 @@ bool Layout::pointerReleased(const PointerInputInfo& p) {
 
 bool Layout::pointerCancelled(const PointerInputInfo& p) {
   Element2d::Pointer active(activeElement(p));
-  if (_capturedElement.valid()) {
+  if (is_valid(_capturedElement)) {
     bool processed = _capturedElement->pointerCancelled(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
     if ((p.type == PointerTypeMask::General) && _dragging) {
       if (Input::canGetCurrentPointerInfo()) cancelUpdates();
 
-      _capturedElement->dragFinished.invoke(_capturedElement.pointer(), ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos), _dragInitialPosition, p.normalizedPos));
+      _capturedElement->dragFinished.invoke(_capturedElement, ElementDragInfo(_capturedElement->parent()->positionInElement(p.pos), _dragInitialPosition, p.normalizedPos));
 
       _dragging = false;
-      _capturedElement.reset(nullptr);
+      _capturedElement = nullptr;
       invalidateContent();
     } else if (processed) {
-      _capturedElement.reset(nullptr);
+      _capturedElement = nullptr;
       invalidateContent();
     }
 
@@ -182,7 +182,7 @@ bool Layout::pointerCancelled(const PointerInputInfo& p) {
     setHoveredElement(p, active);
     bool processed = false;
 
-    if (active.valid()) {
+    if (is_valid(active)) {
       processed = active->pointerCancelled(PointerInputInfo(p.type, active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
     }
 
@@ -193,7 +193,7 @@ bool Layout::pointerCancelled(const PointerInputInfo& p) {
 bool Layout::pointerScrolled(const PointerInputInfo& p) {
   if (hasFlag(Flag_TransparentForPointer)) return false;
 
-  if (_capturedElement.valid()) {
+  if (is_valid(_capturedElement)) {
     _capturedElement->pointerScrolled(PointerInputInfo(p.type, _capturedElement->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
     return true;
@@ -202,7 +202,7 @@ bool Layout::pointerScrolled(const PointerInputInfo& p) {
 
     setHoveredElement(p, active);
 
-    bool processed = active.valid() && active->pointerScrolled(PointerInputInfo(p.type, active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
+    bool processed = is_valid(active) && active->pointerScrolled(PointerInputInfo(p.type, active->positionInElement(p.pos), p.normalizedPos, p.scroll, p.id, p.timestamp, p.origin));
 
     return processed;
   }
@@ -215,16 +215,16 @@ Element2d::Pointer Layout::activeElement(const PointerInputInfo& p) {
   Element2d::Pointer active;
   for (auto i = _topmostElements.rbegin(), e = _topmostElements.rend(); i != e; ++i) {
     active = getActiveElement(p, *i);
-    if (active.valid()) {
+    if (is_valid(active)) {
       active->name();
       break;
     }
   }
 
-  if (active.invalid()) {
+  if (is_invalid(active)) {
     for (auto i = children().rbegin(), e = children().rend(); i != e; ++i) {
       active = getActiveElement(p, *i);
-      if (active.valid()) break;
+      if (is_valid(active)) break;
     }
   }
 
@@ -238,7 +238,7 @@ Element2d::Pointer Layout::getActiveElement(const PointerInputInfo& p, Element2d
 
   for (auto ei = el->children().rbegin(), ee = el->children().rend(); ei != ee; ++ei) {
     Element2d::Pointer element = getActiveElement(p, *ei);
-    if (element.valid()) return element;
+    if (is_valid(element)) return element;
   }
 
   return el->hasFlag(Flag_TransparentForPointer) ? Element2d::Pointer() : el;
@@ -247,16 +247,16 @@ Element2d::Pointer Layout::getActiveElement(const PointerInputInfo& p, Element2d
 void Layout::setHoveredElement(const PointerInputInfo& p, Element2d::Pointer e) {
   if (e == _currentElement) return;
 
-  if (_currentElement.valid()) {
+  if (is_valid(_currentElement)) {
     _currentElement->pointerLeaved(p);
-    _currentElement->hoverEnded.invoke(_currentElement.pointer());
+    _currentElement->hoverEnded.invoke(_currentElement);
   }
 
   _currentElement = e;
 
-  if (_currentElement.valid()) {
+  if (is_valid(_currentElement)) {
     _currentElement->pointerEntered(p);
-    _currentElement->hoverStarted.invoke(_currentElement.pointer());
+    _currentElement->hoverStarted.invoke(_currentElement);
   }
 }
 
@@ -268,11 +268,11 @@ void Layout::performDragging(const PointerInputInfo& p) {
 
   _capturedElement->setPosition(_capturedElement->position() + delta, 0.0f);
 
-  _capturedElement->dragged.invoke(_capturedElement.pointer(), ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
+  _capturedElement->dragged.invoke(_capturedElement, ElementDragInfo(_capturedElement->position(), _dragInitialPosition, p.normalizedPos));
 }
 
 bool Layout::elementIsBeingDragged(s2d::Element2d::Pointer e) {
-  return _dragging && e.valid() && (e == _capturedElement);
+  return _dragging && is_valid(e) && (e == _capturedElement);
 }
 
 void Layout::update(float) {
@@ -282,7 +282,7 @@ void Layout::update(float) {
 void Layout::cancelDragging(float returnDuration) {
   if (_dragging) {
     _capturedElement->setPosition(_dragInitialPosition, returnDuration);
-    _capturedElement.reset(nullptr);
+    _capturedElement = nullptr;
     _dragging = false;
 
     invalidateContent();
@@ -292,20 +292,24 @@ void Layout::cancelDragging(float returnDuration) {
 void Layout::setFocusedElement(Element2d::Pointer e) {
   if (_focusedElement == e) return;
 
-  if (_focusedElement.valid()) _focusedElement->resignFocus(e.pointer());
+  if (is_valid(_focusedElement)) {
+    _focusedElement->resignFocus(e);
+  }
 
   _focusedElement = e;
 
-  bool needKeyboard = hasFlag(Flag_RequiresKeyboard) || (_focusedElement.valid() && _focusedElement->hasFlag(Flag_RequiresKeyboard));
+  bool needKeyboard = hasFlag(Flag_RequiresKeyboard) || (is_valid(_focusedElement) && _focusedElement->hasFlag(Flag_RequiresKeyboard));
 
-  if (_focusedElement.valid()) _focusedElement->setFocus();
+  if (is_valid(_focusedElement)) {
+    _focusedElement->setFocus();
+  }
 
   if (needKeyboard)
-    layoutRequiresKeyboard.invoke(this, _focusedElement.pointer());
+    layoutRequiresKeyboard.invoke(this, _focusedElement);
   else
     layoutDoesntNeedKeyboard.invoke(this);
 
-  focusedElementChanged(_focusedElement.pointer());
+  focusedElementChanged(_focusedElement);
 }
 
 void Layout::setInvalid() {
@@ -329,7 +333,9 @@ void Layout::collectTopmostElements(Element2d::Pointer element) {
 }
 
 void Layout::initRenderingElement(RenderInterface::Pointer& rc) {
-  if (_renderingElement.invalid()) _renderingElement = RenderingElement::Pointer::create(rc, RenderingElement::MaxCapacity);
+  if (is_invalid(_renderingElement)) {
+    _renderingElement = RenderingElement::make_pointer(rc, RenderingElement::MaxCapacity);
+  }
 }
 
 vec2 Layout::contentSize() {
@@ -356,10 +362,14 @@ Element2d::Pointer Layout::findFirstResponderStartingFrom(Element2d::Pointer bas
   if (base->enabled() && base->visible()) {
     for (auto i = base->children().rbegin(), e = base->children().rend(); i != e; ++i) {
       auto el = findFirstResponderStartingFrom(*i, msg);
-      if (el.valid()) return el;
+      if (is_valid(el)) {
+        return el;
+      }
     }
 
-    if (base->respondsToMessage(msg)) return base;
+    if (base->respondsToMessage(msg)) {
+      return base;
+    }
   }
 
   return Element2d::Pointer();
@@ -373,7 +383,7 @@ Element2d::Pointer Layout::findFirstResponderStartingFrom(Element2d::Pointer bas
 
 ModalLayout::ModalLayout(const std::string& name)
   : Layout(ET_S2D_PASS_NAME_TO_BASE_CLASS) {
-  _backgroundFade = ImageView::Pointer::create(Texture::Pointer(), this, "img_background_fade");
+  _backgroundFade = ImageView::make_pointer(Texture::Pointer(), this, "img_background_fade");
   _backgroundFade->setBackgroundColor(vec4(0.0f, 0.5f));
   _backgroundFade->fillParent();
 }

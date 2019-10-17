@@ -70,7 +70,7 @@ void ImageView::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
     buildColorVertices(_vertices, rect(vec2(0.0f), size()), _backgroundColor * alphaScale, transform);
   }
 
-  if (_texture.valid() && (std::abs(_descriptor.value().size.square()) > 0.0f)) {
+  if (is_valid(_texture) && (std::abs(_descriptor.value().size.square()) > 0.0f)) {
     if (_contentMode == ContentMode_Tile) {
       _actualImageSize = _descriptor.value().size;
 

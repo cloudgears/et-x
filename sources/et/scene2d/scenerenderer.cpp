@@ -18,7 +18,7 @@ SceneRenderer::SceneRenderer(RenderInterface::Pointer& rc, const RenderPass::Con
   , _additionalOffsetAndAlpha(0.0f, 0.0f, 1.0f) {
   _clip.emplace();  // default clip, which would be replaced with correct later
 
-  TextureDescription::Pointer desc = TextureDescription::Pointer::create();
+  TextureDescription::Pointer desc = TextureDescription::make_pointer();
   desc->size = vec2i(1);
   desc->format = TextureFormat::RGBA8;
 
@@ -86,8 +86,8 @@ void s2d::SceneRenderer::setProjectionMatrices(const vec2& contextSize) {
 }
 
 SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const MaterialInstance::Pointer& inMaterial, Element2d* object, PrimitiveType pt) {
-  ET_ASSERT(inMaterial.valid());
-  ET_ASSERT(_renderingElement.valid());
+  ET_ASSERT(is_valid(inMaterial));
+  ET_ASSERT(is_valid(_renderingElement));
 
   if ((object != nullptr) && !object->hasFlag(Flag_DynamicRendering)) object = nullptr;
 
@@ -109,7 +109,7 @@ SceneVertex* s2d::SceneRenderer::allocateVertices(uint32_t count, const Material
 
 void SceneRenderer::addVertices(const SceneVertexList& vertices, const MaterialInstance::Pointer& material, Element2d* owner, PrimitiveType pt) {
   uint32_t count = static_cast<uint32_t>(vertices.lastElementIndex());
-  ET_ASSERT((count > 0) && _renderingElement.valid() && material.valid());
+  ET_ASSERT((count > 0) && is_valid(_renderingElement) && is_valid(material));
 
   SceneVertex* target = allocateVertices(count, material, owner, pt);
   for (const SceneVertex& v : vertices) *target++ = v;
@@ -125,7 +125,7 @@ void s2d::SceneRenderer::beginRender(RenderInterface::Pointer& rc) {
 }
 
 void s2d::SceneRenderer::render(RenderInterface::Pointer& rc) {
-  ET_ASSERT(_renderingElement.valid());
+  ET_ASSERT(is_valid(_renderingElement));
 
   /*
    * TODO : refactor rendering

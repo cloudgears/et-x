@@ -72,7 +72,7 @@ void TextField::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
 
   if (_backgroundColor.w > 0.0f) buildColorVertices(_backgroundVertices, wholeRect, _backgroundColor * alphaScale, transform);
 
-  if (_background.texture.valid()) {
+  if (is_valid(_background.texture)) {
     buildImageVertices(_imageVertices, _background.texture, _background.descriptor, wholeRect, alphaScale, transform);
   }
 

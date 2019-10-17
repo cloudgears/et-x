@@ -130,11 +130,11 @@ void Button::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
     buildColorVertices(_bgVertices, rect(vec2(0.0f), size()), _backgroundColor * backgroundScale, transform);
   }
 
-  if (_commonBackground.texture.valid()) {
+  if (is_valid(_commonBackground.texture)) {
     buildImageVertices(_bgVertices, _commonBackground.texture, _commonBackground.descriptor, rect(vec2(0.0f), size()), _commonBackgroundTintColor * finalColorValue, transform);
   }
 
-  if (_background[_state].texture.valid()) {
+  if (is_valid(_background[_state].texture)) {
     buildImageVertices(_bgVertices, _background[_state].texture, _background[_state].descriptor, rect(vec2(0.0f), size()), _backgroundTintColor * backgroundScale * finalColorValue, transform);
   }
 
@@ -153,7 +153,7 @@ void Button::buildVertices(RenderInterface::Pointer&, SceneRenderer&) {
     }
   }
 
-  if (_image[_state].texture.valid()) {
+  if (is_valid(_image[_state].texture)) {
     vec4 aColor = isPressed ? pressedColor() * alphaScale : finalColorValue;
     if (aColor.w > 0.0f) {
       buildImageVertices(_imageVertices, _image[_state].texture, _image[_state].descriptor, rect(_imageOrigin, _imageSize), aColor, transform);
@@ -300,7 +300,7 @@ void Button::adjustSizeForText(const std::string& text, float duration, bool ver
 }
 
 vec2 Button::sizeForText(const std::string& text, const std::string& wrapper) {
-  vec2 textSize = font().valid() ? font()->measureStringSize(wrapper + text + wrapper, fontSize(), fontSmoothing()) : vec2(0.0f);
+  vec2 textSize = is_valid(font()) ? font()->measureStringSize(wrapper + text + wrapper, fontSize(), fontSmoothing()) : vec2(0.0f);
   for (uint32_t i = 0; i < State_max; ++i) {
     textSize = maxv(textSize, _background[i].descriptor.size);
   }

@@ -29,7 +29,7 @@ TextElement::TextElement(Element2d* parent, const Font::Pointer& f, float fsz, c
 
 void TextElement::setFont(const Font::Pointer& f) {
   _font = f;
-  if (_font.valid() && _textMaterial.valid()) {
+  if (is_valid(_font) && is_valid(_textMaterial)) {
     _textMaterial->setTexture(MaterialTexture::BaseColor, _font->generator()->texture());
   }
   invalidateText();
@@ -82,7 +82,7 @@ void TextElement::loadProperties(const Dictionary& d) {
 void TextElement::setTextStyle(TextStyle style) {
   if (style != _textStyle) {
     _textStyle = style;
-    _textMaterial.reset(nullptr);
+    _textMaterial = nullptr;
   }
 }
 
@@ -118,9 +118,10 @@ void TextElement::setTextAlignment(Alignment h, Alignment v) {
 }
 
 MaterialInstance::Pointer TextElement::textMaterial(SceneRenderer& r) {
-  if (_textMaterial.invalid()) {
+  if (is_invalid(_textMaterial)) {
     _textMaterial = r.fontMaterial()->instance();
-    if (_font.valid()) {
+
+    if (is_valid(_font)) {
       _textMaterial->setTexture(MaterialTexture::BaseColor, _font->generator()->texture());
     }
   }

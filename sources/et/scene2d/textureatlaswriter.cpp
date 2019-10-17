@@ -24,7 +24,7 @@ TextureAtlasWriter::TextureAtlasItem& TextureAtlasWriter::addItem(const vec2i& t
   _items.push_back(TextureAtlasItem());
 
   TextureAtlasItem& item = _items.back();
-  item.texture = TextureDescription::Pointer::create();
+  item.texture = TextureDescription::make_pointer();
   item.texture->size = textureSize;
 
   return item;
@@ -127,7 +127,7 @@ void TextureAtlasWriter::writeToFile(const std::string& fileName, const char* te
     std::string texId = removeFileExt(textureName);
 
     Dictionary texture;
-    texture.setStringForKey("filename", textureName);
+    texture.setStringForKey("filename", StringValue(textureName));
     texture.setStringForKey("id", texId);
     textures->content.push_back(texture);
 

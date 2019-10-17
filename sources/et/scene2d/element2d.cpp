@@ -315,12 +315,12 @@ Element2d* Element2d::childWithNameCallback(const std::string& name, Element2d* 
 
   if (recursive) {
     for (auto& c : root->children()) {
-      Element2d* aElement = childWithNameCallback(name, c.pointer(), recursive);
+      Element2d* aElement = childWithNameCallback(name, c, recursive);
       if (aElement != nullptr) return aElement;
     }
   } else {
     for (auto& c : root->children()) {
-      if (c->name() == name) return c.pointer();
+      if (c->name() == name) return c;
     }
   }
 
@@ -470,9 +470,9 @@ void Element2d::setAutolayout(const Dictionary& d) {
 
   if (d.hasKey("angle")) l.angle = d.floatForKey("angle", 0.0f)->content;
 
-  if (d.hasKey("positionMode")) l.layoutPositionMode = layoutModeFromString(d.stringForKey("positionMode", "parent_relative")->content);
+  if (d.hasKey("positionMode")) l.layoutPositionMode = layoutModeFromString(d.stringForKey("positionMode", StringValue("parent_relative"))->content);
 
-  if (d.hasKey("sizeMode")) l.layoutSizeMode = layoutModeFromString(d.stringForKey("sizeMode", "parent_relative")->content);
+  if (d.hasKey("sizeMode")) l.layoutSizeMode = layoutModeFromString(d.stringForKey("sizeMode", StringValue("parent_relative"))->content);
 
   l.layoutMask = (d.integerForKey("autolayout_position", l.layoutMask & LayoutMask_Position)->content ? LayoutMask_Position : 0) | (d.integerForKey("autolayout_size", l.layoutMask & LayoutMask_Size)->content ? LayoutMask_Size : 0) |
                  (d.integerForKey("autolayout_pivot", l.layoutMask & LayoutMask_Pivot)->content ? LayoutMask_Pivot : 0) | (d.integerForKey("autolayout_angle", l.layoutMask & LayoutMask_Angle)->content ? LayoutMask_Angle : 0) |
@@ -546,7 +546,7 @@ const MaterialInstance::Pointer& Element2d::materialInstance() const {
 }
 
 void Element2d::validateMaterialInstance(SceneRenderer& renderer) {
-  if (_material.invalid()) {
+  if (is_invalid(_material)) {
     _material = allocateMaterial(renderer);
   }
 }
