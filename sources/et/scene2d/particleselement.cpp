@@ -27,7 +27,7 @@ ParticlesElement::ParticlesElement(uint32_t amount, Element2d* parent, const std
   baseParticle.acceleration = vec3(0.0f);
   baseParticle.color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
   baseParticle.size = 3.0;
-  baseParticle.emitTime = actualTime();
+  baseParticle.emitTime = actual_time();
   baseParticle.lifeTime = 3.0f;
 
   variationParticle.position = vec3(5.0f, 5.0f, 0.0f);
@@ -41,7 +41,7 @@ ParticlesElement::ParticlesElement(uint32_t amount, Element2d* parent, const std
   _particles.setVariation(variationParticle);
 
   _updateTimer.expired.connect([this](NotifyTimer* timer) {
-    _particles.update(timer->actualTime());
+    _particles.update(timer->actual_time());
     invalidateContent();
   });
 }
@@ -52,7 +52,7 @@ void ParticlesElement::setBaseAndVariationParticles(const particles::PointSprite
 }
 
 void ParticlesElement::start() {
-  _particles.emitMissingParticles(_updateTimer.actualTime());
+  _particles.emitMissingParticles(_updateTimer.actual_time());
 
   _updateTimer.start(timerPool(), 0.0f, NotifyTimer::RepeatForever);
   invalidateContent();

@@ -141,6 +141,7 @@ void CharacterGenerator::updateTexture(const vec2i& position, const vec2i& size,
 }
 
 void CharacterGenerator::setTexture(Texture::Pointer tex) {
+  ET_ASSERT(tex.valid());
   _texture = tex;
 }
 

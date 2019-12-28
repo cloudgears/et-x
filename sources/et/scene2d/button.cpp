@@ -239,7 +239,7 @@ bool Button::capturePointer() const {
 }
 
 void Button::performClick() {
-  float currentTime = timerPool()->actualTime();
+  float currentTime = timerPool()->actual_time();
   if (currentTime > _lastClickTime + _clickTreshold) {
     _lastClickTime = currentTime;
 

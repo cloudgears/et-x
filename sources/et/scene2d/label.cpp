@@ -109,7 +109,7 @@ void Label::setText(const std::string& aText, float duration) {
 
     _textFade = 0.0f;
     _animatingText = true;
-    _textFadeStartTime = actualTime();
+    _textFadeStartTime = actual_time();
     _textFadeDuration = duration;
   }
 
