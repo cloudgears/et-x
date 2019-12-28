@@ -41,8 +41,14 @@ struct CharDescriptor {
     : value(v) {}
 };
 
+struct uint32_t_hash {
+  constexpr size_t operator()(uint32_t v) const noexcept {
+    return v;
+  }
+};
+
 using CharDescriptorList = Vector<CharDescriptor>;
-using CharDescriptorMap = Map<int, CharDescriptor>;
+using CharDescriptorMap = UnorderedMap<uint32_t, CharDescriptor, uint32_t_hash>;
 
 }  // namespace s2d
 }  // namespace et
