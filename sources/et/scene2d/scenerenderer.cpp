@@ -38,7 +38,7 @@ SceneRenderer::SceneRenderer(RenderInterface::Pointer& rc, const RenderPass::Con
   _defaultMaterial = rc->sharedMaterialLibrary().loadMaterial(scene2dMaterial);
   _defaultMaterial->setTexture(MaterialTexture::BaseColor, _whiteTexture);
   _fontMaterial = rc->sharedMaterialLibrary().loadMaterial(fontMaterial);
-  _renderPass = rc->allocateRenderPass(passInfo);
+  _renderPass = rc->createRenderPass(passInfo);
   setProjectionMatrices(vector2ToFloat(rc->contextSize()));
 }
 
@@ -142,7 +142,7 @@ void s2d::SceneRenderer::render(RenderInterface::Pointer& rc) {
 
 void SceneRenderer::endRender(RenderInterface::Pointer& rc) {
   _renderPass->endSubpass();
-  rc->submitRenderPass(_renderPass);
+  rc->endRenderPass(_renderPass);
 }
 
 void SceneRenderer::setAdditionalOffsetAndAlpha(const vec3& offsetAndAlpha) {
